@@ -1,8 +1,8 @@
 <?php 
-	session_start();
+  include "translation.php";
   include "version.php";
   error_reporting(E_ALL ^ E_NOTICE);
-  require 'header.php';
+  //require 'header.php'; NOT NECESSARY, SHOULD BE USED IN THE FUTURE
 ?>
 <!DOCTYPE html>
 
@@ -51,11 +51,11 @@
                         <a class="nav-link" href="./profile/index.php"><i class="fas fa-user-alt fa-lg"></i></a>
             </li>
             <li>
-              <a class="nav-link disabled" href="#">Időzár <span id="time">10:00</span></a>
+              <a class="nav-link disabled" href="#">'.$nav_timeLockTitle.' <span id="time">'.$nav_timeLock_StartValue.'</span></a>
             </li>
 					  </ul>
 						<form class="form-inline my-2 my-lg-0" action=utility/logout.ut.php>
-                      <button class="btn btn-danger my-2 my-sm-0" type="submit">Kijelentkezés</button>
+                      <button class="btn btn-danger my-2 my-sm-0" type="submit">'.$nav_logOut.'</button>
                       </form>
                       <a class="nav-link my-2 my-sm-0" href="./help.php"><i class="fas fa-question-circle fa-lg"></i></a>
 					</div>
@@ -71,7 +71,7 @@
             echo '<table align=center width=200px class=successtable><tr><td><div class="alert alert-success"><strong> - </strong>Sikeres regisztráció! </div></tr></td></table>';
           }
           if($_GET['logout'] == "success"){
-            echo '<table align=center width=400px class=successtable><tr><td><div class="alert alert-info">Sikeres kijelentkezés! </div></tr></td></table>';
+            echo '<table align=center width=400px class=successtable><tr><td><div class="alert alert-info">'.$alert_logout_successful.' </div></tr></td></table>';
           }
           if($_GET['logout'] == "pwChange"){
             echo '<table align=center width=200px class=successtable><tr><td><div class="alert alert-info">Successfully changed password! </div></tr></td></table>';
@@ -94,8 +94,8 @@
     <?php if(!isset($_SESSION['userId'])){echo '
                     
                     <form action="utility/login.ut.php" method="post" class="formmain" id="formmain" autocomplete="off" >
-                    <h1 align=center class="rainbow">Árpád Média IO </h1>
-		                <h4 align=center>Jelenlegi verzió:'.$developmentVersion.'</h4>
+                    <h1 align=center class="rainbow">'.$applicationTitleShort.' </h1>
+		                <h4 align=center>'.$application_version_text.$application_Version.'</h4>
                    <div class="row justify-content-center" style="text-align: center;"><div class="col-7 col-sm-4"><input type="text" name="useremail" placeholder="Felhasználónév/E-mail" class="form-control mb-2 mr-sm-2"></div></div>
                     <div class="row justify-content-center" style="text-align: center;"><div class="col-7 col-sm-4"><input type="password" name="pwd" placeholder="Jelszó" class="form-control mb-2 mr-sm-2"></div></div>
                     <div class="row justify-content-center" style="text-align: center;"><div class="col-5 col-sm-4"><button class="btn btn-dark" type="submit" name="login-submit" align=center>Bejelentkezés</button></div></div>
@@ -104,22 +104,20 @@
             else{
               echo '
               <h1 align=center class="rainbow">Árpád Média IO </h1>
-		                <h4 align=center>Jelenlegi verzió:'.$developmentVersion.'</h4>
+		                <h4 align=center>'.$application_version_text.$application_Version.'</h4>
               <div class="row justify-content-center" style="text-align: center;">
-              <div class="col-6 col-sm-2"><a class="nav-link ab" href="./takeout.php"><i class="fas fa-upload fa-3x"></i><br><h5>Kivétel</h5></a></div>
-              <div class="col-6 col-sm-2 offset-md-1"><a class="nav-link ab" href="./retrieve.php"><i class="fas fa-download fa-3x"></i><br><h5>Visszahozás</h5></a></div>
-              </div>
-              <!-- Force next columns to break to new line at md breakpoint and up -->
-
-              <br>
-              <div class="row justify-content-center" style="text-align: center;">
-              <div class="col-6 col-sm-2"><a class="nav-link ab" href="./adatok.php"><i class="fas fa-database fa-3x"></i><br><h5>Adatok</h5></a></div>
-              <div class="col-6 col-sm-2 offset-md-1"><a class="nav-link ab" href="./pathfinder.php"><i class="fas fa-project-diagram fa-3x"></i><br><h5>PathFinder</h5></a></div>
+              <div class="col-6 col-sm-2"><a class="nav-link ab" href="./takeout.php"><i class="fas fa-upload fa-3x"></i><br><h5>'.$index_takeOut.'</h5></a></div>
+              <div class="col-6 col-sm-2 offset-md-1"><a class="nav-link ab" href="./retrieve.php"><i class="fas fa-download fa-3x"></i><br><h5>'.$index_Retrieve.'</h5></a></div>
               </div>
               <br>
               <div class="row justify-content-center" style="text-align: center;">
-              <div class="col-6 col-sm-2"><a class="nav-link ab" href="./profile/index.php"><i class="fas fa-user-alt fa-3x"></i><br><h5>Profil</h5></a></div>
-              <div class="col-6 col-sm-2 offset-md-1"><a class="nav-link ab" href="./help.php"><i class="fas fa-question-circle fa-3x"></i><br><h5>Segítség</h5></a></div>
+              <div class="col-6 col-sm-2"><a class="nav-link ab" href="./adatok.php"><i class="fas fa-database fa-3x"></i><br><h5>'.$index_Data.'</h5></a></div>
+              <div class="col-6 col-sm-2 offset-md-1"><a class="nav-link ab" href="./pathfinder.php"><i class="fas fa-project-diagram fa-3x"></i><br><h5>'.$index_PathFinder.'</h5></a></div>
+              </div>
+              <br>
+              <div class="row justify-content-center" style="text-align: center;">
+              <div class="col-6 col-sm-2"><a class="nav-link ab" href="./profile/index.php"><i class="fas fa-user-alt fa-3x"></i><br><h5>'.$index_Profile.'</h5></a></div>
+              <div class="col-6 col-sm-2 offset-md-1"><a class="nav-link ab" href="./help.php"><i class="fas fa-question-circle fa-3x"></i><br><h5>'.$index_Help.'</h5></a></div>
             </div>';
               echo '<p>Changelog - <i class="fas fa-exclamation"></i><br \><u>A Changelog teljes rögzítése megszűnik, innentől kezdve felhasználó szintű tájékoztatás lesz itt látható.</u>
               <h6>1.5 - Segítség oldal, pontosabb hibaüzenetek</h6>

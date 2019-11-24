@@ -1,5 +1,5 @@
 <?php 
-session_start();
+include "translation.php";
 if(isset($_SESSION['userId'])){
     error_reporting(E_ALL ^ E_NOTICE);
 //index.php
@@ -20,7 +20,7 @@ if(isset($_SESSION['userId'])){
   
     </head>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-					<a class="navbar-brand" href="index.php">Arpad Media IO</a>
+					<a class="navbar-brand" href="index.php"><?php echo $applicationTitleShort;?></a>
 					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 					  <span class="navbar-toggler-icon"></span>
 					</button>
@@ -46,11 +46,11 @@ if(isset($_SESSION['userId'])){
                         <a class="nav-link" href="./profile/index.php"><i class="fas fa-user-alt fa-lg"></i></a>
             </li>
             <li>
-              <a class="nav-link disabled" href="#">Időzár <span id="time">10:00</span></a>
+              <a class="nav-link disabled" href="#"><?php echo $nav_timeLockTitle;?> <span id="time"><?php echo $nav_timeLock_StartValue;?></span></a>
             </li>
 					  </ul>
 						<form class="form-inline my-2 my-lg-0" action=utility/logout.ut.php>
-                      <button class="btn btn-danger my-2 my-sm-0" type="submit">Kijelentkezés</button>
+                      <button class="btn btn-danger my-2 my-sm-0" type="submit"><?php echo $nav_logOut;?></button>
                       </form>
                       <a class="nav-link disabled my-2 my-sm-0" href="#"><i class="fas fa-question-circle fa-lg"></i></a>
 					</div>
@@ -62,8 +62,8 @@ if(isset($_SESSION['userId'])){
    <table id="itemSearch" align="left"><tr><td>
             <form action="/pathfinder.php" method="GET" autocomplete="off">
             <div class="autocomplete" method="GET">
-    		<input id="id_itemNameAdd" type="text" name="pfItem" class="form-control" placeholder="Start typing item name.."></div></td>
-            <td><button type="submit" name="add" id="add" class="btn btn-info2">Keres</button><span id='sendQueryButtonLoc'></span></td>
+    		<input id="id_itemNameAdd" type="text" name="pfItem" class="form-control mb-2 mr-sm-2" placeholder='<?php echo $applicationSearchField;?>'></div></td>
+            <td><button type="submit" name="add" id="add" class="btn btn-info2 mb-2 mr-sm-2">Keres</button><span id='sendQueryButtonLoc'></span></td>
   			</tr></table>
 			<form autocomplete="off" action="/index.php">
 			</form>

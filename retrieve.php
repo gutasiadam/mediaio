@@ -1,5 +1,5 @@
 <?php
-session_start();
+include "translation.php";
 if(!isset($_SESSION['userId'])){
   header("Location: index.php?error=AccessViolation");}
 
@@ -163,7 +163,8 @@ var goStatus = 0;
 
 <html >
       <title>Arpad Media Item IO</title>
-      <head>
+  <head>
+  <script src="JTranslations.js"></script>
   <link rel="stylesheet" href="./main.css">
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
@@ -202,11 +203,11 @@ var goStatus = 0;
                         <a class="nav-link" href="./profile/index.php"><i class="fas fa-user-alt fa-lg"></i></a>
             </li>
             <li>
-              <a class="nav-link disabled" href="#">Időzár <span id="time">10:00</span></a>
+              <a class="nav-link disabled" href="#"><?php echo $nav_timeLockTitle;?> <span id="time"><?php echo $nav_timeLock_StartValue;?></span></a>
             </li>
 					  </ul>
 						<form class="form-inline my-2 my-lg-0" action=utility/logout.ut.php>
-                      <button class="btn btn-danger my-2 my-sm-0" type="submit">Kijelentkezés</button>
+                      <button class="btn btn-danger my-2 my-sm-0" type="submit"><?php echo $nav_logOut;?></button>
                       </form>
             <a class="nav-link disabled my-2 my-sm-0" href="#"><i class="fas fa-question-circle fa-lg"></i></a>
 					</div>
@@ -216,14 +217,14 @@ var goStatus = 0;
 	<body > <!-- style="background-color:#DCDCDC" -->
 		<div class="container">
 			<br /><br />
-      <h2 class="rainbow" align="center" id="doTitle">Arpad Media IO</h2><br />
+      <h2 class="rainbow" align="center" id="doTitle"><?php echo $applicationTitleShort;?></h2><br />
       <div class="row">
       <div class="col-md-8">
-      <div class="shadow-sm p-3 mb-5 bg-light rounded"><?php echo "<strong>Szia ". $_SESSION['UserUserName']. "! </strong> Mit hoztál vissza?"?></div>
+      <div class="shadow-sm p-3 mb-5 bg-light rounded"><?php echo $Welcomemsg_retrieve?></div>
 			<div class="form-group">
         <table id="itemSearch" align="left"><tr><td><div class="autocomplete" method="GET">
-    				<input id="id_itemNameAdd" type="text" name="add" class="form-control mb-2 mr-sm-2" placeholder="Kezdd el írni a tárgy nevét..."></div></td>
-            <td><button type="button" name="add" id="add" class="btn btn-info2 add_btn mb-2 mr-sm-2">Add</button>     <span id='sendQueryButtonLoc'></span></td>
+    				<input id="id_itemNameAdd" type="text" name="add" class="form-control mb-2 mr-sm-2" placeholder='<?php echo $applicationSearchField;?>'></div></td>
+            <td><button type="button" name="add" id="add" class="btn btn-info2 add_btn mb-2 mr-sm-2"><?php echo $button_Add;?></button>     <span id='sendQueryButtonLoc'></span></td>
   			</tr>
         </table>
 			<form autocomplete="off" action="/index.php">
@@ -233,8 +234,8 @@ var goStatus = 0;
       <br>
           <div class="row">
           <!-- THIS TABLE HOLDS THE TWO CHILDS-->
-            <div class="col-md-6"><table class="table table-bordered table-dark" style="line-height: 10px;" id="dynamic_field"><tr><div style="text-align:center;" class="text-primary"><strong>Általad kivett</strong></div></tr></table></div>
-            <div class="col-md-6"><table class="table table-bordered table-dark" style="line-height: 30px;" id="dynamic_field_2"><tr><div style="text-align:center;" class="text-primary"><strong>Más által kivett</strong></div></tr></table></div>
+            <div class="col-md-6"><table class="table table-bordered table-dark" style="line-height: 10px;" id="dynamic_field"><tr><div style="text-align:center;" class="text-primary"><strong><?php echo $retrieve_table1;?> </strong></div></tr></table></div>
+            <div class="col-md-6"><table class="table table-bordered table-dark" style="line-height: 30px;" id="dynamic_field_2"><tr><div style="text-align:center;" class="text-primary"><strong><?php echo $retrieve_table2;?></strong></div></tr></table></div>
           </div>
           
 						
@@ -246,7 +247,7 @@ var goStatus = 0;
 			</div>
 		</div>
 	</body>
-<footer class="page-footer font-small blue"> <div class="fixed-bottom" align="center"><p>Arpad Media I/O <strong>ver. <?php echo $developmentVersion; ?></strong><br /> Code by Adam Gutasi</p></div></footer>
+<footer class="page-footer font-small blue"> <div class="fixed-bottom" align="center"><p>Arpad Media I/O <strong>ver. <?php echo $application_Version; ?></strong><br /> Code by Adam Gutasi</p></div></footer>
 </html>
 <script>
 
@@ -329,9 +330,9 @@ window.onload = function () {
     type: 'POST',
     data: {data : takeOutJSON},
     success: function (response) { $('#doTitle').animate({'opacity': 0}, 400, function(){
-        $(this).html('<h2 class="text text-success" role="alert">Sikeresen visszahoztad a tárgya(ka)t!</h2>').animate({'opacity': 1}, 400);
-        $(this).html('<h2 class="text text-success" role="alert">Sikeresen visszahoztad a tárgya(ka)t!</h2>').animate({'opacity': 1}, 3000);
-        $(this).html('<h2 class="text text-success" role="alert">Sikeresen visszahoztad a tárgya(ka)t!</h2>').animate({'opacity': 0}, 400);
+        $(this).html('<h2 class="text text-success" role="alert">'+retrieve_Success+'</h2>').animate({'opacity': 1}, 400);
+        $(this).html('<h2 class="text text-success" role="alert">'+retrieve_Success+'</h2>').animate({'opacity': 1}, 3000);
+        $(this).html('<h2 class="text text-success" role="alert">'+retrieve_Success+'</h2>').animate({'opacity': 0}, 400);
         setTimeout(function() { $("#doTitle").text("Arpad Media IO").animate({'opacity': 1}, 400); }, 3800);;   
         $('#dynamic_field').empty();
         $('#dynamic_field_2').empty();
@@ -400,10 +401,10 @@ if (currentItemSel != ''){
           // ERROR 002
           //BÉNA, DE MŰKÖDŐ ANIMÁCIÓ
           $('#doTitle').animate({'opacity': 0}, 400, function(){
-        $(this).html('<h2 class="text text-danger" role="alert">Az tárgy a raktárban van!</h2>').animate({'opacity': 1}, 400);
-        $(this).html('<h2 class="text text-danger" role="alert">Az tárgy a raktárban van!</h2>').animate({'opacity': 1}, 3000);
-        $(this).html('<h2 class="text text-danger" role="alert">Az tárgy a raktárban van!</h2>').animate({'opacity': 0}, 400);
-        setTimeout(function() { $("#doTitle").text("Arpad Media IO").animate({'opacity': 1}, 400); }, 3800);;   
+        $(this).html('<h2 class="text text-danger" role="alert">'+retrieve_Error+'</h2>').animate({'opacity': 1}, 400);
+        $(this).html('<h2 class="text text-danger" role="alert">'+retrieve_Error+'</h2>').animate({'opacity': 1}, 3000);
+        $(this).html('<h2 class="text text-danger" role="alert">'+retrieve_Error+'</h2>').animate({'opacity': 0}, 400);
+        setTimeout(function() { $("#doTitle").text(applicationTitleShort).animate({'opacity': 1}, 400); }, 3800);;   
     }); 
         
             selectList[selectList.length-1] = null;
@@ -431,10 +432,10 @@ $(document).on('click', '.verify_btn', function(){
 
     if (check_authCodeInput == ""){
       $('#doTitle').animate({'opacity': 0}, 400, function(){
-        $(this).html('<h2 class="text text-info" role="alert"><strong>Warn: </strong>Nem adtál meg kódot!</h2>').animate({'opacity': 1}, 400);
-        $(this).html('<h2 class="text text-info" role="alert"><strong>Warn: </strong>Nem adtál meg kódot!</h2>').animate({'opacity': 1}, 3000);
-        $(this).html('<h2 class="text text-info" role="alert"><strong>Warn: </strong>Nem adtál meg kódot!</h2>').animate({'opacity': 0}, 400);
-        setTimeout(function() { $("#doTitle").text("Arpad Media IO").animate({'opacity': 1}, 400); }, 3800);;   
+        $(this).html('<h2 class="text text-info" role="alert"><strong>Warn: </strong>'+retrieve_no_AuthCode_given+'</h2>').animate({'opacity': 1}, 400);
+        $(this).html('<h2 class="text text-info" role="alert"><strong>Warn: </strong>'+retrieve_no_AuthCode_given+'</h2>').animate({'opacity': 1}, 3000);
+        $(this).html('<h2 class="text text-info" role="alert"><strong>Warn: </strong>'+retrieve_no_AuthCode_given+'</h2>').animate({'opacity': 0}, 400);
+        setTimeout(function() { $("#doTitle").text(applicationTitleShort).animate({'opacity': 1}, 400); }, 3800);;   
     }); 
       /*document.getElementById("doTitle").innerHTML = '<h6 class="alert alert-warning" role="alert">Nem adtál meg kódot!</h6>';
           setTimeout(function() { $("#doTitle").text("Arpad Media IO"); }, 3000);;*/
@@ -469,19 +470,19 @@ $(document).on('click', '.verify_btn', function(){
           $('#row'+button_id+'').remove();
           //document.getElementById("doTitle").InnerHTML = '<div class="alert alert-success" role="alert">Sikeresen visszahoztad és felhasználtad a kódot!</div>';
           $('#doTitle').animate({'opacity': 0}, 400, function(){
-        $(this).html('<h2 class="text text-success" role="alert"><strong>Sikeresen</strong> visszahoztad a tárgyat és felhasználtad a kódot!</h2>').animate({'opacity': 1}, 400);
-        $(this).html('<h2 class="text text-success" role="alert"><strong>Sikeresen</strong> visszahoztad a tárgyat és felhasználtad a kódot!</h2>').animate({'opacity': 1}, 3000);
-        $(this).html('<h2 class="text text-success" role="alert"><strong>Sikeresen</strong> visszahoztad a tárgyat és felhasználtad a kódot!</h2>').animate({'opacity': 0}, 400);
-        setTimeout(function() { $("#doTitle").text("Arpad Media IO").animate({'opacity': 1}, 400); }, 3800);;   
+        $(this).html('<h2 class="text text-success" role="alert">'+retrieve_AuthCode_success+'</h2>').animate({'opacity': 1}, 400);
+        $(this).html('<h2 class="text text-success" role="alert">'+retrieve_AuthCode_success+'</h2>').animate({'opacity': 1}, 3000);
+        $(this).html('<h2 class="text text-success" role="alert">'+retrieve_AuthCode_success+'</h2>').animate({'opacity': 0}, 400);
+        setTimeout(function() { $("#doTitle").text(applicationTitleShort).animate({'opacity': 1}, 400); }, 3800);;   
         }); 
           }
           if (tempAuthCheck == 'Non-exist authCode'){
             console.log("Auth Non-existent.");
             $('#doTitle').animate({'opacity': 0}, 400, function(){
-        $(this).html('<h2 class="text text-warning" role="alert">Az általad megadott kód hibás vagy nem létezik!</h2>').animate({'opacity': 1}, 400);
-        $(this).html('<h2 class="text text-warning" role="alert">Az általad megadott kód hibás vagy nem létezik!</h2>').animate({'opacity': 1}, 3000);
-        $(this).html('<h2 class="text text-warning" role="alert">Az általad megadott kód hibás vagy nem létezik!</h2>').animate({'opacity': 0}, 400);
-        setTimeout(function() { $("#doTitle").text("Arpad Media IO").animate({'opacity': 1}, 400); }, 3800);;   
+        $(this).html('<h2 class="text text-warning" role="alert">'+retrieve_Error_AuthCode_General+'</h2>').animate({'opacity': 1}, 400);
+        $(this).html('<h2 class="text text-warning" role="alert">'+retrieve_Error_AuthCode_General+'</h2>').animate({'opacity': 1}, 3000);
+        $(this).html('<h2 class="text text-warning" role="alert">'+retrieve_Error_AuthCode_General+'</h2>').animate({'opacity': 0}, 400);
+        setTimeout(function() { $("#doTitle").text(applicationTitleShort).animate({'opacity': 1}, 400); }, 3800);;   
         }); 
           }
           if (tempAuthCheck == "Db-error"){
@@ -511,19 +512,6 @@ $(document).on('click', '.verify_btn', function(){
   
 
 });
-//EVERY ITEM PRESENT IN THE SYSTEM - MODIFY WITH CAUTION!
-
-var dbItems = ["Fresnel 1000W", "Fresnel 650W", "Fresnel 300W", "Softbox allo 1", "Softbox allo 2", "Softbox fekvo",
- "Fresnel allvany A", "Fresnel allvany B", "Fresnel allvany C", "Softbox allvany 1", "Softbox allvany 2", "Softbox allvany 3", 
- "Hatter allvany 1", "Hatter allvany 2", "Fujitsu monitor 1", "Fujitsu monitor 2", "Dell monitor 1", "Dell monitor 2", "Genius hangfal",
-  "Forgo szek 1", "Forgo szek 2", "Forgo szek 3", "Nagy szurke fuggony 1", "Nagy szurke fuggony 2", "Nagy szurke fuggony 3", "Nagy szurke fuggony 4",
-  "HP laptop", "Szurke kanape", "Kek kanape", "Fekete fa szek 1", "Fekete fa szek 2", "Fekete fem szek", "Spanyolfal", "Kisasztal 1", "Kisasztal 2", "Nagyasztal 1",
-  "Nagyasztal 2", "Nagyasztal 3", "TP-Link switch", "Cisco switch", "D-Link router", "Kuka (kisszoba)", "Kuka (PET)", "Kontroll hangfal 1", "Kontroll hangfal 2", "Szerverasztal 1", "Szerverasztal 2", "Szervergep 1", "Szervergep 2", "Szervergep 3",
-  "Dell szervermonitor", "Nagy parafatabla", "Fekvo parafatabla", "Allo parafatabla", "Neon lampa", "Benti kisszekreny 1", "Benti kisszekreny 2",
-  "Kinti kisszekreny", "Kinti nagyszekreny", "Asztali LED lampa", "Filces tabla", "Szerver ventillator", "Feher allo ventillator",
-  "Hattertarto csipesz 1", "Hattertarto csipesz 2", "Hattertarto csipesz 3", "Negyes kapcsolhato eloszto 1", "Negyes kapcsolhato eloszto 2", "Negyes kapcsolhato eloszto 3", "Negyes kapcsolhato eloszto 4",
-  "Negyes kapcsolhato eloszto 5", "Negyes kapcsolhato eloszto 6", "Negyes eloszto (5m)", "Harmas eloszto (1m)"];
-
 
 //Process takeout
 

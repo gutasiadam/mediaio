@@ -1,7 +1,7 @@
 <?php
 
+include "translation.php";
 
-session_start();
 if(!isset($_SESSION['userId'])){
   header("Location: index.php?error=AccessViolation");}
 //if (!isset($_SESSION['UserUserName'])){
@@ -124,6 +124,7 @@ function checkGoBtn() {
       }</script>
 <html >
 <head>
+  <script src="JTranslations.js"></script>
   <link rel="stylesheet" href="./main.css">
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
@@ -134,9 +135,9 @@ function checkGoBtn() {
     <title>Arpad Media IO</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
-      <title>Arpad Media Item IO</title>
+      <title><?php echo $applicationTitleFull;?></title>
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
-					<a class="navbar-brand rainbow" href="index.php">Arpad Media IO</a>
+					<a class="navbar-brand rainbow" href="index.php"><?php echo $applicationTitleShort;?></a>
 					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 					  <span class="navbar-toggler-icon"></span>
 					</button>
@@ -162,11 +163,11 @@ function checkGoBtn() {
                         <a class="nav-link" href="./profile/index.php"><i class="fas fa-user-alt fa-lg"></i></a>
             </li>
             <li>
-              <a class="nav-link disabled" href="#">Időzár <span id="time">10:00</span></a>
+              <a class="nav-link disabled" href="#"><?php echo $nav_timeLockTitle;?> <span id="time"><?php echo $nav_timeLock_StartValue;?></span></a>
             </li>
 					  </ul>
 						<form class="form-inline my-2 my-lg-0" action=utility/logout.ut.php>
-                      <button class="btn btn-danger my-2 my-sm-0" type="submit">Kijelentkezés</button>
+                      <button class="btn btn-danger my-2 my-sm-0" type="submit"><?php echo $nav_logOut; ?></button>
                       </form>
             <a class="nav-link disabled my-2 my-sm-0" href="#"><i class="fas fa-question-circle fa-lg"></i></a>
 					</div>
@@ -176,13 +177,13 @@ function checkGoBtn() {
 	<body ><!--style="background-color:#DCDCDC"-->
 		<div class="container">
 			<br /><br />
-			<h2 class="rainbow" align="center" id="doTitle">Arpad Media IO</h2><br />
-      <div class="shadow-sm p-3 mb-5 bg-light rounded"><?php echo "<strong>Szia ". $_SESSION['UserUserName']. "! </strong> Mit vinnél el?"?></div>
+			<h2 class="rainbow" align="center" id="doTitle"><?php echo $applicationTitleShort;?></h2><br />
+      <div class="shadow-sm p-3 mb-5 bg-light rounded"><?php echo $Welcomemsg_takeout?></div>
 			<div class="form-group">
 
         <table id="itemSearch" align="left"><tr><td><div class="autocomplete" method="GET">
-    				<input id="id_itemNameAdd" type="text" name="add" class="form-control mb-2 mr-sm-2" placeholder="Start typing item name.."></div></td>
-            <td><button type="button" name="add" id="add" class="btn btn-info2 add_btn mb-2 mr-sm-2" onclick="checkGoBtn()">Add</button>     <span id='sendQueryButtonLoc'></span></td>
+    				<input id="id_itemNameAdd" type="text" name="add" class="form-control mb-2 mr-sm-2" placeholder='<?php echo $applicationSearchField;?>'></div></td>
+            <td><button type="button" name="add" id="add" class="btn btn-info2 add_btn mb-2 mr-sm-2" onclick="checkGoBtn()"><?php echo $button_Add;?></button>     <span id='sendQueryButtonLoc'></span></td>
   			</tr></table>
 			<form autocomplete="off" action="/index.php">
 			</form>
@@ -203,7 +204,7 @@ function checkGoBtn() {
 			</div>
 		</div>
 	</body>
-<footer class="page-footer font-small blue"> <div class="fixed-bottom" align="center"><p>Arpad Media I/O <strong>ver. <?php echo $developmentVersion; ?></strong><br /> Code by Adam Gutasi</p></div></footer>
+<footer class="page-footer font-small blue"> <div class="fixed-bottom" align="center"><p>Arpad Media I/O Tracker <strong>ver. <?php echo $application_Version; ?></strong><br /> Code by Adam Gutasi</p></div></footer>
 </html>
 <script>
 
@@ -264,7 +265,7 @@ window.onload = function () {
           selectList.push(currentItemSel);
           $('#liveSelArrayResult').append('<td>'+selectList+'</td>');
           $('#dynamic_field').append('<tr id="row'+i+'"><td>'+currentItemSel+'</td><td><button type="button" name="remove" id="'+i+'" class="btn btn-danger btn'+i+' btn_remove">X</button></td></tr>');
-         console.log(i + "id with "+ currentItemSel + " created and occupied.")
+         console.log(i + "id with "+ currentItemSel + " created and occupied.");
         }
       }  
    });
@@ -319,9 +320,9 @@ window.onload = function () {
     data: {data : takeOutJSON},
     success: function (response) {
       $('#doTitle').animate({'opacity': 0}, 400, function(){
-        $(this).html('<h2 class="text text-success" role="alert"Sikeres kivétel!</h2>').animate({'opacity': 1}, 400);
-        $(this).html('<h2 class="text text-success" role="alert">Sikeres kivétel!</h2>').animate({'opacity': 1}, 3000);
-        $(this).html('<h2 class="text text-success" role="alert">Sikeres kivétel!</h2>').animate({'opacity': 0}, 400);
+        $(this).html('<h2 class="text text-success" role="alert">'+takeout_Success+'</h2>').animate({'opacity': 1}, 400);
+        $(this).html('<h2 class="text text-success" role="alert">'+takeout_Success+'</h2>').animate({'opacity': 1}, 3000);
+        $(this).html('<h2 class="text text-success" role="alert">'+takeout_Success+'</h2>').animate({'opacity': 0}, 400);
     setTimeout(function() { $("#doTitle").text("Arpad Media IO").animate({'opacity': 1}, 400); }, 3800);;});
     $('#dynamic_field').empty();
     var selectList = [];
@@ -349,9 +350,9 @@ window.onload = function () {
             $('.btn'+(selectList.length+1)).click();
            //ERROR 001
             $('#doTitle').animate({'opacity': 0}, 400, function(){
-        $(this).html('<h2 class="text text-warning" role="alert">A kiválasztott tárgy nincs a raktárban!</h2>').animate({'opacity': 1}, 400);
-        $(this).html('<h2 class="text text-warning" role="alert">A kiválasztott tárgy nincs a raktárban!</h2>').animate({'opacity': 1}, 3000);
-        $(this).html('<h2 class="text text-warning" role="alert">A kiválasztott tárgy nincs a raktárban!</h2>').animate({'opacity': 0}, 400);
+        $(this).html('<h2 class="text text-warning" role="alert">'+takeout_Unavailible+'</h2>').animate({'opacity': 1}, 400);
+        $(this).html('<h2 class="text text-warning" role="alert">'+takeout_Unavailible+'</h2>').animate({'opacity': 1}, 3000);
+        $(this).html('<h2 class="text text-warning" role="alert">'+takeout_Unavailible+'</h2>').animate({'opacity': 0}, 400);
     setTimeout(function() { $("#doTitle").text("Arpad Media IO").animate({'opacity': 1}, 400); }, 3800);;});
           }
           
@@ -379,18 +380,7 @@ window.onload = function () {
   
 
 });
-//EVERY ITEM PRESENT IN THE SYSTEM - MODIFY WITH CAUTION!
 
-var dbItems = ["Fresnel 1000W", "Fresnel 650W", "Fresnel 300W", "Softbox allo 1", "Softbox allo 2", "Softbox fekvo",
- "Fresnel allvany A", "Fresnel allvany B", "Fresnel allvany C", "Softbox allvany 1", "Softbox allvany 2", "Softbox allvany 3", 
- "Hatter allvany 1", "Hatter allvany 2", "Fujitsu monitor 1", "Fujitsu monitor 2", "Dell monitor 1", "Dell monitor 2", "Genius hangfal",
-  "Forgo szek 1", "Forgo szek 2", "Forgo szek 3", "Nagy szurke fuggony 1", "Nagy szurke fuggony 2", "Nagy szurke fuggony 3", "Nagy szurke fuggony 4",
-  "HP laptop", "Szurke kanape", "Kek kanape", "Fekete fa szek 1", "Fekete fa szek 2", "Fekete fem szek", "Spanyolfal", "Kisasztal 1", "Kisasztal 2", "Nagyasztal 1",
-  "Nagyasztal 2", "Nagyasztal 3", "TP-Link switch", "Cisco switch", "D-Link router", "Kuka (kisszoba)", "Kuka (PET)", "Kontroll hangfal 1", "Kontroll hangfal 2", "Szerverasztal 1", "Szerverasztal 2", "Szervergep 1", "Szervergep 2", "Szervergep 3",
-  "Dell szervermonitor", "Nagy parafatabla", "Fekvo parafatabla", "Allo parafatabla", "Neon lampa", "Benti kisszekreny 1", "Benti kisszekreny 2",
-  "Kinti kisszekreny", "Kinti nagyszekreny", "Asztali LED lampa", "Filces tabla", "Szerver ventillator", "Feher allo ventillator",
-  "Hattertarto csipesz 1", "Hattertarto csipesz 2", "Hattertarto csipesz 3", "Negyes kapcsolhato eloszto 1", "Negyes kapcsolhato eloszto 2", "Negyes kapcsolhato eloszto 3", "Negyes kapcsolhato eloszto 4",
-  "Negyes kapcsolhato eloszto 5", "Negyes kapcsolhato eloszto 6", "Negyes eloszto (5m)", "Harmas eloszto (1m)"];
 
 
 //Process takeout

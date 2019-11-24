@@ -1,5 +1,5 @@
 <?php 
-  session_start();
+  include "translation.php";
   require "logincheck.php";
   include "version.php";
   error_reporting(E_ALL ^ E_NOTICE);
@@ -15,7 +15,7 @@
   <script src="https://kit.fontawesome.com/2c66dc83e7.js" crossorigin="anonymous"></script>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Arpad Media IO Login</title>
+    <title>Arpad Media IO Help</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
@@ -89,8 +89,8 @@
         </nav>
     </header>
 	<body>
-		<h1 align=center class="rainbow">Segítség </h1>
-		<h4 align=center>Kattints az alábbi funkciók egyikére, hogy bővebb információt kapj róluk.</h4>
+		<h1 align=center class="rainbow"><?php echo $help?> </h1>
+		<h4 align=center><?php echo $help_description?></h4>
     <?php if(!isset($_SESSION['userId'])){echo '
                     
                     <form action="utility/login.ut.php" method="post" class="formmain" autocomplete="off" >
@@ -101,19 +101,19 @@
                     </form>';}
             else{
               echo '<div class="row justify-content-center" style="text-align: center;">
-              <div class="col-6 col-sm-2 kivetel" id="kivetel"><a class="nav-link ab" href="#"><i class="fas fa-upload fa-3x"></i><br><h5>Kivétel</h5></a></div>
-              <div class="col-6 col-sm-2 offset-md-1 kivetel" id="visszahozas"><a class="nav-link ab" href="#"><i class="fas fa-download fa-3x"></i><br><h5>Visszahozás</h5></a></div>
+              <div class="col-6 col-sm-2 kivetel" id="kivetel"><a class="nav-link ab" href="#"><i class="fas fa-upload fa-3x"></i><br><h5>'.$index_takeOut.'</h5></a></div>
+              <div class="col-6 col-sm-2 offset-md-1 kivetel" id="visszahozas"><a class="nav-link ab" href="#"><i class="fas fa-download fa-3x"></i><br><h5>'.$index_Retrieve.'</h5></a></div>
               </div>
               <!-- Force next columns to break to new line at md breakpoint and up -->
 
               <br>
               <div class="row justify-content-center" style="text-align: center;">
-              <div class="col-6 col-sm-2 kivetel" id="adatok"><a class="nav-link ab" href="#"><i class="fas fa-database fa-3x"></i><br><h5>Adatok</h5></a></div>
-              <div class="col-6 col-sm-2 offset-md-1 kivetel" id="pathfinder"><a class="nav-link ab" href="#"><i class="fas fa-project-diagram fa-3x"></i><br><h5>PathFinder</h5></a></div>
+              <div class="col-6 col-sm-2 kivetel" id="adatok"><a class="nav-link ab" href="#"><i class="fas fa-database fa-3x"></i><br><h5>'.$index_Data.'</h5></a></div>
+              <div class="col-6 col-sm-2 offset-md-1 kivetel" id="pathfinder"><a class="nav-link ab" href="#"><i class="fas fa-project-diagram fa-3x"></i><br><h5>'.$index_PathFinder.'</h5></a></div>
               </div>
               <br>
               <div class="row justify-content-center" style="text-align: center;">
-              <div class="col-6 col-sm-2 kivetel" id="profil"><a class="nav-link ab" href="#"><i class="fas fa-wrench fa-3x"></i><i class="fas fa-user-alt fa-3x"></i> <br><h5>Profil</h5></a></div>
+              <div class="col-6 col-sm-2 kivetel" id="profil"><a class="nav-link ab" href="#"><i class="fas fa-wrench fa-3x"></i><i class="fas fa-user-alt fa-3x"></i> <br><h5>'.$index_Profile.'</h5></a></div>
               <div class="col-6 col-sm-2 offset-md-1 kivetel" id="segitseg"><a class="nav-link ab " href="#"><i class="fas fa-exclamation-circle fa-3x"></i><i class="fas fa-bug fa-3x"></i><br><h6>További segítség</h6></a></div>
             </div>';
             }?>
