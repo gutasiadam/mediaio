@@ -58,16 +58,16 @@
             ?>
             <table class="logintable">
             <tr><td><div class="form-group">
-                <label for="fullName">Teljes név</label> <br> <input class="form-control mb-2 mr-sm-2" width=50% type="text" name="fullName" placeholder="Teljes név"></div></td></tr>
+                <label for="fullName">Teljes név</label> <br> <input class="form-control mb-2 mr-sm-2" width=50% type="text" name="fullName" placeholder="Teljes név" required></div></td></tr>
                 <tr><td><div class="form-group">
-                <label for="userid">Felhasználónév</label> <br> <input class="form-control mb-2 mr-sm-2" type="text" name="userid" placeholder="Felhasználónév"></div></td></tr>
+                <label for="userid">Felhasználónév</label> <br> <input class="form-control mb-2 mr-sm-2" type="text" name="userid" placeholder="Felhasználónév" required></div></td></tr>
                 <tr><td><div class="form-group">
-                <label for="email">E-mail cím</label> <br> <input class="form-control mb-2 mr-sm-2" type="email" name="email" placeholder="E-mail cím"></div></td></tr>
+                <label for="email">E-mail cím</label> <br> <input class="form-control mb-2 mr-sm-2" type="email" name="email" placeholder="E-mail cím" required></div></td></tr>
                 <tr><td><div class="form-group">
-                <label for="tele">Telefonszám</label> <br> <input class="form-control mb-2 mr-sm-2" type="tel" name="tele" pattern="[06][0-9]{2}[0-9]{3}[0-9]{2}[0-9]{3}"></div></td></tr>
+                <label for="tele">Telefonszám</label> <br> <input class="form-control mb-2 mr-sm-2" type="tel" name="tele" pattern="[06][0-9]{2}[0-9]{3}[0-9]{2}[0-9]{3}" required></div></td></tr>
                 <tr><td><div class="form-group">
-                <label for="pwd">Jelszó</label> <br> <input class="form-control mb-2 mr-sm-2" type="password" name="pwd" placeholder="Jelszó" ></div></td></tr>
-                <tr><td><div class="form-group"><input class="form-control mb-2 mr-sm-2" type="password" name="pwd-Re" placeholder="Jelszó újra"></div></td></tr><br>
+                <label for="pwd">Jelszó</label> <br> <input class="form-control mb-2 mr-sm-2" type="password" name="pwd" placeholder="Jelszó" required></div></td></tr>
+                <tr><td><div class="form-group"><input class="form-control mb-2 mr-sm-2" type="password" name="pwd-Re" placeholder="Jelszó újra" required></div></td></tr><br>
                 <tr><td><button class="btn btn-dark mb-2 mr-sm-2" type="submit" name="signup-submit">Mehet</button></td></tr>
                 <tr><td><a href="./index.php" class="btn btn-dark mb-2 mr-sm-2">Vissza a bejelentkezéshez</a></td></tr>
               </table>

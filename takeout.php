@@ -177,7 +177,7 @@ function checkGoBtn() {
 		<div class="container">
 			<br /><br />
 			<h2 class="rainbow" align="center" id="doTitle">Arpad Media IO</h2><br />
-      <div class="shadow-sm p-3 mb-5 bg-light rounded"><?php echo "<strong>Szia ". $_SESSION['UserUserName']. "! </strong> Mit hoztál vissza?"?></div>
+      <div class="shadow-sm p-3 mb-5 bg-light rounded"><?php echo "<strong>Szia ". $_SESSION['UserUserName']. "! </strong> Mit vinnél el?"?></div>
 			<div class="form-group">
 
         <table id="itemSearch" align="left"><tr><td><div class="autocomplete" method="GET">
