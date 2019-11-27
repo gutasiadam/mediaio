@@ -57,8 +57,10 @@
                 }
             ?>
             <table class="logintable">
-            <tr><td><div class="form-group">
-                <label for="fullName">Teljes név</label> <br> <input class="form-control mb-2 mr-sm-2" width=50% type="text" name="fullName" placeholder="Teljes név" required></div></td></tr>
+                <tr><td><div class="form-group">
+                <label for="fullName">Vezetéknév</label> <br> <input class="form-control mb-2 mr-sm-2" width=50% type="text" name="lastName" placeholder="Vezetéknév" required></div></td></tr>
+                <tr><td><div class="form-group">
+                <label for="fullName">Keresztnév</label> <br> <input class="form-control mb-2 mr-sm-2" width=50% type="text" name="firstName" placeholder="Keresztnév" required></div></td></tr>
                 <tr><td><div class="form-group">
                 <label for="userid">Felhasználónév</label> <br> <input class="form-control mb-2 mr-sm-2" type="text" name="userid" placeholder="Felhasználónév" required></div></td></tr>
                 <tr><td><div class="form-group">

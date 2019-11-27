@@ -13,7 +13,8 @@ if (!$conn){
     die("Connection failed: ".mysqli_connect_error());
 }
 
-        $fullname = $_POST['fullName'];
+        $lastname = $_POST['lastName'];
+        $firstname = $_POST['firstName'];
         $telenum = $_POST['tele'];
         $username = $_POST['userid'];
         $email = $_POST['email'];
@@ -22,7 +23,7 @@ if (!$conn){
 
         //Hibakezelés
 
-        if(empty($username) || empty($email) || empty($password) || empty($passwordrepeat) || empty($fullname) || empty($telenum)){
+        if(empty($username) || empty($email) || empty($password) || empty($passwordrepeat) || empty($firstname) || empty($telenum) || empty($lastname)){
             header("Location: ../signup.php?error=emptyField&userid=".$username."&email=".$email);
             exit();
         }else if (!filter_var($email, FILTER_VALIDATE_EMAIL) && (!preg_match("/^[a-zA-Z0-9]*$/", $username))){
@@ -57,7 +58,7 @@ if (!$conn){
                     header("Location: ../signup.php?error=UserTaken&email=".$email);
                     exit();
                 }else{
-                    $sql = "INSERT INTO users (usernameUsers, emailUsers, pwdUsers, fullName, teleNum) VALUES (?, ?, ?, ?, ?)";
+                    $sql = "INSERT INTO users (usernameUsers, emailUsers, pwdUsers, firstName, lastName, teleNum) VALUES (?, ?, ?, ?, ?, ?)";
                     $stmt = mysqli_stmt_init($conn);
                     if (!mysqli_stmt_prepare($stmt, $sql)){
                         header("Location: ../signup.php?error=SQLError");
@@ -65,7 +66,7 @@ if (!$conn){
                     }else{
                         $hashedpwd = password_hash($password, PASSWORD_BCRYPT);
 
-                        mysqli_stmt_bind_param($stmt, "sssss", $username, $email, $hashedpwd, $fullname, $telenum);
+                        mysqli_stmt_bind_param($stmt, "ssssss", $username, $email, $hashedpwd, $firstname, $lastname, $telenum);
                         mysqli_stmt_execute($stmt);
                         header("Location: ../index.php?signup=success");
                         echo "<h1>Login succesul! Transferring to Homepage...</h1>";

@@ -7,7 +7,6 @@
   <script src="https://kit.fontawesome.com/2c66dc83e7.js" crossorigin="anonymous"></script>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Arpad Media IO</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 

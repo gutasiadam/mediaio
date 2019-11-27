@@ -4,14 +4,6 @@ include "translation.php";
 
 if(!isset($_SESSION['userId'])){
   header("Location: index.php?error=AccessViolation");}
-//if (!isset($_SESSION['UserUserName'])){
-    //header("Location: index.php");}
-//Development SECURITY - Allows only certain IPs on the page
-//$allowedIP = array("31.46.204.50", "80.99.70.46", "192.168.0.1", "127.0.0.1", "77.234.86.20");
-//if(!in_array($_SERVER['REMOTE_ADDR'], $allowedIP) && !in_array($_SERVER["HTTP_X_FORWARDED_FOR"], $allowedIP)) {
-  //header("Location: https://www.google.com"); //redirect
-  //exit();
-//}
 $SESSuserName = $_SESSION['UserUserName'];
 include "version.php";
 error_reporting(E_ALL ^ E_NOTICE);
@@ -29,7 +21,7 @@ function PhparrayCookie(){
   // Database initialization - Get's total item number in the database and estabilishes connection.
 	$serverName="localhost";
 	$userName="root";
-	$password="umvHVAZ%";
+	$password=$application_DATABASE_PASS;
 	$dbName="leltar_master";
 	$countOfRec=0;
 
@@ -42,11 +34,9 @@ function PhparrayCookie(){
 	$result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
-	//echo "<table div class="."tabel"."><th>ID</th><th>Name</th><th>Type</th><th>Status</th>";
     // output data of each row
     //Displays amount of records found in leltar_master DB
     while($row = $result->fetch_assoc()) {
-    //   echo "<tr><td>".$row["UID"]. "</td><td>" . $row["Nev"]. "</td><td>" . $row["Tipus"]. "</td><td>". $row["Status"]."</td></tr>";
 		$countOfRec += 1;
 	}
 } else {
@@ -169,7 +159,7 @@ function checkGoBtn() {
 						<form class="form-inline my-2 my-lg-0" action=utility/logout.ut.php>
                       <button class="btn btn-danger my-2 my-sm-0" type="submit"><?php echo $nav_logOut; ?></button>
                       </form>
-            <a class="nav-link disabled my-2 my-sm-0" href="#"><i class="fas fa-question-circle fa-lg"></i></a>
+            <a class="nav-link my-2 my-sm-0" href="./help.php"><i class="fas fa-question-circle fa-lg"></i></a>
 					</div>
 		</nav>
 
@@ -204,7 +194,7 @@ function checkGoBtn() {
 			</div>
 		</div>
 	</body>
-<footer class="page-footer font-small blue"> <div class="fixed-bottom" align="center"><p>Arpad Media I/O Tracker <strong>ver. <?php echo $application_Version; ?></strong><br /> Code by Adam Gutasi</p></div></footer>
+<footer class="page-footer font-small blue"> <div class="fixed-bottom" align="center"><p><?php echo $applicationTitleFull; ?> <strong>ver. <?php echo $application_Version; ?></strong><br /> Code by <a href="https://github.com/d3rang3">Adam Gutasi</a></p></div></footer>
 </html>
 <script>
 

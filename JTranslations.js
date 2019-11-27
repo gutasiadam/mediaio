@@ -1,5 +1,7 @@
 var applicationTitleShort = "Arpad Media IO";
 
+var button_Go = "Go";
+
 var takeout_Success= "Sikeres kivétel!";
 var takeout_Unavailible = "A kiválasztott tárgy nincs a raktárban!";
 

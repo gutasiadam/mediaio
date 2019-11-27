@@ -19,6 +19,6 @@
 </main>
     
 <?php 
-    require "footer.php"
+    require "version.php"
 ?>
 

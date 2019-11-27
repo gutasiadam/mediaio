@@ -119,11 +119,7 @@
               <div class="col-6 col-sm-2"><a class="nav-link ab" href="./profile/index.php"><i class="fas fa-user-alt fa-3x"></i><br><h5>'.$index_Profile.'</h5></a></div>
               <div class="col-6 col-sm-2 offset-md-1"><a class="nav-link ab" href="./help.php"><i class="fas fa-question-circle fa-3x"></i><br><h5>'.$index_Help.'</h5></a></div>
             </div>';
-              echo '<p>Changelog - <i class="fas fa-exclamation"></i><br \><u>A Changelog teljes rögzítése megszűnik, innentől kezdve felhasználó szintű tájékoztatás lesz itt látható.</u>
-              <h6>1.5 - Segítség oldal, pontosabb hibaüzenetek</h6>
-              <h6>1.4 - Mobilos verzió továbbfejlesztése, felhasznűlóbarát kialakítás kezdete</h6>
-              <h6>1.3 - Elvileg mostmár csak a felhasználó csak a saját tárgyát tudja visszahozni, az időzár lassan minden oldalra bevezetésre kerül.<br> Gyorsítótár tesztüzemben, az oldalon <strong>Ideiglenesen megnövekedett töltésidőre kell számítani.</strong></h6>
-              <h6 class="text-muted">A Sign Up / Regisztráció gomb ki lett kapcsolva, fiókért/hozzáférésért keresd Ádámot!';
+              echo '<p>Changelog - <i class="fas fa-exclamation"></i><br \><u>A Changelog teljes rögzítése megszűnik, innentől kezdve felhasználó szintű tájékoztatás lesz itt látható.</u></p>';
             }?>
     
     
@@ -176,28 +172,6 @@
 </style>
 
 <script type="text/javascript">
-var checkbox = document.querySelector('input[name=theme]');
-
-checkbox.addEventListener('change', function() {
-    if(this.checked) {
-        trans()
-        document.documentElement.setAttribute('data-theme', 'dark')
-    } else {
-        trans()
-        document.documentElement.setAttribute('data-theme', 'light')
-    }
-})
-
-let trans = () => {
-    document.documentElement.classList.add('transition');
-    window.setTimeout(() => {
-        document.documentElement.classList.remove('transition')
-    }, 1000)
-}
-
-(function(){
-  setInterval(updateTime, 1000);
-});
 
 function startTimer(duration, display) {
     var timer = duration, minutes, seconds;

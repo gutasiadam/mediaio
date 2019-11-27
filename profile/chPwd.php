@@ -30,7 +30,7 @@
                         <a class="nav-link" href="../pathfinder.php"><i class="fas fa-project-diagram fa-lg"></i></a>
             </li>
             <li class="nav-item active">
-                        <a class="nav-link" href="#"><i class="fas fa-user-alt fa-lg"></i></a>
+                        <a class="nav-link" href="./index.php"><i class="fas fa-user-alt fa-lg"></i></a>
             </li>
             <li>
               <a class="nav-link disabled" href="#">Időzár <span id="time">03:00</span></a>
@@ -44,7 +44,7 @@
 					</div>
 		</nav>'
             ;
-            echo '<table class="logintable"><tr><td><p>Jelszócsere <br><h3 class="rainbow">'. $_SESSION['UserUserName'].'</h3><br>Számára</p></td></tr>
+            echo '<table class="logintable"><tr><td><p>Jelszócsere <br><h3 class="rainbow">'. $_SESSION['UserUserName'].' / '.$_SESSION['lastName'].' '.$_SESSION['firstName'].'</h3><br>Számára</p></td></tr>
             <form action="../utility/chPwd.ut.php" method="post">
             <tr><td><input class="form-control mb-2 mr-sm-2" type="password" name="pwd-Old" placeholder="Jelenlegi jelszó"></td></tr> <br>
             <tr><td><input class="form-control mb-2 mr-sm-2" type="password" name="pwd-New" placeholder="Új jelszó" ></td></tr> <br>

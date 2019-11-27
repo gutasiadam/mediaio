@@ -2,8 +2,6 @@
 include "translation.php";
 if(isset($_SESSION['userId'])){
     error_reporting(E_ALL ^ E_NOTICE);
-//index.php
-
 ?>
 
 <html>  
@@ -16,7 +14,7 @@ if(isset($_SESSION['userId'])){
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js">  </script>
   <script src="https://kit.fontawesome.com/2c66dc83e7.js" crossorigin="anonymous"></script>
-  <title>PathFinder 0.1</title>
+  <title>PathFinder 0.6</title>
   
     </head>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -52,7 +50,7 @@ if(isset($_SESSION['userId'])){
 						<form class="form-inline my-2 my-lg-0" action=utility/logout.ut.php>
                       <button class="btn btn-danger my-2 my-sm-0" type="submit"><?php echo $nav_logOut;?></button>
                       </form>
-                      <a class="nav-link disabled my-2 my-sm-0" href="#"><i class="fas fa-question-circle fa-lg"></i></a>
+                      <a class="nav-link my-2 my-sm-0" href="./help.php"><i class="fas fa-question-circle fa-lg"></i></a>
 					</div>
 </nav>
     <body>  
@@ -60,10 +58,10 @@ if(isset($_SESSION['userId'])){
    <br />
    <h3 align="center">PathFinder<i class="fas fa-project-diagram fa-lg"></i></h3>
    <table id="itemSearch" align="left"><tr><td>
-            <form action="/pathfinder.php" method="GET" autocomplete="off">
+            <form action="./pathfinder.php" method="GET" autocomplete="off">
             <div class="autocomplete" method="GET">
-    		<input id="id_itemNameAdd" type="text" name="pfItem" class="form-control mb-2 mr-sm-2" placeholder='<?php echo $applicationSearchField;?>'></div></td>
-            <td><button type="submit" name="add" id="add" class="btn btn-info2 mb-2 mr-sm-2">Keres</button><span id='sendQueryButtonLoc'></span></td>
+    		<input id="id_itemNameAdd" type="text" name="pfItem" class="form-control" placeholder='<?php echo $applicationSearchField;?>'></div></td>
+            <td><button type="submit" name="add" id="add" class="btn btn-info2 mb-2 mr-sm-2"><?php echo $button_Find;?></button><span id='sendQueryButtonLoc'></span></td>
   			</tr></table>
 			<form autocomplete="off" action="/index.php">
 			</form>

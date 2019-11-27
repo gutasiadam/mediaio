@@ -52,12 +52,6 @@ if(!isset($_SESSION['userId'])){
 
 
 <?php 
-//$allowedIP = array("31.46.204.50", "80.99.70.46", "192.168.0.1", "127.0.0.1", "77.234.86.20");
-//if(!in_array($_SERVER['REMOTE_ADDR'], $allowedIP) && !in_array($_SERVER["HTTP_X_FORWARDED_FOR"], $allowedIP)) {
-  //header("Location: https://www.google.com"); //redirect
-  //exit();
-//}
-
 $serverName="localhost";
 	$userName="root";
 	$password="umvHVAZ%";
@@ -69,15 +63,15 @@ $serverName="localhost";
 	if ($conn->connect_error) {
 		die("Connection fail: (Is the DB server maybe down?)" . $conn->connect_error);
 	}
-	$sql = "SELECT usernameUsers, emailUsers, fullName, teleNum FROM users ORDER BY usernameUsers ASC";
+	$sql = "SELECT usernameUsers, emailUsers, lastName, firstName, teleNum FROM users ORDER BY usernameUsers ASC";
 	$result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
-	echo "<table width='50' align=center class="."table"."><th>Név</th><th>Felhasználónév</th><th>e-mail cím</th><th>Telefonszám</th>";
+	echo "<table width='50' align=center class="."table"."><th>Vezetéknév</th><th>Keresztnév</th><th>Felhasználónév</th><th>e-mail cím</th><th>Telefonszám</th>";
      //output data of each row
     //Displays amount of records found in leltar_master DB
     while($row = $result->fetch_assoc()) {
-		echo "<tr><td>".$row["fullName"]."</td><td>".$row["usernameUsers"]. "</td><td><a href=mailto:".$row["emailUsers"]." target=_top>".$row["emailUsers"]."</a></td><td>".$row["teleNum"]."</td><td></tr>";
+		echo "<tr><td>".$row["lastName"]."</td><td>".$row["firstName"]."</td><td>".$row["usernameUsers"]. "</td><td><a href=mailto:".$row["emailUsers"]." target=_top>".$row["emailUsers"]."</a></td><td>".$row["teleNum"]."</td><td></tr>";
        
 		$countOfRec += 1;
 	}
