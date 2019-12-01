@@ -34,7 +34,7 @@
         echo '';
     } ?>
 
-<main>
+<body>
 
 
 
@@ -51,10 +51,7 @@
                     }else if ($_GET['error'] == 'PasswordLenght'){
                         echo '<p class="registererror">Password should be at least 8 characters long!</p>';
                     }else if ($_GET['error'] == 'UserTaken'){
-                        echo '<p class="registererror">Username already exists. Sorry.</p>';
-                }else if ($_GET['signup'] == 'success'){
-                    echo '<p class="success">Successfully registered! :D </p>';}
-                }
+                        echo '<p class="registererror">Username already exists. Sorry.</p>';}}
             ?>
             <table class="logintable">
                 <tr><td><div class="form-group">
@@ -76,7 +73,7 @@
     </form>
     <h3></h3>
     </div>
-</main>
+</body>
 <style>
     .registererror{
         font-size: 20px;

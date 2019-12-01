@@ -36,7 +36,7 @@
             </li>
             
             </ul>
-						<form class="form-inline my-2 my-lg-0" action=utility/logout.ut.php>
+						<form class="form-inline my-2 my-lg-0" action=../utility/logout.ut.php>
                       <button class="btn btn-danger my-2 my-sm-0" type="submit">Kijelentkezés</button>
                       </form>
                       <a class="nav-link disabled my-2 my-sm-0" href="#"><i class="fas fa-question-circle fa-lg"></i></a>
@@ -51,6 +51,13 @@
                     <tr><td><form action="userlist.php"><button class="btn btn-info">Felhasználók eléhetőségeinek megtekintése <i class="fas fa-address-book"></i></i></button></form></td></tr>
                     </table>'
             ;
+          if ($_SESSION['role']=="admin"){
+            echo '
+                    <table class="logintable">
+                    <tr><td><form action="points.php"><button class="btn btn-success">Pontszámok <i class="fas fa-calculator"></i></button></form></td></tr>
+                    <tr><td><form action="roles.php"><button class="btn btn-light">Felhasználók engedélyek módosítása <i class="fas fa-radiation"></i></i></button></form></td></tr>
+                    </table>';
+          }
         }else{
             header("Location: ../index.php?error=AccessViolation");
             exit();

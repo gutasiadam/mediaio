@@ -9,7 +9,7 @@ $applicationTitleFull = "Árpád Média Item IO";
 $applicationTitleShort = "Arpad Média IO";
 $applicationSearchField = "Kezdd el írni a tárgy nevét...";
 $application_version_text = "Jelenlegi verzió: ";
-$application_Version = "1.7.1";
+$application_Version = "1.8";
 $application_DATABASE_PASS= "umvHVAZ%";
 
 $nav_timeLockTitle = "Időzár";

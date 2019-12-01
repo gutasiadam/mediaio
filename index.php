@@ -52,15 +52,29 @@
             </li>
             <li>
               <a class="nav-link disabled" href="#">'.$nav_timeLockTitle.' <span id="time">'.$nav_timeLock_StartValue.'</span></a>
-            </li>
-					  </ul>
-						<form class="form-inline my-2 my-lg-0" action=utility/logout.ut.php>
-                      <button class="btn btn-danger my-2 my-sm-0" type="submit">'.$nav_logOut.'</button>
-                      </form>
-                      <a class="nav-link my-2 my-sm-0" href="./help.php"><i class="fas fa-question-circle fa-lg"></i></a>
-					</div>
-		</nav>
-';
+            </li>';
+            if ($_SESSION['role']=="admin"){
+              echo '<li><a class="nav-link disabled" href="#">Admin jogokkal rendelkezel</a></li>';
+              echo '</ul>
+              <form class="form-inline my-2 my-lg-0" action=/utility/logout.ut.php>
+                        <button class="btn btn-danger my-2 my-sm-0" type="submit">'.$nav_logOut.'</button>
+                        </form>
+                        <a class="nav-link my-2 my-sm-0" href="./help.php"><i class="fas fa-question-circle fa-lg"></i></a>
+            </div>
+      </nav>
+      ';
+            }
+            else{
+              echo '</ul>
+              <form class="form-inline my-2 my-lg-0" action=utility/logout.ut.php>
+                        <button class="btn btn-danger my-2 my-sm-0" type="submit">'.$nav_logOut.'</button>
+                        </form>
+                        <a class="nav-link my-2 my-sm-0" href="./help.php"><i class="fas fa-question-circle fa-lg"></i></a>
+            </div>
+      </nav>
+      ';
+            }
+					  
                     ?>
                     <?php
                 }else{
