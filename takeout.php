@@ -126,8 +126,8 @@ function checkGoBtn() {
     <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
       <title><?php echo $applicationTitleFull;?></title>
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
-					<a class="navbar-brand rainbow" href="index.php"><?php echo $applicationTitleShort;?></a>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+					<a class="navbar-brand" href="index.php"><?php echo $applicationTitleShort;?></a>
 					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 					  <span class="navbar-toggler-icon"></span>
 					</button>
@@ -168,9 +168,11 @@ function checkGoBtn() {
 		<div class="container">
 			<br /><br />
 			<h2 class="rainbow" align="center" id="doTitle"><?php echo $applicationTitleShort;?></h2><br />
-      <div class="shadow-sm p-3 mb-5 bg-light rounded"><?php echo $Welcomemsg_takeout?></div>
+      <div class="row">
+      <div class="col-md-3">
+      <div class="alert alert-info"><?php echo $Welcomemsg_takeout?></div>
+      </div></div>
 			<div class="form-group">
-
         <table id="itemSearch" align="left"><tr><td><div class="autocomplete" method="GET">
     				<input id="id_itemNameAdd" type="text" name="add" class="form-control mb-2 mr-sm-2" placeholder='<?php echo $applicationSearchField;?>'></div></td>
             <td><button type="button" name="add" id="add" class="btn btn-info2 add_btn mb-2 mr-sm-2" onclick="checkGoBtn()"><?php echo $button_Add;?></button>     <span id='sendQueryButtonLoc'></span></td>
@@ -370,12 +372,6 @@ window.onload = function () {
   
 
 });
-
-
-
-//Process takeout
-
-
 // dbItem remover tool - Prevents an item to be added twice to the list
 function arrayRemove(arr, value) {
 

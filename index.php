@@ -24,8 +24,8 @@
                 <?php 
                 if(isset($_SESSION['userId'])){
                     date_default_timezone_set("Europe/Budapest"); 
-                    echo '<nav class="navbar navbar-expand-lg navbar-light bg-light">
-					<a class="navbar-brand rainbow" href="index.php">Arpad Media IO</a>
+                    echo '<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+					<a class="navbar-brand" href="index.php">Arpad Media IO</a>
 					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 					  <span class="navbar-toggler-icon"></span>
 					</button>
@@ -53,7 +53,7 @@
             <li>
               <a class="nav-link disabled" href="#">'.$nav_timeLockTitle.' <span id="time">'.$nav_timeLock_StartValue.'</span></a>
             </li>';
-            if ($_SESSION['role']=="admin"){
+            if (($_SESSION['role']=="Admin") || ($_SESSION['role']=="Boss")){
               echo '<li><a class="nav-link disabled" href="#">Admin jogokkal rendelkezel</a></li>';
               echo '</ul>
               <form class="form-inline my-2 my-lg-0" action=/utility/logout.ut.php>
@@ -133,7 +133,6 @@
               <div class="col-6 col-sm-2"><a class="nav-link ab" href="./profile/index.php"><i class="fas fa-user-alt fa-3x"></i><br><h5>'.$index_Profile.'</h5></a></div>
               <div class="col-6 col-sm-2 offset-md-1"><a class="nav-link ab" href="./help.php"><i class="fas fa-question-circle fa-3x"></i><br><h5>'.$index_Help.'</h5></a></div>
             </div>';
-              echo '<p>Changelog - <i class="fas fa-exclamation"></i><br \><u>A Changelog teljes rögzítése megszűnik, innentől kezdve felhasználó szintű tájékoztatás lesz itt látható.</u></p>';
             }?>
     
     
@@ -180,7 +179,7 @@
         top: 50%;
         left: 50%;
         margin-right: -50%;
-        width: 100%;
+        width: 95%;
         transform: translate(-50%, -50%) }
 }
 </style>

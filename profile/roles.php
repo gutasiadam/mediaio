@@ -1,8 +1,7 @@
 <?php 
 session_start();
-if(isset($_SESSION['userId']) && ($_SESSION['role']=="admin")){
+if(($_SESSION['role']=="Admin") || ($_SESSION['role']=="Boss")){
     error_reporting(E_ALL ^ E_NOTICE);
-//index.php
 
 $serverName="localhost";
 	$userName="root";
@@ -23,7 +22,7 @@ $serverName="localhost";
   <script src="https://kit.fontawesome.com/2c66dc83e7.js" crossorigin="anonymous"></script>
   <title>Felhasználói jogok</title>
     </head>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
 					<a class="navbar-brand" href="../index.php">Arpad Media IO</a>
 					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 					  <span class="navbar-toggler-icon"></span>
@@ -62,7 +61,7 @@ $serverName="localhost";
     <body>  
         <div class="container">
    <br />
-   <h1 align="center">Ponttábla</h1><br>
+   <h1 align="center">Felhasználói jogok</h1><br>
 			
 <div class="form-group">
    <div class="panel panel-default">
@@ -89,16 +88,15 @@ $serverName="localhost";
                 echo '
                 <div class="row">
                 <div class="col-4">
-                 <h2>'. $row["firstName"].'</h2>
-                 <p>'. $row["lastName"].'/'.$row["usernameUsers"].'</p>
+                 <h2>'.$row["lastName"]." ".$row["firstName"].'</h2>
+                 <p>'.$row["usernameUsers"].'</p>
                 </div>
                 <div class="col-2">';
                 if($row["usernameUsers"]==$_SESSION['UserUserName']){
-                    echo '<h2 class="text text-info">Admin</h2><p>jogok</p>
-                    </div><div class="col-3"><button class="btn btn-warning ">A saját jogaidat nem tudod megváltoztatni!</button></div>
-                    </div>';
+                    echo '<h2 class="text text-success">'.$_SESSION['role'].'</h2><p>jogok</p></div></div>';
                 }else{
-                if($row["Userrole"] == "admin"){
+                  if($row["Userrole"] == "Boss"){echo '<h2 class="text text-danger">Boss</h2><p>jogok</p></div></div>';}
+                if($row["Userrole"] == "Admin"){
                     echo '<h2 class="text text-info">Admin</h2><p>jogok</p>
                     </div>';
                     echo '<div class="col-1"><button class="btn btn-danger " id="auth'.$imodal.'" data-toggle="modal" data-target="#a'.$imodal.'">Lerontás</button></div>
@@ -127,8 +125,8 @@ $serverName="localhost";
                 </div>
               </div>';
                 }
-                else{
-                    echo '<h2>default</h2><p>jogok</p>
+                if($row["Userrole"] == "Default"){
+                    echo '<h2>Default</h2><p>jogok</p>
                     </div>';
                     echo '<div class="col-1"><button class="btn btn-success " id="auth'.$imodal.'" data-toggle="modal" data-target="#a'.$imodal.'">Felemelés</button></div>
                </div>';
@@ -160,7 +158,7 @@ $serverName="localhost";
             }
             
     $connect = null;
-    session_start();
+    //session_start();
       if (isset($_POST["mode"])){
         $serverName = "localhost";
         $dbUserName = "root";
@@ -172,10 +170,10 @@ $serverName="localhost";
                 die("Connection failed: ".mysqli_connect_error());}
 
           if ($_POST["mode"]=="grant"){
-            $SQL = ("UPDATE `users` SET `Userrole` = 'admin' WHERE `users`.`userNameUsers` = '$targetUser'");
+            $SQL = ("UPDATE `users` SET `Userrole` = 'Admin' WHERE `users`.`userNameUsers` = '$targetUser'");
           }
           if ($_POST["mode"]=="revert"){
-            $SQL = ("UPDATE `users` SET `Userrole` = 'default' WHERE `users`.`userNameUsers` = '$targetUser'");
+            $SQL = ("UPDATE `users` SET `Userrole` = 'Default' WHERE `users`.`userNameUsers` = '$targetUser'");
           }
         $WriteResult = $conn->query($SQL);
       }

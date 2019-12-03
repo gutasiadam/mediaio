@@ -1,7 +1,7 @@
 <?php
     if(isset($_SESSION['userId'])){
         #date_default_timezone_set("Europe/Budapest"); 
-        echo '<nav class="navbar navbar-expand-lg navbar-light bg-light>
+        echo '<nav class="navbar navbar-expand-lg navbar-dark bg-dark>
         <a class="navbar-brand" href="#">Arpad Media IO</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
@@ -63,7 +63,7 @@
                 <tr><td><div class="form-group">
                 <label for="email">E-mail cím</label> <br> <input class="form-control mb-2 mr-sm-2" type="email" name="email" placeholder="E-mail cím" required></div></td></tr>
                 <tr><td><div class="form-group">
-                <label for="tele">Telefonszám</label> <br> <input class="form-control mb-2 mr-sm-2" type="tel" name="tele" pattern="[06][0-9]{2}[0-9]{3}[0-9]{2}[0-9]{3}" required></div></td></tr>
+                <label for="tele">Telefonszám</label> <br> <input class="form-control mb-2 mr-sm-2" type="tel" name="tele" placeholder="pl.: 06201234567" pattern="[06][0-9]{2}[0-9]{3}[0-9]{2}[0-9]{3}" required></div></td></tr>
                 <tr><td><div class="form-group">
                 <label for="pwd">Jelszó</label> <br> <input class="form-control mb-2 mr-sm-2" type="password" name="pwd" placeholder="Jelszó" required></div></td></tr>
                 <tr><td><div class="form-group"><input class="form-control mb-2 mr-sm-2" type="password" name="pwd-Re" placeholder="Jelszó újra" required></div></td></tr><br>

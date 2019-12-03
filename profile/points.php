@@ -18,6 +18,7 @@ $serverName="localhost";
 
 <html>  
     <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <script src="utility/timeline.min.js"></script>
         <link rel="stylesheet" href="utility/pathfinder.css" />
         <link rel="stylesheet" href="utility/timeline.min.css" />
@@ -29,7 +30,7 @@ $serverName="localhost";
   <title>PathFinder/AuthCodeGen</title>
   
     </head>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
 					<a class="navbar-brand" href="../index.php">Arpad Media IO</a>
 					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 					  <span class="navbar-toggler-icon"></span>
@@ -94,11 +95,11 @@ $serverName="localhost";
                 
                 echo '
                 <div class="row">
-                <div class="col-2">
+                <div class="col-4">
                  <h2>'. $row["firstName"].'</h2>
-                 <p>'. $row["lastName"].'/'.$row["usernameUsers"].'</p>
+                 <p>'. $row["lastName"].'</p>
                 </div>
-                <div class="col-2">';
+                <div class="col-4 border-left border-right">';
 
                 if($row["UserPoints"] == 0){
                     echo '<h2 class="text text-warning">'.$row["UserPoints"].'</h2>';
@@ -130,7 +131,7 @@ $serverName="localhost";
                 <input type="number" step="0.01" class="form-control" name="points" value=""/> 
                 <input type="hidden" class="form-control" name="user" value="'.$row["usernameUsers"].'"/>
                 <input type="hidden" class="form-control" name="currentpoints" value="'.$row["UserPoints"].'"/> 
-                <h6 id="emailHelp" class="form-text text-muted"> <strong>Negatív számot is beírhatsz</strong> ( pl.: -3 )<br>A gomb lenyomása után töltsd újra az oldalt, hogy a ponttábla frissüljön!</h6>
+                <h6 id="emailHelp" class="form-text text-muted"> <strong>Negatív és nem egész számot is beírhatsz</strong> ( pl.: -3.14 )<br>A gomb lenyomása után töltsd újra az oldalt, hogy a ponttábla frissüljön!</h6>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Mégsem</button>
                     <button type="submit" class="btn btn-success authToggle">Módosítás</button>
                     </form>

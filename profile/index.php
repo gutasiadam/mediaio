@@ -5,7 +5,7 @@
         session_start();
         if(isset($_SESSION['userId'])){
             echo '
-            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
 					<a class="navbar-brand" href="index.php">Arpad Media IO</a>
 					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 					  <span class="navbar-toggler-icon"></span>
@@ -39,19 +39,18 @@
 						<form class="form-inline my-2 my-lg-0" action=../utility/logout.ut.php>
                       <button class="btn btn-danger my-2 my-sm-0" type="submit">Kijelentkezés</button>
                       </form>
-                      <a class="nav-link disabled my-2 my-sm-0" href="#"><i class="fas fa-question-circle fa-lg"></i></a>
+                      <a class="nav-link my-2 my-sm-0" href="../help.php"><i class="fas fa-question-circle fa-lg"></i></a>
 					</div>
 		</nav>
 
                     <body>
                     <h1 align=center>Opciók</h1>
                     <table class="logintable">
-                    <tr><td><form action="pfcurr.php"><button class="btn btn-dark">Mutasd a nálam levő tárgyakat</button></form></td></tr>
-                    <tr><td><form action="chpwd.php"><button class="btn btn-warning">Jelszócsere <i class="fas fa-key"></i></button></form></td></tr>
+                    <tr><td><form action="pfcurr.php"><button class="btn btn-info">Mutasd a nálam levő tárgyakat</button></form></td></tr>
+                    <tr><td><form action="chpwd.php"><button class="btn btn-info">Jelszócsere <i class="fas fa-key"></i></button></form></td></tr>
                     <tr><td><form action="userlist.php"><button class="btn btn-info">Felhasználók eléhetőségeinek megtekintése <i class="fas fa-address-book"></i></i></button></form></td></tr>
-                    </table>'
-            ;
-          if ($_SESSION['role']=="admin"){
+                    </table>';
+          if (($_SESSION['role']=="Admin") || ($_SESSION['role']=="Boss")){
             echo '
                     <table class="logintable">
                     <tr><td><form action="points.php"><button class="btn btn-success">Pontszámok <i class="fas fa-calculator"></i></button></form></td></tr>

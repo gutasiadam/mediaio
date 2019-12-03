@@ -14,10 +14,10 @@ if(isset($_SESSION['userId'])){
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js">  </script>
   <script src="https://kit.fontawesome.com/2c66dc83e7.js" crossorigin="anonymous"></script>
-  <title>PathFinder 0.6</title>
+  <title>PathFinder</title>
   
     </head>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
 					<a class="navbar-brand" href="index.php"><?php echo $applicationTitleShort;?></a>
 					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 					  <span class="navbar-toggler-icon"></span>
@@ -56,12 +56,12 @@ if(isset($_SESSION['userId'])){
     <body>  
         <div class="container">
    <br />
-   <h3 align="center">PathFinder<i class="fas fa-project-diagram fa-lg"></i></h3>
-   <table id="itemSearch" align="left"><tr><td>
+   <h1 align="center">PathFinder</h1>
+   <table id="itemSearch" align="left"><tr>
             <form action="./pathfinder.php" method="GET" autocomplete="off">
             <div class="autocomplete" method="GET">
-    		<input id="id_itemNameAdd" type="text" name="pfItem" class="form-control" placeholder='<?php echo $applicationSearchField;?>'></div></td>
-            <td><button type="submit" name="add" id="add" class="btn btn-info2 mb-2 mr-sm-2"><?php echo $button_Find;?></button><span id='sendQueryButtonLoc'></span></td>
+            <td><input id="id_itemNameAdd" type="text" name="pfItem" class="form-control mb-2 mr-sm-2" placeholder='<?php echo $applicationSearchField;?>'></div></td>
+            <td><button type="submit" name="add" id="add" class="btn btn-info2 mb-2 mr-sm-2" ><?php echo $button_Find;?></button><span id='sendQueryButtonLoc'></span></td>
   			</tr></table>
 			<form autocomplete="off" action="/index.php">
 			</form>
@@ -76,7 +76,7 @@ if(isset($_SESSION['userId'])){
     if(isset($_GET['pfItem'])){
         $TKI = $_GET['pfItem'];      
         $connect = new PDO("mysql:host=localhost;dbname=leltar_master", "root", "umvHVAZ%");
-        $query = "SELECT * FROM `takelog` WHERE `Item` = '$TKI' ORDER BY `Date` ASC";
+        $query = "SELECT * FROM `takelog` WHERE `Item` = '$TKI' ORDER BY `Date` DESC";
         $statement = $connect->prepare($query);
         $statement->execute();
         $result = $statement->fetchAll();

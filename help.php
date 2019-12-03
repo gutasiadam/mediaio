@@ -23,7 +23,7 @@
                 <?php 
                 if(isset($_SESSION['userId'])){
                     date_default_timezone_set("Europe/Budapest"); 
-                    echo '<nav class="navbar navbar-expand-lg navbar-light bg-light">
+                    echo '<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
 					<a class="navbar-brand" href="index.php">Arpad Media IO</a>
 					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 					  <span class="navbar-toggler-icon"></span>
@@ -119,33 +119,38 @@
             }?>
     <div id="szoveg-kivetel" class="szoveg"><p><h2><?php echo $index_takeOut; ?></h2><br><h4>A kivétel oldalon a leltárban szereplő tárgyakat tudod kivenni. A folyamat a következő:</h4>
     <ol><li>A beviteli mezőbe kezdd el írni annak a tárgynak a nevét, amit ki szeretnél venni. Ahogy elkezded írni a tárgy nevét, felbukkannak a kereső által ajánlott tárgyak.<br><strong>Vedd, figyelembe, hogy a beviteli mező nem enged semmi olyat beírni, ami nem szerepel a leltárban.</strong></li>
-    <li>Az "Add"gomb, vagy az ENTER gomb lenyomásával add hozzá a tárgyat a kivenni kívánt tárgyak listájához. <ol><li><h6 class="text text-muted">Ha már valaki kivete az adott tárgyat, azt az oldal egy hibaüzenettel jelzi majd feléd.</li><h6><li>Bármikor visszavonhatod az adott tárgy kivételét, szimplán kattints a mellete található X-re.</li></ol></li>
+    <li>Az "Hozzáad"gomb, vagy az ENTER gomb lenyomásával add hozzá a tárgyat a kivenni kívánt tárgyak listájához. <ol><li><h6 class="text text-muted">Ha már valaki kivette az adott tárgyat, azt az oldal egy hibaüzenettel jelzi majd feléd.</li><h6><li>Bármikor visszavonhatod az adott tárgy kivételét, szimplán kattints a mellette található X-re.</li></ol></li>
     <li>Ha minden tárgyat kiválasztottál, amit szerettél volna, nyomd meg a GO! -gombot.</li>
     <li>Ha minden rendben történt, az oldalon egy zöld- , a sikeres kivételt visszaigazoló jelzést fogsz látni. Kész is vagy!</li>
     </ol>
     </p></div>
 
     <div id="szoveg-visszahozas" class="szoveg"><p><h2><?php echo $index_Retrieve; ?></h2><br><h4>A visszahozás oldalon a nálad levő tárgyakat tudod visszahozottnak beállítani. A folyamat a következő:</h4>
-    <ol><li>Szöveg</li>
+    <ol><li>A beviteli mezőbe kezdd el írni annak a tárgynak a nevét, amit vissza szeretnél hozni. Ahogy elkezded írni a tárgy nevét, felbukkannak a kereső által ajánlott tárgyak.
+    <br>Vedd, figyelembe, hogy a beviteli mező nem enged semmi olyat beírni, ami nem szerepel a leltárban.</li>
+<li>Az "Hozzáad"gomb, vagy az ENTER gomb lenyomásával add hozzá a tárgyat az elvinni kívánt tárgyak listájához.</li>
+<ol><li>Ha már valaki visszahozta az adott tárgyat, azt az oldal egy hibaüzenettel jelzi majd feléd.</li>
+<li>Bármikor visszavonhatod az adott tárgy visszahozatalát, szimplán kattints a mellette található piros X-re.</li></ol>
+<li>Ha minden tárgyat kiválasztottál, amit szerettél volna, nyomd meg a GO! -gombot.</li>
+<li>Amennyiben olyan tárgyakat is vissza akarsz hozni amelyek nem általad lettek kivéve akkor oda egyesével kell beírnod a kódokat majd a mellette található plusz gombra nyomni.</li>
+<li>Ha minden rendben történt, az oldalon egy zöld- , a sikeres kivételt visszaigazoló jelzést fogsz látni. Kész is vagy!</li>
     </ol>
     </p></div>
 
     <div id="szoveg-adatok" class="szoveg"><p><h2><?php echo $index_Data; ?></h2><br><h4>AItt az összes tárgy megtalálható ami az ÁMÖK leltárjába föl van véve. </p></h4>
-    <ul><li>UID: A tárgyakleltári neve.</li>
+    <ul><li>UID: A tárgyak leltári neve.</li>
     <li>NAME: A tárgyak neve részletesen leírva.</li>
     <li>TYPE: A kategória amelyben az adott tárgy van.</li>
     <li>OUT BY: Az a felhasználó aki épp kivette a tárgyat.</li>
     </ul>
     </p></div>
 
-    <div id="szoveg-pathfinder" class="szoveg"><p><h2><?php echo $index_PathFinder; ?></h2><br><h4>A PathFinder segítségével meg tudod nézni, mikor kinél volt egy adott tárgy.</h4>
-    <ol><li>Szöveg</li>
-    </ol>
+    <div id="szoveg-pathfinder" class="szoveg"><p><h2><?php echo $index_PathFinder; ?></h2><br>A keresőbe elkezded gépelni a keresett tárgy nevét. <br>Amikor megtaláltad kiválasztod és rányomsz az keress gombra, ekkor a rendszer kiírja neked a keresett tárgy útját, ki mikor vitte el/ hozta vissza, illetve külön van jelölve ha kóddal került vissza a leltárba.<br> Ha másik tárgyat szeretnél megnézni, kezdd újra a folyamatot.
     </p></div>
 
-    <div id="szoveg-profil" class="szoveg"><p><h2><?php echo $index_Profile; ?></h2><br><h4>A Profil oldalon a felhasználói fiókoddal kapcsolatos beállításokat tudod elvégezni, illetve kódot tudsz generálni a tárgyaidhoz.</h4>
-    <ol><li>Szöveg</li>
-    </ol>
+    <div id="szoveg-profil" class="szoveg"><p><h2><?php echo $index_Profile; ?></h2><br><ul><li>Első gomb: Itt meg tudod tekinteni az éppen nálad levő dolgokat.Kódot is itt tudsz generálni amivel más tudja visszahozni a cuccaid.
+
+    </li><li>Második gomb: A jelszavad tudod megváltoztatni.</li><li>Harmadik gomb: A többiek elérhetősége itt található meg.</ul>
     </p></div>
 
     <div id="szoveg-segitseg" class="szoveg"><p><h2><?php echo $index_Help_Further; ?></h2><br><h4 class="text text-danger">Ha a weboldalon hibát észleltél, vagy további kérdésed van, keresed <strong>Gutási Ádám</strong>-ot személyesen, <br/>Facebookon, a gutasiadm@gmail.com e-mail címen, vagy <a href="mailto:gutasiadm@gmail.com?Subject=MediaIO%20Hibabejelent%C3%A9s" target="_top">írj most egy e-mailt!</a></h4>
