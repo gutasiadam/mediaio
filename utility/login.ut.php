@@ -29,6 +29,11 @@
                         session_start();
                         $_SESSION['userId'] = $row['idUsers'];
                         $_SESSION['UserUserName'] = $row['usernameUsers'];
+                        $_SESSION['firstName'] = $row['firstName'];
+                        $_SESSION['lastName'] = $row['lastName'];
+                        $_SESSION['fullName'] = ($row['firstName']+" "+$row['lastName']);
+                        $_SESSION['role'] = $row['Userrole'];
+                        $_SESSION['color'] = "#FFFF66";
 
                         header("Location: ../index.php?login=success");
                         exit();

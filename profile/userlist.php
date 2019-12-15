@@ -12,7 +12,7 @@ if(!isset($_SESSION['userId'])){
 </head>
 <title>Elérhetőségek</title>
 
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
 					<a class="navbar-brand" href="index.php">Arpad Media IO</a>
 					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 					  <span class="navbar-toggler-icon"></span>
@@ -41,23 +41,18 @@ if(!isset($_SESSION['userId'])){
             <li>
               <a class="nav-link disabled" href="#">Időzár <span id="time">10:00</span></a>
             </li>
-            
+            <?php if (($_SESSION['role']=="Admin") || ($_SESSION['role']=="Boss")){
+              echo '<li><a class="nav-link disabled" href="#">Admin jogokkal rendelkezel</a></li>';}?>
             </ul>
 						<form class="form-inline my-2 my-lg-0" action=../utility/logout.ut.php>
                       <button class="btn btn-danger my-2 my-sm-0" type="submit">Kijelentkezés</button>
                       </form>
-                      <a class="nav-link disabled my-2 my-sm-0" href="#"><i class="fas fa-question-circle fa-lg"></i></a>
+                      <a class="nav-link my-2 my-sm-0" href="#"><i class="fas fa-question-circle fa-lg"></i></a>
 					</div>
 		</nav>
 
 
 <?php 
-//$allowedIP = array("31.46.204.50", "80.99.70.46", "192.168.0.1", "127.0.0.1", "77.234.86.20");
-//if(!in_array($_SERVER['REMOTE_ADDR'], $allowedIP) && !in_array($_SERVER["HTTP_X_FORWARDED_FOR"], $allowedIP)) {
-  //header("Location: https://www.google.com"); //redirect
-  //exit();
-//}
-
 $serverName="localhost";
 	$userName="root";
 	$password="umvHVAZ%";
@@ -69,15 +64,15 @@ $serverName="localhost";
 	if ($conn->connect_error) {
 		die("Connection fail: (Is the DB server maybe down?)" . $conn->connect_error);
 	}
-	$sql = "SELECT usernameUsers, emailUsers, fullName, teleNum FROM users ORDER BY usernameUsers ASC";
+	$sql = "SELECT usernameUsers, emailUsers, lastName, firstName, teleNum FROM users ORDER BY usernameUsers ASC";
 	$result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
-	echo "<table width='50' align=center class="."table"."><th>Név</th><th>Felhasználónév</th><th>e-mail cím</th><th>Telefonszám</th>";
+	echo "<table width='50' align=center class="."table"."><th>Vezetéknév</th><th>Keresztnév</th><th>Felhasználónév</th><th>e-mail cím</th><th>Telefonszám</th>";
      //output data of each row
     //Displays amount of records found in leltar_master DB
     while($row = $result->fetch_assoc()) {
-		echo "<tr><td>".$row["fullName"]."</td><td>".$row["usernameUsers"]. "</td><td><a href=mailto:".$row["emailUsers"]." target=_top>".$row["emailUsers"]."</a></td><td>".$row["teleNum"]."</td><td></tr>";
+		echo "<tr><td>".$row["lastName"]."</td><td>".$row["firstName"]."</td><td>".$row["usernameUsers"]. "</td><td><a href=mailto:".$row["emailUsers"]." target=_top>".$row["emailUsers"]."</a></td><td>".$row["teleNum"]."</td><td></tr>";
        
 		$countOfRec += 1;
 	}

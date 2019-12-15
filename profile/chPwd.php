@@ -6,8 +6,8 @@
         $username = $_SESSION['userId'];
         if(isset($_SESSION['userId'])){
             echo '
-            <nav class="navbar navbar-expand-lg navbar-light bg-light">
-					<a class="navbar-brand rainbow" href="index.php">Arpad Media IO</a>
+            <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+					<a class="navbar-brand" href="index.php">Arpad Media IO</a>
 					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 					  <span class="navbar-toggler-icon"></span>
 					</button>
@@ -30,21 +30,21 @@
                         <a class="nav-link" href="../pathfinder.php"><i class="fas fa-project-diagram fa-lg"></i></a>
             </li>
             <li class="nav-item active">
-                        <a class="nav-link" href="#"><i class="fas fa-user-alt fa-lg"></i></a>
+                        <a class="nav-link" href="./index.php"><i class="fas fa-user-alt fa-lg"></i></a>
             </li>
             <li>
               <a class="nav-link disabled" href="#">Időzár <span id="time">03:00</span></a>
             </li>
 					  </ul>
 						<form class="form-inline my-2 my-lg-0" action=../utility/logout.ut.php>
-                      <button class="btn btn-danger my-2 my-sm-0" type="submit">Log Out</button>
+                      <button class="btn btn-danger my-2 my-sm-0" type="submit">Kijelentkezés</button>
                       </form>
-                        <a class="nav-link disabled my-2 my-sm-0" href="#"><i class="fas fa-question-circle fa-lg"></i></a>
+                        <a class="nav-link my-2 my-sm-0" href="#"><i class="fas fa-question-circle fa-lg"></i></a>
 					  </form>
 					</div>
 		</nav>'
             ;
-            echo '<table class="logintable"><tr><td><p>Jelszócsere <br><h3 class="rainbow">'. $_SESSION['UserUserName'].'</h3><br>Számára</p></td></tr>
+            echo '<table class="logintable"><tr><td><p>Jelszócsere <br><h3 class="rainbow">'.$_SESSION['lastName'].' '.$_SESSION['firstName'].'</h3><br>Számára</p></td></tr>
             <form action="../utility/chPwd.ut.php" method="post">
             <tr><td><input class="form-control mb-2 mr-sm-2" type="password" name="pwd-Old" placeholder="Jelenlegi jelszó"></td></tr> <br>
             <tr><td><input class="form-control mb-2 mr-sm-2" type="password" name="pwd-New" placeholder="Új jelszó" ></td></tr> <br>

@@ -1,1 +1,1 @@
-<?php $developmentVersion = "LIVE 1.6 &#9400; 2019"?><?php;?>
+<?php $developmentVersion = "LIVE 1.7&#9400; 2019";?>

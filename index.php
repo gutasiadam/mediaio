@@ -24,8 +24,8 @@
                 <?php 
                 if(isset($_SESSION['userId'])){
                     date_default_timezone_set("Europe/Budapest"); 
-                    echo '<nav class="navbar navbar-expand-lg navbar-light bg-light">
-					<a class="navbar-brand rainbow" href="index.php">Arpad Media IO</a>
+                    echo '<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+					<a class="navbar-brand" href="index.php">Arpad Media IO</a>
 					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 					  <span class="navbar-toggler-icon"></span>
 					</button>
@@ -48,19 +48,36 @@
                         <a class="nav-link" href="./pathfinder.php"><i class="fas fa-project-diagram fa-lg"></i></a>
             </li>
             <li class="nav-item">
+                        <a class="nav-link" href="./events/xd.php"><i class="fas fa-calendar-alt fa-lg"></i></a>
+            </li>
+            <li class="nav-item">
                         <a class="nav-link" href="./profile/index.php"><i class="fas fa-user-alt fa-lg"></i></a>
             </li>
             <li>
               <a class="nav-link disabled" href="#">'.$nav_timeLockTitle.' <span id="time">'.$nav_timeLock_StartValue.'</span></a>
-            </li>
-					  </ul>
-						<form class="form-inline my-2 my-lg-0" action=utility/logout.ut.php>
-                      <button class="btn btn-danger my-2 my-sm-0" type="submit">'.$nav_logOut.'</button>
-                      </form>
-                      <a class="nav-link my-2 my-sm-0" href="./help.php"><i class="fas fa-question-circle fa-lg"></i></a>
-					</div>
-		</nav>
-';
+            </li>';
+            if (($_SESSION['role']=="Admin") || ($_SESSION['role']=="Boss")){
+              echo '<li><a class="nav-link disabled" href="#">Admin jogokkal rendelkezel</a></li>';
+              echo '</ul>
+              <form class="form-inline my-2 my-lg-0" action=utility/logout.ut.php>
+                        <button class="btn btn-danger my-2 my-sm-0" type="submit">'.$nav_logOut.'</button>
+                        </form>
+                        <a class="nav-link my-2 my-sm-0" href="./help.php"><i class="fas fa-question-circle fa-lg"></i></a>
+            </div>
+      </nav>
+      ';
+            }
+            else{
+              echo '</ul>
+              <form class="form-inline my-2 my-lg-0" action=utility/logout.ut.php>
+                        <button class="btn btn-danger my-2 my-sm-0" type="submit">'.$nav_logOut.'</button>
+                        </form>
+                        <a class="nav-link my-2 my-sm-0" href="./help.php"><i class="fas fa-question-circle fa-lg"></i></a>
+            </div>
+      </nav>
+      ';
+            }
+					  
                     ?>
                     <?php
                 }else{
@@ -119,11 +136,6 @@
               <div class="col-6 col-sm-2"><a class="nav-link ab" href="./profile/index.php"><i class="fas fa-user-alt fa-3x"></i><br><h5>'.$index_Profile.'</h5></a></div>
               <div class="col-6 col-sm-2 offset-md-1"><a class="nav-link ab" href="./help.php"><i class="fas fa-question-circle fa-3x"></i><br><h5>'.$index_Help.'</h5></a></div>
             </div>';
-              echo '<p>Changelog - <i class="fas fa-exclamation"></i><br \><u>A Changelog teljes rögzítése megszűnik, innentől kezdve felhasználó szintű tájékoztatás lesz itt látható.</u>
-              <h6>1.5 - Segítség oldal, pontosabb hibaüzenetek</h6>
-              <h6>1.4 - Mobilos verzió továbbfejlesztése, felhasznűlóbarát kialakítás kezdete</h6>
-              <h6>1.3 - Elvileg mostmár csak a felhasználó csak a saját tárgyát tudja visszahozni, az időzár lassan minden oldalra bevezetésre kerül.<br> Gyorsítótár tesztüzemben, az oldalon <strong>Ideiglenesen megnövekedett töltésidőre kell számítani.</strong></h6>
-              <h6 class="text-muted">A Sign Up / Regisztráció gomb ki lett kapcsolva, fiókért/hozzáférésért keresd Ádámot!';
             }?>
     
     
@@ -170,38 +182,17 @@
         top: 50%;
         left: 50%;
         margin-right: -50%;
-        width: 100%;
+        width: 90%;
         transform: translate(-50%, -50%) }
 }
 </style>
 
 <script type="text/javascript">
-var checkbox = document.querySelector('input[name=theme]');
-
-checkbox.addEventListener('change', function() {
-    if(this.checked) {
-        trans()
-        document.documentElement.setAttribute('data-theme', 'dark')
-    } else {
-        trans()
-        document.documentElement.setAttribute('data-theme', 'light')
-    }
-})
-
-let trans = () => {
-    document.documentElement.classList.add('transition');
-    window.setTimeout(() => {
-        document.documentElement.classList.remove('transition')
-    }, 1000)
-}
-
-(function(){
-  setInterval(updateTime, 1000);
-});
 
 function startTimer(duration, display) {
     var timer = duration, minutes, seconds;
     setInterval(function () {
+     
         minutes = parseInt(timer / 60, 10)
         seconds = parseInt(timer % 60, 10);
 
@@ -210,9 +201,21 @@ function startTimer(duration, display) {
 
         display.textContent = minutes + ":" + seconds;
 
+        if (timer > 60){
+          $('#time').animate({'opacity': 0.9}, 0, function(){
+          $(this).html(display.textContent).animate({'opacity': 1}, 500);
+          setTimeout(function() { $("#time").text(display.textContent).animate({'opacity': 1}, 250); }, 700);;});
+        }
+
+        if (timer < 60){
+          $('#time').animate({'opacity': 0.9}, 0, function(){
+          $(this).html("<font color='red'>"+display.textContent+"</font").animate({'opacity': 1}, 500);
+          setTimeout(function() { $("#time").html("<font color='red'>"+display.textContent+"</font").animate({'opacity': 1}, 250); }, 700);;});
+        }
+
         if (--timer < 0) {
             timer = duration;
-            window.location.href = "./utility/logout.ut.php"
+            window.location.href = "/utility/logout.ut.php"
         }
     }, 1000);
 }

@@ -5,11 +5,12 @@ error_reporting(E_ALL ^ E_NOTICE);
 
 $alert_logout_successful = "Sikeres kijelentkezés!";
 
-$applicationTitleFull = "Arpad Media Item IO";
+$applicationTitleFull = "Árpád Média Item IO";
 $applicationTitleShort = "Arpad Média IO";
 $applicationSearchField = "Kezdd el írni a tárgy nevét...";
 $application_version_text = "Jelenlegi verzió: ";
-$application_Version = "1.7";
+$application_Version = "1.8";
+$application_DATABASE_PASS= "umvHVAZ%";
 
 $nav_timeLockTitle = "Időzár";
 $nav_timeLock_StartValue = "10:00";
@@ -18,9 +19,10 @@ $nav_logOut = "Kijelentkezés";
 
 $button_Add = "Hozzáad";
 $button_Go = "Go";
+$button_Find = "Keress";
 
-$Welcomemsg_takeout = '<strong>Szia '. $_SESSION['UserUserName']. '! </strong> Mit vinnél el?';
-$Welcomemsg_retrieve = '<strong>Szia '. $_SESSION['UserUserName']. '! </strong> Mit hoztál vissza?';
+$Welcomemsg_takeout = '<strong>Szia '. $_SESSION['firstName']. '! </strong> Mit vinnél el?';
+$Welcomemsg_retrieve = '<strong>Szia '. $_SESSION['firstName']. '! </strong> Mit hoztál vissza?';
 
 
 $retrieve_table1 = "Általad kivett";
@@ -32,7 +34,9 @@ $index_Data="Adatok";
 $index_PathFinder="PathFinder";
 $index_Profile="Profil";
 $index_Help="Segítség";
+$index_Help_Further="További segítség";
 
 $help="Segítség";
 $help_description="Kattints az alábbi funkciók egyikére, hogy bővebb információt kapj róluk.";
+
 ?>

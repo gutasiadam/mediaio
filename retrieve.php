@@ -3,18 +3,10 @@ include "translation.php";
 if(!isset($_SESSION['userId'])){
   header("Location: index.php?error=AccessViolation");}
 
-//if (!isset($_SESSION['UserUserName'])){
-    //header("Location: index.php");}
-//Development SECURITY - Allows only certain IPs on the page
-//$allowedIP = array("31.46.204.50", "80.99.70.46", "192.168.0.1", "127.0.0.1", "77.234.86.20");
-//if(!in_array($_SERVER['REMOTE_ADDR'], $allowedIP) && !in_array($_SERVER["HTTP_X_FORWARDED_FOR"], $allowedIP)) {
-  //header("Location: https://www.google.com"); //redirect
-  //exit();
-//}
 $SESSuserName = $_SESSION['UserUserName'];
 include "version.php";
 error_reporting(E_ALL ^ E_NOTICE);
-// Cookie for ITEM SELECTION (JS --> PHP :3)
+// Cookie for ITEM SELECTION (JS --> PHP)
 setcookie('Cookie_currentItemSel', 0, time() + (36000), "/");
 setcookie("currentItemRentByMatch", 0, time() + (1000), "/");
 setcookie("currentUser", $SESSuserName, time() + (1000), "/");
@@ -31,7 +23,7 @@ function PhparrayCookie(){
   // Database initialization - Get's total item number in the database and estabilishes connection.
 	$serverName="localhost";
 	$userName="root";
-	$password="umvHVAZ%";
+	$password=$application_DATABASE_PASS;
 	$dbName="leltar_master";
 	$countOfRec=0;
 
@@ -44,11 +36,9 @@ function PhparrayCookie(){
 	$result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
-	//echo "<table div class="."tabel"."><th>ID</th><th>Name</th><th>Type</th><th>Status</th>";
-    // output data of each row
+    //Outputs data of each row
     //Displays amount of records found in leltar_master DB
     while($row = $result->fetch_assoc()) {
-    //   echo "<tr><td>".$row["UID"]. "</td><td>" . $row["Nev"]. "</td><td>" . $row["Tipus"]. "</td><td>". $row["Status"]."</td></tr>";
 		$countOfRec += 1;
 	}
 } else {
@@ -104,7 +94,7 @@ if(isset($_POST['authCheck'])){
   
   if ($rowNumReturn == 1){
     $currDate = date("Y/m/d H:i:s");
-    // Code Exists, prepare retrieve.
+    // Code Exists, prepare retrieve procedure.
     
     $sql = ("UPDATE `leltar` SET `Status` = '1', `RentBy` = NULL, `AuthState` = NULL WHERE `leltar`.`Nev` = '$authItemName';");
     $sql.= ("DELETE FROM authcodedb WHERE Item = '$authItemName';");
@@ -116,7 +106,7 @@ if(isset($_POST['authCheck'])){
     }
   }
   if ($rowNumReturn == 0){
-    //Invalid code, throw an error
+    //Invalid code, throws an error.
     echo "Non-exist authCode";
   }
   $conn->close();
@@ -162,7 +152,7 @@ var goStatus = 0;
 </script>
 
 <html >
-      <title>Arpad Media Item IO</title>
+      <title><?php echo $applicationTitleFull; ?></title>
   <head>
   <script src="JTranslations.js"></script>
   <link rel="stylesheet" href="./main.css">
@@ -173,11 +163,11 @@ var goStatus = 0;
   <script src="https://kit.fontawesome.com/2c66dc83e7.js" crossorigin="anonymous"></script>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Arpad Media IO Login</title>
+    <title><?php echo $applicationTitleShort." Retrieve"; ?></title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
-					<a class="navbar-brand rainbow" href="index.php">Arpad Media IO</a>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+					<a class="navbar-brand" href="index.php"><?php echo $applicationTitleShort; ?></a>
 					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 					  <span class="navbar-toggler-icon"></span>
 					</button>
@@ -205,26 +195,28 @@ var goStatus = 0;
             <li>
               <a class="nav-link disabled" href="#"><?php echo $nav_timeLockTitle;?> <span id="time"><?php echo $nav_timeLock_StartValue;?></span></a>
             </li>
+            <?php if (($_SESSION['role']=="Admin") || ($_SESSION['role']=="Boss")){
+              echo '<li><a class="nav-link disabled" href="#">Admin jogokkal rendelkezel</a></li>';}?>
 					  </ul>
 						<form class="form-inline my-2 my-lg-0" action=utility/logout.ut.php>
                       <button class="btn btn-danger my-2 my-sm-0" type="submit"><?php echo $nav_logOut;?></button>
                       </form>
-            <a class="nav-link disabled my-2 my-sm-0" href="#"><i class="fas fa-question-circle fa-lg"></i></a>
+            <a class="nav-link my-2 my-sm-0" href="./help.php"><i class="fas fa-question-circle fa-lg"></i></a>
 					</div>
 		</nav>
 
 
-	<body > <!-- style="background-color:#DCDCDC" -->
+	<body >
 		<div class="container">
 			<br /><br />
       <h2 class="rainbow" align="center" id="doTitle"><?php echo $applicationTitleShort;?></h2><br />
       <div class="row">
-      <div class="col-md-8">
-      <div class="shadow-sm p-3 mb-5 bg-light rounded"><?php echo $Welcomemsg_retrieve?></div>
+      <div class="col-md-4">
+      <div class="alert alert-info"><?php echo $Welcomemsg_retrieve?></div>
 			<div class="form-group">
         <table id="itemSearch" align="left"><tr><td><div class="autocomplete" method="GET">
     				<input id="id_itemNameAdd" type="text" name="add" class="form-control mb-2 mr-sm-2" placeholder='<?php echo $applicationSearchField;?>'></div></td>
-            <td><button type="button" name="add" id="add" class="btn btn-info2 add_btn mb-2 mr-sm-2"><?php echo $button_Add;?></button>     <span id='sendQueryButtonLoc'></span></td>
+            <td><button type="button" name="add" id="add" class="btn btn-info2 add_btn mb-2 mr-sm-2"><?php echo $button_Add;?></button><td><span id='sendQueryButtonLoc'></span></td>
   			</tr>
         </table>
 			<form autocomplete="off" action="/index.php">
@@ -242,12 +234,12 @@ var goStatus = 0;
 				<form name="sendRequest" method="POST" action='/index.php'>
               
 				</form>
-        <table class="table table-bordered livearray" id="liveSelArrayResult"><td> DEBUG: SelectItem </td></table>
+        <table class="table table-bordered livearray" id="liveSelArrayResult"><td></td></table>
         
 			</div>
 		</div>
 	</body>
-<footer class="page-footer font-small blue"> <div class="fixed-bottom" align="center"><p>Arpad Media I/O <strong>ver. <?php echo $application_Version; ?></strong><br /> Code by Adam Gutasi</p></div></footer>
+<footer class="page-footer font-small blue"> <div class="fixed-bottom" align="center"><p><?php echo $applicationTitleFull; ?> <strong>ver. <?php echo $application_Version; ?></strong><br /> Code by <a href="https://github.com/d3rang3">Adam Gutasi</a></p></div></footer>
 </html>
 <script>
 
@@ -333,7 +325,7 @@ window.onload = function () {
         $(this).html('<h2 class="text text-success" role="alert">'+retrieve_Success+'</h2>').animate({'opacity': 1}, 400);
         $(this).html('<h2 class="text text-success" role="alert">'+retrieve_Success+'</h2>').animate({'opacity': 1}, 3000);
         $(this).html('<h2 class="text text-success" role="alert">'+retrieve_Success+'</h2>').animate({'opacity': 0}, 400);
-        setTimeout(function() { $("#doTitle").text("Arpad Media IO").animate({'opacity': 1}, 400); }, 3800);;   
+        setTimeout(function() { $("#doTitle").text(applicationTitleShort).animate({'opacity': 1}, 400); }, 3800);;   
         $('#dynamic_field').empty();
         $('#dynamic_field_2').empty();
         selectList = [];
@@ -350,7 +342,7 @@ window.onload = function () {
 
     console.log("CLICK!")
       if (goStatus == 0){
-        $('#sendQueryButtonLoc').append('<button type="submit" class="btn btn-success go_btn mb-2 mr-sm-2" id="goButton" >Go!</button>');
+        $('#sendQueryButtonLoc').append('<button type="submit" class="btn btn-success go_btn mb-2 mr-sm-2" id="goButton" >'+button_Go+'</button>');
         goStatus++;
      }
     document.getElementById("liveSelArrayResult").innerHTML = "";
@@ -380,7 +372,7 @@ if (currentItemSel != ''){
     //dataType: 'json',
     success: function (res) {
       var currentRentby = getCookie("currentRentby");
-          var tempAddCheck = res.substr(8);
+          var tempAddCheck = res;
           console.log("Tempcheck: " + tempAddCheck);
           if (tempAddCheck == 1){ $('#liveSelArrayResult').append('<td>'+selectList+'</td>');
     $('#dynamic_field').append('<tr id="row'+i+'"><td>'+currentItemSel+'</td><td><button type="button" name="remove" id="'+i+'"style="text-align:center;" class="btn btn-danger btn'+i+' btn_remove">X</button></td></tr>');
@@ -463,7 +455,7 @@ $(document).on('click', '.verify_btn', function(){
     //dataType: 'json',
     success: function (res) {
           
-          var tempAuthCheck = res.substr(8);
+          var tempAuthCheck = res;
           console.log("Tempcheck: " + tempAuthCheck);
           if (tempAuthCheck == "Success"){
           console.log("Auth Successful.");
@@ -565,7 +557,7 @@ function autocomplete(inp, arr) {
       }
   });
   /*execute a function presses a key on the keyboard:*/
-  inp.addEventListener("keydown", function(e) {
+  inp.addEventListener("keydown", function(e) {2
       var x = document.getElementById(this.id + "autocomplete-list");
       if (x) x = x.getElementsByTagName("div");
       if (e.keyCode == 40) {

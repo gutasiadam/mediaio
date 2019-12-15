@@ -4,14 +4,6 @@ include "translation.php";
 
 if(!isset($_SESSION['userId'])){
   header("Location: index.php?error=AccessViolation");}
-//if (!isset($_SESSION['UserUserName'])){
-    //header("Location: index.php");}
-//Development SECURITY - Allows only certain IPs on the page
-//$allowedIP = array("31.46.204.50", "80.99.70.46", "192.168.0.1", "127.0.0.1", "77.234.86.20");
-//if(!in_array($_SERVER['REMOTE_ADDR'], $allowedIP) && !in_array($_SERVER["HTTP_X_FORWARDED_FOR"], $allowedIP)) {
-  //header("Location: https://www.google.com"); //redirect
-  //exit();
-//}
 $SESSuserName = $_SESSION['UserUserName'];
 include "version.php";
 error_reporting(E_ALL ^ E_NOTICE);
@@ -29,7 +21,7 @@ function PhparrayCookie(){
   // Database initialization - Get's total item number in the database and estabilishes connection.
 	$serverName="localhost";
 	$userName="root";
-	$password="umvHVAZ%";
+	$password=$application_DATABASE_PASS;
 	$dbName="leltar_master";
 	$countOfRec=0;
 
@@ -42,11 +34,9 @@ function PhparrayCookie(){
 	$result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
-	//echo "<table div class="."tabel"."><th>ID</th><th>Name</th><th>Type</th><th>Status</th>";
     // output data of each row
     //Displays amount of records found in leltar_master DB
     while($row = $result->fetch_assoc()) {
-    //   echo "<tr><td>".$row["UID"]. "</td><td>" . $row["Nev"]. "</td><td>" . $row["Tipus"]. "</td><td>". $row["Status"]."</td></tr>";
 		$countOfRec += 1;
 	}
 } else {
@@ -136,8 +126,8 @@ function checkGoBtn() {
     <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
       <title><?php echo $applicationTitleFull;?></title>
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
-					<a class="navbar-brand rainbow" href="index.php"><?php echo $applicationTitleShort;?></a>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+					<a class="navbar-brand" href="index.php"><?php echo $applicationTitleShort;?></a>
 					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 					  <span class="navbar-toggler-icon"></span>
 					</button>
@@ -165,11 +155,13 @@ function checkGoBtn() {
             <li>
               <a class="nav-link disabled" href="#"><?php echo $nav_timeLockTitle;?> <span id="time"><?php echo $nav_timeLock_StartValue;?></span></a>
             </li>
+            <?php if (($_SESSION['role']=="Admin") || ($_SESSION['role']=="Boss")){
+              echo '<li><a class="nav-link disabled" href="#">Admin jogokkal rendelkezel</a></li>';}?>
 					  </ul>
 						<form class="form-inline my-2 my-lg-0" action=utility/logout.ut.php>
                       <button class="btn btn-danger my-2 my-sm-0" type="submit"><?php echo $nav_logOut; ?></button>
                       </form>
-            <a class="nav-link disabled my-2 my-sm-0" href="#"><i class="fas fa-question-circle fa-lg"></i></a>
+            <a class="nav-link my-2 my-sm-0" href="./help.php"><i class="fas fa-question-circle fa-lg"></i></a>
 					</div>
 		</nav>
 
@@ -178,9 +170,11 @@ function checkGoBtn() {
 		<div class="container">
 			<br /><br />
 			<h2 class="rainbow" align="center" id="doTitle"><?php echo $applicationTitleShort;?></h2><br />
-      <div class="shadow-sm p-3 mb-5 bg-light rounded"><?php echo $Welcomemsg_takeout?></div>
+      <div class="row">
+      <div class="col-md-3">
+      <div class="alert alert-info"><?php echo $Welcomemsg_takeout?></div>
+      </div></div>
 			<div class="form-group">
-
         <table id="itemSearch" align="left"><tr><td><div class="autocomplete" method="GET">
     				<input id="id_itemNameAdd" type="text" name="add" class="form-control mb-2 mr-sm-2" placeholder='<?php echo $applicationSearchField;?>'></div></td>
             <td><button type="button" name="add" id="add" class="btn btn-info2 add_btn mb-2 mr-sm-2" onclick="checkGoBtn()"><?php echo $button_Add;?></button>     <span id='sendQueryButtonLoc'></span></td>
@@ -204,7 +198,7 @@ function checkGoBtn() {
 			</div>
 		</div>
 	</body>
-<footer class="page-footer font-small blue"> <div class="fixed-bottom" align="center"><p>Arpad Media I/O Tracker <strong>ver. <?php echo $application_Version; ?></strong><br /> Code by Adam Gutasi</p></div></footer>
+<footer class="page-footer font-small blue"> <div class="fixed-bottom" align="center"><p><?php echo $applicationTitleFull; ?> <strong>ver. <?php echo $application_Version; ?></strong><br /> Code by <a href="https://github.com/d3rang3">Adam Gutasi</a></p></div></footer>
 </html>
 <script>
 
@@ -342,7 +336,7 @@ window.onload = function () {
     data: {takeoutCheck : itemCheckJSON},
     //dataType: 'json',
     success: function (res) {
-          var tempAddCheck = res.substr(8);
+          var tempAddCheck = res;
           console.log("Tempcheck: " + tempAddCheck);
           if (tempAddCheck == 0){console.log("Nincs hiba, folytatás");}
           if (tempAddCheck == 1){
@@ -380,12 +374,6 @@ window.onload = function () {
   
 
 });
-
-
-
-//Process takeout
-
-
 // dbItem remover tool - Prevents an item to be added twice to the list
 function arrayRemove(arr, value) {
 
