@@ -6,7 +6,7 @@ if(!isset($_SESSION['userId'])){
 <head>
 <script src="JTranslations.js"></script>
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-	  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+	  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   <script src="https://kit.fontawesome.com/2c66dc83e7.js" crossorigin="anonymous"></script>
 </head>
 
@@ -39,6 +39,8 @@ if(!isset($_SESSION['userId'])){
 						<li>
               <a class="nav-link disabled" href="#">Időzár <span id="time">10:00</span></a>
             </li>
+            <?php if (($_SESSION['role']=="Admin") || ($_SESSION['role']=="Boss")){
+              echo '<li><a class="nav-link disabled" href="#">Admin jogokkal rendelkezel</a></li>';}?>
 					  </ul>
 						<form class="form-inline my-2 my-lg-0" action=utility/logout.ut.php>
                       <button class="btn btn-danger my-2 my-sm-0" type="submit">Kijelentkezés</button>
@@ -49,7 +51,7 @@ if(!isset($_SESSION['userId'])){
 <div class="form-group">
         <table id="itemSearch" align="left"><tr><td><div class="autocomplete" method="GET">
     				<input id="id_itemNameAdd" type="text" name="add" class="form-control mb-2 mr-sm-2" placeholder='<?php echo $applicationSearchField;?>'></div></td>
-            <td><button type="button" name="add" id="add" class="btn btn-info2 add_btn mb-2 mr-sm-2" onclick="checkGoBtn()">Keres</button>     <span id='sendQueryButtonLoc'></span></td>
+            <td><button type="button" name="add" id="add" class="btn btn-info2 add_btn mb-2 mr-sm-2" onclick="checkGoBtn()">Keress</button> </button>     <span id='sendQueryButtonLoc'></span></td>
   			</tr></table>
 
 <?php 
@@ -81,12 +83,12 @@ if ($result->num_rows > 0) {
 		if ($countOfRec == 50){
 		}
 		if($row["TakeRestrict"]=="*"){
-			echo "<tr style='background-color:#fffeab;' ><td>".$row["UID"]. "</td><td>" . $row["Nev"]. "</td><td>" . $row["Tipus"]. "</td><td><strong>". $row["RentBy"]."</strong></td></tr>";
+			echo "<tr style='background-color:#fffeab;' ><a id=".$row["UID"]."><td>".$row["UID"]. "</td><td>" . $row["Nev"]. "</td><td>" . $row["Tipus"]. "</td><td><strong>". $row["RentBy"]."</strong></td></tr></a>";
 		}
 		else if($row["Status"]==0){
-			echo "<tr style='background-color:#F5B8B8;' ><td>".$row["UID"]. "</td><td>" . $row["Nev"]. "</td><td>" . $row["Tipus"]. "</td><td><strong>". $row["RentBy"]."</strong></td></tr>";
+			echo "<tr style='background-color:#F5B8B8;' ><a id=".$row["UID"]."><td>".$row["UID"]. "</td><td>" . $row["Nev"]. "</td><td>" . $row["Tipus"]. "</td><td><strong>". $row["RentBy"]."</strong></td></tr></a>";
 		}else{
-			echo "<tr><td>".$row["UID"]. "</td><td>" . $row["Nev"]. "</td><td>" . $row["Tipus"]. "</td><td>". "</td></tr>";
+			echo "<tr><a id=".$row["UID"]."><td>".$row["UID"]. "</td><td>" . $row["Nev"]. "</td><td>" . $row["Tipus"]. "</td><td>". "</td></tr></a>";
 		}
 		$countOfRec += 1;
 	}
@@ -94,6 +96,7 @@ if ($result->num_rows > 0) {
     echo "0 results";
 }
 echo "</table>";
+echo '<a href="#ftl099"> Zss</a>';
 $conn->close();?>
 <script>
 

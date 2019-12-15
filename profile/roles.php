@@ -51,6 +51,8 @@ $serverName="localhost";
 						<li>
               <a class="nav-link disabled" href="#">Időzár <span id="time">10:00</span></a>
             </li>
+            <?php if (($_SESSION['role']=="Admin") || ($_SESSION['role']=="Boss")){
+              echo '<li><a class="nav-link disabled" href="#">Admin jogokkal rendelkezel</a></li>';}?>
 					  </ul>
 						<form class="form-inline my-2 my-lg-0" action=../utility/logout.ut.php>
                       <button class="btn btn-danger my-2 my-sm-0" type="submit">Kijelentkezés</button>
@@ -116,7 +118,7 @@ $serverName="localhost";
                     <form action="./roles.php" class="form-group" method=post>
                 <input type="hidden" class="form-control" name="user" value="'.$row["usernameUsers"].'"/>
                 <input type="hidden" class="form-control" name="mode" value="revert"/> 
-                <h6 id="emailHelp" class="form-text text-muted"> A módosítás gomb megynomásával megvonod '.$row["usernameUsers"].' felhasználót admin jogaitól.<br>A gomb lenyomása után töltsd újra az oldalt, hogy a ponttábla frissüljön!</h6>
+                <h6 id="emailHelp" class="form-text text-muted"> A módosítás gomb megynomásával megvonod '.$row["usernameUsers"].' felhasználót admin jogaitól.<br>A gomb lenyomása után töltsd újra az oldalt, hogy a tábla frissüljön!</h6>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Mégsem</button>
                     <button type="submit" class="btn btn-danger authToggle">Módosítás</button>
                     </form>
@@ -145,7 +147,7 @@ $serverName="localhost";
                     <form action="./roles.php" class="form-group" method=post>
                 <input type="hidden" class="form-control" name="user" value="'.$row["usernameUsers"].'"/>
                 <input type="hidden" class="form-control" name="mode" value="grant"/> 
-                <h6 id="emailHelp" class="form-text text-muted">A módosítás gomb megynomásával felruházod '.$row["usernameUsers"].' felhasználót admin jogokkal.<br>A gomb lenyomása után töltsd újra az oldalt, hogy a ponttábla frissüljön!</h6>
+                <h6 id="emailHelp" class="form-text text-muted">A módosítás gomb megynomásával felruházod '.$row["usernameUsers"].' felhasználót admin jogokkal.<br>A gomb lenyomása után töltsd újra az oldalt, hogy a tábla frissüljön!</h6>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Mégsem</button>
                     <button type="submit" class="btn btn-danger authToggle">Módosítás</button>
                     </form>

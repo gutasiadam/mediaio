@@ -155,6 +155,8 @@ function checkGoBtn() {
             <li>
               <a class="nav-link disabled" href="#"><?php echo $nav_timeLockTitle;?> <span id="time"><?php echo $nav_timeLock_StartValue;?></span></a>
             </li>
+            <?php if (($_SESSION['role']=="Admin") || ($_SESSION['role']=="Boss")){
+              echo '<li><a class="nav-link disabled" href="#">Admin jogokkal rendelkezel</a></li>';}?>
 					  </ul>
 						<form class="form-inline my-2 my-lg-0" action=utility/logout.ut.php>
                       <button class="btn btn-danger my-2 my-sm-0" type="submit"><?php echo $nav_logOut; ?></button>
@@ -334,7 +336,7 @@ window.onload = function () {
     data: {takeoutCheck : itemCheckJSON},
     //dataType: 'json',
     success: function (res) {
-          var tempAddCheck = res.substr(8);
+          var tempAddCheck = res;
           console.log("Tempcheck: " + tempAddCheck);
           if (tempAddCheck == 0){console.log("Nincs hiba, folytatás");}
           if (tempAddCheck == 1){

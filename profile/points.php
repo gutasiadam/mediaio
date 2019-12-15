@@ -1,10 +1,10 @@
 <?php 
 session_start();
 
-if($_SESSION['role']!="admin"){
-    header("Location: ../index.php");
+if($_SESSION['role']=="Default") {
+    header("Location: ../index.php?notboss");
 }
-if(isset($_SESSION['userId']) && ($_SESSION['role']=="admin")){
+if(isset($_SESSION['userId']) && (($_SESSION['role']=="Admin") || ($_SESSION['role']=="Boss"))){
     error_reporting(E_ALL ^ E_NOTICE);
 
 //index.php
@@ -59,6 +59,8 @@ $serverName="localhost";
 						<li>
               <a class="nav-link disabled" href="#">Időzár <span id="time">10:00</span></a>
             </li>
+            <?php if (($_SESSION['role']=="Admin") || ($_SESSION['role']=="Boss")){
+              echo '<li><a class="nav-link disabled" href="#">Admin jogokkal rendelkezel</a></li>';}?>
 					  </ul>
 						<form class="form-inline my-2 my-lg-0" action=../utility/logout.ut.php>
                       <button class="btn btn-danger my-2 my-sm-0" type="submit">Kijelentkezés</button>

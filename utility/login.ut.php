@@ -33,6 +33,7 @@
                         $_SESSION['lastName'] = $row['lastName'];
                         $_SESSION['fullName'] = ($row['firstName']+" "+$row['lastName']);
                         $_SESSION['role'] = $row['Userrole'];
+                        $_SESSION['color'] = "#FFFF66";
 
                         header("Location: ../index.php?login=success");
                         exit();

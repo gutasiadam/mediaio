@@ -48,6 +48,9 @@
                         <a class="nav-link" href="./pathfinder.php"><i class="fas fa-project-diagram fa-lg"></i></a>
             </li>
             <li class="nav-item">
+                        <a class="nav-link" href="./events/xd.php"><i class="fas fa-calendar-alt fa-lg"></i></a>
+            </li>
+            <li class="nav-item">
                         <a class="nav-link" href="./profile/index.php"><i class="fas fa-user-alt fa-lg"></i></a>
             </li>
             <li>
@@ -56,7 +59,7 @@
             if (($_SESSION['role']=="Admin") || ($_SESSION['role']=="Boss")){
               echo '<li><a class="nav-link disabled" href="#">Admin jogokkal rendelkezel</a></li>';
               echo '</ul>
-              <form class="form-inline my-2 my-lg-0" action=/utility/logout.ut.php>
+              <form class="form-inline my-2 my-lg-0" action=utility/logout.ut.php>
                         <button class="btn btn-danger my-2 my-sm-0" type="submit">'.$nav_logOut.'</button>
                         </form>
                         <a class="nav-link my-2 my-sm-0" href="./help.php"><i class="fas fa-question-circle fa-lg"></i></a>
@@ -179,7 +182,7 @@
         top: 50%;
         left: 50%;
         margin-right: -50%;
-        width: 95%;
+        width: 90%;
         transform: translate(-50%, -50%) }
 }
 </style>
@@ -189,6 +192,7 @@
 function startTimer(duration, display) {
     var timer = duration, minutes, seconds;
     setInterval(function () {
+     
         minutes = parseInt(timer / 60, 10)
         seconds = parseInt(timer % 60, 10);
 
@@ -197,9 +201,21 @@ function startTimer(duration, display) {
 
         display.textContent = minutes + ":" + seconds;
 
+        if (timer > 60){
+          $('#time').animate({'opacity': 0.9}, 0, function(){
+          $(this).html(display.textContent).animate({'opacity': 1}, 500);
+          setTimeout(function() { $("#time").text(display.textContent).animate({'opacity': 1}, 250); }, 700);;});
+        }
+
+        if (timer < 60){
+          $('#time').animate({'opacity': 0.9}, 0, function(){
+          $(this).html("<font color='red'>"+display.textContent+"</font").animate({'opacity': 1}, 500);
+          setTimeout(function() { $("#time").html("<font color='red'>"+display.textContent+"</font").animate({'opacity': 1}, 250); }, 700);;});
+        }
+
         if (--timer < 0) {
             timer = duration;
-            window.location.href = "./utility/logout.ut.php"
+            window.location.href = "/utility/logout.ut.php"
         }
     }, 1000);
 }
