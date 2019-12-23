@@ -48,7 +48,7 @@
                         <a class="nav-link" href="./pathfinder.php"><i class="fas fa-project-diagram fa-lg"></i></a>
             </li>
             <li class="nav-item">
-                        <a class="nav-link" href="./events/xd.php"><i class="fas fa-calendar-alt fa-lg"></i></a>
+                        <a class="nav-link" href="./events/"><i class="fas fa-calendar-alt fa-lg"></i></a>
             </li>
             <li class="nav-item">
                         <a class="nav-link" href="./profile/index.php"><i class="fas fa-user-alt fa-lg"></i></a>
@@ -91,7 +91,7 @@
             echo '<table align=center width=400px class=successtable><tr><td><div class="alert alert-info">'.$alert_logout_successful.' </div></tr></td></table>';
           }
           if($_GET['logout'] == "pwChange"){
-            echo '<table align=center width=200px class=successtable><tr><td><div class="alert alert-info">Successfully changed password! </div></tr></td></table>';
+            echo '<table align=center width=200px class=successtable><tr><td><div class="alert alert-info">Sikeres jelszócsere! </div></tr></td></table>';
           }
           if($_GET['error'] == "WrongPass"){
             echo '<table align=center width=200px class=successtable><tr><td><div class="alert alert-danger"><strong>Hiba - </strong>Helytelen jelszó! </div></tr></td></table>';
@@ -100,7 +100,7 @@
             echo '<table align=center width=200px class=successtable><tr><td><div class="alert alert-danger"><strong>Hiba - </strong>Hibás felhasználónév / jelszó! </div></tr></td></table>';
           }
           if($_GET['error'] == "AccessViolation"){
-            echo '<table align=center width=200px class=successtable><tr><td><div class="alert alert-danger"><strong>Hiba - </strong>Ehhez a funkcióhoz be kell jelentkezned! </div></tr></td></table>';
+            echo '<table align=center width=200px class=successtable><tr><td><div class="alert alert-danger"><strong>Hiba - </strong>Ehhez a funkcióhoz be kell jelentkezned, vagy nincs jogosultságod megtekinteni az oldalt!</div></tr></td></table>';
           }
                 ?>
             </ul>
@@ -116,6 +116,7 @@
                    <div class="row justify-content-center" style="text-align: center;"><div class="col-7 col-sm-4"><input type="text" name="useremail" placeholder="Felhasználónév/E-mail" class="form-control mb-2 mr-sm-2"></div></div>
                     <div class="row justify-content-center" style="text-align: center;"><div class="col-7 col-sm-4"><input type="password" name="pwd" placeholder="Jelszó" class="form-control mb-2 mr-sm-2"></div></div>
                     <div class="row justify-content-center" style="text-align: center;"><div class="col-5 col-sm-4"><button class="btn btn-dark" type="submit" name="login-submit" align=center>Bejelentkezés</button></div></div>
+                    <div class="row justify-content-center" style="text-align: center;"><div class="col-5 col-sm-4"><a href="./pwReset.php">Elfelejtett jelszó</a></div></div>
                     </div>
                     </form>';}
             else{

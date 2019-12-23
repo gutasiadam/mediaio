@@ -28,11 +28,14 @@ if(!isset($_SESSION['userId'])){
 						  <a class="nav-link" href="./retrieve.php"><i class="fas fa-download fa-lg"></i></a>
 						</li>
             <li class="nav-item active">
-						  <a class="nav-link" href="./adatok.php"><i class="fas fa-database fa-lg"></i></a>
+						  <a class="nav-link" href="#"><i class="fas fa-database fa-lg"></i></a>
 						</li>
 						<li class="nav-item">
                         	<a class="nav-link" href="./pathfinder.php"><i class="fas fa-project-diagram fa-lg"></i></a>
 						</li>
+            <li class="nav-item">
+                        <a class="nav-link" href="./events/"><i class="fas fa-calendar-alt fa-lg"></i></a>
+            </li>
 						<li class="nav-item">
                         <a class="nav-link" href="./profile/index.php"><i class="fas fa-user-alt fa-lg"></i></a>
             			</li>

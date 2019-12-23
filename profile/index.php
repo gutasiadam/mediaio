@@ -28,6 +28,9 @@
             <li class="nav-item">
                         <a class="nav-link" href="../pathfinder.php"><i class="fas fa-project-diagram fa-lg"></i></a>
             </li>
+            <li class="nav-item">
+                        <a class="nav-link" href="../events/"><i class="fas fa-calendar-alt fa-lg"></i></a>
+            </li>
             <li class="nav-item active">
                         <a class="nav-link" href="#"><i class="fas fa-user-alt fa-lg"></i></a>
             </li>
@@ -55,7 +58,9 @@
             echo '
                     <table class="logintable">
                     <tr><td><form action="points.php"><button class="btn btn-success">Pontszámok <i class="fas fa-calculator"></i></button></form></td></tr>
-                    <tr><td><form action="roles.php"><button class="btn btn-light">Felhasználók engedélyek módosítása <i class="fas fa-radiation"></i></i></button></form></td></tr>
+                    <tr><td><form action="../budget/"><button class="btn btn-info">Költségvetés <i class="fas fa-coins"></i></button>
+                    </form> </td></tr>
+                    <tr><td><form action="roles.php"><button class="btn btn-light">Felhasználói engedélyek módosítása <i class="fas fa-radiation"></i></i></button></form></td></tr>
                     </table>';
           }
         }else{
@@ -70,6 +75,11 @@
   width: 30%;
   text-align: center;
   margin: 0 auto; 
+}
+
+#unavailable{
+  font-size:18px;
+  color: red;
 }
 </style>
 <script>

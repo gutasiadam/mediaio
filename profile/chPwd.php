@@ -49,7 +49,10 @@
             <tr><td><input class="form-control mb-2 mr-sm-2" type="password" name="pwd-Old" placeholder="Jelenlegi jelszó"></td></tr> <br>
             <tr><td><input class="form-control mb-2 mr-sm-2" type="password" name="pwd-New" placeholder="Új jelszó" ></td></tr> <br>
             <tr><td><input class="form-control mb-2 mr-sm-2" type="password" name="pwd-New-Check" placeholder="Új jelszó még egyszer"></td></tr> <br>
-            <tr><td><br><button class="btn btn-dark" align=center type="submit" name="pwdCh-submit">Mehet</button></td></tr>
+            <tr><td><br><button class="btn btn-dark" id="submitPwdCh"align=center type="submit" name="pwdCh-submit">Mehet</button></td></tr>
+            <tr><td><div class="spinner-border" role="status">
+            <span class="sr-only">Loading...</span>
+            </div></tr></td>
             </form>
             ';
                 if (isset($_GET['error'])){
@@ -76,6 +79,13 @@
     ?>
 </html>
 <script>
+$("#submitPwdCh").click(function(){
+  $(".spinner-border").fadeIn();
+});
+
+$( document ).ready(function() {
+  $(".spinner-border").hide();
+});
 (function(){
   setInterval(updateTime, 1000);
 });

@@ -71,7 +71,7 @@ $serverName="localhost";
     <body>  
         <div class="container">
    <br />
-   <h1 align="center">Ponttábla</h1><br>
+   <h1 id="mainTitle" align="center">Ponttábla</h1><br>
 			
 <div class="form-group">
    <div class="panel panel-default">
@@ -84,6 +84,7 @@ $serverName="localhost";
         $conn->close();
         $imodal=0;
         $resultArray = [];
+        $pointsData =[];
 
           while($row = $result->fetch_assoc()) { 
               array_push($resultArray, $row);
@@ -94,7 +95,10 @@ $serverName="localhost";
                 $result2 = mysqli_query($conn, $query);
                 $conn->close();
                 while($codeRow = $result2->fetch_assoc()) {$dbCode = $codeRow["Code"]; $dbUser = $codeRow["AuthUser"];}*/
-                
+                $tempArray = [$row["firstName"],$row["lastName"],$row["UserPoints"]];
+  array_push($pointsData,$tempArray);
+  //echo($pointsData[$imodal][2]);
+  //echo($imodal);
                 echo '
                 <div class="row">
                 <div class="col-4">
@@ -130,12 +134,13 @@ $serverName="localhost";
                   <div class="modal-body">
                     <form action="./points.php" class="form-group" method=post>
                 <h4>Pontszám</h4> 
-                <input type="number" step="0.01" class="form-control" name="points" value=""/> 
-                <input type="hidden" class="form-control" name="user" value="'.$row["usernameUsers"].'"/>
-                <input type="hidden" class="form-control" name="currentpoints" value="'.$row["UserPoints"].'"/> 
+                <input type="number" step="0.01" class="form-control" id="PValue'.$imodal.'" name="points" value=""/> 
+                <input type="hidden" class="form-control" name="user" id="modalnum'.$imodal.'" value="'.$row["usernameUsers"].'"/>
+                <input type="hidden" class="form-control" name="user" id="user'.$imodal.'" value="'.$row["usernameUsers"].'"/>
+                <input type="hidden" class="form-control" name="currentpoints" id="currentpoints'.$imodal.'" value="'.$row["UserPoints"].'"/> 
                 <h6 id="emailHelp" class="form-text text-muted"> <strong>Negatív és nem egész számot is beírhatsz</strong> ( pl.: -3.14 )<br>A gomb lenyomása után töltsd újra az oldalt, hogy a ponttábla frissüljön!</h6>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Mégsem</button>
-                    <button type="submit" class="btn btn-success authToggle">Módosítás</button>
+                    <button type="submit" id="authToggle" class="btn btn-success authToggle" value='.$imodal.' onclick="submitData(this.value)">Módosítás</button>
                     </form>
               </div>
                     </div>      
@@ -144,8 +149,7 @@ $serverName="localhost";
             }
             
     $connect = null;
-    session_start();
-      if (isset($_POST["points"])){
+      /*if (isset($_POST["points"])){
         $serverName = "localhost";
         $dbUserName = "root";
         $dbPassword = "umvHVAZ%";
@@ -166,7 +170,7 @@ $serverName="localhost";
         else{
             echo "OOF";
         }*/
-      }
+      #}
 
 ?>
     </body>  
@@ -178,6 +182,48 @@ $serverName="localhost";
 </style>
 
 <script>
+function submitData(val) {
+  //alert(val);
+  var pointUpdate = document.getElementById('PValue'+val).value;
+  var userUpdate = document.getElementById('user'+val).value;
+  var pointsCurrent = document.getElementById('currentpoints'+val).value;
+  //alert(pointUpdate+userUpdate+pointsCurrent);
+      var newScore= (parseFloat(pointUpdate)+parseFloat(pointsCurrent)).toFixed(2);
+      //alert(newScore);
+      $.ajax({
+    type: 'POST',
+    url: "./pointUpdate.php",
+    data: {newScore:parseFloat(newScore), userUpdate:userUpdate},
+    success: function (response) {
+     //alert(response);
+    document.getElementById("mainTitle").innerHTML = "Ponttábla";
+    },//window.location.href = './takeout.php?state=Success';;
+    error: function(XMLHttpRequest, textStatus, errorThrown) { 
+        //alert("Status: " + textStatus); alert("Error: " + errorThrown); 
+    }
+    });
+}
+
+/*$(document).on('click', '#authToggle', function(){
+      var pointUpdate = document.getElementById('PValue').value;
+      var userUpdate = document.getElementById('user').value;
+      var pointsCurrent = document.getElementById('currentpoints').value;
+      alert(pointUpdate+userUpdate+pointsCurrent);
+      var newScore= (parseFloat(pointUpdate)+parseFloat(pointsCurrent)).toFixed(2);
+      alert(newScore);
+      $.ajax({
+    type: 'POST',
+    url: "./pointUpdate.php",
+    data: {newScore:parseFloat(newScore), userUpdate:userUpdate},
+    success: function (response) {
+     alert(response);
+    //document.getElementById("mainTitle").innerHTML = "Ponttábla";
+    },//window.location.href = './takeout.php?state=Success';;
+    error: function(XMLHttpRequest, textStatus, errorThrown) { 
+        alert("Status: " + textStatus); alert("Error: " + errorThrown); 
+    }
+})
+    });*/
 
 function startTimer(duration, display) {
     var timer = duration, minutes, seconds;
