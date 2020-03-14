@@ -21,7 +21,7 @@ if(!isset($_SESSION['userId'])){
     <script src='./timegrid/main.js'></script>
     <script src='./interaction/main.js'></script>
 
-   
+  <title>Event Calendar @ default</title>
   <link href='https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css' rel='stylesheet' />
   <script src="./moment/main.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -75,12 +75,6 @@ if(!isset($_SESSION['userId'])){
 					</div>
 </nav>
     <body>
-    <div class="alert alert-warning alert-dismissible fade show" role="alert">
-  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-    <span aria-hidden="true">&times;</span>
-  </button>
-  <strong>Kedves <?php echo $_SESSION['firstName'];?>!</strong> Amenniyben Firefox böngészőn nézed ezt az oldalt, kérlek használj egy másik böngészőt, mert az adott oldal bizonyos funkciói nem elérhetők róla.
-</div>
     <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -92,21 +86,20 @@ if(!isset($_SESSION['userId'])){
       </div>
       <div class="modal-body">
         <h6>Esemény hozzáadása <span id="addEventInterval"></span> időben</h6>
-        <form id="sendAddEvent" class="form-group">
+        <form id="sendAddEvent">
         <select class="form-control" id="eventTypeSelect" required>
       <option value="" selected disabled hidden>Típus</option>
       <?php if(($_SESSION['role']=="Admin") || ($_SESSION['role']=="Boss")){
-        echo '<option value="#ff6363">Délelőtti iskolai esemény</option>
-        <option value="#db4040">Délutáni iskolai esemény</option>
-        <option value="#bd7966">Hétvégi iskolai esemény</option>
+        echo '<option value="#faa0a0">Délelőtti iskolai esemény</option>
+        <option value="#faa0a0">Délutáni iskolai esemény</option>
+        <option value="#faa0a0">Hétvégi iskolai esemény</option>
         <option value="#59ffba">Workshop</option>
-        <option value="#fffd6b">Szünet</option>
-        <option value="#81c773">Gyűlés</option>';
+        <option value="#f2f0a2">Szünet</option>
+        <option value="#93ba6d">Gyűlés</option>';
       } ?>
-      <option value="#ffb145">Külsős esemény</option>
-      <option value="#917fe3">Otthoni munka</option>
-      <option value="#787878">Egyéb</option></select>
-      </br>
+      <option value="#f7e2b7">Külsős esemény</option>
+      <option value="#fdffcf">Otthoni munka</option>
+      <option value="#c9c9c9">Egyéb</option></select>
         <input class="form-control" id="addEventName" type="text" placeholder="esemény címe"></input></br>
         <h6 class="mailSend"><i class="fas fa-exclamation-circle"></i> Hozzáadás után az e-mail címedre (<?php echo $_SESSION['email'];?>) érkezni fog egy levél. Kérlek ellenőrizd az adatokat, és az <strong>esemény hozzáadása</strong> linkkel erősítsd meg
         szándékodat. <u>(megerősítés után már nem tudod törölni az eseményt.)</u></h6>
@@ -133,13 +126,11 @@ if(!isset($_SESSION['userId'])){
         </button>
       </div>
       <div class="modal-body">
-      <?php if(($_SESSION['role']=="Admin") || ($_SESSION['role']=="Boss")){
-        echo ' <form id="sendDelEvent">
+        <form id="sendDelEvent">
         <input type="submit" class="btn btn-danger" value="Törlés"></button>
         <input type="hidden" id="delEventId"></input>
         <input type="hidden" id="delEventTitle"></input>
-        </form>';
-      } ?>
+        </form>
         <form id="worksheetShow" name="worksheetShow" onsubmit="workSheetPrepare(this);">
         <input type="submit" class="btn btn-dark" value="Munkalap megtekintése"></button>
         <input type="hidden" id="delEventId"></input>
@@ -153,23 +144,24 @@ if(!isset($_SESSION['userId'])){
     </div>
   </div>
 </div>
-
-
 <table class="table table-bordered" height=90%><tr>
     <td width=100%><div id='calendar'></td></div>
-    <td>
-  <h3 class="text-dark">Eseménynaptár - segítség</h3>
-  <span class="badge badge-success">Hozzáadás</span><h6 class="text-dark">Jelöld ki a naptárban az időszakot, majd töltsd ki a felugró ablakot</h6>
-  <span class="badge badge-danger">Törlés</span><h6 class="text-dark">Kattints rá az adott eseményre, majd válaszd ki a törlés opciót</h6>
-  <span class="badge badge-info">Áttevés</span><h6 class="text-dark">Húzd át az eseményt egy másik napra/időpontra</h6>
-  <span class="badge badge-dark">Rövidítés/hosszabítás</span><h6 class="text-dark">Heti nézetben kezdd el az eseményt le/felfele húzni, akkár több napon át.</h6>
-  <p><h4 class="text-dark">Eseménytípusok színei</h4><table style="table-layout: fixed;">
-  <tr><td class="text-dark" style="background-color:#ff6363;"> Délelőtti iskolai esemény </td>  <td class="text-dark" style="background-color: #81c773; "> Gyűlés </td>  <td class="text-dark" style="background-color: #59ffba;"> Workshop </td></tr>
-  <tr><td class="text-dark" style="background-color: #ffb145;"> Külsős esemény </td>  <td class="text-dark" style="background-color: #db4040;">  Délutáni iskolai esemény </td>     <td class="text-dark" style="background-color: #917fe3;"> Otthoni munka </td></tr>
-  <tr><td class="text-dark" style="background-color: #fffd6b;"> Szünet </td>   <td class="text-dark" style="background-color: #787878;"> Egyéb </td>    <td class="text-dark" style="background-color: #bd7966;"> Hétvégi iskolai esemény </td></tr>
-  </table></p></td>
 </table>
 
+
+    <div id="sideHelp1" class="sideHelp">
+  <a href="javascript:void(0)" class="closebtn" onclick="closeNav()"><i class="fas fa-times fa-2x"></i></a>
+  <h3 class="text-white">Eseménynaptár - segítség</h3>
+  <span class="badge badge-success">Hozzáadás</span><h6 class="text-white">Jelöld ki a naptárban az időszakot, majd töltsd ki a felugró ablakot</h6>
+  <span class="badge badge-danger">Törlés</span><h6 class="text-white">Kattints rá az adott eseményre, majd válaszd ki a törlés opciót</h6>
+  <span class="badge badge-info">Áttevés</span><h6 class="text-white">Húzd át az eseményt egy másik napra/időpontra</h6>
+  <span class="badge badge-dark">Rövidítés/hosszabítás</span><h6 class="text-white">Heti nézetben kezdd el az eseményt le/felfele húzni, akkár több napon át.</h6>
+  <p><h4 class="text-white">Eseménytípusok színei</h4><table style="table-layout: fixed;">
+  <tr><td class="text-dark" style="background-color: #faa0a0;"> <strong>Délelőtti iskolai esemény</strong> </td>  <td class="text-dark" style="background-color: #59ffba;"> Workshop </td>  <td class="text-dark" style="background-color: #fdffcf;"> Otthoni munka </td></tr>
+  <tr><td class="text-dark" style="background-color: #f7e2b7;"> Külsős esemény </td>  <td class="text-dark" style="background-color: #ff4d4d;"> Délutáni iskolai esemény </td>     <td class="text-dark" style="background-color: #f2f0a2;"> Szünet </td></tr>
+  <tr><td class="text-dark" style="background-color: #93ba6d;"> Gyűlés </td>   <td class="text-dark" style="background-color: #c9c9c9;"> Egyéb </td>    <td class="text-dark" style="background-color: #faa0a0;"> Hétvégi iskolai esemény </td></tr>
+  </table></p>
+</div>
   </body>
 </html>
 <style>
@@ -181,15 +173,10 @@ if(!isset($_SESSION['userId'])){
   top: 0; /* Stay at the top */
   left: 0;
   background-color: #222; /* Black*/
-  overflow-y: hidden;
   overflow-x: hidden; /* Disable horizontal scroll */
   padding-top: 60px; /* Place content 60px from the top */
   transition: 0.5s; /* 0.5 second transition effect to slide in the sidenav */
   padding-left: 10px;
-}
-
-table{
-  text-align: left;
 }
 
 .closebtn{

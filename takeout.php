@@ -5,7 +5,6 @@ include "translation.php";
 if(!isset($_SESSION['userId'])){
   header("Location: index.php?error=AccessViolation");}
 $SESSuserName = $_SESSION['UserUserName'];
-include "version.php";
 error_reporting(E_ALL ^ E_NOTICE);
 // Cookie for ITEM SELECTION (JS --> PHP :3)
 setcookie('Cookie_currentItemSel', 0, time() + (36000), "/");
@@ -97,18 +96,26 @@ if( isset($_POST['data'])){
 var goStatus = 0;
 function checkGoBtn() {
       $("#add").one('click', function () { 
-    // executes only once
+
+    console.log(selectList.lenght);
+    
 
     if (selectList.length >= 1){
+      console.log("Gombhozzáadás");
       if (goStatus == 0){
         $('#sendQueryButtonLoc').append('<button type="submit" class="btn btn-success go_btn mb-2 mr-sm-2" id="goButton" >Go!</button>');
         goStatus++;
       }
      }
+
+     if (selectList.lenght == 0){
+      console.log("GOMTÖRLÉS");
+      $('#goButton').remove();}
     });
 
       $("#add").on('click', function () { 
     if (selectList.lenght == 0){
+      console.log("GOMTÖRLÉS");
       $('#goButton').remove();}
     });
       }</script>
@@ -127,7 +134,7 @@ function checkGoBtn() {
 </head>
       <title><?php echo $applicationTitleFull;?></title>
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-					<a class="navbar-brand" href="index.php"><?php echo $applicationTitleShort;?></a>
+					<a class="navbar-brand" href="index.php"><img src="./utility/logo.png" height="30"></a>
 					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 					  <span class="navbar-toggler-icon"></span>
 					</button>
@@ -243,9 +250,7 @@ window.onload = function () {
       document.getElementById("liveSelArrayResult").innerHTML = "";
 
       var currentItemSel = document.getElementById("id_itemNameAdd").value;
-      if (currentItemSel == ''){
-
-      }
+      if (currentItemSel == ''){}
       if (currentItemSel != ''){
         document.cookie = "Cookie_currentItemSel = "+currentItemSel;
         var PATTERN = currentItemSel,
@@ -260,6 +265,7 @@ window.onload = function () {
           //console.log(dbItems);
           document.getElementById('id_itemNameAdd').value = '';
           selectList.push(currentItemSel);
+          checkGoBtn();
           $('#liveSelArrayResult').append('<td>'+selectList+'</td>');
           $('#dynamic_field').append('<tr id="row'+i+'"><td>'+currentItemSel+'</td><td><button type="button" name="remove" id="'+i+'" class="btn btn-danger btn'+i+' btn_remove">X</button></td></tr>');
          console.log(i + "id with "+ currentItemSel + " created and occupied.");
@@ -292,9 +298,11 @@ window.onload = function () {
     var button_id = $(this).attr("id");
     dbItems.push(selectList[button_id-2]);
     dbItems.sort;
-    selectList[button_id-2]=null;
+    //selectList[button_id-2]=null;
+    selectList.splice(selectList[button_id-2], 1);
     $('#row'+button_id+'').remove();
-
+    console.log(selectList.length);
+    checkGoBtn();
     document.getElementById("liveSelArrayResult").innerHTML = "";
     $('#liveSelArrayResult').append('<td>'+selectList+'</td>');
 
@@ -323,6 +331,8 @@ window.onload = function () {
     setTimeout(function() { $("#doTitle").text("Arpad Media IO").animate({'opacity': 1}, 400); }, 3800);;});
     $('#dynamic_field').empty();
     var selectList = [];
+    console.log("selectList:"+selectList);
+    $('#goButton').fadeOut();
     },//window.location.href = './takeout.php?state=Success';;
     error: function(XMLHttpRequest, textStatus, errorThrown) { 
         alert("Status: " + textStatus); alert("Error: " + errorThrown); 
@@ -345,6 +355,7 @@ window.onload = function () {
           if (tempAddCheck == 1){
             console.log("Err1 - Adatbázishiba, vagy a tárgy már ki van véve")
             $('.btn'+(selectList.length+1)).click();
+            checkGoBtn();
            //ERROR 001
             $('#doTitle').animate({'opacity': 0}, 400, function(){
         $(this).html('<h2 class="text text-warning" role="alert">'+takeout_Unavailible+'</h2>').animate({'opacity': 1}, 400);
@@ -377,6 +388,19 @@ window.onload = function () {
   
 
 });
+function loadFile(filePath) {
+  var result = null;
+  var xmlhttp = new XMLHttpRequest();
+  xmlhttp.open("GET", filePath, false);
+  xmlhttp.send();
+  if (xmlhttp.status==200) {
+    result = xmlhttp.responseText;
+  }
+  return result.split("\n");
+  
+}
+ 
+var dbItems=(loadFile("./utility/DB_Elements.txt"));
 // dbItem remover tool - Prevents an item to be added twice to the list
 function arrayRemove(arr, value) {
 

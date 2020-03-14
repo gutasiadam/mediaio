@@ -1,6 +1,5 @@
 <?php 
   include "translation.php";
-  include "version.php";
   error_reporting(E_ALL ^ E_NOTICE);
   //require 'header.php'; NOT NECESSARY, SHOULD BE USED IN THE FUTURE
 ?>
@@ -22,10 +21,32 @@
 <body>
     <header>
                 <?php 
+
+
                 if(isset($_SESSION['userId'])){
+                  $host=$ftp_ip;
+$output=shell_exec('ping -n 1 '.$host);
+
+//echo "<pre>$output</pre>"; //for viewing the ping result, if not need it just remove it
+
+if (strpos($output, 'out') !== false) {
+    $state = "red";
+}
+    elseif(strpos($output, 'expired') !== false)
+{
+  $state = "yellow";
+}
+    elseif(strpos($output, 'data') !== false)
+{
+  $state = "green";
+}
+else
+{
+  $state = "black";
+}
                     date_default_timezone_set("Europe/Budapest"); 
                     echo '<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-					<a class="navbar-brand" href="index.php">Arpad Media IO</a>
+					<a class="navbar-brand" href="index.php"><img src="./utility/logo.png" height="30"></a>
 					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 					  <span class="navbar-toggler-icon"></span>
 					</button>
@@ -80,28 +101,9 @@
 					  
                     ?>
                     <?php
-                }else{
-                    echo '';
                 }
           // Handle specific GET requests
-          if($_GET['signup'] == "success"){
-            echo '<table align=center width=200px class=successtable><tr><td><div class="alert alert-success"><strong> - </strong>Sikeres regisztráció! </div></tr></td></table>';
-          }
-          if($_GET['logout'] == "success"){
-            echo '<table align=center width=400px class=successtable><tr><td><div class="alert alert-info">'.$alert_logout_successful.' </div></tr></td></table>';
-          }
-          if($_GET['logout'] == "pwChange"){
-            echo '<table align=center width=200px class=successtable><tr><td><div class="alert alert-info">Sikeres jelszócsere! </div></tr></td></table>';
-          }
-          if($_GET['error'] == "WrongPass"){
-            echo '<table align=center width=200px class=successtable><tr><td><div class="alert alert-danger"><strong>Hiba - </strong>Helytelen jelszó! </div></tr></td></table>';
-          }
-          if($_GET['error'] == "NoUser"){
-            echo '<table align=center width=200px class=successtable><tr><td><div class="alert alert-danger"><strong>Hiba - </strong>Hibás felhasználónév / jelszó! </div></tr></td></table>';
-          }
-          if($_GET['error'] == "AccessViolation"){
-            echo '<table align=center width=200px class=successtable><tr><td><div class="alert alert-danger"><strong>Hiba - </strong>Ehhez a funkcióhoz be kell jelentkezned, vagy nincs jogosultságod megtekinteni az oldalt!</div></tr></td></table>';
-          }
+          
                 ?>
             </ul>
         </nav>
@@ -111,40 +113,103 @@
     <?php if(!isset($_SESSION['userId'])){echo '
                     
                     <form action="utility/login.ut.php" method="post" class="formmain" id="formmain" autocomplete="off" >
-                    <h1 align=center class="rainbow">'.$applicationTitleShort.' </h1>
+                    <h6 align=center width="50%" id="SystemMsg" class="successtable2" style="display:none;">XD</h6>
+                    <h1 align=center class="rainbow">'.$applicationTitleFull.' </h1>
 		                <h4 align=center>'.$application_version_text.$application_Version.'</h4>
                    <div class="row justify-content-center" style="text-align: center;"><div class="col-7 col-sm-4"><input type="text" name="useremail" placeholder="Felhasználónév/E-mail" class="form-control mb-2 mr-sm-2"></div></div>
                     <div class="row justify-content-center" style="text-align: center;"><div class="col-7 col-sm-4"><input type="password" name="pwd" placeholder="Jelszó" class="form-control mb-2 mr-sm-2"></div></div>
                     <div class="row justify-content-center" style="text-align: center;"><div class="col-5 col-sm-4"><button class="btn btn-dark" type="submit" name="login-submit" align=center>Bejelentkezés</button></div></div>
                     <div class="row justify-content-center" style="text-align: center;"><div class="col-5 col-sm-4"><a href="./pwReset.php">Elfelejtett jelszó</a></div></div>
                     </div>
-                    </form>';}
+                    </form><footer class="page-footer font-small blue"> <div class="fixed-bottom" align="center"><p>'.$applicationTitleFull.' <strong>ver. '.$application_Version.'</strong><br /> Code by <a href="https://github.com/d3rang3">Adam Gutasi</a></p></div></footer>';}
             else{
               echo '
+              <div class="alert alert-warning alert-dismissible fade show" id="note" role="alert">
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+  <strong>Kedves '.$_SESSION['firstName'].'!</strong> Az oldal <u>folyamatos fejlesztés</u> alatt áll. Ha hibát szeretnél bejelenteni/észrevételed van, írj az arpad.media.io@gmail.com címre, vagy <a href="mailto:arpad.media.io@gmail.com?Subject=MediaIO%20Hibabejelent%C3%A9s" target="_top">írj most egy e-mailt!</a>
+</div>
               <h1 align=center class="rainbow">Árpád Média IO </h1>
 		                <h4 align=center>'.$application_version_text.$application_Version.'</h4>
-              <div class="row justify-content-center" style="text-align: center;">
+              <div class="row justify-content-center" style="text-align: center; width:100%; margin: 0 auto;">
               <div class="col-6 col-sm-2"><a class="nav-link ab" href="./takeout.php"><i class="fas fa-upload fa-3x"></i><br><h5>'.$index_takeOut.'</h5></a></div>
               <div class="col-6 col-sm-2 offset-md-1"><a class="nav-link ab" href="./retrieve.php"><i class="fas fa-download fa-3x"></i><br><h5>'.$index_Retrieve.'</h5></a></div>
               </div>
               <br>
-              <div class="row justify-content-center" style="text-align: center;">
+              <div class="row justify-content-center" style="text-align: center; width:100%; margin: 0 auto;">
               <div class="col-6 col-sm-2"><a class="nav-link ab" href="./adatok.php"><i class="fas fa-database fa-3x"></i><br><h5>'.$index_Data.'</h5></a></div>
               <div class="col-6 col-sm-2 offset-md-1"><a class="nav-link ab" href="./pathfinder.php"><i class="fas fa-project-diagram fa-3x"></i><br><h5>'.$index_PathFinder.'</h5></a></div>
               </div>
               <br>
-              <div class="row justify-content-center" style="text-align: center;">
+            <div class="row justify-content-center" style="text-align: center; width:100%; margin: 0 auto;">
+              <div class="col-6 col-sm-2"><a class="nav-link ab" href="./adatok.php"><i class="fas fa-calendar-alt fa-3x"></i><br><h5>'."Naptár".'</h5></a></div>
+              <div class="col-6 col-sm-2 offset-md-1"><a class="nav-link ab" href="http://80.99.70.46/mftp" target="_blank"><i class="fas fa-server fa-3x" style="color:'.$state .'"></i><br><h5>'."Fájlszerver".'</h5></a></div>
+              </div>
+              <br>
+              <div class="row justify-content-center" style="text-align: center; width:100%; margin: 0 auto;">
               <div class="col-6 col-sm-2"><a class="nav-link ab" href="./profile/index.php"><i class="fas fa-user-alt fa-3x"></i><br><h5>'.$index_Profile.'</h5></a></div>
               <div class="col-6 col-sm-2 offset-md-1"><a class="nav-link ab" href="./help.php"><i class="fas fa-question-circle fa-3x"></i><br><h5>'.$index_Help.'</h5></a></div>
-            </div>';
+            </div>
+              <footer class="page-footer font-small blue"> <div class="fixed-bottom" align="center"><p>'.$applicationTitleFull.' <strong>ver. '.$application_Version.'</strong><br /> Code by <a href="https://github.com/d3rang3">Adam Gutasi</a></p></div></footer>';
+            }
+            
+            
+            if($_GET['signup'] == "success"){
+              echo '<script>document.getElementById("SystemMsg").innerHTML="Sikeres regisztráció!";
+              document.getElementById("SystemMsg").className = "alert alert-success successtable";
+              $("#SystemMsg").fadeIn();
+              setTimeout(function(){ $("#SystemMsg").fadeOut(); }, 6000);
+              </script>';
+            }
+            if($_GET['logout'] == "success"){
+              echo '<script>document.getElementById("SystemMsg").innerHTML="Sikeres kijelentkezés!";
+              document.getElementById("SystemMsg").className = "alert alert-success successtable";
+              $("#SystemMsg").fadeIn();
+              setTimeout(function(){ $("#SystemMsg").fadeOut(); }, 6000);
+              </script>';} // ÁTMÁSOLNI
+            if($_GET['logout'] == "pwChange"){
+              echo '<script>document.getElementById("SystemMsg").innerHTML="Sikeres jelszócsere!";
+              document.getElementById("SystemMsg").className = "alert alert-success successtable";
+              $("#SystemMsg").fadeIn();
+              setTimeout(function(){ $("#SystemMsg").fadeOut(); }, 6000);
+              </script>';
+            }
+            if($_GET['error'] == "WrongPass"){
+              echo '<script>document.getElementById("SystemMsg").innerHTML="Helytelen jelszó!";
+              document.getElementById("SystemMsg").className = "alert alert-danger successtable";
+              $("#SystemMsg").fadeIn();
+              setTimeout(function(){ $("#SystemMsg").fadeOut(); }, 6000);
+              </script>';
+            }
+            if($_GET['error'] == "NoUser"){
+              echo '<script>document.getElementById("SystemMsg").innerHTML="Hibás felhasználónév / jelszó!";
+              document.getElementById("SystemMsg").className = "alert alert-danger successtable";
+              $("#SystemMsg").fadeIn();
+              setTimeout(function(){ $("#SystemMsg").fadeOut(); }, 6000);
+              </script>';
+            }
+            if($_GET['error'] == "AccessViolation"){
+              echo '<script>document.getElementById("SystemMsg").innerHTML="Ehhez a funkcióhoz be kell jelentkezned!";
+              document.getElementById("SystemMsg").className = "alert alert-danger successtable";
+              $("#SystemMsg").fadeIn();
+              setTimeout(function(){ $("#SystemMsg").fadeOut(); }, 6000);
+              </script>';
             }?>
-    
-    
-      
+
 	</body>
 <style>
 .successtable{
   width: 30%;
+  margin: 0 auto;
+  margin-bottom: 10px;
+}
+
+.successtable2{
+  width: 30%;
+  margin: 0 auto;
+  margin-bottom: 10px;
+  color: white;
 }
 
 .logintable{
@@ -178,6 +243,10 @@
   color: #ffffff;
 }
 
+#note {
+  z-index: 10;
+}
+
 .formmain{
   position: absolute;
         top: 50%;
@@ -189,6 +258,8 @@
 </style>
 
 <script type="text/javascript">
+
+
 
 function startTimer(duration, display) {
     var timer = duration, minutes, seconds;
@@ -216,7 +287,7 @@ function startTimer(duration, display) {
 
         if (--timer < 0) {
             timer = duration;
-            window.location.href = "/utility/logout.ut.php"
+            window.location.href = "utility/logout.ut.php"
         }
     }, 1000);
 }

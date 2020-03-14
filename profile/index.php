@@ -45,12 +45,13 @@
                       </form>
                       <a class="nav-link my-2 my-sm-0" href="../help.php"><i class="fas fa-question-circle fa-lg"></i></a>
 					</div>
-		</nav>
+    </nav>
+    <footer class="page-footer font-small blue"> <div class="fixed-bottom" align="center"><p>'.$applicationTitleFull.' <strong>ver. '.$application_Version.'</strong><br /> Code by <a href="https://github.com/d3rang3">Adam Gutasi</a></p></div></footer>
 
                     <body>
                     <h1 align=center>Opciók</h1>
                     <table class="logintable">
-                    <tr><td><form action="pfcurr.php"><button class="btn btn-dark">Mutasd a nálam levő tárgyakat</button></form></td></tr>
+                    <tr><td><form action="pfcurr.php"><button class="btn btn-dark">Mutasd a nálam levő tárgyakat <i class="fas fa-project-diagram"></i></button></form></td></tr>
                     <tr><td><form action="chpwd.php"><button class="btn btn-warning">Jelszócsere <i class="fas fa-key"></i></button></form></td></tr>
                     <tr><td><form action="userlist.php"><button class="btn btn-dark">Felhasználók eléhetőségeinek megtekintése <i class="fas fa-address-book"></i></i></button></form></td></tr>
                     </table>';
@@ -59,8 +60,12 @@
                     <table class="logintable">
                     <tr><td><form action="points.php"><button class="btn btn-success">Pontszámok <i class="fas fa-calculator"></i></button></form></td></tr>
                     <tr><td><form action="../budget/"><button class="btn btn-info">Költségvetés <i class="fas fa-coins"></i></button>
-                    </form> </td></tr>
-                    <tr><td><form action="roles.php"><button class="btn btn-light">Felhasználói engedélyek módosítása <i class="fas fa-radiation"></i></i></button></form></td></tr>
+                    </form> </td></tr>';
+                    if($_SESSION['role']=="Boss"){
+                      echo '<tr><td><form action="../utility/refetchData.php"><button class="btn btn-success">Adattáblák frissítése <i class="fas fa-sync"></i></i></button></form></td></tr>';
+                    }
+                    echo '<tr><td><form action="roles.php"><button class="btn btn-danger">Felhasználói engedélyek módosítása <i class="fas fa-radiation"></i></i></button></form></td></tr>
+                    <tr><td><form action="stats.php"><button class="btn btn-dark">Áttekintés <i class="fas fa-chart-pie"></i></i></button></form></td></tr>
                     </table>';
           }
         }else{

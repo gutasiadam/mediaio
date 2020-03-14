@@ -45,6 +45,9 @@ $serverName="localhost";
             <li class="nav-item">
                         	<a class="nav-link active" href="./pfcurr.php"><i class="fas fa-project-diagram fa-lg"></i></a>
             			</li>
+                  <li class="nav-item">
+                        <a class="nav-link" href="../events/"><i class="fas fa-calendar-alt fa-lg"></i></a>
+            </li>
             <li class="nav-item">
                         <a class="nav-link" href="../profile/index.php"><i class="fas fa-user-alt fa-lg"></i></a>
             </li>

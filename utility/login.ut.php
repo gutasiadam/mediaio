@@ -32,7 +32,7 @@
                         $_SESSION['firstName'] = $row['firstName'];
                         $_SESSION['email']= $row['emailUsers'];
                         $_SESSION['lastName'] = $row['lastName'];
-                        $_SESSION['fullName'] = ($row['firstName']+" "+$row['lastName']);
+                        $_SESSION['fullName'] = ($row['lastName']." ".$row['firstName']);
                         $_SESSION['role'] = $row['Userrole'];
                         $_SESSION['color'] = "#FFFF66";
 

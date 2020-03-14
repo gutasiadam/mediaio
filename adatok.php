@@ -51,12 +51,11 @@ if(!isset($_SESSION['userId'])){
 					  <a class="nav-link my-2 my-sm-0" href="#"><i class="fas fa-question-circle fa-lg"></i></a>
 					</div>
 </nav>
-<div class="form-group">
+<!--<div class="form-group">
         <table id="itemSearch" align="left"><tr><td><div class="autocomplete" method="GET">
     				<input id="id_itemNameAdd" type="text" name="add" class="form-control mb-2 mr-sm-2" placeholder='<?php echo $applicationSearchField;?>'></div></td>
-            <td><button type="button" name="add" id="add" class="btn btn-info2 add_btn mb-2 mr-sm-2" onclick="checkGoBtn()">Keress</button> </button>     <span id='sendQueryButtonLoc'></span></td>
-  			</tr></table>
-
+            <td><button type="button" name="add" id="keres1" class="btn btn-info2 add_btn mb-2 mr-sm-2">Keress</button> </button>     <span id='sendQueryButtonLoc'></span></td>-->
+  			<td><h4 id="doTitle">Rendezés név szerint növekvő sorrendben</h4></td></tr></table>
 <?php 
 //$allowedIP = array("31.46.204.50", "80.99.70.46", "192.168.0.1", "127.0.0.1", "77.234.86.20");
 //if(!in_array($_SERVER['REMOTE_ADDR'], $allowedIP) && !in_array($_SERVER["HTTP_X_FORWARDED_FOR"], $allowedIP)) {
@@ -79,19 +78,19 @@ $serverName="localhost";
 	$result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
-	echo "<table width='50' align=center class="."table"."><th>UID</th><th>Name</th><th>Type</th><th>Out by</th>";
+	echo "<table width='50' id="."dataTable"." align=center class="."table"."><th onclick=sortTable(0)>UID</th><th onclick=sortTable(1)>Name</th><th>Type</th><th>Out by</th>";
      //output data of each row
     //Displays amount of records found in leltar_master DB
     while($row = $result->fetch_assoc()) {
 		if ($countOfRec == 50){
 		}
 		if($row["TakeRestrict"]=="*"){
-			echo "<tr style='background-color:#fffeab;' ><a id=".$row["UID"]."><td>".$row["UID"]. "</td><td>" . $row["Nev"]. "</td><td>" . $row["Tipus"]. "</td><td><strong>". $row["RentBy"]."</strong></td></tr></a>";
+			echo "<tr style='background-color:#fffeab;' ><td><a id=#".$row["UID"]."></a>".$row["UID"]. "</td><td>" . $row["Nev"]. "</td><td>" . $row["Tipus"]. "</td><td><strong>". $row["RentBy"]."</strong></td></tr>";
 		}
 		else if($row["Status"]==0){
-			echo "<tr style='background-color:#F5B8B8;' ><a id=".$row["UID"]."><td>".$row["UID"]. "</td><td>" . $row["Nev"]. "</td><td>" . $row["Tipus"]. "</td><td><strong>". $row["RentBy"]."</strong></td></tr></a>";
+			echo "<tr style='background-color:#F5B8B8;' ><td><a id=#".$row["UID"]."></a>".$row["UID"]. "</td><td>" . $row["Nev"]. "</td><td>" . $row["Tipus"]. "</td><td><strong>". $row["RentBy"]."</strong></td></tr>";
 		}else{
-			echo "<tr><a id=".$row["UID"]."><td>".$row["UID"]. "</td><td>" . $row["Nev"]. "</td><td>" . $row["Tipus"]. "</td><td>". "</td></tr></a>";
+			echo "<tr><td><a id=#".$row["UID"]."></a>".$row["UID"]. "</td><td>" . $row["Nev"]. "</td><td>" . $row["Tipus"]. "</td><td>". "</td></tr>";
 		}
 		$countOfRec += 1;
 	}
@@ -99,10 +98,28 @@ if ($result->num_rows > 0) {
     echo "0 results";
 }
 echo "</table>";
-echo '<a href="#ftl099"> Zss</a>';
 $conn->close();?>
 <script>
 
+$('#keres1').click(function(){
+  var keres1Val=  document.getElementById("id_itemNameAdd").value;
+  console.log(keres1Val);
+/*AJAX CALL EGY PHP Fájlba, onnan már formázva return*/
+}); 
+
+function loadFile(filePath) {
+  var result = null;
+  var xmlhttp = new XMLHttpRequest();
+  xmlhttp.open("GET", filePath, false);
+  xmlhttp.send();
+  if (xmlhttp.status==200) {
+    result = xmlhttp.responseText;
+  }
+  return result.split("\n");
+  
+}
+
+var dbItems=(loadFile("./utility/DB_Elements.txt"));
 // dbItem remover tool - Prevents an item to be added twice to the list
 function arrayRemove(arr, value) {
 
@@ -239,6 +256,78 @@ window.onload = function () {
     setInterval(updateTime, 1000);
     updateTime();
 };
+</script>
+
+<script>
+function sortTable(n) {
+  if(n==1){
+    sMode="név";
+  }else{
+    sMode="UID";
+  }
+  
+  var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+  table = document.getElementById("dataTable");
+  switching = true;
+  //Set the sorting direction to ascending:
+  dir = "asc"; 
+  /*Make a loop that will continue until
+  no switching has been done:*/
+  while (switching) {
+    //start by saying: no switching is done:
+    switching = false;
+    rows = table.rows;
+    /*Loop through all table rows (except the
+    first, which contains table headers):*/
+    for (i = 1; i < (rows.length - 1); i++) {
+      //start by saying there should be no switching:
+      shouldSwitch = false;
+      /*Get the two elements you want to compare,
+      one from current row and one from the next:*/
+      x = rows[i].getElementsByTagName("td")[n];
+      y = rows[i + 1].getElementsByTagName("td")[n];
+      
+      /*check if the two rows should switch place,
+      based on the direction, asc or desc:*/
+      if (dir == "asc") {
+        dMode="növekvő";
+        if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+          //if so, mark as a switch and break the loop:
+          shouldSwitch= true;
+          break;
+        }
+      } else if (dir == "desc") {
+        dMode="csökkenő";
+        if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+          //if so, mark as a switch and break the loop:
+          shouldSwitch = true;
+          break;
+        }
+      }
+    }
+  
+    if (shouldSwitch) {
+      /*If a switch has been marked, make the switch
+      and mark that a switch has been done:*/
+      rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+      switching = true;
+      //Each time a switch is done, increase this count by 1:
+      switchcount ++;      
+    } else {
+      /*If no switching has been done AND the direction is "asc",
+      set the direction to "desc" and run the while loop again.*/
+      if (switchcount == 0 && dir == "asc") {
+        dir = "desc";
+        switching = true;
+      }
+    }
+  }
+  $('#doTitle').animate({'opacity': 0}, 400, function(){
+        $(this).html('<h4 class="text text-info" role="alert">Rendezés '+sMode+' szerint '+dMode+' sorrendben.</h4>').animate({'opacity': 1}, 400);
+        $(this).html('<h4 class="text text-info" role="alert">Rendezés '+sMode+' szerint '+dMode+' sorrendben.').animate({'opacity': 1}, 100);
+        $(this).html('<h4 class="text text-info" role="alert">Rendezés '+sMode+' szerint '+dMode+' sorrendben.').animate({'opacity': 0}, 400);
+    setTimeout(function() { $("#doTitle").text("Rendezés "+sMode+" szerint "+dMode+" sorrendben.").animate({'opacity': 1}, 400); }, 900);;});
+}
 </script>
 
 <style>

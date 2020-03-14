@@ -1,7 +1,6 @@
 <?php 
   include "translation.php";
   require "logincheck.php";
-  include "version.php";
   error_reporting(E_ALL ^ E_NOTICE);
 ?>
 <!DOCTYPE html>
@@ -31,7 +30,7 @@
 				  
 					<div class="collapse navbar-collapse" id="navbarSupportedContent">
 					  <ul class="navbar-nav mr-auto">
-						<li class="nav-item active ">
+						<li class="nav-item ">
 						    <a class="nav-link" href="./index.php"><i class="fas fa-home fa-lg"></i><span class="sr-only">(current)</span></a>
 						</li>
 						<li class="nav-item">
@@ -47,18 +46,24 @@
                         <a class="nav-link" href="./pathfinder.php"><i class="fas fa-project-diagram fa-lg"></i></a>
             </li>
             <li class="nav-item">
+                        <a class="nav-link" href="./events/"><i class="fas fa-calendar-alt fa-lg"></i></a>
+            </li>
+            <li class="nav-item">
                         <a class="nav-link" href="./profile/index.php"><i class="fas fa-user-alt fa-lg"></i></a>
             </li>
             <li>
               <a class="nav-link disabled" href="#">'.$nav_timeLockTitle.' <span id="time">'.$nav_timeLock_StartValue.'</span></a>
             </li>
-            
+            ';if (($_SESSION['role']=="Admin") || ($_SESSION['role']=="Boss")){
+              echo '<li><a class="nav-link disabled" href="#">Admin jogokkal rendelkezel</a></li>';}
+            echo '
 					  </ul>
 						<form class="form-inline my-2 my-lg-0" action=utility/logout.ut.php>
                       <button class="btn btn-danger my-2 my-sm-0" type="submit">'.$nav_logOut.'</button>
                       </form>
 					</div>
-		</nav>
+    </nav>
+    <footer class="page-footer font-small blue"> <div class="fixed-bottom" align="center"><p>'.$applicationTitleFull.' <strong>ver. '.$application_Version.'</strong><br /> Code by <a href="https://github.com/d3rang3">Adam Gutasi</a></p></div></footer>
 ';
                     ?>
                     <?php
@@ -66,24 +71,6 @@
                     echo '';
                 }
           // Handle specific GET requests
-          if($_GET['signup'] == "success"){
-            echo '<table align=center width=200px class=successtable><tr><td><div class="alert alert-success"><strong>Hiba - </strong>Sikeres regisztráció! </div></tr></td></table>';
-          }
-          if($_GET['logout'] == "success"){
-            echo '<table align=center width=200px class=successtable><tr><td><div class="alert alert-info">Sikeres kijelentkezés! </div></tr></td></table>';
-          }
-          if($_GET['logout'] == "pwChange"){
-            echo '<table align=center width=200px class=successtable><tr><td><div class="alert alert-info">Successfully changed password! </div></tr></td></table>';
-          }
-          if($_GET['error'] == "WrongPass"){
-            echo '<table align=center width=200px class=successtable><tr><td><div class="alert alert-danger"><strong>Hiba - </strong>Helytelen jelszó! </div></tr></td></table>';
-          }
-          if($_GET['error'] == "NoUser"){
-            echo '<table align=center width=200px class=successtable><tr><td><div class="alert alert-danger"><strong>Hiba - </strong>Hibás felhasználónév / jelszó! </div></tr></td></table>';
-          }
-          if($_GET['error'] == "AccessViolation"){
-            echo '<table align=center width=200px class=successtable><tr><td><div class="alert alert-danger"><strong>Hiba - </strong>Ehhez a funkcióhoz be kell jelentkezned! </div></tr></td></table>';
-          }
                 ?>
             </ul>
         </nav>
@@ -100,22 +87,29 @@
                     </div>
                     </form>';}
             else{
-              echo '<div class="row justify-content-center" style="text-align: center;">
+              echo '<div class="row justify-content-center" style="text-align: center; width:80%; margin: 0 auto;">
               <div class="col-6 col-sm-2 kivetel" id="kivetel"><a class="nav-link ab" href="#"><i class="fas fa-upload fa-3x"></i><br><h5>'.$index_takeOut.'</h5></a></div>
               <div class="col-6 col-sm-2 offset-md-1 kivetel" id="visszahozas"><a class="nav-link ab" href="#"><i class="fas fa-download fa-3x"></i><br><h5>'.$index_Retrieve.'</h5></a></div>
               </div>
               <!-- Force next columns to break to new line at md breakpoint and up -->
 
               <br>
-              <div class="row justify-content-center" style="text-align: center;">
+              <div class="row justify-content-center" style="text-align: center; width:80%; margin: 0 auto;">
               <div class="col-6 col-sm-2 kivetel" id="adatok"><a class="nav-link ab" href="#"><i class="fas fa-database fa-3x"></i><br><h5>'.$index_Data.'</h5></a></div>
               <div class="col-6 col-sm-2 offset-md-1 kivetel" id="pathfinder"><a class="nav-link ab" href="#"><i class="fas fa-project-diagram fa-3x"></i><br><h5>'.$index_PathFinder.'</h5></a></div>
               </div>
               <br>
-              <div class="row justify-content-center" style="text-align: center;">
-              <div class="col-6 col-sm-2 kivetel" id="profil"><a class="nav-link ab" href="#"><i class="fas fa-wrench fa-3x"></i><i class="fas fa-user-alt fa-3x"></i> <br><h5>'.$index_Profile.'</h5></a></div>
+              <div class="row justify-content-center" style="text-align: center; width:80%; margin: 0 auto;">
+              <div class="col-6 col-sm-2"><a class="nav-link ab" href="./adatok.php"><i class="fas fa-calendar-alt fa-3x"></i><br><h5>'."Naptár".'</h5></a></div>
+              <div class="col-6 col-sm-2 offset-md-1"><a class="nav-link ab" href="http://80.99.70.46/mftp" target="_blank"><i class="fas fa-server fa-3x" style="color:'.$state .'"></i><br><h5>'."Fájlszerver".'</h5></a></div> <!--HREF-->
+              </div>
+              <br>
+              <div class="row justify-content-center" style="text-align: center; width:80%; margin: 0 auto;">
+              <div class="col-6 col-sm-2 kivetel" id="profil"><a class="nav-link ab" href="#"><i class="fas fa-user-alt fa-3x"></i> <br><h5>'.$index_Profile.'</h5></a></div>
               <div class="col-6 col-sm-2 offset-md-1 kivetel" id="segitseg"><a class="nav-link ab " href="#"><i class="fas fa-exclamation-circle fa-3x"></i><i class="fas fa-bug fa-3x"></i><br><h6>'.$index_Help_Further.'</h6></a></div>
-            </div>';
+            </div>
+            
+            ';
             }?>
     <div id="szoveg-kivetel" class="szoveg"><p><h2><?php echo $index_takeOut; ?></h2><br><h4>A kivétel oldalon a leltárban szereplő tárgyakat tudod kivenni. A folyamat a következő:</h4>
     <ol><li>A beviteli mezőbe kezdd el írni annak a tárgynak a nevét, amit ki szeretnél venni. Ahogy elkezded írni a tárgy nevét, felbukkannak a kereső által ajánlott tárgyak.<br><strong>Vedd, figyelembe, hogy a beviteli mező nem enged semmi olyat beírni, ami nem szerepel a leltárban.</strong></li>
@@ -145,7 +139,7 @@
     </ul>
     </p></div>
 
-    <div id="szoveg-pathfinder" class="szoveg"><p><h2><?php echo $index_PathFinder; ?></h2><br>A keresőbe elkezded gépelni a keresett tárgy nevét. <br>Amikor megtaláltad kiválasztod és rányomsz az keress gombra, ekkor a rendszer kiírja neked a keresett tárgy útját, ki mikor vitte el/ hozta vissza, illetve külön van jelölve ha kóddal került vissza a leltárba.<br> Ha másik tárgyat szeretnél megnézni, kezdd újra a folyamatot.
+    <div id="szoveg-pathfinder" class="szoveg"><p><h2><?php echo $index_PathFinder  ; ?></h2><br>A keresőbe elkezded gépelni a keresett tárgy nevét. <br>Amikor megtaláltad kiválasztod és rányomsz az keress gombra, ekkor a rendszer kiírja neked a keresett tárgy útját, ki mikor vitte el/ hozta vissza, illetve külön van jelölve ha kóddal került vissza a leltárba.<br> Ha másik tárgyat szeretnél megnézni, kezdd újra a folyamatot.
     </p></div>
 
     <div id="szoveg-profil" class="szoveg"><p><h2><?php echo $index_Profile; ?></h2><br><ul><li>Első gomb: Itt meg tudod tekinteni az éppen nálad levő dolgokat.Kódot is itt tudsz generálni amivel más tudja visszahozni a cuccaid.
@@ -153,7 +147,7 @@
     </li><li>Második gomb: A jelszavad tudod megváltoztatni.</li><li>Harmadik gomb: A többiek elérhetősége itt található meg.</ul>
     </p></div>
 
-    <div id="szoveg-segitseg" class="szoveg"><p><h2><?php echo $index_Help_Further; ?></h2><br><h4 class="text text-danger">Ha a weboldalon hibát észleltél, vagy további kérdésed van, keresed <strong>Gutási Ádám</strong>-ot személyesen, <br/>Facebookon, a gutasiadm@gmail.com e-mail címen, vagy <a href="mailto:gutasiadm@gmail.com?Subject=MediaIO%20Hibabejelent%C3%A9s" target="_top">írj most egy e-mailt!</a></h4>
+    <div id="szoveg-segitseg" class="szoveg"><p><h2><?php echo $index_Help_Further; ?></h2><br><h4 class="text text-danger">Ha a weboldalon hibát észleltél, vagy további kérdésed van, keresed <strong>Gutási Ádám</strong>-ot személyesen, <br/>Facebookon, az arpad.media.io@gmail.com e-mail címen, vagy <a href="mailto:arpad.media.io@gmail.com?Subject=MediaIO%20Hibabejelent%C3%A9s" target="_top">írj most egy e-mailt!</a></h4>
     </p></div>
       
 	</body>

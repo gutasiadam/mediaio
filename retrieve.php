@@ -4,7 +4,6 @@ if(!isset($_SESSION['userId'])){
   header("Location: index.php?error=AccessViolation");}
 
 $SESSuserName = $_SESSION['UserUserName'];
-include "version.php";
 error_reporting(E_ALL ^ E_NOTICE);
 // Cookie for ITEM SELECTION (JS --> PHP)
 setcookie('Cookie_currentItemSel', 0, time() + (36000), "/");
@@ -167,7 +166,7 @@ var goStatus = 0;
     <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-					<a class="navbar-brand" href="index.php"><?php echo $applicationTitleShort; ?></a>
+					<a class="navbar-brand" href="index.php"><img src="./utility/logo2.png" height="30"></a>
 					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 					  <span class="navbar-toggler-icon"></span>
 					</button>
@@ -252,6 +251,20 @@ var goStatus = 0;
     var value = re.exec(document.cookie);
     return (value != null) ? unescape(value[1]) : null;
   }
+
+  function loadFile(filePath) {
+  var result = null;
+  var xmlhttp = new XMLHttpRequest();
+  xmlhttp.open("GET", filePath, false);
+  xmlhttp.send();
+  if (xmlhttp.status==200) {
+    result = xmlhttp.responseText;
+  }
+  return result.split("\n");
+  
+}
+
+var dbItems=(loadFile("./utility/DB_Elements.txt"));
 //Right at load - start autologout.
 
   var selectList = [];
@@ -382,10 +395,9 @@ if (currentItemSel != ''){
     console.log(i + "id with "+ currentItemSel + " created and occupied.");
           }
           if (tempAddCheck == 2){
-            //$('#needsVerificationTable').append('<td>'+selectList+'</td>');
-            $('#dynamic_field_2').append('<tr id="row'+i+'"><td>'+currentItemSel+'<br><small>'+currentRentby+'</small></td><td><form><div class="form-group"><input type="number" class="form-control" id="authCodeInput'+i+'" placeholder="XXX-XXX"></div></form></td><td><button type="button" class="verify_btn btn-success" name="verify" id="'+i+'" class="btn btn-success btnsucc'+i+' btn_auth">+</button></td><td><button type="button" name="remove" id="'+i+'" class="btn btn-danger btn'+i+' btn_remove">X</button></td></tr>');
+            $('#dynamic_field_2').append('<tr id="row'+i+'"><td>'+currentItemSel+'<br><small>'+currentRentby+'</small></td><td><form><div class="form-group"><input type="number" class="form-control" id="authCodeInput'+i+'" placeholder="XXX-XXX"><input type="hidden" id="authCodeItem'+i+'" class="form-control" value='+currentItemSel+'></input></div></form></td><td><button type="button" class="verify_btn btn-success" name="verify" id="'+i+'" class="btn btn-success btnsucc'+i+' btn_auth">+</button></td><td><button type="button" name="remove" id="'+i+'" class="btn btn-danger btn'+i+' btn_remove">X</button></td></tr>');
     console.log(i + "id with "+ currentItemSel + " created and occupied INTO TABLE 2");
-          needsVerification.push(currentItemSel);
+          needsVerification[i] = currentItemSel;
             selectList[selectList.length-1] = null;
           console.log(needsVerification);
           }
@@ -423,7 +435,7 @@ $(document).on('click', '.verify_btn', function(){
     var button_id = $(this).attr("id");
 
     var check_authCodeInput = document.getElementById("authCodeInput"+button_id).value;
-    console.log("IN! Code to verify : "+check_authCodeInput);
+    console.log("IN! Code to verify : "+check_authCodeInput+" with a CodeItem value of"+needsVerification[button_id]);
 
     if (check_authCodeInput == ""){
       $('#doTitle').animate({'opacity': 0}, 400, function(){

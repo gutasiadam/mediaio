@@ -1,16 +1,16 @@
 <?php 
 session_start();
 error_reporting(E_ALL ^ E_NOTICE);
-//This file is created to make translation easier.
+//This file is created to make translation easier. Default language is HUNAGRIAN.
 
 $alert_logout_successful = "Sikeres kijelentkezés!";
 
-$applicationTitleFull = "Árpád Média Item IO";
+$applicationTitleFull = "Árpád Média IO";
 $applicationTitleShort = "Arpad Média IO";
 $applicationSearchField = "Kezdd el írni a tárgy nevét...";
 $application_version_text = "Jelenlegi verzió: ";
-$application_Version = "1.11";
-$application_DATABASE_PASS= "umvHVAZ%";
+$application_Version = "1.13";
+$application_DATABASE_PASS= "umvHVAZ%"; //This is the password for the account root on the local databse. Change this to your DB's password.
 
 $nav_timeLockTitle = "Időzár";
 $nav_timeLock_StartValue = "10:00";
@@ -35,6 +35,8 @@ $index_PathFinder="PathFinder";
 $index_Profile="Profil";
 $index_Help="Segítség";
 $index_Help_Further="További segítség";
+
+$ftp_ip="localhost"; //Change this to your FTP server's Ip. ( only used for availibility check.)
 
 $help="Segítség";
 $help_description="Kattints az alábbi funkciók egyikére, hogy bővebb információt kapj róluk.";

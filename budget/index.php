@@ -56,42 +56,44 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js">  </script>
   <script src="https://kit.fontawesome.com/2c66dc83e7.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/gijgo@1.9.13/js/gijgo.min.js" type="text/javascript"></script>
+  <link href="https://unpkg.com/gijgo@1.9.13/css/gijgo.min.css" rel="stylesheet" type="text/css" />
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Arpad Media IO</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
-                <h1 align=center>Költségvetés</br><button class="btn btn-warning" data-toggle="modal" data-target="#budgetModal">Bevétel/Kiadás hozzáadása</button></h1>
+                <h1 align=center>Költségvetés</br><div style="padding-top: 10px;"><button class="btn btn-warning" data-toggle="modal" data-target="#budgetModal">Bevétel/Kiadás hozzáadása</button></div></h1>
                 <table class="budget_table">
                 <tr><td><h3>Bevételek</h3></td>
                 <td><h3>Kiadások</h3></td></tr>
                 <tr>
                 <td><table class="income_table money_table"><tr>
                 <?php 
-                $query = "SELECT * FROM `main_budget` WHERE `Type` = 'INC' ORDER BY `Date` DESC";
+                $query = "SELECT * FROM `main_budget` WHERE `Type` = 'INC' ORDER BY `Year` DESC, `Month` DESC, `Day` DESC";
                 $statement = $connect->prepare($query);
                 $statement->execute();
                 $result = $statement->fetchAll();
                 foreach($result as $row){
-                    echo '<tr><td><h3 class="text text-success">+'.$row["Amount"].' Ft</h3><h5>'.$row["Description"].'</h5></td></tr>';
+                  echo '<tr><td><h3 class="text text-success">+'.$row["Amount"].' Ft</h3><h5><strong>'.$row["Year"].'/'.$row["Month"].'/'.$row["Day"].'</strong> '.$row["Description"].'</h5></td></tr>';
                 }
                 ?>
                 </tr></table></td>
                 <td><table class="expense_table money_table "><tr>
                 <?php 
-                $query = "SELECT * FROM `main_budget` WHERE `Type` = 'EXP' ORDER BY `Date` DESC";
+                $query = "SELECT * FROM `main_budget` WHERE `Type` = 'EXP' ORDER BY `Year` DESC, `Month` DESC, `Day` DESC";
                 $statement = $connect->prepare($query);
                 $statement->execute();
                 $result = $statement->fetchAll();
                 foreach($result as $row){
-                    echo '<tr><td><h3 class="text text-danger">-'.$row["Amount"].' Ft</h3><h5>'.$row["Description"].'</h5></td></tr>';
+                    echo '<tr><td><h3 class="text text-danger">-'.$row["Amount"].' Ft</h3><h5><strong>'.$row["Year"].'/'.$row["Month"].'/'.$row["Day"].'</strong> '.$row["Description"].'</h5></td></tr>';
                 }
                 ?>
                 </tr></table></td>
                 </tr></table>
                 <?php 
-                $query = "SELECT * FROM `main_budget` ORDER BY `Date` DESC";
+                $query = "SELECT * FROM `main_budget` ORDER BY `Year` DESC, `Month` DESC, `Day` DESC";
                 $statement = $connect->prepare($query);
                 $statement->execute();
                 $result = $statement->fetchAll();
@@ -116,13 +118,18 @@
       </div>
       <div class="modal-body">
       <form id="sendBudgetForm">
-    <select class="form-control" id="budgetTypeSelect">
+      <div class="form-group">
+      <input autocomplete="off" id="datepicker" class="form-control" type="text" placeholder="Dátum" required></input></div>
+      <div class="form-group">
+      <label class="form-check-label" for="budgetTypeSelect1">Típus</label>
+      <select class="form-control" id="budgetTypeSelect" required>
+      <option value="" selected disabled hidden>Válassz</option>
       <option value="INC">Bevétel</option>
       <option value="EXP">Kiadás</option>
-    </select>
-        <input class="form-control" id="budgetName" type="text" placeholder="Bevétel/Kiadás címe"></input>
-        <input class="form-control" id="budgetValue" type="number" placeholder="Érték"></input>
-        <input type="hidden" id="userName" value=<?php echo $_SESSION["UserUserName"];?>></input>
+    </select></div>
+    <div class="form-group"><input autocomplete="off" class="form-control" id="budgetName" type="text" placeholder="Bevétel/Kiadás címe" required></input></div>
+    <div class="form-group"><input autocomplete="off" class="form-control" id="budgetValue" type="number" placeholder="Érték" required></input></div>
+    <div class="form-group"><input autocomplete="off" type="hidden" id="userName" value=<?php echo $_SESSION["UserUserName"];?>></input></div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Mégsem</button>
@@ -141,10 +148,11 @@ var bType = $( "#budgetTypeSelect").val();
 var bName = document.getElementById('budgetName').value;
 var bVal = document.getElementById('budgetValue').value;
 var bUser = document.getElementById('userName').value;
+var bDate = document.getElementById('datepicker').value;
 $.ajax({
        url:"budgetHandler.php",
        type:"POST",
-       data:{bType:bType, bName:bName, bVal:bVal, bUser:bUser},
+       data:{bType:bType, bName:bName, bVal:bVal, bUser:bUser, bDate:bDate},
        success:function(successNum){
         if(successNum == 1){ // if true (1)
       setTimeout(function(){// wait for 5 secs(2)
@@ -181,6 +189,17 @@ window.onload = function () {
         display = document.querySelector('#time');
     startTimer(fiveMinutes, display);
 };
+$( document ).ready(function() {
+  $('#datepicker').datepicker({
+    format: "yyyy/mm/dd",
+    uiLibrary: 'bootstrap',
+            weekStart: 1,
+            clearBtn: true,
+            language: "hu",
+            autoclose: true
+});
+});
+
 </script>
 
 <style>
@@ -201,6 +220,7 @@ window.onload = function () {
   padding-left: 5px;
   margin-left: 20px;
 }
+
 #unavailable{
   font-size:18px;
   color: red;

@@ -1,0 +1,60 @@
+Fresnel 1000W
+Fresnel 650W
+Fresnel 300W
+Softbox allo 1
+Softbox allo 2
+Softbox fekvo
+Fresnel allvany A
+Fresnel allvany B
+Fresnel allvany C
+Softbox allvany 1
+Softbox allvany 2
+Softbox allvany 3
+Hatter allvany 1
+Hatter allvany 2
+Genius hangfal
+HP laptop
+Spanyolfal
+Neon lampa
+Asztali LED lampa
+Szerver ventillator
+Feher allo ventillator
+Belogo rud
+Lg kis feher projektor
+Negyes kapcsolhato eloszto 1
+Negyes kapcsolhato eloszto 2
+Negyes kapcsolhato eloszto 3
+Negyes kapcsolhato eloszto 4
+Negyes kapcsolhato eloszto 5
+Negyes kapcsolhato eloszto 6
+Negyes eloszto (5m)
+Harmas eloszto (1m)
+Harmas eloszto (3m)
+2/2-es eloszto (3m)
+Harmas eloszto (5m)
+Otos kapcsolhato eloszto (3m)
+Otos eloszto (5m)
+Feher 3/6-os eloszto (1,5m) 1
+Feher 3/6-os eloszto (1,5m) 2
+Studiomikrofon
+Hattertarto keresztrud (2m)
+Halogen reflektor (400w)
+Behringer kevero
+Dimmer
+Derito lap
+Kis mikrofon allvany
+Pop filter
+Mikrofon tarto kengyel
+Carena kamera allvany
+Hama 79 kamera allvany
+Hama 63 kamera allvany
+Selecline laptop
+60*90 Bowens-es softbox
+Godox MS300 studiovaku 1
+Godox MS300 studiovaku 2
+40*180-as softbox (mehracs) 1
+40*180-as softbox (mehracs) 2
+120-as oktabox (mehracs)
+Godox X2T-C transmitter
+Hattertarto keresztrud (3m)
+Barna hetes eloszto

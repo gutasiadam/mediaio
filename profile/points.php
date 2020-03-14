@@ -53,6 +53,9 @@ $serverName="localhost";
             <li class="nav-item">
                         	<a class="nav-link" href="../pathfinder.php"><i class="fas fa-project-diagram fa-lg"></i></a>
             			</li>
+                  <li class="nav-item">
+                        <a class="nav-link" href="../events/"><i class="fas fa-calendar-alt fa-lg"></i></a>
+            </li>
             <li class="nav-item">
                         <a class="nav-link active" href="../profile/index.php"><i class="fas fa-user-alt fa-lg"></i></a>
             </li>
@@ -116,7 +119,7 @@ $serverName="localhost";
                 else{
                     echo '<h2>'.$row["UserPoints"].'</h2>';
                 }
-                echo '<p>Pont</p>
+                echo '<p>BZs</p>
                 </div>';
                 echo '<div class="col-1"><button class="btn btn-dark " id="auth'.$imodal.'" data-toggle="modal" data-target="#a'.$imodal.'">Módosítás</button></div>
                </div>';
@@ -134,11 +137,11 @@ $serverName="localhost";
                   <div class="modal-body">
                     <form action="./points.php" class="form-group" method=post>
                 <h4>Pontszám</h4> 
-                <input type="number" step="0.01" class="form-control" id="PValue'.$imodal.'" name="points" value=""/> 
+                <input type="number" step="0.5" class="form-control" id="PValue'.$imodal.'" name="points" value=""/> 
                 <input type="hidden" class="form-control" name="user" id="modalnum'.$imodal.'" value="'.$row["usernameUsers"].'"/>
                 <input type="hidden" class="form-control" name="user" id="user'.$imodal.'" value="'.$row["usernameUsers"].'"/>
                 <input type="hidden" class="form-control" name="currentpoints" id="currentpoints'.$imodal.'" value="'.$row["UserPoints"].'"/> 
-                <h6 id="emailHelp" class="form-text text-muted"> <strong>Negatív és nem egész számot is beírhatsz</strong> ( pl.: -3.14 )<br>A gomb lenyomása után töltsd újra az oldalt, hogy a ponttábla frissüljön!</h6>
+                <h6 id="emailHelp" class="form-text text-muted"> <strong>Negatív és nem egész számot is beírhatsz</strong> ( pl.: -3.5 )<br>A gomb lenyomása után töltsd újra az oldalt, hogy a ponttábla frissüljön!</h6>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Mégsem</button>
                     <button type="submit" id="authToggle" class="btn btn-success authToggle" value='.$imodal.' onclick="submitData(this.value)">Módosítás</button>
                     </form>
