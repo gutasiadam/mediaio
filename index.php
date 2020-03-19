@@ -27,8 +27,6 @@
                   $host=$ftp_ip;
 $output=shell_exec('ping -n 1 '.$host);
 
-//echo "<pre>$output</pre>"; //for viewing the ping result, if not need it just remove it
-
 if (strpos($output, 'out') !== false) {
     $state = "red";
 }
@@ -111,7 +109,7 @@ else
 	<body>
 		
     <?php if(!isset($_SESSION['userId'])){echo '
-                    
+                    <div class="loginbox">
                     <form action="utility/login.ut.php" method="post" class="formmain" id="formmain" autocomplete="off" >
                     <h6 align=center width="50%" id="SystemMsg" class="successtable2" style="display:none;">XD</h6>
                     <h1 align=center class="rainbow">'.$applicationTitleFull.' </h1>
@@ -121,7 +119,8 @@ else
                     <div class="row justify-content-center" style="text-align: center;"><div class="col-5 col-sm-4"><button class="btn btn-dark" type="submit" name="login-submit" align=center>Bejelentkezés</button></div></div>
                     <div class="row justify-content-center" style="text-align: center;"><div class="col-5 col-sm-4"><a href="./pwReset.php">Elfelejtett jelszó</a></div></div>
                     </div>
-                    </form><footer class="page-footer font-small blue"> <div class="fixed-bottom" align="center"><p>'.$applicationTitleFull.' <strong>ver. '.$application_Version.'</strong><br /> Code by <a href="https://github.com/d3rang3">Adam Gutasi</a></p></div></footer>';}
+                    </form><footer class="page-footer font-small blue"> <div class="fixed-bottom" align="center"><p>'.$applicationTitleFull.' <strong>ver. '.$application_Version.'</strong><br /> Code by <a href="https://github.com/d3rang3">Adam Gutasi</a></p></div></footer>
+                    </div>';}
             else{
               echo '
               <div class="alert alert-warning alert-dismissible fade show" id="note" role="alert">
@@ -195,7 +194,13 @@ else
               $("#SystemMsg").fadeIn();
               setTimeout(function(){ $("#SystemMsg").fadeOut(); }, 6000);
               </script>';
-            }?>
+            }
+            if($_GET['logout'] == "WrongAuth"){
+              echo '<script>document.getElementById("SystemMsg").innerHTML="Hibás Authenticator kód!";
+              document.getElementById("SystemMsg").className = "alert alert-danger successtable";
+              $("#SystemMsg").fadeIn();
+              setTimeout(function(){ $("#SystemMsg").fadeOut(); }, 6000);
+              </script>';}?>
 
 	</body>
 <style>
@@ -252,9 +257,11 @@ else
         top: 50%;
         left: 50%;
         margin-right: -50%;
-        width: 90%;
-        transform: translate(-50%, -50%) }
-}
+        width: 30%;
+        transform: translate(-50%, -50%);
+        background-color: #ededed;
+        border-radius: 50px;
+        box-shadow: 10px 6px 50px grey; }
 </style>
 
 <script type="text/javascript">

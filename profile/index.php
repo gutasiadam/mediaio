@@ -2,6 +2,23 @@
 <html>
     <?php 
     require("../header.php");
+    require("../translation.php");
+    $servername = "localhost";
+    $username = "root";
+    $password = $application_DATABASE_PASS;
+    $dbname = "loginsystem";
+    $conn = new mysqli($servername, $username, $password, $dbname);
+    $uName = $_SESSION['UserUserName'];
+    $sql = "SELECT idUsers FROM users WHERE usernameUsers = '$uName' AND GAUTH_SECRET IS NOT NULL";
+    $result = $conn->query($sql);
+    if ($result->num_rows > 0) {
+      // output data of each row
+      while($row = $result->fetch_assoc()) {
+        $userGAUTHSTATE = 1;
+      }
+  } else {
+    $userGAUTHSTATE = 0;}
+
         session_start();
         if(isset($_SESSION['userId'])){
             echo '
@@ -54,7 +71,12 @@
                     <tr><td><form action="pfcurr.php"><button class="btn btn-dark">Mutasd a nálam levő tárgyakat <i class="fas fa-project-diagram"></i></button></form></td></tr>
                     <tr><td><form action="chpwd.php"><button class="btn btn-warning">Jelszócsere <i class="fas fa-key"></i></button></form></td></tr>
                     <tr><td><form action="userlist.php"><button class="btn btn-dark">Felhasználók eléhetőségeinek megtekintése <i class="fas fa-address-book"></i></i></button></form></td></tr>
-                    </table>';
+                    ';
+                    if ($userGAUTHSTATE !=1){
+                      echo '<tr><td><form action="../utility/G_generate.php"><button class="btn btn-dark">Google Authenticator kód generálása <i class="fas fa-qrcode"></i></button></form></td></tr>';
+                    }else{
+                      echo '<tr><td><form><button class="btn btn-dark disabled">Google Authenticator kód már generálva! <i class="far fa-check-circle"></i></button></form></td></tr>';
+                    }
           if (($_SESSION['role']=="Admin") || ($_SESSION['role']=="Boss")){
             echo '
                     <table class="logintable">
@@ -64,8 +86,10 @@
                     if($_SESSION['role']=="Boss"){
                       echo '<tr><td><form action="../utility/refetchData.php"><button class="btn btn-success">Adattáblák frissítése <i class="fas fa-sync"></i></i></button></form></td></tr>';
                     }
+                    
                     echo '<tr><td><form action="roles.php"><button class="btn btn-danger">Felhasználói engedélyek módosítása <i class="fas fa-radiation"></i></i></button></form></td></tr>
                     <tr><td><form action="stats.php"><button class="btn btn-dark">Áttekintés <i class="fas fa-chart-pie"></i></i></button></form></td></tr>
+                    
                     </table>';
           }
         }else{
