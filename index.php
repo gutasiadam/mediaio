@@ -43,7 +43,7 @@ else
   $state = "black";
 }
                     date_default_timezone_set("Europe/Budapest"); 
-                    echo '<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+                    echo '<nav class="navbar navbar-expand-lg navbar-dark bg-dark nav-all" id="nav-head">
 					<a class="navbar-brand" href="index.php"><img src="./utility/logo.png" height="30"></a>
 					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 					  <span class="navbar-toggler-icon"></span>
@@ -74,9 +74,12 @@ else
             </li>
             <li>
               <a class="nav-link disabled" href="#">'.$nav_timeLockTitle.' <span id="time">'.$nav_timeLock_StartValue.'</span></a>
+            </li>
+            <li>
+            <a class="nav-link disabled" id="ServerMsg" href="#"></a>
             </li>';
             if (($_SESSION['role']=="Admin") || ($_SESSION['role']=="Boss")){
-              echo '<li><a class="nav-link disabled" href="#">Admin jogokkal rendelkezel</a></li>';
+              echo '<li><a class="nav-link disabled" href="#"></a></li>';
               echo '</ul>
               <form class="form-inline my-2 my-lg-0" action=utility/logout.ut.php>
                         <button class="btn btn-danger my-2 my-sm-0" type="submit">'.$nav_logOut.'</button>
@@ -108,51 +111,132 @@ else
     </header>
 	<body>
 		
-    <?php if(!isset($_SESSION['userId'])){echo '
+    <?php if(!isset($_SESSION['userId'])){?>
                     <div class="loginbox">
                     <form action="utility/login.ut.php" method="post" class="formmain" id="formmain" autocomplete="off" >
                     <h6 align=center width="50%" id="SystemMsg" class="successtable2" style="display:none;">XD</h6>
-                    <h1 align=center class="rainbow">'.$applicationTitleFull.' </h1>
-		                <h4 align=center>'.$application_version_text.$application_Version.'</h4>
+                    <h1 align=center class="rainbow"><?php echo $applicationTitleFull;?></h1>
+		                <h4 align=center><?php echo $application_version_text.$application_Version;?></h4>
                    <div class="row justify-content-center" style="text-align: center;"><div class="col-7 col-sm-4"><input type="text" name="useremail" placeholder="Felhasználónév/E-mail" class="form-control mb-2 mr-sm-2"></div></div>
                     <div class="row justify-content-center" style="text-align: center;"><div class="col-7 col-sm-4"><input type="password" name="pwd" placeholder="Jelszó" class="form-control mb-2 mr-sm-2"></div></div>
                     <div class="row justify-content-center" style="text-align: center;"><div class="col-5 col-sm-4"><button class="btn btn-dark" type="submit" name="login-submit" align=center>Bejelentkezés</button></div></div>
                     <div class="row justify-content-center" style="text-align: center;"><div class="col-5 col-sm-4"><a href="./pwReset.php">Elfelejtett jelszó</a></div></div>
                     </div>
-                    </form><footer class="page-footer font-small blue"> <div class="fixed-bottom" align="center"><p>'.$applicationTitleFull.' <strong>ver. '.$application_Version.'</strong><br /> Code by <a href="https://github.com/d3rang3">Adam Gutasi</a></p></div></footer>
-                    </div>';}
-            else{
-              echo '
+                    </form><footer class="page-footer font-small blue"> <div class="fixed-bottom" align="center"><p><?php echo $applicationTitleFull; ?> <strong>ver. <?php echo $application_Version; ?></strong><br /> Code by <a href="https://github.com/d3rang3">Adam Gutasi</a></p></div></footer>
+                    </div> <?php ;}
+               else{ ?>
               <div class="alert alert-warning alert-dismissible fade show" id="note" role="alert">
   <button type="button" class="close" data-dismiss="alert" aria-label="Close">
     <span aria-hidden="true">&times;</span>
   </button>
-  <strong>Kedves '.$_SESSION['firstName'].'!</strong> Az oldal <u>folyamatos fejlesztés</u> alatt áll. Ha hibát szeretnél bejelenteni/észrevételed van, írj az arpad.media.io@gmail.com címre, vagy <a href="mailto:arpad.media.io@gmail.com?Subject=MediaIO%20Hibabejelent%C3%A9s" target="_top">írj most egy e-mailt!</a>
+  <strong>Kedves <?php echo $_SESSION['firstName'] ?>!</strong> Az oldal <u>folyamatos fejlesztés</u> alatt áll. Ha hibát szeretnél bejelenteni/észrevételed van, írj az arpad.media.io@gmail.com címre, vagy <a href="mailto:arpad.media.io@gmail.com?Subject=MediaIO%20Hibabejelent%C3%A9s" target="_top">írj most egy e-mailt!</a>
 </div>
               <h1 align=center class="rainbow">Árpád Média IO </h1>
-		                <h4 align=center>'.$application_version_text.$application_Version.'</h4>
+		                <h4 align=center><?php echo $application_version_text.$application_Version; ?>'</h4>
               <div class="row justify-content-center" style="text-align: center; width:100%; margin: 0 auto;">
-              <div class="col-6 col-sm-2"><a class="nav-link ab" href="./takeout.php"><i class="fas fa-upload fa-3x"></i><br><h5>'.$index_takeOut.'</h5></a></div>
-              <div class="col-6 col-sm-2 offset-md-1"><a class="nav-link ab" href="./retrieve.php"><i class="fas fa-download fa-3x"></i><br><h5>'.$index_Retrieve.'</h5></a></div>
+              <div class="col-6 col-sm-2"><a class="nav-link ab" href="./takeout.php"><i class="fas fa-upload fa-3x"></i><br><h5><?php echo $index_takeOut; ?></h5></a></div>
+              <div class="col-6 col-sm-2 offset-md-1"><a class="nav-link ab" href="./retrieve.php"><i class="fas fa-download fa-3x"></i><br><h5><?php echo $index_Retrieve ?></h5></a></div>
               </div>
               <br>
               <div class="row justify-content-center" style="text-align: center; width:100%; margin: 0 auto;">
-              <div class="col-6 col-sm-2"><a class="nav-link ab" href="./adatok.php"><i class="fas fa-database fa-3x"></i><br><h5>'.$index_Data.'</h5></a></div>
-              <div class="col-6 col-sm-2 offset-md-1"><a class="nav-link ab" href="./pathfinder.php"><i class="fas fa-project-diagram fa-3x"></i><br><h5>'.$index_PathFinder.'</h5></a></div>
+              <div class="col-6 col-sm-2"><a class="nav-link ab" href="./adatok.php"><i class="fas fa-database fa-3x"></i><br><h5><?php echo $index_Data; ?></h5></a></div>
+              <div class="col-6 col-sm-2 offset-md-1"><a class="nav-link ab" href="./pathfinder.php"><i class="fas fa-project-diagram fa-3x"></i><br><h5><?php echo $index_PathFinder ?></h5></a></div>
               </div>
               <br>
             <div class="row justify-content-center" style="text-align: center; width:100%; margin: 0 auto;">
-              <div class="col-6 col-sm-2"><a class="nav-link ab" href="./adatok.php"><i class="fas fa-calendar-alt fa-3x"></i><br><h5>'."Naptár".'</h5></a></div>
-              <div class="col-6 col-sm-2 offset-md-1"><a class="nav-link ab" href="http://80.99.70.46/mftp" target="_blank"><i class="fas fa-server fa-3x" style="color:'.$state .'"></i><br><h5>'."Fájlszerver".'</h5></a></div>
+              <div class="col-6 col-sm-2"><a class="nav-link ab" href="./adatok.php"><i class="fas fa-calendar-alt fa-3x"></i><br><h5>Naptár</h5></a></div>
+              <div class="col-6 col-sm-2 offset-md-1"><a class="nav-link ab" href="http://80.99.70.46/mftp" target="_blank"><i class="fas fa-server fa-3x" style="color:<?php echo $state; ?>"></i><br><h5>Fájlszerver</h5></a></div>
               </div>
               <br>
               <div class="row justify-content-center" style="text-align: center; width:100%; margin: 0 auto;">
-              <div class="col-6 col-sm-2"><a class="nav-link ab" href="./profile/index.php"><i class="fas fa-user-alt fa-3x"></i><br><h5>'.$index_Profile.'</h5></a></div>
-              <div class="col-6 col-sm-2 offset-md-1"><a class="nav-link ab" href="./help.php"><i class="fas fa-question-circle fa-3x"></i><br><h5>'.$index_Help.'</h5></a></div>
+              <div class="col-6 col-sm-2"><a class="nav-link ab" href="./profile/index.php"><i class="fas fa-user-alt fa-3x"></i><br><h5><?php echo $index_Profile; ?></h5></a></div>
+              <div class="col-6 col-sm-2 offset-md-1"><a class="nav-link ab" href="./help.php"><i class="fas fa-question-circle fa-3x"></i><br><h5><?php echo $index_Help; ?></h5></a></div>
             </div>
-              <footer class="page-footer font-small blue"> <div class="fixed-bottom" align="center"><p>'.$applicationTitleFull.' <strong>ver. '.$application_Version.'</strong><br /> Code by <a href="https://github.com/d3rang3">Adam Gutasi</a></p></div></footer>';
-            }
+              <footer class="page-footer font-small blue"> <div class="fixed-bottom" align="center"><p><?php echo $applicationTitleFull; ?> <strong>ver. <?php echo $application_Version; ?></strong><br /> Code by <a href="https://github.com/d3rang3">Adam Gutasi</a>
+            Socket kommunikáció állapota: <span id='webSocketState' style="width: 10px; height:10px; display: inline-block;"></span>
+            </p></div></footer>';
+            <script type = "text/javascript">
+            $( document ).ready(function() {
+              WebSocketTest();
+            });
+            //Websocket kommunikáció felállítása.
+            function WebSocketTest() {
             
+            if ("WebSocket" in window) {
+               console.log("WebSocket is supported by your Browser!");
+               var ws = new WebSocket("ws://192.168.0.24:3000/ws");
+               // Let us open a web socket
+				
+               ws.onopen = function() {
+                  
+                  // Web Socket is connected, send data using send()
+                  //ws.send("I Joined the network!");
+                  document.getElementById('webSocketState').style.backgroundColor = ('lime');
+                  console.log("Message is sent to the network");
+               };
+				
+               ws.onmessage = function (evt) { 
+                var received_msg = evt.data;
+
+                try {
+                    let m = JSON.parse(evt.data);
+                     handleMessage(m);
+                } catch (err) {
+                    console.log('[Client] Message is not parseable to JSON.');
+                }
+
+                  console.log("Message recieved: " + received_msg);
+                  document.getElementById('recMsg').innerHTML = (received_msg);
+               };
+				
+               ws.onclose = function() { 
+                  
+                  // websocket is closed.
+                  console.log("Connection is closed..."); 
+                  document.getElementById('webSocketState').style.backgroundColor = ('red');
+                  document.getElementById("ServerMsg").style.backgroundColor = ('LightCoral');
+                  document.getElementById("ServerMsg").style.color = ('white');
+                  document.getElementById('ServerMsg').innerHTML = ('A szerverrel való kommunikáció megszakadt. Próbáld meg újratölteni az oldalt.');
+               };
+
+               let handlers = {
+                "set-background-color": function(m) {
+        // ...
+                console.log('[Client] set-background-color handler running.');
+                console.log('[Client] Color is ' + m.params.color);
+                document.getElementById('webSocketState').style.backgroundColor = (m.params.color);
+                }
+            };
+
+
+               function handleMessage(m) {
+
+                if (m.method == undefined) {
+                    return;
+                }
+
+                let method = m.method;
+
+                if (method) {
+
+                    if (handlers[method]) {
+                        let handler = handlers[method];
+                        handler(m);
+                    } else {
+                        console.log('[Client] No handler defined for method ' + method + '.');
+                    }
+
+                }
+        }
+            } else {
+              
+               // The browser doesn't support WebSocket
+               console.log("WebSocket NOT supported by your Browser!");
+            }
+         }
+            </script>
+            <?php }
+            //GET változók kezelése
             
             if($_GET['signup'] == "success"){
               echo '<script>document.getElementById("SystemMsg").innerHTML="Sikeres regisztráció!";

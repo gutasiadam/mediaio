@@ -5,6 +5,21 @@ if(!isset($_SESSION['userId'])){
 #echo $_SESSION['color'];
 ?><html lang='en'>
   <head>
+  <div class="se-pre-con"><img src="loading.gif"></div>
+  <style>
+.no-js #loader { display: none;  }
+.js #loader { display: block; position: absolute; left: 100px; top: 0; }
+.se-pre-con {
+  position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+  text-align: center;
+  z-index: 9999;
+}
+
+  </style>
     <meta charset='utf-8' />
     <script src="https://kit.fontawesome.com/2c66dc83e7.js" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -32,7 +47,11 @@ if(!isset($_SESSION['userId'])){
 ?>
   <!-- HOZZÁADÁS MODAL -->
   </head>
-
+  <script>
+    $(window).on('load', function () {
+  $(".se-pre-con").fadeOut("slow");
+ });
+  </script>
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
 					<a class="navbar-brand" href="index.php">Arpad Media IO</a>
 					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -75,11 +94,13 @@ if(!isset($_SESSION['userId'])){
 					</div>
 </nav>
     <body>
+
+    
     <div class="alert alert-warning alert-dismissible fade show" role="alert">
   <button type="button" class="close" data-dismiss="alert" aria-label="Close">
     <span aria-hidden="true">&times;</span>
   </button>
-  <strong>Kedves <?php echo $_SESSION['firstName'];?>!</strong> Amenniyben Firefox böngészőn nézed ezt az oldalt, kérlek használj egy másik böngészőt, mert az adott oldal bizonyos funkciói nem elérhetők róla.
+  <strong>Kedves <?php echo $_SESSION['firstName'];?>!</strong> Az oldal nem támogatja a Firefox böngészőt. Ha azt használod, kérlek válts egy másik böngészőre.
 </div>
     <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
