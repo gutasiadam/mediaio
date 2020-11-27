@@ -53,7 +53,7 @@ if(!isset($_SESSION['userId'])){
  });
   </script>
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-					<a class="navbar-brand" href="index.php">Arpad Media IO</a>
+  <a class="navbar-brand" href="index.php"><img src="../utility/logo2.png" height="50"></a>
 					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 					  <span class="navbar-toggler-icon"></span>
 					</button>
@@ -90,7 +90,7 @@ if(!isset($_SESSION['userId'])){
 						<form class="form-inline my-2 my-lg-0" action=../utility/logout.ut.php>
                       <button class="btn btn-danger my-2 my-sm-0" type="submit">Kijelentkezés</button>
                       </form>
-					  <a class="nav-link my-2 my-sm-0" href="#"><span onclick="openNav()"><i class="fas fa-question-circle fa-lg"></i></span></a>
+                      <a class="nav-link my-2 my-sm-0" href="../help.php"><span onclick="openNav()"><i class="fas fa-question-circle fa-lg"></i></span></a>
 					</div>
 </nav>
     <body>

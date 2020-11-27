@@ -11,7 +11,7 @@ if(!isset($_SESSION['userId'])){
 </head>
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-					<a class="navbar-brand" href="index.php">Arpad Media IO</a>
+          <a class="navbar-brand" href="index.php"><img src="./utility/logo2.png" height="50"></a>
 					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 					  <span class="navbar-toggler-icon"></span>
 					</button>
@@ -39,8 +39,8 @@ if(!isset($_SESSION['userId'])){
 						<li class="nav-item">
                         <a class="nav-link" href="./profile/index.php"><i class="fas fa-user-alt fa-lg"></i></a>
             			</li>
-						<li>
-              <a class="nav-link disabled" href="#">Időzár <span id="time">10:00</span></a>
+            <li>
+              <a class="nav-link disabled" href="#"><?php echo $nav_timeLockTitle;?> <span id="time"><?php echo $nav_timeLock_StartValue;?></span></a>
             </li>
             <?php if (($_SESSION['role']=="Admin") || ($_SESSION['role']=="Boss")){
               echo '<li><a class="nav-link disabled" href="#">Admin jogokkal rendelkezel</a></li>';}?>
@@ -48,7 +48,7 @@ if(!isset($_SESSION['userId'])){
 						<form class="form-inline my-2 my-lg-0" action=utility/logout.ut.php>
                       <button class="btn btn-danger my-2 my-sm-0" type="submit">Kijelentkezés</button>
                       </form>
-					  <a class="nav-link my-2 my-sm-0" href="#"><i class="fas fa-question-circle fa-lg"></i></a>
+					  <a class="nav-link my-2 my-sm-0" href="./help.php"><i class="fas fa-question-circle fa-lg"></i></a>
 					</div>
 </nav>
 <!--<div class="form-group">
@@ -100,6 +100,32 @@ if ($result->num_rows > 0) {
 echo "</table>";
 $conn->close();?>
 <script>
+
+function startTimer(duration, display) {
+    var timer = duration, minutes, seconds;
+    setInterval(function () {
+        minutes = parseInt(timer / 60, 10)
+        seconds = parseInt(timer % 60, 10);
+
+        minutes = minutes < 10 ? "0" + minutes : minutes;
+        seconds = seconds < 10 ? "0" + seconds : seconds;
+
+        display.textContent = minutes + ":" + seconds;
+
+        if (--timer < 0) {
+            timer = duration;
+            window.location.href = "./utility/logout.ut.php"
+        }
+    }, 1000);
+}
+
+window.onload = function () {
+    var fiveMinutes = 60 * 10 - 1,
+        display = document.querySelector('#time');
+    startTimer(fiveMinutes, display);
+    setInterval(updateTime, 1000);
+    updateTime();
+};
 
 $('#keres1').click(function(){
   var keres1Val=  document.getElementById("id_itemNameAdd").value;
@@ -231,31 +257,7 @@ function autocomplete(inp, arr) {
   setInterval(updateTime, 1000);
 });
 
-function startTimer(duration, display) {
-    var timer = duration, minutes, seconds;
-    setInterval(function () {
-        minutes = parseInt(timer / 60, 10)
-        seconds = parseInt(timer % 60, 10);
 
-        minutes = minutes < 10 ? "0" + minutes : minutes;
-        seconds = seconds < 10 ? "0" + seconds : seconds;
-
-        display.textContent = minutes + ":" + seconds;
-
-        if (--timer < 0) {
-            timer = duration;
-            window.location.href = "./utility/logout.ut.php"
-        }
-    }, 1000);
-}
-
-window.onload = function () {
-    var fiveMinutes = 60 * 10 - 1,
-        display = document.querySelector('#time');
-    startTimer(fiveMinutes, display);
-    setInterval(updateTime, 1000);
-    updateTime();
-};
 </script>
 
 <script>

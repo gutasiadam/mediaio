@@ -99,6 +99,7 @@ $message = '
 // To send HTML mail, the Content-type header must be set
 $headers[] = 'MIME-Version: 1.0';
 $headers[] = 'Content-type: text/html; charset=utf-8';
+$headers[] = 'From: arpadmedia.io@gmail.com';
 
 /* Additional headers
 $headers[] = 'To: Mary <mary@example.com>, Kelly <kelly@example.com>';

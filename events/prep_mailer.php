@@ -30,6 +30,7 @@ Ha az esemény adatait hibásan adtad meg, <a href="http://80.99.70.46/.git/medi
 
 // To send HTML mail, the Content-type header must be set
 $headers[] = 'MIME-Version: 1.0';
+$headers[] = 'From: arpadmedia.io@gmail.com';
 $headers[] = 'Content-type: text/html; charset=utf-8';
 
 /* Additional headers

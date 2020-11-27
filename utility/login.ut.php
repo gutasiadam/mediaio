@@ -36,13 +36,7 @@
                         $_SESSION['role'] = $row['Userrole'];
                         $_SESSION['color'] = "#FFFF66";
                         $_SESSION['GCodeState'] = $row['GAUTH_SECRET'];
-
-                        if($_SESSION['GCodeState']==""){
                         header("Location: ../index.php?login=success");
-                        exit();}
-                        else{header("Location: ../verify.php?gcode=1");
-
-                        }
 
                     }else{
                         header("Location: ../index.php?error=PasswordVerifFail");

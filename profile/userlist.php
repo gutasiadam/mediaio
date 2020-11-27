@@ -50,7 +50,7 @@ if(!isset($_SESSION['userId'])){
 						<form class="form-inline my-2 my-lg-0" action=../utility/logout.ut.php>
                       <button class="btn btn-danger my-2 my-sm-0" type="submit">Kijelentkezés</button>
                       </form>
-                      <a class="nav-link my-2 my-sm-0" href="#"><i class="fas fa-question-circle fa-lg"></i></a>
+                      <a class="nav-link my-2 my-sm-0" href="../help.php"> <i class="fas fa-question-circle fa-lg"></i></a>
 					</div>
 		</nav>
 

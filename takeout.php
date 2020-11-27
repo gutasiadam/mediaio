@@ -93,6 +93,81 @@ if( isset($_POST['data'])){
   exit;
  }?>
 <script>
+
+
+if ("WebSocket" in window) {
+               console.log("WebSocket is supported by your Browser!");
+               var ws = new WebSocket("ws://192.168.0.24:3000/ws");
+               // Let us open a web socket
+				
+               ws.onopen = function() {
+                  
+                  // Web Socket is connected, send data using send()
+                  sender={'method':'probe','user':'gutasiadam'}
+                  ws.send(JSON.parse(sender));
+                  document.getElementById('webSocketState').style.backgroundColor = ('lime');
+                  console.log("Message is sent to the network");
+               };
+				
+               ws.onmessage = function (evt) { 
+                var received_msg = evt.data;
+
+                try {
+                    let m = JSON.parse(evt.data);
+                     handleMessage(m);
+                } catch (err) {
+                    console.log('[Client] Message is not parseable to JSON.');
+                }
+
+                  console.log("Message recieved: " + received_msg);
+                  document.getElementById('recMsg').innerHTML = (received_msg);
+               };
+				
+               ws.onclose = function() { 
+                  
+                  // websocket is closed.
+                  console.log("Connection is closed..."); 
+                  document.getElementById('webSocketState').style.backgroundColor = ('red');
+                  document.getElementById("ServerMsg").style.backgroundColor = ('LightCoral');
+                  document.getElementById("ServerMsg").style.color = ('white');
+                  document.getElementById('ServerMsg').innerHTML = ('A szerverrel való kommunikáció megszakadt. Próbáld meg újratölteni az oldalt.');
+               };
+
+               let handlers = {
+                "set-background-color": function(m) {
+        // ...
+                console.log('[Client] set-background-color handler running.');
+                console.log('[Client] Color is ' + m.params.color);
+                document.getElementById('webSocketState').style.backgroundColor = (m.params.color);
+                }
+            };
+
+
+               function handleMessage(m) {
+
+                if (m.method == undefined) {
+                    return;
+                }
+
+                let method = m.method;
+
+                if (method) {
+
+                    if (handlers[method]) {
+                        let handler = handlers[method];
+                        handler(m);
+                    } else {
+                        console.log('[Client] No handler defined for method ' + method + '.');
+                    }
+
+                }
+        }
+            } else {
+              
+               // The browser doesn't support WebSocket
+               console.log("WebSocket NOT supported by your Browser!");
+            }
+
 var goStatus = 0;
 function checkGoBtn() {
       $("#add").one('click', function () { 
@@ -123,9 +198,10 @@ function checkGoBtn() {
 <head>
   <script src="JTranslations.js"></script>
   <link rel="stylesheet" href="./main.css">
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js">  </script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js">  </script>
+  <script src="utility/jstree.js"></script>
   <script src="https://kit.fontawesome.com/2c66dc83e7.js" crossorigin="anonymous"></script>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -134,7 +210,7 @@ function checkGoBtn() {
 </head>
       <title><?php echo $applicationTitleFull;?></title>
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-					<a class="navbar-brand" href="index.php"><img src="./utility/logo.png" height="30"></a>
+					<a class="navbar-brand" href="index.php"><img src="./utility/logo2.png" height="50"></a>
 					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 					  <span class="navbar-toggler-icon"></span>
 					</button>
@@ -177,6 +253,10 @@ function checkGoBtn() {
 
 
 	<body ><!--style="background-color:#DCDCDC"-->
+
+
+</select>
+
 		<div class="container">
 			<br /><br />
 			<h2 class="rainbow" align="center" id="doTitle"><?php echo $applicationTitleShort;?></h2><br />
@@ -188,6 +268,14 @@ function checkGoBtn() {
         <table id="itemSearch" align="left"><tr><td><div class="autocomplete" method="GET">
     				<input id="id_itemNameAdd" type="text" name="add" class="form-control mb-2 mr-sm-2" placeholder='<?php echo $applicationSearchField;?>'></div></td>
             <td><button type="button" name="add" id="add" class="btn btn-info2 add_btn mb-2 mr-sm-2" onclick="checkGoBtn()"><?php echo $button_Add;?></button>     <span id='sendQueryButtonLoc'></span></td>
+            <td><div class="col-md-9">
+      Filter: <input type="text" id="search" /><button id="clear">Clear</button>
+<div id="jstree">
+</div>
+<p>Selected items:</p>
+<ul id="output">
+</ul>
+      </div></td>
   			</tr></table>
 			<form autocomplete="off" action="/index.php">
 			</form>
@@ -211,6 +299,64 @@ function checkGoBtn() {
 <footer class="page-footer font-small blue"> <div class="fixed-bottom" align="center"><p><?php echo $applicationTitleFull; ?> <strong>ver. <?php echo $application_Version; ?></strong><br /> Code by <a href="https://github.com/d3rang3">Adam Gutasi</a></p></div></footer>
 </html>
 <script>
+
+
+$('#jstree').jstree({
+  'plugins': ['search', 'checkbox', 'wholerow'],
+  'core': {
+    'data': [
+      {'id': '1', 'parent': '#', 'text': 'Greater London'},
+      {'id': '11', 'parent': '1', 'text': 'Goldsmiths College'},
+      {'id': '12', 'parent': '1', 'text': 'King\'s College London'},
+      {'id': '13', 'parent': '1', 'text': 'University College London'},
+      {'id': '14', 'parent': '1', 'text': 'University of Westminster'},
+      {'id': '2', 'parent': '#', 'text': 'North East'},
+      {'id': '21', 'parent': '2', 'text': 'University of Durham'},
+      {'id': '22', 'parent': '2', 'text': 'University of Teeside'},
+      {'id': '3', 'parent': '#', 'text': 'North West'},
+      {'id': '31', 'parent': '3', 'text': 'Lancaster University'},
+      {'id': '32', 'parent': '3', 'text': 'University of Liverpool'},
+      {'id': '33', 'parent': '3', 'text': 'University of Manchester'},
+      {'id': '34', 'parent': '3', 'text': 'Manchester Metropolitan University'},
+      {'id': '4', 'parent': '#', 'text': 'South West'},
+      {'id': '41', 'parent': '4', 'text': 'University of Bath'},
+      {'id': '42', 'parent': '4', 'text': 'University of Bristol'},
+      {'id': '43', 'parent': '4', 'text': 'University of Exeter'},
+      {'id': '44', 'parent': '4', 'text': 'University of Plymouth'},
+      {'id': '5', 'parent': '#', 'text': 'Yorkshire and Humberside'},
+      {'id': '51', 'parent': '5', 'text': 'University of Hull'},
+      {'id': '52', 'parent': '5', 'text': 'University of Leeds'},
+      {'id': '53', 'parent': '5', 'text': 'University of York'},
+    ],
+    'animation': false,
+    //'expand_selected_onload': true,
+    'themes': {
+      'icons': false,
+    }
+  },
+  'search': {
+    'show_only_matches': true,
+    'show_only_matches_children': false
+  }
+})
+
+$('#search').on("keyup change", function () {
+  $('#jstree').jstree(true).search($(this).val())
+})
+
+$('#clear').click(function (e) {
+  $('#search').val('').change().focus()
+})
+
+$('#jstree').on('changed.jstree', function (e, data) {
+  var objects = data.instance.get_selected(true)
+  var leaves = $.grep(objects, function (o) { return data.instance.is_leaf(o) })
+  var list = $('#output')
+  list.empty()
+  $.each(leaves, function (i, o) {
+    $('<li/>').text(o.text).appendTo(list)
+  })
+})
 
 //Right at load - start autologout.
 

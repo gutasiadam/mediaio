@@ -1,5 +1,6 @@
 
-      document.addEventListener('DOMContentLoaded', function() {
+console.log("Admin display")
+document.addEventListener('DOMContentLoaded', function() {
         var calendarEl = document.getElementById('calendar');
 
         var calendar = new FullCalendar.Calendar(calendarEl, {

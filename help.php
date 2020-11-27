@@ -23,7 +23,7 @@
                 if(isset($_SESSION['userId'])){
                     date_default_timezone_set("Europe/Budapest"); 
                     echo '<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-					<a class="navbar-brand" href="index.php">Arpad Media IO</a>
+          <a class="navbar-brand" href="index.php"><img src="./utility/logo2.png" height="50"></a>
 					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 					  <span class="navbar-toggler-icon"></span>
 					</button>
@@ -100,11 +100,6 @@
               </div>
               <br>
               <div class="row justify-content-center" style="text-align: center; width:80%; margin: 0 auto;">
-              <div class="col-6 col-sm-2"><a class="nav-link ab" href="./adatok.php"><i class="fas fa-calendar-alt fa-3x"></i><br><h5>'."Naptár".'</h5></a></div>
-              <div class="col-6 col-sm-2 offset-md-1"><a class="nav-link ab" href="http://80.99.70.46/mftp" target="_blank"><i class="fas fa-server fa-3x" style="color:'.$state .'"></i><br><h5>'."Fájlszerver".'</h5></a></div> <!--HREF-->
-              </div>
-              <br>
-              <div class="row justify-content-center" style="text-align: center; width:80%; margin: 0 auto;">
               <div class="col-6 col-sm-2 kivetel" id="profil"><a class="nav-link ab" href="#"><i class="fas fa-user-alt fa-3x"></i> <br><h5>'.$index_Profile.'</h5></a></div>
               <div class="col-6 col-sm-2 offset-md-1 kivetel" id="segitseg"><a class="nav-link ab " href="#"><i class="fas fa-exclamation-circle fa-3x"></i><i class="fas fa-bug fa-3x"></i><br><h6>'.$index_Help_Further.'</h6></a></div>
             </div>
@@ -147,7 +142,7 @@
     </li><li>Második gomb: A jelszavad tudod megváltoztatni.</li><li>Harmadik gomb: A többiek elérhetősége itt található meg.</ul>
     </p></div>
 
-    <div id="szoveg-segitseg" class="szoveg"><p><h2><?php echo $index_Help_Further; ?></h2><br><h4 class="text text-danger">Ha a weboldalon hibát észleltél, vagy további kérdésed van, keresed <strong>Gutási Ádám</strong>-ot személyesen, <br/>Facebookon, az arpad.media.io@gmail.com e-mail címen, vagy <a href="mailto:arpad.media.io@gmail.com?Subject=MediaIO%20Hibabejelent%C3%A9s" target="_top">írj most egy e-mailt!</a></h4>
+    <div id="szoveg-segitseg" class="szoveg"><p><h2><?php echo $index_Help_Further; ?></h2><br><h4 class="text text-danger">Ha a weboldalon hibát észleltél, vagy további kérdésed van, keresed <strong>Gutási Ádám</strong>-ot személyesen, <br/>Facebookon, az arpadmedia.io@gmail.com e-mail címen, vagy <a href="mailto:arpadmedia.io@gmail.com?Subject=MediaIO%20Hibabejelent%C3%A9s" target="_top">írj most egy e-mailt!</a></h4>
     </p></div>
       
 	</body>

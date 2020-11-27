@@ -15,6 +15,8 @@ Hatter allvany 2
 Genius hangfal
 HP laptop
 Spanyolfal
+VGA hosszabito (5m)
+VGA toldo (anya-anya)
 Neon lampa
 Asztali LED lampa
 Szerver ventillator
@@ -26,7 +28,7 @@ Negyes kapcsolhato eloszto 2
 Negyes kapcsolhato eloszto 3
 Negyes kapcsolhato eloszto 4
 Negyes kapcsolhato eloszto 5
-Negyes kapcsolhato eloszto 6
+Negyes kapcsolhato eloszto* 6
 Negyes eloszto (5m)
 Harmas eloszto (1m)
 Harmas eloszto (3m)
@@ -39,7 +41,7 @@ Feher 3/6-os eloszto (1,5m) 2
 Studiomikrofon
 Hattertarto keresztrud (2m)
 Halogen reflektor (400w)
-Behringer kevero
+HDMI-VGA atalakito
 Dimmer
 Derito lap
 Kis mikrofon allvany
@@ -58,3 +60,12 @@ Godox MS300 studiovaku 2
 Godox X2T-C transmitter
 Hattertarto keresztrud (3m)
 Barna hetes eloszto
+Xlr link kabel (0,5m) 1
+Xlr link kabel (0,5m) 2
+Xlr link kabel (0,8m)
+Xlr link kabel (1m) 
+Softbox tapkabel (adapterrel) 1
+Softbox tapkabel (adapterrel) 2
+Softbox tapkabel (adapterrel) 3
+Vaku tapkabel 1
+Vaku tapkabel 1

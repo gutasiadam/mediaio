@@ -23,7 +23,7 @@
         if(isset($_SESSION['userId'])){
             echo '
             <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-					<a class="navbar-brand" href="index.php">Arpad Media IO</a>
+            <a class="navbar-brand" href="index.php"><img src="../utility/logo2.png" height="50"></a>
 					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 					  <span class="navbar-toggler-icon"></span>
 					</button>
@@ -72,11 +72,6 @@
                     <tr><td><form action="chpwd.php"><button class="btn btn-warning">Jelszócsere <i class="fas fa-key"></i></button></form></td></tr>
                     <tr><td><form action="userlist.php"><button class="btn btn-dark">Felhasználók eléhetőségeinek megtekintése <i class="fas fa-address-book"></i></i></button></form></td></tr>
                     ';
-                    if ($userGAUTHSTATE !=1){
-                      echo '<tr><td><form action="../utility/G_generate.php"><button class="btn btn-dark">Google Authenticator kód generálása <i class="fas fa-qrcode"></i></button></form></td></tr>';
-                    }else{
-                      echo '<tr><td><form><button class="btn btn-dark disabled">Google Authenticator kód már generálva! <i class="far fa-check-circle"></i></button></form></td></tr>';
-                    }
           if (($_SESSION['role']=="Admin") || ($_SESSION['role']=="Boss")){
             echo '
                     <table class="logintable">

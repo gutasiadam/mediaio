@@ -105,8 +105,8 @@ $serverName="localhost";
                 echo '
                 <div class="row">
                 <div class="col-4">
-                 <h2>'. $row["firstName"].'</h2>
-                 <p>'. $row["lastName"].'</p>
+                  <h6 class="nospace">'. $row["lastName"].'</h6>
+                  <h2>'. $row["firstName"].'</h2>
                 </div>
                 <div class="col-4 border-left border-right">';
 
@@ -181,6 +181,11 @@ $serverName="localhost";
 <style>
 .timeline__item{
   background-color: #ededed;
+}
+
+.nospace{
+  padding-bottom:1px;
+  margin:0px;
 }
 </style>
 

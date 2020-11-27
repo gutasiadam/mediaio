@@ -44,7 +44,7 @@ else
 }
                     date_default_timezone_set("Europe/Budapest"); 
                     echo '<nav class="navbar navbar-expand-lg navbar-dark bg-dark nav-all" id="nav-head">
-					<a class="navbar-brand" href="index.php"><img src="./utility/logo.png" height="30"></a>
+					<a class="navbar-brand" href="index.php"><img src="./utility/logo2.png" height="50"></a>
 					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 					  <span class="navbar-toggler-icon"></span>
 					</button>
@@ -79,7 +79,7 @@ else
             <a class="nav-link disabled" id="ServerMsg" href="#"></a>
             </li>';
             if (($_SESSION['role']=="Admin") || ($_SESSION['role']=="Boss")){
-              echo '<li><a class="nav-link disabled" href="#"></a></li>';
+              echo '<li><a class="nav-link disabled" href="#">Admin jogokkal rendelkezel</a></li>';
               echo '</ul>
               <form class="form-inline my-2 my-lg-0" action=utility/logout.ut.php>
                         <button class="btn btn-danger my-2 my-sm-0" type="submit">'.$nav_logOut.'</button>
@@ -129,7 +129,7 @@ else
   <button type="button" class="close" data-dismiss="alert" aria-label="Close">
     <span aria-hidden="true">&times;</span>
   </button>
-  <strong>Kedves <?php echo $_SESSION['firstName'] ?>!</strong> Az oldal <u>folyamatos fejlesztés</u> alatt áll. Ha hibát szeretnél bejelenteni/észrevételed van, írj az arpad.media.io@gmail.com címre, vagy <a href="mailto:arpad.media.io@gmail.com?Subject=MediaIO%20Hibabejelent%C3%A9s" target="_top">írj most egy e-mailt!</a>
+  <strong>Kedves <?php echo $_SESSION['firstName'] ?>!</strong> Az oldal <u>folyamatos fejlesztés</u> alatt áll. Ha hibát szeretnél bejelenteni/észrevételed van, írj az arpadmedia.io@gmail.com címre, vagy <a href="mailto:arpadmedia.io@gmail.com?Subject=MediaIO%20Hibabejelent%C3%A9s" target="_top">írj most egy e-mailt!</a>
 </div>
               <h1 align=center class="rainbow">Árpád Média IO </h1>
 		                <h4 align=center><?php echo $application_version_text.$application_Version; ?>'</h4>

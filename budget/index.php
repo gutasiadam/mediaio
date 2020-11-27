@@ -66,8 +66,8 @@
 <body>
                 <h1 align=center>Költségvetés</br><div style="padding-top: 10px;"><button class="btn btn-warning" data-toggle="modal" data-target="#budgetModal">Bevétel/Kiadás hozzáadása</button></div></h1>
                 <table class="budget_table">
-                <tr><td><h3>Bevételek</h3></td>
-                <td><h3>Kiadások</h3></td></tr>
+                <tr><td class="tdTitle"><h3>Bevételek</h3></td>
+                <td class="tdTitle"><h3>Kiadások</h3></td></tr>
                 <tr>
                 <td><table class="income_table money_table"><tr>
                 <?php 
@@ -76,7 +76,7 @@
                 $statement->execute();
                 $result = $statement->fetchAll();
                 foreach($result as $row){
-                  echo '<tr><td><h3 class="text text-success">+'.$row["Amount"].' Ft</h3><h5><strong>'.$row["Year"].'/'.$row["Month"].'/'.$row["Day"].'</strong> '.$row["Description"].'</h5></td></tr>';
+                  echo '<tr><td><h3 class="text text-success entry">+'.$row["Amount"].' Ft</h3><h5><strong>'.$row["Year"].'/'.$row["Month"].'/'.$row["Day"].'</strong> '.$row["Description"].'</h5></td></tr>';
                 }
                 ?>
                 </tr></table></td>
@@ -87,7 +87,7 @@
                 $statement->execute();
                 $result = $statement->fetchAll();
                 foreach($result as $row){
-                    echo '<tr><td><h3 class="text text-danger">-'.$row["Amount"].' Ft</h3><h5><strong>'.$row["Year"].'/'.$row["Month"].'/'.$row["Day"].'</strong> '.$row["Description"].'</h5></td></tr>';
+                    echo '<tr><td><h3 class="text text-danger entry">-'.$row["Amount"].' Ft</h3><h5><strong>'.$row["Year"].'/'.$row["Month"].'/'.$row["Day"].'</strong> '.$row["Description"].'</h5></td></tr>';
                 }
                 ?>
                 </tr></table></td>
@@ -104,7 +104,7 @@
                     }
                     $TotalMoney += $row["Amount"];
                 }
-                echo '<h4 class="finalValue">Megmaradt összeg: '.$TotalMoney.' Ft</h4>';
+                echo '<h3 class="finalValue">Megmaradt összeg: '.$TotalMoney.' Ft</h3>';
                 $connect=null;
                 ?>
 <div class="modal fade" id="budgetModal" tabindex="-1" role="dialog" aria-labelledby="budgetModalLabel" aria-hidden="true">
@@ -204,21 +204,31 @@ $( document ).ready(function() {
 
 <style>
 .budget_table{
-  width: 95%;
+  width: 500px;
   border-style: solid;
   text-align: center;
   margin: 0 auto; 
 }
 
 .finalValue{
-  width: 95%;
-  text-align: left;
+  padding-top: 25px;
+  padding-left: 20px;
+  width: 500px;
+  text-align: center;
   margin: 0 auto; 
+}
+
+.income_table{
+  text-align: right;
 }
 
 .money_table{
   padding-left: 5px;
   margin-left: 20px;
+}
+
+.entry{
+  /* A bemeneti kiadások/bevételek classja*/
 }
 
 #unavailable{
