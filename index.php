@@ -335,7 +335,6 @@ else
 #note {
   z-index: 10;
 }
-
 .formmain{
   position: absolute;
         top: 50%;

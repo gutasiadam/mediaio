@@ -1,9 +1,7 @@
 <?php 
-session_start();
-
 include("../translation.php");
 if($_SESSION['role']=="Boss"){
-    echo "Menő";
+    echo "ALLOW";
 }
 
 $mysqli = new mysqli("localhost", "root", $application_DATABASE_PASS, "leltar_master");
@@ -13,7 +11,7 @@ if ($mysqli->connect_errno) {
     printf("Connect failed: %s\n", $mysqli->connect_error);
     exit();
 }
-
+//OLD TXT Method
 $query = "SELECT Nev FROM leltar WHERE TakeRestrict='' ";
 
 if ($result = $mysqli->query($query)) {
@@ -22,6 +20,7 @@ if ($result = $mysqli->query($query)) {
     while ($row = $result->fetch_assoc()) {
         fwrite($DB_Elements, $row["Nev"]."\n");
     }
+    print json_encode($rows);
     fclose($DB_Elements);
     /* free result set */
     $result->free();
@@ -37,6 +36,29 @@ if ($result = $mysqli->query($query)) {
     }
     fclose($DB_Elements);
     /* free result set */
+    $result->free();
+}
+
+//NEW, JSON METHOD
+$rows = array();
+$query = "SELECT Nev, ID, UID, Category, Status FROM leltar WHERE TakeRestrict='' ";
+if ($result = $mysqli->query($query)) {
+
+    /* fetch associative array */
+    while ($row = $result->fetch_assoc()) {
+        if($row['Status']==="0"){
+            $row['state']=['disabled' => true];
+        }else{
+            $row['state']=['disabled' => false];
+        }
+        $rows[] = $row;
+
+    }
+    print json_encode($rows);
+
+    $itemsJSONFile = fopen('takeOutItems.json', 'w');
+    fwrite($itemsJSONFile, json_encode($rows));
+    fclose($itemsJSONFile);
     $result->free();
 }
 

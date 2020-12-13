@@ -33,8 +33,7 @@ function PhparrayCookie(){
 	$result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
-    // output data of each row
-    //Displays amount of records found in leltar_master DB
+
     while($row = $result->fetch_assoc()) {
 		$countOfRec += 1;
 	}
@@ -94,7 +93,8 @@ if( isset($_POST['data'])){
  }?>
 <script>
 
-
+//WebSocket
+/*
 if ("WebSocket" in window) {
                console.log("WebSocket is supported by your Browser!");
                var ws = new WebSocket("ws://192.168.0.24:3000/ws");
@@ -167,7 +167,7 @@ if ("WebSocket" in window) {
                // The browser doesn't support WebSocket
                console.log("WebSocket NOT supported by your Browser!");
             }
-
+*/
 var goStatus = 0;
 function checkGoBtn() {
       $("#add").one('click', function () { 
@@ -200,6 +200,8 @@ function checkGoBtn() {
   <link rel="stylesheet" href="./main.css">
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+  <link rel="stylesheet" href="http://static.jstree.com/3.0.2/assets/bootstrap/css/bootstrap.min.css" />
+	<link rel="stylesheet" href="http://static.jstree.com/3.0.2/assets/dist/themes/default/style.min.css" />
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js">  </script>
   <script src="utility/jstree.js"></script>
   <script src="https://kit.fontawesome.com/2c66dc83e7.js" crossorigin="anonymous"></script>
@@ -252,12 +254,13 @@ function checkGoBtn() {
 		</nav>
 
 
-	<body ><!--style="background-color:#DCDCDC"-->
+  <body ><!--style="background-color:#DCDCDC"-->
 
 
 </select>
 
 		<div class="container">
+    <button id="takeout2BTN">Új kivétel teszt</button>
 			<br /><br />
 			<h2 class="rainbow" align="center" id="doTitle"><?php echo $applicationTitleShort;?></h2><br />
       <div class="row">
@@ -269,7 +272,7 @@ function checkGoBtn() {
     				<input id="id_itemNameAdd" type="text" name="add" class="form-control mb-2 mr-sm-2" placeholder='<?php echo $applicationSearchField;?>'></div></td>
             <td><button type="button" name="add" id="add" class="btn btn-info2 add_btn mb-2 mr-sm-2" onclick="checkGoBtn()"><?php echo $button_Add;?></button>     <span id='sendQueryButtonLoc'></span></td>
             <td><div class="col-md-9">
-      Filter: <input type="text" id="search" /><button id="clear">Clear</button>
+      Keresés: <input type="text" id="search" autocomplete="off" /><button id="clear">Törlés</button>
 <div id="jstree">
 </div>
 <p>Selected items:</p>
@@ -301,42 +304,58 @@ function checkGoBtn() {
 <script>
 
 
+//Load takeOutItems.json
+d=({})
+
+
+function loadJSON(callback) {   
+console.log("loadJSON function called")
+var xobj = new XMLHttpRequest();
+    xobj.overrideMimeType("application/json");
+xobj.open('GET', './utility/takeOutItems.json', false); // Replace 'my_data' with the path to your file
+xobj.onreadystatechange = function () {
+      if (xobj.readyState == 4 && xobj.status == "200") {
+        // Required use of an anonymous callback as .open will NOT return a value but simply returns undefined in asynchronous mode
+        callback(xobj.responseText);
+        d=JSON.parse(xobj.responseText);
+        //console.log("SYNC end:"+d)
+
+      }
+};
+xobj.send(null);  
+}
+
+function renameKey ( obj, oldKey, newKey ) {
+  obj[newKey] = obj[oldKey];
+  delete obj[oldKey];
+}
+
+loadJSON(function(response) {
+  // Parse JSON string into object
+  console.log("loadJSON done");
+ });
+for (let i = 0; i < d.length; i++) {
+  renameKey(d[i],'Nev','text');
+  renameKey(d[i],'ID','id');
+}
+
+
+console.log(d)
+ 
+
 $('#jstree').jstree({
   'plugins': ['search', 'checkbox', 'wholerow'],
   'core': {
-    'data': [
-      {'id': '1', 'parent': '#', 'text': 'Greater London'},
-      {'id': '11', 'parent': '1', 'text': 'Goldsmiths College'},
-      {'id': '12', 'parent': '1', 'text': 'King\'s College London'},
-      {'id': '13', 'parent': '1', 'text': 'University College London'},
-      {'id': '14', 'parent': '1', 'text': 'University of Westminster'},
-      {'id': '2', 'parent': '#', 'text': 'North East'},
-      {'id': '21', 'parent': '2', 'text': 'University of Durham'},
-      {'id': '22', 'parent': '2', 'text': 'University of Teeside'},
-      {'id': '3', 'parent': '#', 'text': 'North West'},
-      {'id': '31', 'parent': '3', 'text': 'Lancaster University'},
-      {'id': '32', 'parent': '3', 'text': 'University of Liverpool'},
-      {'id': '33', 'parent': '3', 'text': 'University of Manchester'},
-      {'id': '34', 'parent': '3', 'text': 'Manchester Metropolitan University'},
-      {'id': '4', 'parent': '#', 'text': 'South West'},
-      {'id': '41', 'parent': '4', 'text': 'University of Bath'},
-      {'id': '42', 'parent': '4', 'text': 'University of Bristol'},
-      {'id': '43', 'parent': '4', 'text': 'University of Exeter'},
-      {'id': '44', 'parent': '4', 'text': 'University of Plymouth'},
-      {'id': '5', 'parent': '#', 'text': 'Yorkshire and Humberside'},
-      {'id': '51', 'parent': '5', 'text': 'University of Hull'},
-      {'id': '52', 'parent': '5', 'text': 'University of Leeds'},
-      {'id': '53', 'parent': '5', 'text': 'University of York'},
-    ],
-    'animation': false,
-    //'expand_selected_onload': true,
+    'data': d,
+    'animation': true,
+    'expand_selected_onload': true,
     'themes': {
       'icons': false,
     }
   },
   'search': {
     'show_only_matches': true,
-    'show_only_matches_children': false
+    'show_only_matches_children': true
   }
 })
 
@@ -347,6 +366,29 @@ $('#search').on("keyup change", function () {
 $('#clear').click(function (e) {
   $('#search').val('').change().focus()
 })
+//JSON Object of selectted Items:
+takeOutPrepJSON = {
+  'items':[]
+}
+$('#jstree').on("changed.jstree", function (e, data) {
+  len=$('#jstree').jstree().get_selected(true).length
+  for (i=0; i < len; i++){
+    itemName=$('#jstree').jstree().get_selected(true)[i].text
+    itemId=$('#jstree').jstree().get_selected(true)[i].id
+    //var item = takeOutPrepJSON[i];   
+    itemArr={};
+    itemArr.name=itemName;
+    itemArr.id=itemId;
+    takeOutPrepJSON.items[i]=itemArr;
+    //takeOutPrepJSON.items[i].name=$('#jstree').jstree().get_selected(true)[i].text
+    //takeOutPrepJSON.items[i].id=$('#jstree').jstree().get_selected(true)[i].id
+    console.log("takeOutPrepJSON:"+takeOutPrepJSON);
+  }
+    }).jstree();
+
+$('#jstree').on("changed.jstree", function (e, data) {
+  console.log(data.instance.get_selected(true).text);
+});
 
 $('#jstree').on('changed.jstree', function (e, data) {
   var objects = data.instance.get_selected(true)
@@ -358,11 +400,52 @@ $('#jstree').on('changed.jstree', function (e, data) {
   })
 })
 
+$('#jstree_demo').jstree({
+  "core" : {
+    "animation" : 0,
+    "check_callback" : true,
+    "themes" : { "stripes" : true },
+    'data' : {
+      'url' : function (node) {
+        return node.id === '#' ?
+          'ajax_demo_roots.json' : 'ajax_demo_children.json';
+      },
+      'data' : function (node) {
+        return { 'id' : node.id };
+      }
+    }
+  },
+  "types" : {
+    "#" : {
+      "max_children" : 1,
+      "max_depth" : 4,
+      "valid_children" : ["root"]
+    },
+    "root" : {
+      "icon" : "/static/3.3.10/assets/images/tree_icon.png",
+      "valid_children" : ["default"]
+    },
+    "default" : {
+      "valid_children" : ["default","file"]
+    },
+    "file" : {
+      "icon" : "glyphicon glyphicon-file",
+      "valid_children" : []
+    }
+  },
+  "plugins" : [
+    "contextmenu", "dnd", "search",
+    "state", "types", "wholerow"
+  ]
+});
 //Right at load - start autologout.
 
   var selectList = [];
   var i=1;
   $(document).ready(function(){
+  
+//get items from takeOutItems.json
+
 
 function startTimer(duration, display) {
     var timer = duration, minutes, seconds;
@@ -517,7 +600,21 @@ window.onload = function () {
 })
     });
 
-  
+
+  document.getElementById("takeout2BTN").addEventListener("click", function() {
+    console.log("Kimenet:"+JSON.stringify(takeOutPrepJSON));
+    $.ajax({
+      url:"./utility/takeout_administrator.php",
+      //url:"./utility/dummy.php",
+			method:"POST",
+			data:{takeoutData: takeOutPrepJSON},
+			success:function(response)
+			{
+        console.log(response);
+        location.reload();
+			}
+		});
+});
 	$('#submit').click(function(){		
 		$.ajax({
 			url:"name.php",

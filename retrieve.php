@@ -143,6 +143,7 @@ if( isset($_POST['data'])){
     }
   echo $d;
   }
+  include('./utility/refetchdata.php');
   exit;
  }?>
 <script>
