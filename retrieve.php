@@ -158,7 +158,7 @@ var goStatus = 0;
   <link rel="stylesheet" href="./main.css">
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
-  <script src="utility/_initMenu.js" crossorigin="anonymous"></script>
+
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js">  </script>
   <script src="https://kit.fontawesome.com/2c66dc83e7.js" crossorigin="anonymous"></script>
     <meta charset="utf-8" />
@@ -173,14 +173,31 @@ var goStatus = 0;
 					</button>
 				  
 					<div class="collapse navbar-collapse" id="navbarSupportedContent">
-					  <ul class="navbar-nav mr-auto navbarUl">
-						<script>
-            $( document ).ready(function() {
-              menuItems = importItem("./utility/menuitems.json");
-              drawMenuItemsLeft('retrieve',menuItems);
-            });
-            </script>
-            <li><a class="nav-link disabled" href="#"><?php echo $nav_timeLockTitle;?> <span id="time"><?php echo $nav_timeLock_StartValue;?></span></a></li>
+					  <ul class="navbar-nav mr-auto">
+						<li class="nav-item ">
+						    <a class="nav-link" href="./index.php"><i class="fas fa-home fa-lg"></i><span class="sr-only">(current)</span></a>
+						</li>
+						<li class="nav-item">
+						    <a class="nav-link" href="./takeout.php"><i class="fas fa-upload fa-lg"></i></a>
+						</li>
+						<li class="nav-item active">
+						    <a class="nav-link" href="#"><i class="fas fa-download fa-lg"></i></a>
+						</li>
+            <li class="nav-item">
+						    <a class="nav-link" href="./adatok.php"><i class="fas fa-database fa-lg"></i></a>
+						</li>
+            <li class="nav-item">
+                        <a class="nav-link" href="./pathfinder.php"><i class="fas fa-project-diagram fa-lg"></i></a>
+            </li>
+            <li class="nav-item">
+                        <a class="nav-link" href="./events/"><i class="fas fa-calendar-alt fa-lg"></i></a>
+            </li>
+            <li class="nav-item">
+                        <a class="nav-link" href="./profile/index.php"><i class="fas fa-user-alt fa-lg"></i></a>
+            </li>
+            <li>
+              <a class="nav-link disabled" href="#"><?php echo $nav_timeLockTitle;?> <span id="time"><?php echo $nav_timeLock_StartValue;?></span></a>
+            </li>
             <?php if (($_SESSION['role']=="Admin") || ($_SESSION['role']=="Boss")){
               echo '<li><a class="nav-link disabled" href="#">Admin jogokkal rendelkezel</a></li>';}?>
 					  </ul>
@@ -203,19 +220,11 @@ var goStatus = 0;
         <table id="itemSearch" align="left"><tr><td><div class="autocomplete" method="GET">
     				<input id="id_itemNameAdd" type="text" name="add" class="form-control mb-2 mr-sm-2" placeholder='<?php echo $applicationSearchField;?>'></div></td>
             <td><button type="button" name="add" id="add" class="btn btn-info2 add_btn mb-2 mr-sm-2"><?php echo $button_Add;?></button><td><span id='sendQueryButtonLoc'></span></td>
-            
   			</tr>
-        
         </table>
 			<form autocomplete="off" action="/index.php">
 			</form>
         </div></div>
-        <div class="col-md-4"><div class="form-check intactForm">
-  <input class="form-check-input" type="checkbox" value="" id="intactItems">
-  <label class="form-check-label" for="intactItems">
- <h6>Igazolom, hogy minden, amit visszahoztam sérülésmentes és kifogástalanul működik. Sérülés esetén azonnal jelezd azt a vezetőségnek.</h6>
-  </label>
-</div></div>
       </div>
       <br>
           <div class="row">
@@ -264,7 +273,6 @@ var dbItems=(loadFile("./utility/DB_Elements.txt"));
   var needsVerification = [];
   $(document).ready(function(){
 
-    $('.intactForm').hide(); // Csak akkor jelenjen meg a checkbox, ha már van Go gomb is.
 function startTimer(duration, display) {
     var timer = duration, minutes, seconds;
     setInterval(function () {
@@ -321,8 +329,6 @@ window.onload = function () {
 	});
 //selectList = selectList.filter(Boolean);
   $(document).on('click', '.go_btn', function(){
-    if($("#intactItems").prop("checked")){ // ha a felhasználó elfogadta, hogy a tárgyak rendben vannak.
-
       var filtered = selectList.filter(function (el) {
       return el != null;
     });
@@ -347,14 +353,11 @@ window.onload = function () {
         alert("Status: " + textStatus); alert("Error: " + errorThrown); 
     }
 })
-  }else{
-    alert("Ha a tárggyal gond van, jelezd a vezetőségnek!");
-  }});
+    });
   
   $(document).on('click', '.add_btn', function(){
 
-    //console.log("CLICK!")
-    $('.intactForm').fadeIn();
+    console.log("CLICK!")
       if (goStatus == 0){
         $('#sendQueryButtonLoc').append('<button type="submit" class="btn btn-success go_btn mb-2 mr-sm-2" id="goButton" >'+button_Go+'</button>');
         goStatus++;

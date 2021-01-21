@@ -1,27 +1,27 @@
 { "menu": {
     "left" : [
-        {"name": "index","icon": "fas fa-home fa-lg", "href": "/index.php"},
-        {"name": "takeout","icon": "fas fa-upload fa-lg", "href": "/takeout.php"},
-        {"name": "retrieve","icon": "fas fa-download fa-lg", "href": "/retrieve.php"},
-        {"name": "adatok","icon": "fas fa-database fa-lg", "href": "/adatok.php"},
-        {"name": "pathfinder","icon": "fas fa-project-diagram fa-lg", "href": "/pathfinder.php"},
-        {"name": "events","icon": "fas fa-calendar-alt fa-lg", "href": "/events/"},
-        {"name": "profile","icon": "fas fa-user-alt fa-lg", "href": "/profile/index.php"}
+        {"name": "index","icon": "fas fa-home fa-lg", "href": "./index.php"},
+        {"name": "takeout","icon": "fas fa-upload fa-lg", "href": "./takeout.php"},
+        {"name": "retrieve","icon": "fas fa-download fa-lg", "href": "./retrieve.php"},
+        {"name": "adatok","icon": "fas fa-database fa-lg", "href": "./adatok.php"},
+        {"name": "pathfinder","icon": "fas fa-project-diagram fa-lg", "href": "./pathfinder.php"},
+        {"name": "events","icon": "fas fa-calendar-alt fa-lg", "href": "./events/"},
+        {"name": "profile/index","icon": "fas fa-user-alt fa-lg", "href": "./profile/index.php"}
     ],
     "info" : [
         {"name": "adminRoles", "message": "Admin jogokkal rendelkezel."}
     ],
     "right" : [
-        {"name": "help","icon": "fas fa-question-circle fa-lg", "href": "/help.php"}
+        {"name": "help","icon": "fas fa-question-circle fa-lg", "href": "./help.php"}
     ]},
     "indexTable":[
-        {"name": "takeout","icon": "fas fa-upload fa-3x", "href": "/takeout.php", "displayName": "Kivétel"},
-        {"name": "retrieve","icon": "fas fa-download fa-3x", "href": "/retrieve.php", "displayName": "Visszahozás"},
-        {"name": "adatok","icon": "fas fa-database fa-3x", "href": "/adatok.php", "displayName": "Adatok"},
-        {"name": "pathfinder","icon": "fas fa-project-diagram fa-3x", "href": "/pathfinder.php", "displayName": "PathFinder"},
-        {"name": "events","icon": "fas fa-calendar-alt fa-3x", "href": "/events/", "displayName": "Naptár"},
+        {"name": "takeout","icon": "fas fa-upload fa-3x", "href": "./takeout.php", "displayName": "Kivétel"},
+        {"name": "retrieve","icon": "fas fa-download fa-3x", "href": "./retrieve.php", "displayName": "Visszahozás"},
+        {"name": "adatok","icon": "fas fa-database fa-3x", "href": "./adatok.php", "displayName": "Adatok"},
+        {"name": "pathfinder","icon": "fas fa-project-diagram fa-3x", "href": "./pathfinder.php", "displayName": "PathFinder"},
+        {"name": "events","icon": "fas fa-calendar-alt fa-3x", "href": "./events/", "displayName": "Naptár"},
         {"name": "fileServer", "icon": "fas fa-server fa-3x", "displayName": "Fájlszerver"},
-        {"name": "profile","icon": "fas fa-user-alt fa-3x", "href": "/profile/index.php", "displayName": "Profil"},
-        {"name": "help","icon": "fas fa-question-circle fa-3x", "href": "/help.php", "displayName": "Segítség"}
+        {"name": "profile/index","icon": "fas fa-user-alt fa-3x", "href": "./profile/index.php", "displayName": "Profil"},
+        {"name": "help","icon": "fas fa-question-circle fa-3x", "href": "./help.php", "displayName": "Segítség"}
     ]
 }

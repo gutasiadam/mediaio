@@ -10,7 +10,6 @@ if(isset($_SESSION['userId'])){
         <link rel="stylesheet" href="utility/pathfinder.css" />
         <!--<link rel="stylesheet" href="utility/timeline.min.css" />-->
         <script src="utility/jquery.js"></script>
-        <script src="utility/_initMenu.js" crossorigin="anonymous"></script>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js">  </script>
@@ -26,14 +25,31 @@ if(isset($_SESSION['userId'])){
 					</button>
 				  
 					<div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav mr-auto navbarUl">
-						<script>
-            $( document ).ready(function() {
-              menuItems = importItem("./utility/menuitems.json");
-              drawMenuItemsLeft('pathfinder',menuItems);
-            });
-            </script>
-            <li><a class="nav-link disabled" href="#"><?php echo $nav_timeLockTitle;?> <span id="time"><?php echo $nav_timeLock_StartValue;?></span></a></li>
+					  <ul class="navbar-nav mr-auto">
+						<li class="nav-item ">
+						  <a class="nav-link" href="./index.php"><i class="fas fa-home fa-lg"></i><span class="sr-only">(current)</span></a>
+						</li>
+						<li class="nav-item">
+						  <a class="nav-link" href="./takeout.php"><i class="fas fa-upload fa-lg"></i></a>
+						</li>
+						<li class="nav-item">
+						  <a class="nav-link" href="./retrieve.php"><i class="fas fa-download fa-lg"></i></a>
+						</li>
+            <li class="nav-item">
+						  <a class="nav-link" href="./adatok.php"><i class="fas fa-database fa-lg"></i></a>
+            </li>
+            <li class="nav-item">
+                        	<a class="nav-link active" href="#"><i class="fas fa-project-diagram fa-lg"></i></a>
+            </li>
+            <li class="nav-item">
+                        <a class="nav-link" href="./events/"><i class="fas fa-calendar-alt fa-lg"></i></a>
+            </li>
+            <li class="nav-item">
+                        <a class="nav-link" href="./profile/index.php"><i class="fas fa-user-alt fa-lg"></i></a>
+            </li>
+            <li>
+              <a class="nav-link disabled" href="#"><?php echo $nav_timeLockTitle;?> <span id="time"><?php echo $nav_timeLock_StartValue;?></span></a>
+            </li>
             <?php if (($_SESSION['role']=="Admin") || ($_SESSION['role']=="Boss")){
               echo '<li><a class="nav-link disabled" href="#">Admin jogokkal rendelkezel</a></li>';}?>
 					  </ul>
