@@ -8,6 +8,7 @@ if(!isset($_SESSION['userId'])){
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 	  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   <script src="https://kit.fontawesome.com/2c66dc83e7.js" crossorigin="anonymous"></script>
+  <script src="utility/_initMenu.js" crossorigin="anonymous"></script>
 </head>
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -17,28 +18,13 @@ if(!isset($_SESSION['userId'])){
 					</button>
 				  
 					<div class="collapse navbar-collapse" id="navbarSupportedContent">
-					  <ul class="navbar-nav mr-auto">
-						<li class="nav-item ">
-						  <a class="nav-link" href="./index.php"><i class="fas fa-home fa-lg"></i><span class="sr-only">(current)</span></a>
-						</li>
-						<li class="nav-item">
-						  <a class="nav-link" href="./takeout.php"><i class="fas fa-upload fa-lg"></i></a>
-						</li>
-						<li class="nav-item">
-						  <a class="nav-link" href="./retrieve.php"><i class="fas fa-download fa-lg"></i></a>
-						</li>
-            <li class="nav-item active">
-						  <a class="nav-link" href="#"><i class="fas fa-database fa-lg"></i></a>
-						</li>
-						<li class="nav-item">
-                        	<a class="nav-link" href="./pathfinder.php"><i class="fas fa-project-diagram fa-lg"></i></a>
-						</li>
-            <li class="nav-item">
-                        <a class="nav-link" href="./events/"><i class="fas fa-calendar-alt fa-lg"></i></a>
-            </li>
-						<li class="nav-item">
-                        <a class="nav-link" href="./profile/index.php"><i class="fas fa-user-alt fa-lg"></i></a>
-            			</li>
+					  <ul class="navbar-nav mr-auto navbarUl">
+						<script>
+            $( document ).ready(function() {
+              menuItems = importItem("./utility/menuitems.json");
+              drawMenuItemsLeft('adatok',menuItems);
+            });
+            </script>
             <li>
               <a class="nav-link disabled" href="#"><?php echo $nav_timeLockTitle;?> <span id="time"><?php echo $nav_timeLock_StartValue;?></span></a>
             </li>
