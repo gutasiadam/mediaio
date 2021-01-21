@@ -13,13 +13,13 @@
   <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js">  </script>
   <script src="https://kit.fontawesome.com/2c66dc83e7.js" crossorigin="anonymous"></script>
+  <script src="utility/_initMenu.js" crossorigin="anonymous"></script>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Arpad Media IO Login</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
-    <header>
                 <?php 
 
 
@@ -50,41 +50,26 @@ else
 					</button>
 				  
 					<div class="collapse navbar-collapse" id="navbarSupportedContent">
-					  <ul class="navbar-nav mr-auto">
-						<li class="nav-item active ">
-						    <a class="nav-link" href="./index.php"><i class="fas fa-home fa-lg"></i><span class="sr-only">(current)</span></a>
-						</li>
-						<li class="nav-item">
-						    <a class="nav-link" href="./takeout.php"><i class="fas fa-upload fa-lg"></i></a>
-						</li>
-						<li class="nav-item ">
-						    <a class="nav-link" href="./retrieve.php"><i class="fas fa-download fa-lg"></i></a>
-						</li>
-            <li class="nav-item">
-						    <a class="nav-link" href="./adatok.php"><i class="fas fa-database fa-lg"></i></a>
-						</li>
-            <li class="nav-item">
-                        <a class="nav-link" href="./pathfinder.php"><i class="fas fa-project-diagram fa-lg"></i></a>
-            </li>
-            <li class="nav-item">
-                        <a class="nav-link" href="./events/"><i class="fas fa-calendar-alt fa-lg"></i></a>
-            </li>
-            <li class="nav-item">
-                        <a class="nav-link" href="./profile/index.php"><i class="fas fa-user-alt fa-lg"></i></a>
-            </li>
-            <li>
-              <a class="nav-link disabled" href="#">'.$nav_timeLockTitle.' <span id="time">'.$nav_timeLock_StartValue.'</span></a>
-            </li>
+					  <ul class="navbar-nav mr-auto navbarUl">
             <li>
             <a class="nav-link disabled" id="ServerMsg" href="#"></a>
-            </li>';
+            </li></ul>';?>
+            <script>
+            $( document ).ready(function() {
+              menuItems = importItem("./utility/menuitems.json");
+              drawMenuItemsLeft('index',menuItems);
+            });
+            </script>
+            
+            <?php
             if (($_SESSION['role']=="Admin") || ($_SESSION['role']=="Boss")){
+              echo '<ul class="navbar-nav navbarPhP">';
               echo '<li><a class="nav-link disabled" href="#">Admin jogokkal rendelkezel</a></li>';
               echo '</ul>
               <form class="form-inline my-2 my-lg-0" action=utility/logout.ut.php>
                         <button class="btn btn-danger my-2 my-sm-0" type="submit">'.$nav_logOut.'</button>
                         </form>
-                        <a class="nav-link my-2 my-sm-0" href="./help.php"><i class="fas fa-question-circle fa-lg"></i></a>
+                        <div class="menuRight"></div>
             </div>
       </nav>
       ';
@@ -94,21 +79,21 @@ else
               <form class="form-inline my-2 my-lg-0" action=utility/logout.ut.php>
                         <button class="btn btn-danger my-2 my-sm-0" type="submit">'.$nav_logOut.'</button>
                         </form>
-                        <a class="nav-link my-2 my-sm-0" href="./help.php"><i class="fas fa-question-circle fa-lg"></i></a>
+                        <div class="menuRight"></div>
             </div>
       </nav>
       ';
             }
 					  
                     ?>
+                    
                     <?php
                 }
           // Handle specific GET requests
           
                 ?>
-            </ul>
+                <!-- </ul -->
         </nav>
-    </header>
 	<body>
 		
     <?php if(!isset($_SESSION['userId'])){?>
@@ -133,107 +118,19 @@ else
 </div>
               <h1 align=center class="rainbow">Árpád Média IO </h1>
 		                <h4 align=center><?php echo $application_version_text.$application_Version; ?>'</h4>
-              <div class="row justify-content-center" style="text-align: center; width:100%; margin: 0 auto;">
-              <div class="col-6 col-sm-2"><a class="nav-link ab" href="./takeout.php"><i class="fas fa-upload fa-3x"></i><br><h5><?php echo $index_takeOut; ?></h5></a></div>
-              <div class="col-6 col-sm-2 offset-md-1"><a class="nav-link ab" href="./retrieve.php"><i class="fas fa-download fa-3x"></i><br><h5><?php echo $index_Retrieve ?></h5></a></div>
-              </div>
-              <br>
-              <div class="row justify-content-center" style="text-align: center; width:100%; margin: 0 auto;">
-              <div class="col-6 col-sm-2"><a class="nav-link ab" href="./adatok.php"><i class="fas fa-database fa-3x"></i><br><h5><?php echo $index_Data; ?></h5></a></div>
-              <div class="col-6 col-sm-2 offset-md-1"><a class="nav-link ab" href="./pathfinder.php"><i class="fas fa-project-diagram fa-3x"></i><br><h5><?php echo $index_PathFinder ?></h5></a></div>
-              </div>
-              <br>
-            <div class="row justify-content-center" style="text-align: center; width:100%; margin: 0 auto;">
-              <div class="col-6 col-sm-2"><a class="nav-link ab" href="./adatok.php"><i class="fas fa-calendar-alt fa-3x"></i><br><h5>Naptár</h5></a></div>
-              <div class="col-6 col-sm-2 offset-md-1"><a class="nav-link ab" href="http://80.99.70.46/mftp" target="_blank"><i class="fas fa-server fa-3x" style="color:<?php echo $state; ?>"></i><br><h5>Fájlszerver</h5></a></div>
-              </div>
-              <br>
-              <div class="row justify-content-center" style="text-align: center; width:100%; margin: 0 auto;">
-              <div class="col-6 col-sm-2"><a class="nav-link ab" href="./profile/index.php"><i class="fas fa-user-alt fa-3x"></i><br><h5><?php echo $index_Profile; ?></h5></a></div>
-              <div class="col-6 col-sm-2 offset-md-1"><a class="nav-link ab" href="./help.php"><i class="fas fa-question-circle fa-3x"></i><br><h5><?php echo $index_Help; ?></h5></a></div>
-            </div>
+                    <div class="row justify-content-center mainRow1" style="text-align: center; width:100%; margin: 0 auto;"></div><br>
+                    <div class="row justify-content-center mainRow2" style="text-align: center; width:100%; margin: 0 auto;"></div><br>
+                    <div class="row justify-content-center mainRow3" style="text-align: center; width:100%; margin: 0 auto;"></div><br>
+                    <div class="row justify-content-center mainRow4" style="text-align: center; width:100%; margin: 0 auto;"></div><br>
               <footer class="page-footer font-small blue"> <div class="fixed-bottom" align="center"><p><?php echo $applicationTitleFull; ?> <strong>ver. <?php echo $application_Version; ?></strong><br /> Code by <a href="https://github.com/d3rang3">Adam Gutasi</a>
             Socket kommunikáció állapota: <span id='webSocketState' style="width: 10px; height:10px; display: inline-block;"></span>
             </p></div></footer>';
             <script type = "text/javascript">
-            $( document ).ready(function() {
-              WebSocketTest();
+            $( document ).ready(function() {             
+              //WebSocketTest();
+              drawMenuItemsRight('index',menuItems);
+              drawIndexTable(menuItems);
             });
-            //Websocket kommunikáció felállítása.
-            function WebSocketTest() {
-            
-            if ("WebSocket" in window) {
-               console.log("WebSocket is supported by your Browser!");
-               var ws = new WebSocket("ws://192.168.0.24:3000/ws");
-               // Let us open a web socket
-				
-               ws.onopen = function() {
-                  
-                  // Web Socket is connected, send data using send()
-                  //ws.send("I Joined the network!");
-                  document.getElementById('webSocketState').style.backgroundColor = ('lime');
-                  console.log("Message is sent to the network");
-               };
-				
-               ws.onmessage = function (evt) { 
-                var received_msg = evt.data;
-
-                try {
-                    let m = JSON.parse(evt.data);
-                     handleMessage(m);
-                } catch (err) {
-                    console.log('[Client] Message is not parseable to JSON.');
-                }
-
-                  console.log("Message recieved: " + received_msg);
-                  document.getElementById('recMsg').innerHTML = (received_msg);
-               };
-				
-               ws.onclose = function() { 
-                  
-                  // websocket is closed.
-                  console.log("Connection is closed..."); 
-                  document.getElementById('webSocketState').style.backgroundColor = ('red');
-                  document.getElementById("ServerMsg").style.backgroundColor = ('LightCoral');
-                  document.getElementById("ServerMsg").style.color = ('white');
-                  document.getElementById('ServerMsg').innerHTML = ('A szerverrel való kommunikáció megszakadt. Próbáld meg újratölteni az oldalt.');
-               };
-
-               let handlers = {
-                "set-background-color": function(m) {
-        // ...
-                console.log('[Client] set-background-color handler running.');
-                console.log('[Client] Color is ' + m.params.color);
-                document.getElementById('webSocketState').style.backgroundColor = (m.params.color);
-                }
-            };
-
-
-               function handleMessage(m) {
-
-                if (m.method == undefined) {
-                    return;
-                }
-
-                let method = m.method;
-
-                if (method) {
-
-                    if (handlers[method]) {
-                        let handler = handlers[method];
-                        handler(m);
-                    } else {
-                        console.log('[Client] No handler defined for method ' + method + '.');
-                    }
-
-                }
-        }
-            } else {
-              
-               // The browser doesn't support WebSocket
-               console.log("WebSocket NOT supported by your Browser!");
-            }
-         }
             </script>
             <?php }
             //GET változók kezelése
@@ -287,108 +184,12 @@ else
               </script>';}?>
 
 	</body>
-<style>
-.successtable{
-  width: 30%;
-  margin: 0 auto;
-  margin-bottom: 10px;
-}
-
-.successtable2{
-  width: 30%;
-  margin: 0 auto;
-  margin-bottom: 10px;
-  color: white;
-}
-
-.logintable{
-  width: 15%;
-  text-align: center;
-  margin: 0 auto; 
-}
-
-.nav{
-  align:left;
-}
-
-.col-6{
-  border-style: solid;
-  border-width: 1px;
-  transition: 0.5s;
-  text-align:center;
-}
-
-.col-6:hover{
-  background-color:#3b3b3b;
-  border-radius: 25px;
-}
-
-.ab{
-  color: #3b3b3b;
-  transition: 0.5s;
-}
-
-.ab:hover{
-  color: #ffffff;
-}
-
-#note {
-  z-index: 10;
-}
-.formmain{
-  position: absolute;
-        top: 50%;
-        left: 50%;
-        margin-right: -50%;
-        width: 30%;
-        transform: translate(-50%, -50%);
-        background-color: #ededed;
-        border-radius: 50px;
-        box-shadow: 10px 6px 50px grey; }
-</style>
-
 <script type="text/javascript">
-
-
-
-function startTimer(duration, display) {
-    var timer = duration, minutes, seconds;
-    setInterval(function () {
-     
-        minutes = parseInt(timer / 60, 10)
-        seconds = parseInt(timer % 60, 10);
-
-        minutes = minutes < 10 ? "0" + minutes : minutes;
-        seconds = seconds < 10 ? "0" + seconds : seconds;
-
-        display.textContent = minutes + ":" + seconds;
-
-        if (timer > 60){
-          $('#time').animate({'opacity': 0.9}, 0, function(){
-          $(this).html(display.textContent).animate({'opacity': 1}, 500);
-          setTimeout(function() { $("#time").text(display.textContent).animate({'opacity': 1}, 250); }, 700);;});
-        }
-
-        if (timer < 60){
-          $('#time').animate({'opacity': 0.9}, 0, function(){
-          $(this).html("<font color='red'>"+display.textContent+"</font").animate({'opacity': 1}, 500);
-          setTimeout(function() { $("#time").html("<font color='red'>"+display.textContent+"</font").animate({'opacity': 1}, 250); }, 700);;});
-        }
-
-        if (--timer < 0) {
-            timer = duration;
-            window.location.href = "utility/logout.ut.php"
-        }
-    }, 1000);
-}
-
-window.onload = function () {
+/*window.onload = function () {
     var fiveMinutes = 60 * 10 - 1,
         display = document.querySelector('#time');
     startTimer(fiveMinutes, display);
     setInterval(updateTime, 1000);
     updateTime();
-};
-
-
+};*/
 </script>

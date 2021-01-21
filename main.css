@@ -20,3 +20,63 @@
   80% { color: #09457a; } 
   100% { color: #5f0976; }
 }
+
+
+.successtable{
+  width: 30%;
+  margin: 0 auto;
+  margin-bottom: 10px;
+}
+
+.successtable2{
+  width: 30%;
+  margin: 0 auto;
+  margin-bottom: 10px;
+  color: white;
+}
+
+.logintable{
+  width: 15%;
+  text-align: center;
+  margin: 0 auto; 
+}
+
+.nav{
+  align:left;
+}
+
+.col-6{
+  border-style: solid;
+  border-width: 1px;
+  transition: 0.5s;
+  text-align:center;
+}
+
+.col-6:hover{
+  background-color:#3b3b3b;
+  border-radius: 25px;
+}
+
+.ab{
+  color: #3b3b3b;
+  transition: 0.5s;
+}
+
+.ab:hover{
+  color: #ffffff;
+}
+
+#note {
+  z-index: 10;
+}
+.formmain{
+  position: absolute;
+        top: 50%;
+        left: 50%;
+        margin-right: -50%;
+        width: 30%;
+        transform: translate(-50%, -50%);
+        background-color: #ededed;
+        border-radius: 50px;
+        box-shadow: 10px 6px 50px grey; 
+      }
