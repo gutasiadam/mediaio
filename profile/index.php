@@ -2,7 +2,14 @@
 <html>
     <?php 
     require("../header.php");
-    require("../translation.php");
+    require("../translation.php");?>
+    <script src="../utility/_initMenu.js" crossorigin="anonymous"></script>
+<script> $( document ).ready(function() {
+              menuItems = importItem("../utility/menuitems.json");
+              drawMenuItemsLeft("profile",menuItems,2);
+              drawMenuItemsRight('profile',menuItems);
+            });</script>
+    <?php
     $servername = "localhost";
     $username = "root";
     $password = $application_DATABASE_PASS;
@@ -23,34 +30,13 @@
         if(isset($_SESSION['userId'])){
             echo '
             <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <a class="navbar-brand" href="index.php"><img src="../utility/logo2.png" height="50"></a>
+            <a class="navbar-brand" href="../index.php"><img src="../utility/logo2.png" height="50"></a>
 					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 					  <span class="navbar-toggler-icon"></span>
 					</button>
-				  
+          
 					<div class="collapse navbar-collapse" id="navbarSupportedContent">
-					  <ul class="navbar-nav mr-auto">
-						<li class="nav-item ">
-						    <a class="nav-link" href="../index.php"><i class="fas fa-home fa-lg"></i><span class="sr-only">(current)</span></a>
-						</li>
-						<li class="nav-item">
-						    <a class="nav-link" href="../takeout.php"><i class="fas fa-upload fa-lg"></i></a>
-						</li>
-						<li class="nav-item ">
-						    <a class="nav-link" href="../retrieve.php"><i class="fas fa-download fa-lg"></i></a>
-						</li>
-            <li class="nav-item">
-						    <a class="nav-link" href="../adatok.php"><i class="fas fa-database fa-lg"></i></a>
-						</li>
-            <li class="nav-item">
-                        <a class="nav-link" href="../pathfinder.php"><i class="fas fa-project-diagram fa-lg"></i></a>
-            </li>
-            <li class="nav-item">
-                        <a class="nav-link" href="../events/"><i class="fas fa-calendar-alt fa-lg"></i></a>
-            </li>
-            <li class="nav-item active">
-                        <a class="nav-link" href="#"><i class="fas fa-user-alt fa-lg"></i></a>
-            </li>
+					  <ul class="navbar-nav mr-auto navbarUl">
             <li>
               <a class="nav-link disabled" href="#">Időzár <span id="time">10:00</span></a>
             </li>';
@@ -60,7 +46,7 @@
 						<form class="form-inline my-2 my-lg-0" action=../utility/logout.ut.php>
                       <button class="btn btn-danger my-2 my-sm-0" type="submit">Kijelentkezés</button>
                       </form>
-                      <a class="nav-link my-2 my-sm-0" href="../help.php"><i class="fas fa-question-circle fa-lg"></i></a>
+                      <div class="menuRight"></div>
 					</div>
     </nav>
     <footer class="page-footer font-small blue"> <div class="fixed-bottom" align="center"><p>'.$applicationTitleFull.' <strong>ver. '.$application_Version.'</strong><br /> Code by <a href="https://github.com/d3rang3">Adam Gutasi</a></p></div></footer>
@@ -107,33 +93,13 @@
 }
 </style>
 <script>
-(function(){
-  setInterval(updateTime, 1000);
-});
-
-function startTimer(duration, display) {
-    var timer = duration, minutes, seconds;
-    setInterval(function () {
-        minutes = parseInt(timer / 60, 10)
-        seconds = parseInt(timer % 60, 10);
-
-        minutes = minutes < 10 ? "0" + minutes : minutes;
-        seconds = seconds < 10 ? "0" + seconds : seconds;
-
-        display.textContent = minutes + ":" + seconds;
-
-        if (--timer < 0) {
-            timer = duration;
-            window.location.href = "../utility/logout.ut.php"
-        }
-    }, 1000);
-}
-
 window.onload = function () {
     var fiveMinutes = 10 * 60 - 1,
         display = document.querySelector('#time');
     startTimer(fiveMinutes, display);
-    setInterval(updateTime, 1000);
+    (function(){
+  setInterval(updateTime, 1000);
+});
     updateTime();
 };
 </script>
