@@ -20,4 +20,6 @@ By the time of writing, MediaIO is capable of:
 - Currently I am not capable of hosting a demo. A demo Database has to be created too for further portability.
 
 In the current development phase, **every help is appreciated!**
+
 ###### For any further questions, feel free to contact me on [the project page](https://github.com/d3rang3/mediaio "the project's page") or on [my GitHub](https://github.com/d3rang3 "my GitHub").
+
