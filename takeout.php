@@ -351,13 +351,28 @@ $('#jstree').jstree({
     'expand_selected_onload': true,
     'themes': {
       'icons': false,
-    }
-  },
+    }},
   'search': {
     'show_only_matches': true,
     'show_only_matches_children': true
   }
-})
+});
+/*
+$('#jstree').jstree({
+    'core' : {
+        'data' : d,
+
+        "themes":{
+            "icons":false
+        }
+    },
+    "search": {
+        "show_only_matches": true,
+        "show_only_matches_children": true
+    },
+    "plugins" : ["checkbox", "search"]
+
+});*/
 
 $('#search').on("keyup change", function () {
   $('#jstree').jstree(true).search($(this).val())
@@ -752,6 +767,7 @@ function autocomplete(inp, arr) {
   autocomplete(document.getElementById("id_itemNameAdd"), dbItems);
 
 // autologout
+
   (function(){
   setInterval(updateTime, 1000);
 });
@@ -844,5 +860,9 @@ function startTimer(duration, display) {
 
   .livearray{
     display:none;
+  }
+
+  .jstree-hidden{
+    display: none;
   }
 </style>

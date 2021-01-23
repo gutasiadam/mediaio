@@ -6,7 +6,9 @@
         {"name": "adatok","icon": "fas fa-database fa-lg", "href": "/adatok.php"},
         {"name": "pathfinder","icon": "fas fa-project-diagram fa-lg", "href": "/pathfinder.php"},
         {"name": "events","icon": "fas fa-calendar-alt fa-lg", "href": "/events/"},
+        {"name": "maintenance", "icon": "fas fa-broom fa-lg", "href": "/maintenance/index.php"},
         {"name": "profile","icon": "fas fa-user-alt fa-lg", "href": "/profile/index.php"}
+        
     ],
     "info" : [
         {"name": "adminRoles", "message": "Admin jogokkal rendelkezel."}

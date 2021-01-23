@@ -45,7 +45,7 @@ if(isset($_SESSION['userId'])){
 </nav>
     <body>  
         <div class="container">
-   <br /><form action="./pathfinder.php" method="GET" autocomplete="off">
+   <br /><form action="./pathfinder.php" method="GET" autocomplete="off"></form>
    <h1 align="left">PathFinder</h1><button type="submit" name="add" id="add" class="btn btn-info2 mb-2 mr-sm-2" ><?php echo $button_Find;?></button>
    <table id="itemSearch" align="left" style="margin-right: 10px;"><tr>
             <td><input id="id_itemNameAdd" type="text" name="pfItem" class="form-control mb-2 mr-sm-2" placeholder='<?php echo $applicationSearchField;?>'></td></div>
@@ -101,7 +101,6 @@ if(isset($_SESSION['userId'])){
 </html>
 
 <script>
-
 function startTimer(duration, display) {
     var timer = duration, minutes, seconds;
     setInterval(function () {

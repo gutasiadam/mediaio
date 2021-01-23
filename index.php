@@ -90,7 +90,6 @@ else
                     <?php
                 }
           // Handle specific GET requests
-          
                 ?>
                 <!-- </ul -->
         </nav>
@@ -175,13 +174,7 @@ else
               $("#SystemMsg").fadeIn();
               setTimeout(function(){ $("#SystemMsg").fadeOut(); }, 6000);
               </script>';
-            }
-            if($_GET['logout'] == "WrongAuth"){
-              echo '<script>document.getElementById("SystemMsg").innerHTML="Hibás Authenticator kód!";
-              document.getElementById("SystemMsg").className = "alert alert-danger successtable";
-              $("#SystemMsg").fadeIn();
-              setTimeout(function(){ $("#SystemMsg").fadeOut(); }, 6000);
-              </script>';}?>
+            }?>
 
 	</body>
 <script type="text/javascript">

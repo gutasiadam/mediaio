@@ -1,3 +1,8 @@
+@media print{
+  .noprint {
+    display: none;
+  }
+}
 .rainbow {
   -webkit-animation: color 15s linear infinite;
   animation: color 15s linear infinite;  

@@ -57,16 +57,16 @@
           $('.navbarUl').append('<li class="nav-item imported"><a class="nav-link" href="'+(".").repeat(jumpupFolderStruct)+menuItems.menu.left[i].href+'"><i class="'+menuItems.menu.left[i].icon+'"></i></a></li>');
          }
          }};
-        function drawMenuItemsRight(activeName,menuItems){
+        function drawMenuItemsRight(activeName,menuItems,jumpupFolderStruct=1){
             console.log("drawMenuItemsRight called.")
             if (menuItems){
                 for (i = 0; i < menuItems.menu.right.length; i++) {
                     //draw item on top side
                      console.log(menuItems.menu.right[i]);
                      if (menuItems.menu.right[i].name == activeName){
-                      $('.menuRight').append('<a class="nav-link my-2 my-sm-0 active" href="'+menuItems.menu.right[i].href+'"><i class="'+menuItems.menu.right[i].icon+'"></i></a>');
+                      $('.menuRight').append('<a class="nav-link my-2 my-sm-0 active" href="'+(".").repeat(jumpupFolderStruct)+menuItems.menu.right[i].href+'"><i class="'+menuItems.menu.right[i].icon+'"></i></a>');
                      }else{
-                      $('.menuRight').append('<a class="nav-link my-2 my-sm-0" href="'+menuItems.menu.right[i].href+'"><i class="'+menuItems.menu.right[i].icon+'"></i></a>');
+                      $('.menuRight').append('<a class="nav-link my-2 my-sm-0" href="'+(".").repeat(jumpupFolderStruct)+menuItems.menu.right[i].href+'"><i class="'+menuItems.menu.right[i].icon+'"></i></a>');
                      } 
             }}else{
                 console.log("menItems not defined!")
@@ -74,17 +74,17 @@
             
              };
 
-    function drawIndexTable(menuItems){
+    function drawIndexTable(menuItems,jumpupFolderStruct=1){
 
         console.log("Drawing Main Page table");
         if (menuItems){
             for (i = 0; i < menuItems.indexTable.length; i++) {
                 //console.log(i,menuItems.indexTable[i])
                 if(i%2==0){
-                    $('.mainRow'+Math.round((i+1)/2)).append(`<div class="col-6 col-sm-2"><a class="nav-link ab" href="${menuItems.indexTable[i].href}"><i class="${menuItems.indexTable[i].icon}"></i><br><h5>${menuItems.indexTable[i].displayName}</h5></a></div>`);
+                    $('.mainRow'+Math.round((i+1)/2)).append(`<div class="col-6 col-sm-2"><a class="nav-link ab" href="${(".").repeat(jumpupFolderStruct)+menuItems.indexTable[i].href}"><i class="${menuItems.indexTable[i].icon}"></i><br><h5>${menuItems.indexTable[i].displayName}</h5></a></div>`);
                     //$('.mainRow'+Math.round(i/2)).append('<div class="col-6 col-sm-2"><a class="nav-link ab" href="./takeout.php"><i class="fas fa-upload fa-3x"></i><br><h5>Debug</h5></a></div>');
                 }else{
-                    $('.mainRow'+Math.round((i+1)/2)).append(`<div class="col-6 col-sm-2 offset-md-1"><a class="nav-link ab" href="${menuItems.indexTable[i].href}"><i class="${menuItems.indexTable[i].icon}"></i><br><h5>${menuItems.indexTable[i].displayName}</h5></a></div>`);
+                    $('.mainRow'+Math.round((i+1)/2)).append(`<div class="col-6 col-sm-2 offset-md-1"><a class="nav-link ab" href="${(".").repeat(jumpupFolderStruct)+menuItems.indexTable[i].href}"><i class="${menuItems.indexTable[i].icon}"></i><br><h5>${menuItems.indexTable[i].displayName}</h5></a></div>`);
                     //$('.mainRow'+Math.round(i/2)).append('<div class="col-6 col-sm-2"><a class="nav-link ab" href="./takeout.php"><i class="fas fa-upload fa-3x"></i><br><h5>Debug</h5></a></div>');
                 }
                  

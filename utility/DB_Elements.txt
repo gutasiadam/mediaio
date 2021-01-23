@@ -69,3 +69,4 @@ Softbox tapkabel (adapterrel) 2
 Softbox tapkabel (adapterrel) 3
 Vaku tapkabel 1
 Vaku tapkabel 1
+Elgato capture card
