@@ -30,13 +30,13 @@
                         $_SESSION['userId'] = $row['idUsers'];
                         $_SESSION['UserUserName'] = $row['usernameUsers'];
                         $_SESSION['firstName'] = $row['firstName'];
+                        $_SESSION['email']= $row['emailUsers'];
                         $_SESSION['lastName'] = $row['lastName'];
-                        $_SESSION['fullName'] = ($row['firstName']+" "+$row['lastName']);
+                        $_SESSION['fullName'] = ($row['lastName']." ".$row['firstName']);
                         $_SESSION['role'] = $row['Userrole'];
                         $_SESSION['color'] = "#FFFF66";
-
+                        $_SESSION['GCodeState'] = $row['GAUTH_SECRET'];
                         header("Location: ../index.php?login=success");
-                        exit();
 
                     }else{
                         header("Location: ../index.php?error=PasswordVerifFail");

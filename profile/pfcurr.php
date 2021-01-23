@@ -3,12 +3,10 @@ session_start();
 if(isset($_SESSION['userId'])){
     error_reporting(E_ALL ^ E_NOTICE);
 //index.php
-
 $serverName="localhost";
 	$userName="root";
 	$password="umvHVAZ%";
 	$dbName="leltar_master";
-
 ?>
 
 <html>  
@@ -47,6 +45,9 @@ $serverName="localhost";
             <li class="nav-item">
                         	<a class="nav-link active" href="./pfcurr.php"><i class="fas fa-project-diagram fa-lg"></i></a>
             			</li>
+                  <li class="nav-item">
+                        <a class="nav-link" href="../events/"><i class="fas fa-calendar-alt fa-lg"></i></a>
+            </li>
             <li class="nav-item">
                         <a class="nav-link" href="../profile/index.php"><i class="fas fa-user-alt fa-lg"></i></a>
             </li>
@@ -59,7 +60,7 @@ $serverName="localhost";
 						<form class="form-inline my-2 my-lg-0" action=../utility/logout.ut.php>
                       <button class="btn btn-danger my-2 my-sm-0" type="submit">Kijelentkezés</button>
                       </form></form>
-              <a class="nav-link my-2 my-sm-0" href="#"><i class="fas fa-question-circle fa-lg"></i></a>
+              <a class="nav-link my-2 my-sm-0" href="../help.php"><i class="fas fa-question-circle fa-lg"></i></a>
 					</div>
 </nav>
     <body>  
@@ -88,9 +89,7 @@ $serverName="localhost";
           while($row = $result->fetch_assoc()) { 
               array_push($resultArray, $row);
               $authGen = random_int(100000,999999);
-
               if ($row["AuthState"] != NULL){ // Tehát már van kód generálva
-
                 //Keressük meg az itemhez tartozó kód értékét és hogy melyik felhasználó használhatja ezt a kódot.
                 $conn = new mysqli($serverName, $userName, $password, $dbName);
                 $rowItem = $row["Nev"];
@@ -118,7 +117,6 @@ $serverName="localhost";
               //$query = "SELECT * FROM `leltar` WHERE RentBy = '$TKI'";
               echo '<div class="col-2"><button class="btn btn-dark " id="auth'.$imodal.'" data-toggle="modal" data-target="#a'.$imodal.'">Generate AuthCode</button></div>
              </div>';
-
             echo              
             '<div class="modal fade" id="a'.$imodal.'" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
@@ -172,10 +170,7 @@ $serverName="localhost";
 else{
     echo("Acces Denied.");
 }
-
-
 //AUTH Handling
-
 session_start();
       if (isset($_POST["authItem"])){
         //echo 'Data recieved, process!'.$_POST["authItem"].'</br>';
@@ -188,10 +183,7 @@ session_start();
         $authCode = $_POST["authGen"];
         $authItem = $_POST["authItem"];
         $SESSuserName = $_SESSION['UserUserName'];
-
-
             $conn = new mysqli($serverName, $dbUserName, $dbPassword, $dbDatabase); // FIRST, This database stores the currently used authCodes,
-
               if ($conn->connect_error){
                 die("Connection failed: ".mysqli_connect_error());}
         //Check whether the specific code exists.
@@ -211,7 +203,6 @@ session_start();
           //echo "Desired Item Already In AuthCodeDB, can't generate a code for you. :( ";
           exit();
         }else{
-
         $sql=("INSERT IGNORE INTO authcodedb (`ID`,`Code`, `AuthBy`, `TakeID`, `Item`) VALUES (NULL, '$authCode', '$SESSuserName', '1', '$authItem')");
         //$sql=("INSERT INTO authcodedb (`ID`,`Code`, `AuthBy`, `AuthUser`, `TakeID`, `Item`)
         //SELECT * FROM (SELECT '$authItem') AS tmp
@@ -233,43 +224,32 @@ session_start();
       }
 ?>
 <script>
-
 function copyText(item) {
   /* Get the text field */
   var copyText = document.getElementById('$code'.item);
-
   /* Select the text field */
   copyText.select();
   copyText.setSelectionRange(0, 99999); /*For mobile devices*/
-
   /* Copy the text inside the text field */
   document.execCommand("copy");
-
   /* Alert the copied text */
   alert("Lol");
   alert("Copied the text: " + copyText.value);
 }
-
-
-
 function startTimer(duration, display) {
     var timer = duration, minutes, seconds;
     setInterval(function () {
         minutes = parseInt(timer / 60, 10)
         seconds = parseInt(timer % 60, 10);
-
         minutes = minutes < 10 ? "0" + minutes : minutes;
         seconds = seconds < 10 ? "0" + seconds : seconds;
-
         display.textContent = minutes + ":" + seconds;
-
         if (--timer < 0) {
             timer = duration;
             window.location.href = "./utility/logout.ut.php"
         }
     }, 1000);
 }
-
 window.onload = function () {
     var fiveMinutes = 60 * 10 - 1,
         display = document.querySelector('#time');
@@ -277,7 +257,6 @@ window.onload = function () {
     setInterval(updateTime, 1000);
     updateTime();
 };
-
 /*$(document).on('click', '.authToggle', function(){
   setTimeout(function(){ window.location.href = "./utility/logout.ut.php"; }, 3000);});*/
 </script>

@@ -5,7 +5,6 @@ include "translation.php";
 if(!isset($_SESSION['userId'])){
   header("Location: index.php?error=AccessViolation");}
 $SESSuserName = $_SESSION['UserUserName'];
-include "version.php";
 error_reporting(E_ALL ^ E_NOTICE);
 // Cookie for ITEM SELECTION (JS --> PHP :3)
 setcookie('Cookie_currentItemSel', 0, time() + (36000), "/");
@@ -34,8 +33,7 @@ function PhparrayCookie(){
 	$result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
-    // output data of each row
-    //Displays amount of records found in leltar_master DB
+
     while($row = $result->fetch_assoc()) {
 		$countOfRec += 1;
 	}
@@ -94,21 +92,105 @@ if( isset($_POST['data'])){
   exit;
  }?>
 <script>
+
+//WebSocket
+/*
+if ("WebSocket" in window) {
+               console.log("WebSocket is supported by your Browser!");
+               var ws = new WebSocket("ws://192.168.0.24:3000/ws");
+               // Let us open a web socket
+				
+               ws.onopen = function() {
+                  
+                  // Web Socket is connected, send data using send()
+                  sender={'method':'probe','user':'gutasiadam'}
+                  ws.send(JSON.parse(sender));
+                  document.getElementById('webSocketState').style.backgroundColor = ('lime');
+                  console.log("Message is sent to the network");
+               };
+				
+               ws.onmessage = function (evt) { 
+                var received_msg = evt.data;
+
+                try {
+                    let m = JSON.parse(evt.data);
+                     handleMessage(m);
+                } catch (err) {
+                    console.log('[Client] Message is not parseable to JSON.');
+                }
+
+                  console.log("Message recieved: " + received_msg);
+                  document.getElementById('recMsg').innerHTML = (received_msg);
+               };
+				
+               ws.onclose = function() { 
+                  
+                  // websocket is closed.
+                  console.log("Connection is closed..."); 
+                  document.getElementById('webSocketState').style.backgroundColor = ('red');
+                  document.getElementById("ServerMsg").style.backgroundColor = ('LightCoral');
+                  document.getElementById("ServerMsg").style.color = ('white');
+                  document.getElementById('ServerMsg').innerHTML = ('A szerverrel való kommunikáció megszakadt. Próbáld meg újratölteni az oldalt.');
+               };
+
+               let handlers = {
+                "set-background-color": function(m) {
+        // ...
+                console.log('[Client] set-background-color handler running.');
+                console.log('[Client] Color is ' + m.params.color);
+                document.getElementById('webSocketState').style.backgroundColor = (m.params.color);
+                }
+            };
+
+
+               function handleMessage(m) {
+
+                if (m.method == undefined) {
+                    return;
+                }
+
+                let method = m.method;
+
+                if (method) {
+
+                    if (handlers[method]) {
+                        let handler = handlers[method];
+                        handler(m);
+                    } else {
+                        console.log('[Client] No handler defined for method ' + method + '.');
+                    }
+
+                }
+        }
+            } else {
+              
+               // The browser doesn't support WebSocket
+               console.log("WebSocket NOT supported by your Browser!");
+            }
+*/
 var goStatus = 0;
 function checkGoBtn() {
       $("#add").one('click', function () { 
-    // executes only once
+
+    console.log(selectList.lenght);
+    
 
     if (selectList.length >= 1){
+      console.log("Gombhozzáadás");
       if (goStatus == 0){
         $('#sendQueryButtonLoc').append('<button type="submit" class="btn btn-success go_btn mb-2 mr-sm-2" id="goButton" >Go!</button>');
         goStatus++;
       }
      }
+
+     if (selectList.lenght == 0){
+      console.log("GOMTÖRLÉS");
+      $('#goButton').remove();}
     });
 
       $("#add").on('click', function () { 
     if (selectList.lenght == 0){
+      console.log("GOMTÖRLÉS");
       $('#goButton').remove();}
     });
       }</script>
@@ -116,9 +198,12 @@ function checkGoBtn() {
 <head>
   <script src="JTranslations.js"></script>
   <link rel="stylesheet" href="./main.css">
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js">  </script>
+  <link rel="stylesheet" href="http://static.jstree.com/3.0.2/assets/bootstrap/css/bootstrap.min.css" />
+	<link rel="stylesheet" href="http://static.jstree.com/3.0.2/assets/dist/themes/default/style.min.css" />
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js">  </script>
+  <script src="utility/jstree.js"></script>
   <script src="https://kit.fontawesome.com/2c66dc83e7.js" crossorigin="anonymous"></script>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -127,7 +212,7 @@ function checkGoBtn() {
 </head>
       <title><?php echo $applicationTitleFull;?></title>
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-					<a class="navbar-brand" href="index.php"><?php echo $applicationTitleShort;?></a>
+					<a class="navbar-brand" href="index.php"><img src="./utility/logo2.png" height="50"></a>
 					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 					  <span class="navbar-toggler-icon"></span>
 					</button>
@@ -150,6 +235,9 @@ function checkGoBtn() {
                         <a class="nav-link" href="./pathfinder.php"><i class="fas fa-project-diagram fa-lg"></i></a>
             </li>
             <li class="nav-item">
+                        <a class="nav-link" href="./events/"><i class="fas fa-calendar-alt fa-lg"></i></a>
+            </li>
+            <li class="nav-item">
                         <a class="nav-link" href="./profile/index.php"><i class="fas fa-user-alt fa-lg"></i></a>
             </li>
             <li>
@@ -166,8 +254,13 @@ function checkGoBtn() {
 		</nav>
 
 
-	<body ><!--style="background-color:#DCDCDC"-->
+  <body ><!--style="background-color:#DCDCDC"-->
+
+
+</select>
+
 		<div class="container">
+    <button id="takeout2BTN">Új kivétel teszt</button>
 			<br /><br />
 			<h2 class="rainbow" align="center" id="doTitle"><?php echo $applicationTitleShort;?></h2><br />
       <div class="row">
@@ -178,6 +271,14 @@ function checkGoBtn() {
         <table id="itemSearch" align="left"><tr><td><div class="autocomplete" method="GET">
     				<input id="id_itemNameAdd" type="text" name="add" class="form-control mb-2 mr-sm-2" placeholder='<?php echo $applicationSearchField;?>'></div></td>
             <td><button type="button" name="add" id="add" class="btn btn-info2 add_btn mb-2 mr-sm-2" onclick="checkGoBtn()"><?php echo $button_Add;?></button>     <span id='sendQueryButtonLoc'></span></td>
+            <td><div class="col-md-9">
+      Keresés: <input type="text" id="search" autocomplete="off" /><button id="clear">Törlés</button>
+<div id="jstree">
+</div>
+<p>Selected items:</p>
+<ul id="output">
+</ul>
+      </div></td>
   			</tr></table>
 			<form autocomplete="off" action="/index.php">
 			</form>
@@ -202,11 +303,164 @@ function checkGoBtn() {
 </html>
 <script>
 
+
+//Load takeOutItems.json
+d=({})
+
+
+function loadJSON(callback) {   
+console.log("loadJSON function called")
+var xobj = new XMLHttpRequest();
+    xobj.overrideMimeType("application/json");
+xobj.open('GET', './utility/takeOutItems.json', false); // Replace 'my_data' with the path to your file
+xobj.onreadystatechange = function () {
+      if (xobj.readyState == 4 && xobj.status == "200") {
+        // Required use of an anonymous callback as .open will NOT return a value but simply returns undefined in asynchronous mode
+        callback(xobj.responseText);
+        d=JSON.parse(xobj.responseText);
+        //console.log("SYNC end:"+d)
+
+      }
+};
+xobj.send(null);  
+}
+
+function renameKey ( obj, oldKey, newKey ) {
+  obj[newKey] = obj[oldKey];
+  delete obj[oldKey];
+}
+
+loadJSON(function(response) {
+  // Parse JSON string into object
+  console.log("loadJSON done");
+ });
+for (let i = 0; i < d.length; i++) {
+  renameKey(d[i],'Nev','text');
+  renameKey(d[i],'ID','id');
+}
+
+
+console.log(d)
+ 
+
+$('#jstree').jstree({
+  'plugins': ['search', 'checkbox', 'wholerow'],
+  'core': {
+    'data': d,
+    'animation': true,
+    'expand_selected_onload': true,
+    'themes': {
+      'icons': false,
+    }},
+  'search': {
+    'show_only_matches': true,
+    'show_only_matches_children': true
+  }
+});
+/*
+$('#jstree').jstree({
+    'core' : {
+        'data' : d,
+
+        "themes":{
+            "icons":false
+        }
+    },
+    "search": {
+        "show_only_matches": true,
+        "show_only_matches_children": true
+    },
+    "plugins" : ["checkbox", "search"]
+
+});*/
+
+$('#search').on("keyup change", function () {
+  $('#jstree').jstree(true).search($(this).val())
+})
+
+$('#clear').click(function (e) {
+  $('#search').val('').change().focus()
+})
+//JSON Object of selectted Items:
+takeOutPrepJSON = {
+  'items':[]
+}
+$('#jstree').on("changed.jstree", function (e, data) {
+  len=$('#jstree').jstree().get_selected(true).length
+  for (i=0; i < len; i++){
+    itemName=$('#jstree').jstree().get_selected(true)[i].text
+    itemId=$('#jstree').jstree().get_selected(true)[i].id
+    //var item = takeOutPrepJSON[i];   
+    itemArr={};
+    itemArr.name=itemName;
+    itemArr.id=itemId;
+    takeOutPrepJSON.items[i]=itemArr;
+    //takeOutPrepJSON.items[i].name=$('#jstree').jstree().get_selected(true)[i].text
+    //takeOutPrepJSON.items[i].id=$('#jstree').jstree().get_selected(true)[i].id
+    console.log("takeOutPrepJSON:"+takeOutPrepJSON);
+  }
+    }).jstree();
+
+$('#jstree').on("changed.jstree", function (e, data) {
+  console.log(data.instance.get_selected(true).text);
+});
+
+$('#jstree').on('changed.jstree', function (e, data) {
+  var objects = data.instance.get_selected(true)
+  var leaves = $.grep(objects, function (o) { return data.instance.is_leaf(o) })
+  var list = $('#output')
+  list.empty()
+  $.each(leaves, function (i, o) {
+    $('<li/>').text(o.text).appendTo(list)
+  })
+})
+
+$('#jstree_demo').jstree({
+  "core" : {
+    "animation" : 0,
+    "check_callback" : true,
+    "themes" : { "stripes" : true },
+    'data' : {
+      'url' : function (node) {
+        return node.id === '#' ?
+          'ajax_demo_roots.json' : 'ajax_demo_children.json';
+      },
+      'data' : function (node) {
+        return { 'id' : node.id };
+      }
+    }
+  },
+  "types" : {
+    "#" : {
+      "max_children" : 1,
+      "max_depth" : 4,
+      "valid_children" : ["root"]
+    },
+    "root" : {
+      "icon" : "/static/3.3.10/assets/images/tree_icon.png",
+      "valid_children" : ["default"]
+    },
+    "default" : {
+      "valid_children" : ["default","file"]
+    },
+    "file" : {
+      "icon" : "glyphicon glyphicon-file",
+      "valid_children" : []
+    }
+  },
+  "plugins" : [
+    "contextmenu", "dnd", "search",
+    "state", "types", "wholerow"
+  ]
+});
 //Right at load - start autologout.
 
   var selectList = [];
   var i=1;
   $(document).ready(function(){
+  
+//get items from takeOutItems.json
+
 
 function startTimer(duration, display) {
     var timer = duration, minutes, seconds;
@@ -240,9 +494,7 @@ window.onload = function () {
       document.getElementById("liveSelArrayResult").innerHTML = "";
 
       var currentItemSel = document.getElementById("id_itemNameAdd").value;
-      if (currentItemSel == ''){
-
-      }
+      if (currentItemSel == ''){}
       if (currentItemSel != ''){
         document.cookie = "Cookie_currentItemSel = "+currentItemSel;
         var PATTERN = currentItemSel,
@@ -257,6 +509,7 @@ window.onload = function () {
           //console.log(dbItems);
           document.getElementById('id_itemNameAdd').value = '';
           selectList.push(currentItemSel);
+          checkGoBtn();
           $('#liveSelArrayResult').append('<td>'+selectList+'</td>');
           $('#dynamic_field').append('<tr id="row'+i+'"><td>'+currentItemSel+'</td><td><button type="button" name="remove" id="'+i+'" class="btn btn-danger btn'+i+' btn_remove">X</button></td></tr>');
          console.log(i + "id with "+ currentItemSel + " created and occupied.");
@@ -289,9 +542,11 @@ window.onload = function () {
     var button_id = $(this).attr("id");
     dbItems.push(selectList[button_id-2]);
     dbItems.sort;
-    selectList[button_id-2]=null;
+    //selectList[button_id-2]=null;
+    selectList.splice(selectList[button_id-2], 1);
     $('#row'+button_id+'').remove();
-
+    console.log(selectList.length);
+    checkGoBtn();
     document.getElementById("liveSelArrayResult").innerHTML = "";
     $('#liveSelArrayResult').append('<td>'+selectList+'</td>');
 
@@ -320,6 +575,8 @@ window.onload = function () {
     setTimeout(function() { $("#doTitle").text("Arpad Media IO").animate({'opacity': 1}, 400); }, 3800);;});
     $('#dynamic_field').empty();
     var selectList = [];
+    console.log("selectList:"+selectList);
+    $('#goButton').fadeOut();
     },//window.location.href = './takeout.php?state=Success';;
     error: function(XMLHttpRequest, textStatus, errorThrown) { 
         alert("Status: " + textStatus); alert("Error: " + errorThrown); 
@@ -342,6 +599,7 @@ window.onload = function () {
           if (tempAddCheck == 1){
             console.log("Err1 - Adatbázishiba, vagy a tárgy már ki van véve")
             $('.btn'+(selectList.length+1)).click();
+            checkGoBtn();
            //ERROR 001
             $('#doTitle').animate({'opacity': 0}, 400, function(){
         $(this).html('<h2 class="text text-warning" role="alert">'+takeout_Unavailible+'</h2>').animate({'opacity': 1}, 400);
@@ -357,7 +615,21 @@ window.onload = function () {
 })
     });
 
-  
+
+  document.getElementById("takeout2BTN").addEventListener("click", function() {
+    console.log("Kimenet:"+JSON.stringify(takeOutPrepJSON));
+    $.ajax({
+      url:"./utility/takeout_administrator.php",
+      //url:"./utility/dummy.php",
+			method:"POST",
+			data:{takeoutData: takeOutPrepJSON},
+			success:function(response)
+			{
+        console.log(response);
+        location.reload();
+			}
+		});
+});
 	$('#submit').click(function(){		
 		$.ajax({
 			url:"name.php",
@@ -374,6 +646,19 @@ window.onload = function () {
   
 
 });
+function loadFile(filePath) {
+  var result = null;
+  var xmlhttp = new XMLHttpRequest();
+  xmlhttp.open("GET", filePath, false);
+  xmlhttp.send();
+  if (xmlhttp.status==200) {
+    result = xmlhttp.responseText;
+  }
+  return result.split("\n");
+  
+}
+ 
+var dbItems=(loadFile("./utility/DB_Elements.txt"));
 // dbItem remover tool - Prevents an item to be added twice to the list
 function arrayRemove(arr, value) {
 
@@ -482,6 +767,7 @@ function autocomplete(inp, arr) {
   autocomplete(document.getElementById("id_itemNameAdd"), dbItems);
 
 // autologout
+
   (function(){
   setInterval(updateTime, 1000);
 });
@@ -574,5 +860,9 @@ function startTimer(duration, display) {
 
   .livearray{
     display:none;
+  }
+
+  .jstree-hidden{
+    display: none;
   }
 </style>

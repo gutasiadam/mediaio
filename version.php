@@ -1,1 +1,0 @@
-<?php $developmentVersion = "LIVE 1.7&#9400; 2019";?>

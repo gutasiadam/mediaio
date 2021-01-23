@@ -1,3 +1,4 @@
+<link href='https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css' rel='stylesheet' />
 <?php 
     //*ISTENÍTETT KÓD*
     if (isset($_POST['signup-submit'])){
@@ -69,6 +70,45 @@ if (!$conn){
 
                         mysqli_stmt_bind_param($stmt, "sssssss", $username, $email, $hashedpwd, $firstname, $lastname, $telenum, $role);
                         mysqli_stmt_execute($stmt);
+$to = $email;
+
+// Subject
+$subject = 'MediaIO - Regisztráció';
+
+// Message
+$message = '
+<html>
+<head>
+  <title>Arpad Media IO</title>
+</head>
+<body>
+  <h3>Kedves '.$firstname.'!</h3><p>
+ Köszönjük, hogy regisztráltál az <strong>Arpad Media IO</strong> rendszerünkben!</p>
+ Az adataid a következők: 
+ <table>
+    <tr>
+      <th>Teljes Név</th><th>Felhasználónév</th><th>E-mail cím</th><th>Telefonszám</th>
+    </tr>
+    <tr>
+      <td>'.$lastname.' '.$firstname.'</td><td>'.$username.'</td><td>'.$email.'</td><td>'.$telenum.'</td>
+    </tr>
+  </table>
+  <h6>Ez egy automatikus üzenet. Kérem ne küldjön vissza semmit.<br>Üdvözlettel: <br> Arpad Media Admin</h6>
+</body>
+</html>
+';
+
+// To send HTML mail, the Content-type header must be set
+$headers[] = 'MIME-Version: 1.0';
+$headers[] = 'Content-type: text/html; charset=utf-8';
+
+/* Additional headers
+$headers[] = 'To: Mary <mary@example.com>, Kelly <kelly@example.com>';
+$headers[] = 'From: Birthday Reminder <birthday@example.com>';
+$headers[] = 'Cc: birthdayarchive@example.com';*/
+$headers[] = 'Bcc: gutasi.guti@gmail.com';
+// Mail it
+mail($to, $subject, $message, implode("\r\n", $headers));
                         header("Location: ../index.php?signup=success");
                         echo "<h1>Login succesul! Transferring to Homepage...</h1>";
                         exit();
@@ -78,6 +118,9 @@ if (!$conn){
         }
         mysqli_stmt_close($stmt);
         mysqli_close($conn);
+        
+
+
     }else{
         header("Location: ../index.php?submit=AccessViolation");
         exit();

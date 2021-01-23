@@ -10,42 +10,30 @@ if(isset($_SESSION['userId'])){
         <link rel="stylesheet" href="utility/pathfinder.css" />
         <!--<link rel="stylesheet" href="utility/timeline.min.css" />-->
         <script src="utility/jquery.js"></script>
+        <script src="utility/_initMenu.js" crossorigin="anonymous"></script>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js">  </script>
   <script src="https://kit.fontawesome.com/2c66dc83e7.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="utility/pfcss.css">
   <title>PathFinder</title>
   
     </head>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-					<a class="navbar-brand" href="index.php"><?php echo $applicationTitleShort;?></a>
+    <a class="navbar-brand" href="index.php"><img src="./utility/logo2.png" height="50"></a>
 					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 					  <span class="navbar-toggler-icon"></span>
 					</button>
 				  
 					<div class="collapse navbar-collapse" id="navbarSupportedContent">
-					  <ul class="navbar-nav mr-auto">
-						<li class="nav-item ">
-						  <a class="nav-link" href="./index.php"><i class="fas fa-home fa-lg"></i><span class="sr-only">(current)</span></a>
-						</li>
-						<li class="nav-item">
-						  <a class="nav-link" href="./takeout.php"><i class="fas fa-upload fa-lg"></i></a>
-						</li>
-						<li class="nav-item">
-						  <a class="nav-link" href="./retrieve.php"><i class="fas fa-download fa-lg"></i></a>
-						</li>
-            <li class="nav-item">
-						  <a class="nav-link" href="./adatok.php"><i class="fas fa-database fa-lg"></i></a>
-            </li>
-            <li class="nav-item">
-                        	<a class="nav-link active" href="#"><i class="fas fa-project-diagram fa-lg"></i></a>
-            			</li>
-            <li class="nav-item">
-                        <a class="nav-link" href="./profile/index.php"><i class="fas fa-user-alt fa-lg"></i></a>
-            </li>
-            <li>
-              <a class="nav-link disabled" href="#"><?php echo $nav_timeLockTitle;?> <span id="time"><?php echo $nav_timeLock_StartValue;?></span></a>
-            </li>
+          <ul class="navbar-nav mr-auto navbarUl">
+						<script>
+            $( document ).ready(function() {
+              menuItems = importItem("./utility/menuitems.json");
+              drawMenuItemsLeft('pathfinder',menuItems);
+            });
+            </script>
+            <li><a class="nav-link disabled" href="#"><?php echo $nav_timeLockTitle;?> <span id="time"><?php echo $nav_timeLock_StartValue;?></span></a></li>
             <?php if (($_SESSION['role']=="Admin") || ($_SESSION['role']=="Boss")){
               echo '<li><a class="nav-link disabled" href="#">Admin jogokkal rendelkezel</a></li>';}?>
 					  </ul>
@@ -57,20 +45,15 @@ if(isset($_SESSION['userId'])){
 </nav>
     <body>  
         <div class="container">
-   <br />
-   <h1 align="center">PathFinder</h1>
-   <table id="itemSearch" align="left"><tr>
-            <form action="./pathfinder.php" method="GET" autocomplete="off">
-            
-            <td><input id="id_itemNameAdd" type="text" name="pfItem" class="form-control mb-2 mr-sm-2" placeholder='<?php echo $applicationSearchField;?>'></div></td>
-            <td><button type="submit" name="add" id="add" class="btn btn-info2 mb-2 mr-sm-2" ><?php echo $button_Find;?></button><span id='sendQueryButtonLoc'></span></td>
+   <br /><form action="./pathfinder.php" method="GET" autocomplete="off"></form>
+   <h1 align="left">PathFinder</h1><button type="submit" name="add" id="add" class="btn btn-info2 mb-2 mr-sm-2" ><?php echo $button_Find;?></button>
+   <table id="itemSearch" align="left" style="margin-right: 10px;"><tr>
+            <td><input id="id_itemNameAdd" type="text" name="pfItem" class="form-control mb-2 mr-sm-2" placeholder='<?php echo $applicationSearchField;?>'></td></div>
   			</tr></table>
-        <form  action="/index.php">
-			  </form>
 					<div class="table-responsive">
 						<table class="table table-bordered" id="dynamic_field"></div></div>
       </div>
-			
+      <footer class="page-footer font-small blue"> <div class="fixed-bottom" align="center"><p><?php echo $applicationTitleFull; ?> <strong>ver. <?php echo $application_Version; ?></strong><br /> Code by <a href="https://github.com/d3rang3">Adam Gutasi</a></p></div></footer>		
 <div class="form-group">
    <div class="panel panel-default">
     <div class="panel-heading">
@@ -83,44 +66,34 @@ if(isset($_SESSION['userId'])){
         $statement = $connect->prepare($query);
         $statement->execute();
         $result = $statement->fetchAll();
-        echo '<h3 class="panel-title">Item Journey - '.$TKI.'</h3>
+        echo '<h3 class="panel-title">Tárgy útvonala - '.$TKI.'</h3>
         </div>
-        <div class="panel-body">
-         <div class="timeline">
-          <div class="timeline__wrap">
-           <div class="timeline__items">';
+        <div class="entries">';
            foreach($result as $row)
            {
             if($row["Event"]=="OUT"){
-              echo '<div class="timeline__item ">
-              <div class="timeline__content out">
-               <h2>'. $row["Date"]. ' by '. $row["User"] . '</h2>
-               <p>'. $row["Event"]. '</p>
-              </div>
-             </div>';} 
+              echo '
+              <div class="entry out">
+               <div class="title"><h3>'. $row["Date"]. ' by '. $row["User"] . '</h3></div>
+               <div class="body">'. $row["Event"]. '</div>
+             </div>';}
             if($row["Event"]=="IN"){
-              echo '<div class="timeline__item ">
-              <div class="timeline__content in">
-               <h2>'. $row["Date"]. ' by '. $row["User"] . '</h2>
-               <p>'. $row["Event"]. '</p>
-              </div>
+              echo '
+              <div class="entry in">
+               <div class="title"><h3>'. $row["Date"]. ' by '. $row["User"] . '</h3></div>
+               <div class="body">'. $row["Event"]. '</div>
              </div>';
             }
             if($row["Event"]=="INwA"){
-              echo '<div class="timeline__item ">
-              <div class="timeline__content inwa">
-               <h2>'. $row["Date"]. ' by '. $row["User"] . '</h2>
-               <p> In w\ AuthCode </p>
-              </div>
+              echo '<div class="entry inwa">
+              <div class="title"><h3>'. $row["Date"]. ' by '. $row["User"] . '</h3></div>
+              <div class="body">'."IN\wA". '</div>
              </div>';
             }
             
            }
            echo '
-           </div>
-          </div>
-         </div>
-        </div>';
+        </div></table>';
     }
     $connect = null;
     ?>
@@ -128,7 +101,6 @@ if(isset($_SESSION['userId'])){
 </html>
 
 <script>
-
 function startTimer(duration, display) {
     var timer = duration, minutes, seconds;
     setInterval(function () {
@@ -316,38 +288,22 @@ function startTimer(duration, display) {
   }
 
   /*the container must be positioned relative:*/
-  .autocomplete {
-    position: relative;
-    display: inline-block;
-  }
-
-  input {
-    border: 1px solid transparent;
-    background-color: #f1f1f1;
-    padding: 10px;
-    font-size: 16px;
-  }
-
-  input[type=text] {
-    background-color: #f1f1f1;
-    width: 100%;
-  }
-
-  input[type=submit] {
-    background-color: DodgerBlue;
-   color: #fff;
-   cursor: pointer;
-  }
-
 
   .in{
     background-color:#B8F5C2;
+    border-radius: 20px;
   }
   .out{
     background-color:#F5B8B8;
+    border-radius: 20px;
   }
   .inwa{
     background-color:#acfcfc;
+    border-radius: 20px;  
+  }
+
+  .entry{
+    border: 2.5px solid grey;
   }
 
   .autocomplete-items {
@@ -384,6 +340,7 @@ function startTimer(duration, display) {
   .livearray{
     display:none;
   }
+  
 </style>
 
 <?php

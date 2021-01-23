@@ -8,36 +8,25 @@ if(!isset($_SESSION['userId'])){
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 	  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   <script src="https://kit.fontawesome.com/2c66dc83e7.js" crossorigin="anonymous"></script>
+  <script src="utility/_initMenu.js" crossorigin="anonymous"></script>
 </head>
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-					<a class="navbar-brand" href="index.php">Arpad Media IO</a>
+          <a class="navbar-brand" href="index.php"><img src="./utility/logo2.png" height="50"></a>
 					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 					  <span class="navbar-toggler-icon"></span>
 					</button>
 				  
 					<div class="collapse navbar-collapse" id="navbarSupportedContent">
-					  <ul class="navbar-nav mr-auto">
-						<li class="nav-item ">
-						  <a class="nav-link" href="./index.php"><i class="fas fa-home fa-lg"></i><span class="sr-only">(current)</span></a>
-						</li>
-						<li class="nav-item">
-						  <a class="nav-link" href="./takeout.php"><i class="fas fa-upload fa-lg"></i></a>
-						</li>
-						<li class="nav-item">
-						  <a class="nav-link" href="./retrieve.php"><i class="fas fa-download fa-lg"></i></a>
-						</li>
-            <li class="nav-item active">
-						  <a class="nav-link" href="./adatok.php"><i class="fas fa-database fa-lg"></i></a>
-						</li>
-						<li class="nav-item">
-                        	<a class="nav-link" href="./pathfinder.php"><i class="fas fa-project-diagram fa-lg"></i></a>
-						</li>
-						<li class="nav-item">
-                        <a class="nav-link" href="./profile/index.php"><i class="fas fa-user-alt fa-lg"></i></a>
-            			</li>
-						<li>
-              <a class="nav-link disabled" href="#">Időzár <span id="time">10:00</span></a>
+					  <ul class="navbar-nav mr-auto navbarUl">
+						<script>
+            $( document ).ready(function() {
+              menuItems = importItem("./utility/menuitems.json");
+              drawMenuItemsLeft('adatok',menuItems);
+            });
+            </script>
+            <li>
+              <a class="nav-link disabled" href="#"><?php echo $nav_timeLockTitle;?> <span id="time"><?php echo $nav_timeLock_StartValue;?></span></a>
             </li>
             <?php if (($_SESSION['role']=="Admin") || ($_SESSION['role']=="Boss")){
               echo '<li><a class="nav-link disabled" href="#">Admin jogokkal rendelkezel</a></li>';}?>
@@ -45,15 +34,14 @@ if(!isset($_SESSION['userId'])){
 						<form class="form-inline my-2 my-lg-0" action=utility/logout.ut.php>
                       <button class="btn btn-danger my-2 my-sm-0" type="submit">Kijelentkezés</button>
                       </form>
-					  <a class="nav-link my-2 my-sm-0" href="#"><i class="fas fa-question-circle fa-lg"></i></a>
+					  <a class="nav-link my-2 my-sm-0" href="./help.php"><i class="fas fa-question-circle fa-lg"></i></a>
 					</div>
 </nav>
-<div class="form-group">
+<!--<div class="form-group">
         <table id="itemSearch" align="left"><tr><td><div class="autocomplete" method="GET">
     				<input id="id_itemNameAdd" type="text" name="add" class="form-control mb-2 mr-sm-2" placeholder='<?php echo $applicationSearchField;?>'></div></td>
-            <td><button type="button" name="add" id="add" class="btn btn-info2 add_btn mb-2 mr-sm-2" onclick="checkGoBtn()">Keress</button> </button>     <span id='sendQueryButtonLoc'></span></td>
-  			</tr></table>
-
+            <td><button type="button" name="add" id="keres1" class="btn btn-info2 add_btn mb-2 mr-sm-2">Keress</button> </button>     <span id='sendQueryButtonLoc'></span></td>-->
+  			<td><h4 id="doTitle">Rendezés név szerint növekvő sorrendben</h4></td></tr></table>
 <?php 
 //$allowedIP = array("31.46.204.50", "80.99.70.46", "192.168.0.1", "127.0.0.1", "77.234.86.20");
 //if(!in_array($_SERVER['REMOTE_ADDR'], $allowedIP) && !in_array($_SERVER["HTTP_X_FORWARDED_FOR"], $allowedIP)) {
@@ -76,19 +64,19 @@ $serverName="localhost";
 	$result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
-	echo "<table width='50' align=center class="."table"."><th>UID</th><th>Name</th><th>Type</th><th>Out by</th>";
+	echo "<table width='50' id="."dataTable"." align=center class="."table"."><th onclick=sortTable(0)>UID</th><th onclick=sortTable(1)>Name</th><th>Type</th><th>Out by</th>";
      //output data of each row
     //Displays amount of records found in leltar_master DB
     while($row = $result->fetch_assoc()) {
 		if ($countOfRec == 50){
 		}
 		if($row["TakeRestrict"]=="*"){
-			echo "<tr style='background-color:#fffeab;' ><a id=".$row["UID"]."><td>".$row["UID"]. "</td><td>" . $row["Nev"]. "</td><td>" . $row["Tipus"]. "</td><td><strong>". $row["RentBy"]."</strong></td></tr></a>";
+			echo "<tr style='background-color:#fffeab;' ><td><a id=#".$row["UID"]."></a>".$row["UID"]. "</td><td>" . $row["Nev"]. "</td><td>" . $row["Tipus"]. "</td><td><strong>". $row["RentBy"]."</strong></td></tr>";
 		}
 		else if($row["Status"]==0){
-			echo "<tr style='background-color:#F5B8B8;' ><a id=".$row["UID"]."><td>".$row["UID"]. "</td><td>" . $row["Nev"]. "</td><td>" . $row["Tipus"]. "</td><td><strong>". $row["RentBy"]."</strong></td></tr></a>";
+			echo "<tr style='background-color:#F5B8B8;' ><td><a id=#".$row["UID"]."></a>".$row["UID"]. "</td><td>" . $row["Nev"]. "</td><td>" . $row["Tipus"]. "</td><td><strong>". $row["RentBy"]."</strong></td></tr>";
 		}else{
-			echo "<tr><a id=".$row["UID"]."><td>".$row["UID"]. "</td><td>" . $row["Nev"]. "</td><td>" . $row["Tipus"]. "</td><td>". "</td></tr></a>";
+			echo "<tr><td><a id=#".$row["UID"]."></a>".$row["UID"]. "</td><td>" . $row["Nev"]. "</td><td>" . $row["Tipus"]. "</td><td>". "</td></tr>";
 		}
 		$countOfRec += 1;
 	}
@@ -96,10 +84,54 @@ if ($result->num_rows > 0) {
     echo "0 results";
 }
 echo "</table>";
-echo '<a href="#ftl099"> Zss</a>';
 $conn->close();?>
 <script>
 
+function startTimer(duration, display) {
+    var timer = duration, minutes, seconds;
+    setInterval(function () {
+        minutes = parseInt(timer / 60, 10)
+        seconds = parseInt(timer % 60, 10);
+
+        minutes = minutes < 10 ? "0" + minutes : minutes;
+        seconds = seconds < 10 ? "0" + seconds : seconds;
+
+        display.textContent = minutes + ":" + seconds;
+
+        if (--timer < 0) {
+            timer = duration;
+            window.location.href = "./utility/logout.ut.php"
+        }
+    }, 1000);
+}
+
+window.onload = function () {
+    var fiveMinutes = 60 * 10 - 1,
+        display = document.querySelector('#time');
+    startTimer(fiveMinutes, display);
+    setInterval(updateTime, 1000);
+    updateTime();
+};
+
+$('#keres1').click(function(){
+  var keres1Val=  document.getElementById("id_itemNameAdd").value;
+  console.log(keres1Val);
+/*AJAX CALL EGY PHP Fájlba, onnan már formázva return*/
+}); 
+
+function loadFile(filePath) {
+  var result = null;
+  var xmlhttp = new XMLHttpRequest();
+  xmlhttp.open("GET", filePath, false);
+  xmlhttp.send();
+  if (xmlhttp.status==200) {
+    result = xmlhttp.responseText;
+  }
+  return result.split("\n");
+  
+}
+
+var dbItems=(loadFile("./utility/DB_Elements.txt"));
 // dbItem remover tool - Prevents an item to be added twice to the list
 function arrayRemove(arr, value) {
 
@@ -211,31 +243,79 @@ function autocomplete(inp, arr) {
   setInterval(updateTime, 1000);
 });
 
-function startTimer(duration, display) {
-    var timer = duration, minutes, seconds;
-    setInterval(function () {
-        minutes = parseInt(timer / 60, 10)
-        seconds = parseInt(timer % 60, 10);
 
-        minutes = minutes < 10 ? "0" + minutes : minutes;
-        seconds = seconds < 10 ? "0" + seconds : seconds;
+</script>
 
-        display.textContent = minutes + ":" + seconds;
-
-        if (--timer < 0) {
-            timer = duration;
-            window.location.href = "./utility/logout.ut.php"
+<script>
+function sortTable(n) {
+  if(n==1){
+    sMode="név";
+  }else{
+    sMode="UID";
+  }
+  
+  var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+  table = document.getElementById("dataTable");
+  switching = true;
+  //Set the sorting direction to ascending:
+  dir = "asc"; 
+  /*Make a loop that will continue until
+  no switching has been done:*/
+  while (switching) {
+    //start by saying: no switching is done:
+    switching = false;
+    rows = table.rows;
+    /*Loop through all table rows (except the
+    first, which contains table headers):*/
+    for (i = 1; i < (rows.length - 1); i++) {
+      //start by saying there should be no switching:
+      shouldSwitch = false;
+      /*Get the two elements you want to compare,
+      one from current row and one from the next:*/
+      x = rows[i].getElementsByTagName("td")[n];
+      y = rows[i + 1].getElementsByTagName("td")[n];
+      
+      /*check if the two rows should switch place,
+      based on the direction, asc or desc:*/
+      if (dir == "asc") {
+        dMode="növekvő";
+        if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+          //if so, mark as a switch and break the loop:
+          shouldSwitch= true;
+          break;
         }
-    }, 1000);
+      } else if (dir == "desc") {
+        dMode="csökkenő";
+        if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+          //if so, mark as a switch and break the loop:
+          shouldSwitch = true;
+          break;
+        }
+      }
+    }
+  
+    if (shouldSwitch) {
+      /*If a switch has been marked, make the switch
+      and mark that a switch has been done:*/
+      rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+      switching = true;
+      //Each time a switch is done, increase this count by 1:
+      switchcount ++;      
+    } else {
+      /*If no switching has been done AND the direction is "asc",
+      set the direction to "desc" and run the while loop again.*/
+      if (switchcount == 0 && dir == "asc") {
+        dir = "desc";
+        switching = true;
+      }
+    }
+  }
+  $('#doTitle').animate({'opacity': 0}, 400, function(){
+        $(this).html('<h4 class="text text-info" role="alert">Rendezés '+sMode+' szerint '+dMode+' sorrendben.</h4>').animate({'opacity': 1}, 400);
+        $(this).html('<h4 class="text text-info" role="alert">Rendezés '+sMode+' szerint '+dMode+' sorrendben.').animate({'opacity': 1}, 100);
+        $(this).html('<h4 class="text text-info" role="alert">Rendezés '+sMode+' szerint '+dMode+' sorrendben.').animate({'opacity': 0}, 400);
+    setTimeout(function() { $("#doTitle").text("Rendezés "+sMode+" szerint "+dMode+" sorrendben.").animate({'opacity': 1}, 400); }, 900);;});
 }
-
-window.onload = function () {
-    var fiveMinutes = 60 * 10 - 1,
-        display = document.querySelector('#time');
-    startTimer(fiveMinutes, display);
-    setInterval(updateTime, 1000);
-    updateTime();
-};
 </script>
 
 <style>

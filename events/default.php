@@ -21,142 +21,15 @@ if(!isset($_SESSION['userId'])){
     <script src='./timegrid/main.js'></script>
     <script src='./interaction/main.js'></script>
 
-   
+  <title>Event Calendar @ default</title>
   <link href='https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css' rel='stylesheet' />
   <script src="./moment/main.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        var calendarEl = document.getElementById('calendar');
-
-        var calendar = new FullCalendar.Calendar(calendarEl, {
-          plugins: [ 'dayGrid', 'timeGrid', 'interaction', 'moment', 'bootstrap' ],
-          locale: 'hu',
-    themeSystem: 'bootstrap',
-    firstDay: 1,
-    editable:true,
-    droppable:true,
-    height: "parent",
-    width: "parent",
-    nowIndicator: true,
-    header:{
-  left:   'title',
-  center: '',
-  right:  'timeGridWeek dayGridMonth today prev,next,'
-},
-    events: 'load.php',
-    selectable:true,
-    selectHelper:true,
-  windowResize: function(view) {
-    calendar.updateSize();
-  },
-  select: function(info) {
-    console.log("WHY ARE YOU RUNNING?");
-    var startval = info.startStr;
-    var endval = info.endStr;
-    console.log(startval+' '+endval);
-    document.getElementById('addEventInterval').innerHTML = startval+ ' - '+endval;
-    document.getElementById('addEventStartVal').value = startval;
-    document.getElementById('addEventEndVal').value = endval;;
-    $('#exampleModal').modal('show');
-    $( "#sendAddEvent" ).submit(function() {
-    console.log( "Adder call!");
-  $('#exampleModal').modal('hide');
-
-  title = document.getElementById('addEventName').value;
-  start = startval;
-  end = endval;
-  color= "#f7f7f7";
-  console.log(title);
-  console.log(startval);
-  console.log(color);
-  console.log(endval);
-     if(title)
-     {
-      $.ajax({
-       url:"insert.php",
-       type:"POST",
-       data:{title:title, start:start, end:end, color:color},
-       success:function()
-       {
-        document.getElementById('SystemMsg').innerHTML = "Sikeres hozzáadás";
-        calendar.refetchEvents()
-        console.log("SUCC")
-       }
-      })
-     }
-    })
-
-    },
-    eventClick:function(info)
-    {
-      var id = info.event.id;
-      var title = info.event.title;
-    console.log(id+title)
-     document.getElementById('delEventTitle').value = title;
-     document.getElementById('deleteEventName').innerHTML = title;
-     document.getElementById('deleteEventName2').innerHTML = title;
-     document.getElementById('delEventId').value = id;
-     $('#deleteModal').modal('show');
-    $( "#sendDelEvent" ).submit(function() {
-    console.log( "Deletion call!");
-    $('#deleteModal').modal('hide');
-    id = document.getElementById('delEventId').value;
-      $.ajax({
-       url:"delete.php",
-       type:"POST",
-       data:{id:id},
-       success:function()
-       {
-        calendar.refetchEvents()
-        console.log("Event Removed");
-       }
-      })
-     })
-    },
-    eventResize:function(info)
-    {
-     var start = calendar.formatIso(info.event.start);
-     var end = calendar.formatIso(info.event.end);
-     var title = info.event.title;
-     var id = info.event.id;
-     console.log(start+end+title+id);
-     $.ajax({
-      url:"update.php",
-      type:"POST",
-      data:{title:title, start:start, end:end, id:id},
-      success:function(){
-       calendar.refetchEvents()
-       console.log('Event Update');
-      }
-     })
-    },
-    eventDrop:function(info)
-    {
-     var start = calendar.formatIso(info.event.start);
-     var end = calendar.formatIso(info.event.end);
-     var title = info.event.title;
-     var id = info.event.id;
-     $.ajax({
-      url:"update.php",
-      type:"POST",
-      data:{title:title, start:start, end:end, id:id},
-      success:function()
-      {
-        calendar.refetchEvents()
-       console.log("Event Updated");
-      }
-     });
-    }
-
-   });
-
-        calendar.render();
-      });
-
-      
-    </script>
+<?php 
+  if(($_SESSION['role']=="Default")){
+    echo '<script src="./defaultCalendarRender.js"></script>';
+  }else{  echo '<script src="./adminCalendarRender.js"></script>';}
+?>
   <!-- HOZZÁADÁS MODAL -->
   </head>
 
@@ -214,11 +87,26 @@ if(!isset($_SESSION['userId'])){
       <div class="modal-body">
         <h6>Esemény hozzáadása <span id="addEventInterval"></span> időben</h6>
         <form id="sendAddEvent">
-        <input class="form-control" id="addEventName" type="text" placeholder="esemény címe"></input>
+        <select class="form-control" id="eventTypeSelect" required>
+      <option value="" selected disabled hidden>Típus</option>
+      <?php if(($_SESSION['role']=="Admin") || ($_SESSION['role']=="Boss")){
+        echo '<option value="#faa0a0">Délelőtti iskolai esemény</option>
+        <option value="#faa0a0">Délutáni iskolai esemény</option>
+        <option value="#faa0a0">Hétvégi iskolai esemény</option>
+        <option value="#59ffba">Workshop</option>
+        <option value="#f2f0a2">Szünet</option>
+        <option value="#93ba6d">Gyűlés</option>';
+      } ?>
+      <option value="#f7e2b7">Külsős esemény</option>
+      <option value="#fdffcf">Otthoni munka</option>
+      <option value="#c9c9c9">Egyéb</option></select>
+        <input class="form-control" id="addEventName" type="text" placeholder="esemény címe"></input></br>
+        <h6 class="mailSend"><i class="fas fa-exclamation-circle"></i> Hozzáadás után az e-mail címedre (<?php echo $_SESSION['email'];?>) érkezni fog egy levél. Kérlek ellenőrizd az adatokat, és az <strong>esemény hozzáadása</strong> linkkel erősítsd meg
+        szándékodat. <u>(megerősítés után már nem tudod törölni az eseményt.)</u></h6>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Mégsem</button>
-        <input type="submit" class="btn btn-primary"></button>
+        <input type="submit" class="btn btn-primary" value="Hozzáadás" ></button>
         <input type="hidden" id="addEventStartVal"></input>
         <input type="hidden" id="addEventEndVal"></input>
         </form>
@@ -227,27 +115,31 @@ if(!isset($_SESSION['userId'])){
   </div>
 </div>
 
-<!-- TÖRLÉS MODAL -->
-    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<!-- OPCIÓK MODAL -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Esemény törlése</h5>
+        <h5 class="modal-title" id="exampleModalLabel">Opcíók</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
-        <h6 class="bg-warning text-black" align="center">Biztosan törölni szeretnéd a(z) <span id="deleteEventName2"></span> eseményt?</h6>
         <form id="sendDelEvent">
-      </div>
-      <div class="modal-footer">
-      <span id="deleteEventName"></span>
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Mégsem</button>
         <input type="submit" class="btn btn-danger" value="Törlés"></button>
         <input type="hidden" id="delEventId"></input>
         <input type="hidden" id="delEventTitle"></input>
         </form>
+        <form id="worksheetShow" name="worksheetShow" onsubmit="workSheetPrepare(this);">
+        <input type="submit" class="btn btn-dark" value="Munkalap megtekintése"></button>
+        <input type="hidden" id="delEventId"></input>
+        <input type="hidden" id="delEventTitle"></input>
+        </form>
+      </div>
+      <div class="modal-footer">
+      <span id="deleteEventName"></span>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Mégsem</button>
       </div>
     </div>
   </div>
@@ -256,6 +148,7 @@ if(!isset($_SESSION['userId'])){
     <td width=100%><div id='calendar'></td></div>
 </table>
 
+
     <div id="sideHelp1" class="sideHelp">
   <a href="javascript:void(0)" class="closebtn" onclick="closeNav()"><i class="fas fa-times fa-2x"></i></a>
   <h3 class="text-white">Eseménynaptár - segítség</h3>
@@ -263,6 +156,11 @@ if(!isset($_SESSION['userId'])){
   <span class="badge badge-danger">Törlés</span><h6 class="text-white">Kattints rá az adott eseményre, majd válaszd ki a törlés opciót</h6>
   <span class="badge badge-info">Áttevés</span><h6 class="text-white">Húzd át az eseményt egy másik napra/időpontra</h6>
   <span class="badge badge-dark">Rövidítés/hosszabítás</span><h6 class="text-white">Heti nézetben kezdd el az eseményt le/felfele húzni, akkár több napon át.</h6>
+  <p><h4 class="text-white">Eseménytípusok színei</h4><table style="table-layout: fixed;">
+  <tr><td class="text-dark" style="background-color: #faa0a0;"> <strong>Délelőtti iskolai esemény</strong> </td>  <td class="text-dark" style="background-color: #59ffba;"> Workshop </td>  <td class="text-dark" style="background-color: #fdffcf;"> Otthoni munka </td></tr>
+  <tr><td class="text-dark" style="background-color: #f7e2b7;"> Külsős esemény </td>  <td class="text-dark" style="background-color: #ff4d4d;"> Délutáni iskolai esemény </td>     <td class="text-dark" style="background-color: #f2f0a2;"> Szünet </td></tr>
+  <tr><td class="text-dark" style="background-color: #93ba6d;"> Gyűlés </td>   <td class="text-dark" style="background-color: #c9c9c9;"> Egyéb </td>    <td class="text-dark" style="background-color: #faa0a0;"> Hétvégi iskolai esemény </td></tr>
+  </table></p>
 </div>
   </body>
 </html>
@@ -278,6 +176,7 @@ if(!isset($_SESSION['userId'])){
   overflow-x: hidden; /* Disable horizontal scroll */
   padding-top: 60px; /* Place content 60px from the top */
   transition: 0.5s; /* 0.5 second transition effect to slide in the sidenav */
+  padding-left: 10px;
 }
 
 .closebtn{
@@ -351,7 +250,7 @@ function startTimer(duration, display) {
 
         if (--timer < 0) {
             timer = duration;
-            window.location.href = "/utility/logout.ut.php"
+            window.location.href = "../utility/logout.ut.php"
         }
     }, 1000);
 }
@@ -363,4 +262,8 @@ window.onload = function () {
     setInterval(updateTime, 1000);
     updateTime();
 };
+
+$( document ).ready(function() {
+  $(".mailSend").hide();
+});
  </script>

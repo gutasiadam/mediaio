@@ -29,6 +29,9 @@
             <li class="nav-item">
                         <a class="nav-link" href="../pathfinder.php"><i class="fas fa-project-diagram fa-lg"></i></a>
             </li>
+            <li class="nav-item">
+                        <a class="nav-link" href="../events/"><i class="fas fa-calendar-alt fa-lg"></i></a>
+            </li>
             <li class="nav-item active">
                         <a class="nav-link" href="./index.php"><i class="fas fa-user-alt fa-lg"></i></a>
             </li>
@@ -39,7 +42,7 @@
 						<form class="form-inline my-2 my-lg-0" action=../utility/logout.ut.php>
                       <button class="btn btn-danger my-2 my-sm-0" type="submit">Kijelentkezés</button>
                       </form>
-                        <a class="nav-link my-2 my-sm-0" href="#"><i class="fas fa-question-circle fa-lg"></i></a>
+                      <a class="nav-link my-2 my-sm-0" href="../help.php"><i class="fas fa-question-circle fa-lg"></i></a>
 					  </form>
 					</div>
 		</nav>'
@@ -49,7 +52,10 @@
             <tr><td><input class="form-control mb-2 mr-sm-2" type="password" name="pwd-Old" placeholder="Jelenlegi jelszó"></td></tr> <br>
             <tr><td><input class="form-control mb-2 mr-sm-2" type="password" name="pwd-New" placeholder="Új jelszó" ></td></tr> <br>
             <tr><td><input class="form-control mb-2 mr-sm-2" type="password" name="pwd-New-Check" placeholder="Új jelszó még egyszer"></td></tr> <br>
-            <tr><td><br><button class="btn btn-dark" align=center type="submit" name="pwdCh-submit">Mehet</button></td></tr>
+            <tr><td><br><button class="btn btn-dark" id="submitPwdCh"align=center type="submit" name="pwdCh-submit">Mehet</button></td></tr>
+            <tr><td><div class="spinner-border" role="status">
+            <span class="sr-only">Loading...</span>
+            </div></tr></td>
             </form>
             ';
                 if (isset($_GET['error'])){
@@ -76,6 +82,13 @@
     ?>
 </html>
 <script>
+$("#submitPwdCh").click(function(){
+  $(".spinner-border").fadeIn();
+});
+
+$( document ).ready(function() {
+  $(".spinner-border").hide();
+});
 (function(){
   setInterval(updateTime, 1000);
 });
