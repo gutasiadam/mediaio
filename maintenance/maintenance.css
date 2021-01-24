@@ -3,18 +3,18 @@
     place-items: center;
 }
 
-#takaritasirend {
+.takaritasirend {
     border: 2px solid coral;
 }
 
-#takaritasirend td {
+.takaritasirend td {
     border: 1px coral;
     border-style: dotted;
     font-size: large;
     
 }
 
-#takaritasirend th{
+.takaritasirend th{
     font-size: x-large;
     border: 2px coral;
     border-style: double;

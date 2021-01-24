@@ -39,21 +39,31 @@
                         <div class="menuRight"></div>
             </div></nav>';} ?>
     </nav>
-<h1 align=center class="rainbow">Takarítási rend </h1>
+<h1 align=center class="rainbow">Takarítási rend, feladatok </h1>
+
 <div class="tableParent">
+<div class="form-check">
+  <input class="form-check-input" type="checkbox" value="" id="showOnlyMyTasks_checkBox" data-toggle="toggle">
+  <label class="form-check-label" for="defaultCheck1">
+    Csak a saját feladataimat mutasd
+  </label>
+  </div>
 <?php
             if (($_SESSION['role']=="Admin") || ($_SESSION['role']=="Boss")){
-              echo '<button type="button" class="btn btn-warning edit_Table_Button noprint" data-toggle="modal" data-target="#add_Work_Modal">Módosítás</button>';
+              echo '<table><tr><td><button type="button" class="btn btn-warning edit_Table_Button noprint" data-toggle="modal" data-target="#add_Work_Modal">Módosítás</button></td><td><button type="button" class="btn btn-danger delete_Table_Button noprint">Törlés</button></td></tr></table>';
               
             }?>
 
-<table id="takaritasirend">
+<table class="takaritasirend" id="takaritasirend">
 <tr>
     <th>Dátum</th>
     <th>Személyek</th>
     <th>Elvégzendő feladat(ok)</th>
   </tr>
-  <?php  include("./render_work_Data.php");?>
+  <?php  include("./render_work_Data.php");
+  renderWorkTable("*");
+  ?>
+
 </table></br>
 <i class="noprint">// A rendszer csak a mai, vagy újabb feladatokat mutatja.
   Ha a mai napnál régebbi feladatott állítottál be, akkor az automatikusan törölve lett :( //</i>
@@ -84,7 +94,10 @@
       <td> <p>Felhasználók</p>
       <div class="box 1" ondrop="drop(event)" ondragover="allowDrop(event)"">
    
-    <?php renderUsersDraggable();?>
+    <?php 
+    renderUsersDraggable();
+    
+    ?>
   </div></td>
   <td>
   <p>Kijelölt</p>
@@ -95,7 +108,7 @@
   </div>
   <div class="form-group">
     <label for="work_Task">Feladat</label>
-    <input type="text" class="form-control" id="work_Task" placeholder="Egyszerre csak egy feladatot adj meg!">
+    <input type="text" class="form-control" id="work_Task" placeholder="Ide írd a feladatokat..">
   </div>
   
 </form>
@@ -146,7 +159,7 @@ $( ".send_Work_update" ).click(function( event ) {
        data:{date:datum, user:szemely, task:feladat},
        success:function(result)
        {
-        alert(result);
+        //alert(result);
         if(result==1){
           $('#processing').html("Nincs ilyen felhasználó!")
         }
@@ -177,6 +190,35 @@ $( ".clear_Update" ).click(function( event ) {
   $('#work_Task').val("");
 });
 
+//Csak a saját feladatok mutatása
+
+$('#showOnlyMyTasks_checkBox').change(function() {
+        if(this.checked) {
+            console.log("Check!");
+            $('table#takaritasirend > tbody > tr').not(':first').remove();//Címsor után minden törlése
+            $.ajax({
+       url:"render_work_Data.php",
+       type:"POST",
+       async: true,
+       // a PHP szkript utasítást kap, hogy csak egy felhasználóra vagyunk kíváncsiak.
+       data:{mode:'UserFiltered'}, 
+       success:function(result)
+       {
+        sentBack_result=JSON.parse(result);
+        console.log(sentBack_result);
+
+        if(sentBack_result.message=="success"){
+          for (let index = 0; index < sentBack_result.data.length; index++) {
+            $('#takaritasirend tr:last').after('<tr><td>'+sentBack_result.data[index].datum+'</td><td>'+sentBack_result.data[index].szemely+'</td><td>'+sentBack_result.data[index].feladat+'</td></tr>');
+          }
+        }
+       }
+      })
+            
+        }else{
+          location.reload();
+        }   
+    });
 //DRAG
 
 function allowDrop(ev) {

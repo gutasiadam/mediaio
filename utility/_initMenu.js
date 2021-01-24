@@ -1,4 +1,5 @@
 //Draw menu:
+console.log("_initMenu laod started...")
       //Import menu items
       var menuItems = null;
       function importItem(fileLoc) {

@@ -184,13 +184,13 @@ function checkGoBtn() {
      }
 
      if (selectList.lenght == 0){
-      console.log("GOMTÖRLÉS");
+      console.log("GOMBTÖRLÉS");
       $('#goButton').remove();}
     });
 
       $("#add").on('click', function () { 
     if (selectList.lenght == 0){
-      console.log("GOMTÖRLÉS");
+      console.log("GOMBTÖRLÉS");
       $('#goButton').remove();}
     });
       }</script>
@@ -200,8 +200,7 @@ function checkGoBtn() {
   <link rel="stylesheet" href="./main.css">
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
-  <link rel="stylesheet" href="http://static.jstree.com/3.0.2/assets/bootstrap/css/bootstrap.min.css" />
-	<link rel="stylesheet" href="http://static.jstree.com/3.0.2/assets/dist/themes/default/style.min.css" />
+  <script src="./utility/_initMenu.js" crossorigin="anonymous"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js">  </script>
   <script src="utility/jstree.js"></script>
   <script src="https://kit.fontawesome.com/2c66dc83e7.js" crossorigin="anonymous"></script>
@@ -211,43 +210,26 @@ function checkGoBtn() {
     <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
       <title><?php echo $applicationTitleFull;?></title>
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
 					<a class="navbar-brand" href="index.php"><img src="./utility/logo2.png" height="50"></a>
 					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 					  <span class="navbar-toggler-icon"></span>
 					</button>
 				  
 					<div class="collapse navbar-collapse" id="navbarSupportedContent">
-					  <ul class="navbar-nav mr-auto">
-						<li class="nav-item ">
-						    <a class="nav-link" href="./index.php"><i class="fas fa-home fa-lg"></i><span class="sr-only">(current)</span></a>
-						</li>
-						<li class="nav-item active">
-						    <a class="nav-link" href="./takeout.php"><i class="fas fa-upload fa-lg"></i></a>
-						</li>
-						<li class="nav-item ">
-						    <a class="nav-link" href="./retrieve.php"><i class="fas fa-download fa-lg"></i></a>
-						</li>
-            <li class="nav-item">
-						    <a class="nav-link" href="./adatok.php"><i class="fas fa-database fa-lg"></i></a>
-						</li>
-            <li class="nav-item">
-                        <a class="nav-link" href="./pathfinder.php"><i class="fas fa-project-diagram fa-lg"></i></a>
-            </li>
-            <li class="nav-item">
-                        <a class="nav-link" href="./events/"><i class="fas fa-calendar-alt fa-lg"></i></a>
-            </li>
-            <li class="nav-item">
-                        <a class="nav-link" href="./profile/index.php"><i class="fas fa-user-alt fa-lg"></i></a>
-            </li>
-            <li>
-              <a class="nav-link disabled" href="#"><?php echo $nav_timeLockTitle;?> <span id="time"><?php echo $nav_timeLock_StartValue;?></span></a>
-            </li>
+					  <ul class="navbar-nav mr-auto navbarUl">
+						<script>
+            $( document ).ready(function() {
+              menuItems = importItem("./utility/menuitems.json");
+              drawMenuItemsLeft('takeout',menuItems);
+            });
+            </script>
+            <li><a class="nav-link disabled" href="#"><?php echo $nav_timeLockTitle;?> <span id="time"><?php echo $nav_timeLock_StartValue;?></span></a></li>
             <?php if (($_SESSION['role']=="Admin") || ($_SESSION['role']=="Boss")){
               echo '<li><a class="nav-link disabled" href="#">Admin jogokkal rendelkezel</a></li>';}?>
 					  </ul>
 						<form class="form-inline my-2 my-lg-0" action=utility/logout.ut.php>
-                      <button class="btn btn-danger my-2 my-sm-0" type="submit"><?php echo $nav_logOut; ?></button>
+                      <button class="btn btn-danger my-2 my-sm-0" type="submit"><?php echo $nav_logOut;?></button>
                       </form>
             <a class="nav-link my-2 my-sm-0" href="./help.php"><i class="fas fa-question-circle fa-lg"></i></a>
 					</div>
