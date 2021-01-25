@@ -50,7 +50,10 @@
   </div>
 <?php
             if (($_SESSION['role']=="Admin") || ($_SESSION['role']=="Boss")){
-              echo '<table><tr><td><button type="button" class="btn btn-warning edit_Table_Button noprint" data-toggle="modal" data-target="#add_Work_Modal">Módosítás</button></td><td><button type="button" class="btn btn-danger delete_Table_Button noprint">Törlés</button></td></tr></table>';
+              echo '<table>
+              <tr><td><button type="button" class="btn btn-warning table-Control edit_Table_Button noprint" data-toggle="modal" data-target="#add_Work_Modal">Módosítás</button></td>
+              <td><button type="button" class="btn btn-danger table-Control delete_Table_Button noprint">Törlés</button></td></tr>
+              </table>';
               
             }?>
 
@@ -190,6 +193,42 @@ $( ".clear_Update" ).click(function( event ) {
   $('#work_Task').val("");
 });
 
+$( ".delete_Table_Button" ).click(function( event ) {
+  if(!$('.delete_Table_Button').hasClass('disabled')){
+  $('.delete_Table_Button').addClass('disabled');
+  $('#takaritasirend tr:first ').append("<td class='deleteRowTitle'></td>");
+  $('#takaritasirend tr:not(:first)').each(function(i){
+    console.log(i);
+    $(this).append('<td class="deleteRow"><button type="button" class="btn btn-danger delRowBtn" onclick="deleteWork('+i+')" id="del_'+i+'"><span aria-hidden="true">&times;</span></button></td>');
+ });   
+ }
+});
+
+function deleteWork(index){
+  //$(('#takaritasirend tr').eq(i))
+  //Dátum, felhasználónév, és Elvégzendő feladat lekérése
+  toBeDeleted_Date= $('#takaritasirend tr').find('td:nth-child(1)').eq(index).text();
+  toBeDeleted_userName= $('#takaritasirend tr').find('td:nth-child(2)').eq(index).text();
+  toBeDeleted_workDescription= $('#takaritasirend tr').find('td:nth-child(3)').eq(index).text();
+  //console.log(toBeDeleted_Date+toBeDeleted_userName+toBeDeleted_workDescription)
+  
+  $.ajax({
+       url:"delete_work.php",
+       type:"POST",
+       async: true,
+       data:{date:toBeDeleted_Date, user:toBeDeleted_userName, task:toBeDeleted_workDescription},
+       success:function(result)
+       {
+        if(result=200){
+          //Sikeres a törlés
+          $('#takaritasirend tr').eq(index+1).fadeOut();
+        }else{
+          console.log(result);
+          console.log("A törlés nem futott le sikeresen.")
+        }
+       }
+      })
+};
 //Csak a saját feladatok mutatása
 
 $('#showOnlyMyTasks_checkBox').change(function() {
