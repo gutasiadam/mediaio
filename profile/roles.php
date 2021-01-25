@@ -6,7 +6,7 @@ if(($_SESSION['role']=="Admin") || ($_SESSION['role']=="Boss")){
 $serverName="localhost";
 	$userName="root";
 	$password="umvHVAZ%";
-	$dbName="loginsystem";
+	$dbName="mediaio";
 
 ?>
 
@@ -168,7 +168,7 @@ $serverName="localhost";
         $serverName = "localhost";
         $dbUserName = "root";
         $dbPassword = "umvHVAZ%";
-        $dbDatabase = "loginsystem";
+        $dbDatabase = "mediaio";
         $targetUser = $_POST["user"];
         $conn = new mysqli($serverName, $dbUserName, $dbPassword, $dbDatabase);
               if ($conn->connect_error){

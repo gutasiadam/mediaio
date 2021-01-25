@@ -61,7 +61,7 @@ if(isset($_SESSION['userId'])){
     <?php 
     if(isset($_GET['pfItem'])){
         $TKI = $_GET['pfItem'];      
-        $connect = new PDO("mysql:host=localhost;dbname=leltar_master", "root", "umvHVAZ%");
+        $connect = new PDO("mysql:host=localhost;dbname=mediaio", "root", "umvHVAZ%");
         $query = "SELECT * FROM `takelog` WHERE `Item` = '$TKI' ORDER BY `Date` DESC";
         $statement = $connect->prepare($query);
         $statement->execute();

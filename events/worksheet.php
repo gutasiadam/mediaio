@@ -11,7 +11,7 @@
 <?php 
 session_start();
 
-$connect = new PDO("mysql:host=localhost;dbname=calendar", "root", "umvHVAZ%");
+$connect = new PDO("mysql:host=localhost;dbname=mediaio", "root", "umvHVAZ%");
 
 if(isset($_POST["wEvent"]) && isset($_SESSION['UserUserName']))
 {
@@ -66,7 +66,7 @@ if(isset($_POST["uId"]) && isset($_SESSION['UserUserName']))
 
 if(isset($_POST["deleteId"])){
   $WorkId=$_POST["deleteId"];
-  $connect = new PDO("mysql:host=localhost;dbname=calendar", "root", "umvHVAZ%");
+  $connect = new PDO("mysql:host=localhost;dbname=mediaio", "root", "umvHVAZ%");
   $query = "DELETE from worksheet WHERE ID='$WorkId'";
   $statement = $connect->prepare($query);
   $statement->execute();
@@ -78,7 +78,7 @@ if(isset( $_SESSION['UserUserName'])){
 if(isset($_GET['eventId'])){
     $eventId = $_GET['eventId'];
     //MŰKÖDŐ ÁG
-    $connect = new PDO("mysql:host=localhost;dbname=calendar", "root", "umvHVAZ%");
+    $connect = new PDO("mysql:host=localhost;dbname=mediaio", "root", "umvHVAZ%");
     //Esemény címénak, egyéb adatainak megtalálása és eltárolása
     $query = "SELECT * from events WHERE id = '$eventId'";
     $statement = $connect->prepare($query);

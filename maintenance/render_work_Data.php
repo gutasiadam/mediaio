@@ -3,7 +3,7 @@
 session_start();
 $n=0;
 function renderUsersDraggable(){
-    $conn = new mysqli("localhost", "root", "umvHVAZ%", "loginsystem");
+    $conn = new mysqli("localhost", "root", "umvHVAZ%", "mediaio");
     $result = $conn->query("SELECT usernameUsers FROM users");
     if ($result->num_rows > 0) {
         while($row = $result->fetch_assoc()) {
@@ -17,7 +17,7 @@ function renderWorkTable($selectedUser){
 
   $today=date("Y/m/d");
     //Először töröljük a mainál régebbi dátumú feladokat, ha van ilyen.
-    $conn = new mysqli("localhost", "root", "umvHVAZ%", "rendrakas");
+    $conn = new mysqli("localhost", "root", "umvHVAZ%", "mediaio");
     if ($conn->connect_error) {
         die("Connection failed: " . $conn->connect_error);
       }

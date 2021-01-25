@@ -2,7 +2,7 @@
 session_start();
 if ($_SESSION['role']=="admin"){
 //Resets every item that is took out.
-$conn = new mysqli('localhost', 'root', 'umvHVAZ%', 'leltar_master');
+$conn = new mysqli('localhost', 'root', 'umvHVAZ%', 'mediaio');
 $sql = ("SELECT * FROM `leltar` WHERE `Status` = 0");
 $result = $conn->query($sql);
 $rowReturn = $result->num_rows;

@@ -1,7 +1,7 @@
 <?php
 //insert.php
 session_start();
-$connect = new PDO("mysql:host=localhost;dbname=budget", "root", "umvHVAZ%");
+$connect = new PDO("mysql:host=localhost;dbname=mediaio", "root", "umvHVAZ%");
 $Dates = preg_split("#/#", $_POST['bDate']); 
 if(isset($_POST["bVal"]))
 {

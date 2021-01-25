@@ -21,7 +21,7 @@ function PhparrayCookie(){
 	$serverName="localhost";
 	$userName="root";
 	$password=$application_DATABASE_PASS;
-	$dbName="leltar_master";
+	$dbName="mediaio";
 	$countOfRec=0;
 
 	$conn = new mysqli($serverName, $userName, $password, $dbName);
@@ -45,7 +45,7 @@ $conn->close();
 //CHECK WETHER SELECTED ITEM IS OUT OR NAH
 if(isset($_POST['takeoutCheck'])){
   $checkitem= json_decode(stripslashes($_POST['takeoutCheck']));
-  $conn = new mysqli($serverName, $userName, $password, 'leltar_master');
+  $conn = new mysqli($serverName, $userName, $password, 'mediaio');
   $sqlPreCheck = ("SELECT `leltar`.`Nev`, `leltar`.`Status`
   FROM `leltar`
   WHERE (( `Status` = 0) AND ( `Nev` = '$checkitem'))");
@@ -64,7 +64,7 @@ if(isset($_POST['takeoutCheck'])){
 // IF VERYTHING IS GOOD, WRITE TO DB
 if( isset($_POST['data'])){
   $data = json_decode(($_POST['data']), true);
-  $dbName="leltar_master";
+  $dbName="mediaio";
   foreach ($data as $d){
     $conn = new mysqli($serverName, $userName, $password, $dbName);
     $currDate = date("Y/m/d H:i:s");
@@ -76,7 +76,7 @@ if( isset($_POST['data'])){
     $result = $conn->query($sql);
     $conn->close();
     if ($result === TRUE) {
-      $conn = new mysqli($serverName, $userName, $password, 'leltar_master');
+      $conn = new mysqli($serverName, $userName, $password, 'mediaio');
       $sql2 = ("UPDATE leltar SET Status = 0, RentBy = '$SESSuserName' WHERE `Nev`='$d'");
       $result2 = $conn->query($sql2);
       $conn->close();

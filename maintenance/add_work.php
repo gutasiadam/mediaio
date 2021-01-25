@@ -4,7 +4,7 @@ session_start();
 if(isset($_POST["date"]) && isset($_POST["user"]) && isset($_POST["task"]))
 {
     //Először nézzük meg, létezik-e a felhasználó:
-    $conn = new mysqli("localhost", "root", "umvHVAZ%", "loginsystem");
+    $conn = new mysqli("localhost", "root", "umvHVAZ%", "mediaio");
     $user=$_POST["user"];
     $result = $conn->query("SELECT emailUsers, firstName FROM users WHERE userNameUsers='$user'");
     $conn->close();
@@ -14,7 +14,7 @@ if(isset($_POST["date"]) && isset($_POST["user"]) && isset($_POST["task"]))
         $nev=$row['firstName'];
     }
      
-    $connect = new PDO("mysql:host=localhost;dbname=rendrakas", "root", "umvHVAZ%");
+    $connect = new PDO("mysql:host=localhost;dbname=mediaio", "root", "umvHVAZ%");
  
  $query = "
  INSERT INTO feladatok 

@@ -1,7 +1,7 @@
 <?php
 //insert.php
 session_start();
-$connect = new PDO("mysql:host=localhost;dbname=calendar", "root", "umvHVAZ%");
+$connect = new PDO("mysql:host=localhost;dbname=mediaio", "root", "umvHVAZ%");
 
 if(isset($_POST["wEvent"]))
 {

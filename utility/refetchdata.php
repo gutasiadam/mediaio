@@ -4,7 +4,7 @@ if($_SESSION['role']=="Boss"){
     echo "ALLOW";
 }
 
-$mysqli = new mysqli("localhost", "root", $application_DATABASE_PASS, "leltar_master");
+$mysqli = new mysqli("localhost", "root", $application_DATABASE_PASS, "mediaio");
 $DB_Elements = fopen("DB_Elements.txt", "w");
 /* check connection */
 if ($mysqli->connect_errno) {

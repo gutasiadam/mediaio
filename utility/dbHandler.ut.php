@@ -3,7 +3,7 @@
 $serverName = "localhost";
 $dbUserName = "root";
 $dbPassword = "umvHVAZ%";
-$dbDatabase = "loginsystem";
+$dbDatabase = "mediaio";
 
 
 $conn = mysqli_connect($serverName, $dbUserName, $dbPassword, $dbDatabase);

@@ -12,7 +12,7 @@ if(isset($_SESSION['userId']) && (($_SESSION['role']=="Admin") || ($_SESSION['ro
 $serverName="localhost";
 	$userName="root";
 	$password="umvHVAZ%";
-	$dbName="loginsystem";
+	$dbName="mediaio";
 
 ?>
 

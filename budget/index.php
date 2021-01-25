@@ -2,7 +2,7 @@
     require("../header.php");
         session_start();
         if (($_SESSION['role']=="Admin") || ($_SESSION['role']=="Boss")){
-            $connect = new PDO("mysql:host=localhost;dbname=budget", "root", "umvHVAZ%");
+            $connect = new PDO("mysql:host=localhost;dbname=mediaio", "root", "umvHVAZ%");
             echo '
             <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
 					<a class="navbar-brand" href="index.php">Arpad Media IO</a>

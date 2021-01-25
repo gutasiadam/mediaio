@@ -23,7 +23,7 @@ function PhparrayCookie(){
 	$serverName="localhost";
 	$userName="root";
 	$password=$application_DATABASE_PASS;
-	$dbName="leltar_master";
+	$dbName="mediaio";
 	$countOfRec=0;
 
 	$conn = new mysqli($serverName, $userName, $password, $dbName);
@@ -53,7 +53,7 @@ $conn->close();
 // 2: successful row, BUT no SESSION match, should go to table 2.
 if(isset($_POST['takeoutCheck'])){
   $checkitem= json_decode(stripslashes($_POST['takeoutCheck']));
-  $conn = new mysqli($serverName, $userName, $password, 'leltar_master');
+  $conn = new mysqli($serverName, $userName, $password, 'mediaio');
   $sqlPreCheck = ("SELECT `leltar`.`Nev`, `leltar`.`Status`, leltar.RentBy
   FROM `leltar`
   WHERE (( `Status` = 0) AND ( `Nev` = '$checkitem')) LIMIT 1");
@@ -83,7 +83,7 @@ if(isset($_POST['takeoutCheck'])){
 if(isset($_POST['authCheck'])){
   $authItemName = $_COOKIE["currentVerifItem"];
   $check_authCode= json_decode(stripslashes($_POST['authCheck']));
-  $conn = new mysqli($serverName, $userName, $password, 'leltar_master');
+  $conn = new mysqli($serverName, $userName, $password, 'mediaio');
   $sqlPreCheck = ("SELECT `authcodedb`.`Code`, `authcodedb`.`Item`
   FROM `authcodedb`
   WHERE  `Code` = '$check_authCode' AND `Item` = '$authItemName'");
@@ -116,7 +116,7 @@ if(isset($_POST['authCheck'])){
 // IF VERYTHING IS GOOD, WRITE TO DB
 if( isset($_POST['data'])){
   $data = json_decode(($_POST['data']), true);
-  $dbName="leltar_master";
+  $dbName="mediaio";
   foreach ($data as $d){
     $conn = new mysqli($serverName, $userName, $password, $dbName);
     $currDate = date("Y/m/d H:i:s");

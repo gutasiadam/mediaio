@@ -1,3 +1,0 @@
-Fresnel 1000W
-1
-RUN

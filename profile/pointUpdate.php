@@ -3,7 +3,7 @@
 
 //update.php
 
-$connect = new PDO("mysql:host=localhost;dbname=loginsystem", "root", "umvHVAZ%");
+$connect = new PDO("mysql:host=localhost;dbname=mediaio", "root", "umvHVAZ%");
 
 if(isset($_POST["newScore"]))
 {

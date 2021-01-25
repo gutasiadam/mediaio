@@ -36,7 +36,7 @@ require("header.php");
 </table>
 <?php
 	if(!empty($_POST["forgot-password"])){
-		$conn = mysqli_connect("localhost", "root", "umvHVAZ%", "loginsystem");
+		$conn = mysqli_connect("localhost", "root", "umvHVAZ%", "mediaio");
 		
 		$condition = "";
 		if(!empty($_POST["user-login-name"])) 

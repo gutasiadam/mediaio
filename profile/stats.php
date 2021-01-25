@@ -7,7 +7,7 @@ include("header.php");
 $search = date('Y-m-d');
 $search2 = date('Y-m-d', strtotime($search. ' - 7 days'));
 
-$conn = new mysqli("localhost", "root", "umvHVAZ%", "calendar");
+$conn = new mysqli("localhost", "root", "umvHVAZ%", "mediaio");
 $sql = ("SELECT * FROM `events` WHERE add_Date BETWEEN '$search2' AND '$search'");
 $result = $conn->query($sql) or die($conn->error);
 //echo $search2;
@@ -22,7 +22,7 @@ $sql = ("SELECT * FROM `events`");
 $result = $conn->query($sql) or die($conn->error);
 $row_cnt2 = $result->num_rows;//db esemény található a naptárban.
 
-$conn = new mysqli("localhost", "root", "umvHVAZ%", "leltar_master");
+$conn = new mysqli("localhost", "root", "umvHVAZ%", "mediaio");
 $sql = ("SELECT * FROM `leltar`");
 $result = $conn->query($sql) or die($conn->error);
 $row_cnt3 = $result->num_rows;//Max_tárgy a raktárban
@@ -31,12 +31,10 @@ $sql = ("SELECT * FROM `leltar` WHERE Status = 1");
 $result = $conn->query($sql) or die($conn->error);
 $row_cnt4 = $result->num_rows;//Jelenleg benn tárgyak
 
-$conn->close();
-
-$conn = new mysqli("localhost", "root", "umvHVAZ%", "loginsystem");
 $sql = ("SELECT userNameUsers FROM `users`");
 $result = $conn->query($sql) or die($conn->error);
 $row_cnt5 = $result->num_rows;//regiszztrált felhasználók
+$conn->close();
 ?>
 
 <body>

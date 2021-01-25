@@ -3,7 +3,7 @@ session_start();
 $serverName = "localhost";
 $dbUserName = "root";
 $dbPassword = "umvHVAZ%";
-$dbDatabase = "leltar_master";
+$dbDatabase = "mediaio";
 $SESSuserName = $_SESSION['UserUserName'];
 
 if( isset($_POST['takeoutData'])){

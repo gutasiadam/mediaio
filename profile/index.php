@@ -13,7 +13,7 @@
     $servername = "localhost";
     $username = "root";
     $password = $application_DATABASE_PASS;
-    $dbname = "loginsystem";
+    $dbname = "mediaio";
     $conn = new mysqli($servername, $username, $password, $dbname);
     $uName = $_SESSION['UserUserName'];
     $sql = "SELECT idUsers FROM users WHERE usernameUsers = '$uName' AND GAUTH_SECRET IS NOT NULL";

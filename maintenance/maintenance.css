@@ -26,8 +26,9 @@
 
 .box{
     display: block;
-    width: 100px;
-    height: 100px;
+    width: auto;
+    min-height: 50px;
+    height: auto;
     z-index: 20000;
     border: 1px solid black;
     background-color: white;

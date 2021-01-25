@@ -1,7 +1,7 @@
 <?php if(isset($_GET['secureId'])){
     $secureId = $_GET['secureId'];
 
-    $connect = new PDO("mysql:host=localhost;dbname=calendar", "root", "umvHVAZ%");
+    $connect = new PDO("mysql:host=localhost;dbname=mediaio", "root", "umvHVAZ%");
     $query = "SELECT title, start_event, end_event, borderColor FROM `eventprep` WHERE secureId = '$secureId'";
 
     $statement = $connect->prepare($query);

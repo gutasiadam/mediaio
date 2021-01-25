@@ -6,7 +6,7 @@ if(isset($_SESSION['userId'])){
 $serverName="localhost";
 	$userName="root";
 	$password="umvHVAZ%";
-	$dbName="leltar_master";
+	$dbName="mediaio";
 ?>
 
 <html>  
@@ -178,7 +178,7 @@ session_start();
         $serverName = "localhost";
         $dbUserName = "root";
         $dbPassword = "umvHVAZ%";
-        $dbDatabase = "leltar_master";
+        $dbDatabase = "mediaio";
         
         $authCode = $_POST["authGen"];
         $authItem = $_POST["authItem"];
