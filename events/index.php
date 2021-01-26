@@ -5,21 +5,9 @@ if(!isset($_SESSION['userId'])){
 #echo $_SESSION['color'];
 ?><html lang='en'>
   <head>
-  <div class="se-pre-con"><img src="loading.gif"></div>
-  <style>
-.no-js #loader { display: none;  }
-.js #loader { display: block; position: absolute; left: 100px; top: 0; }
-.se-pre-con {
-  position: fixed;
-	left: 0px;
-	top: 0px;
-	width: 100%;
-	height: 100%;
-  text-align: center;
-  z-index: 9999;
-}
+  <link rel="stylesheet" href="../main.css">
+  <div class="se-pre-con"><img class="loadingAnimation" src="../utility/mediaIO_loading_logo_1b.gif"><div class="Loadtext">Betöltés..</div></div>
 
-  </style>
     <meta charset='utf-8' />
     <script src="https://kit.fontawesome.com/2c66dc83e7.js" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>

@@ -127,6 +127,16 @@
 </div>
 
 <script>
+//Ha nincs feladat, ne is jelenjen meg a táblázat:
+function deleteTableIfNoTask(){
+  if($('#takaritasirend tr').length==1){
+    $('#takaritasirend').fadeOut(600);
+    $('#takaritasirend').remove();
+  }
+}
+
+deleteTableIfNoTask();
+
 window.onload = function () {
   $('#processing').hide();
     var fiveMinutes = 10 * 60 - 1,
@@ -221,7 +231,10 @@ function deleteWork(index){
        {
         if(result=200){
           //Sikeres a törlés
-          $('#takaritasirend tr').eq(index+1).fadeOut();
+          $('#takaritasirend tr').eq(index+1).fadeOut(600);
+          $('#takaritasirend tr').eq(index+1).remove();
+          setInterval(function(){ deleteTableIfNoTask(); }, 600);
+          
         }else{
           console.log(result);
           console.log("A törlés nem futott le sikeresen.")

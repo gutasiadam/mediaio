@@ -5,11 +5,13 @@
 ?>
 <!DOCTYPE html>
 
-<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+
 <html data-theme='dark'>
 <head>
+<link rel="stylesheet" href="./main.css">
+  <div class="se-pre-con"><img class="loadingAnimation" src="./utility/mediaIO_loading_logo_1b.gif"></div>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-  <link rel="stylesheet" href="./main.css">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
   <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js">  </script>
   <script src="https://kit.fontawesome.com/2c66dc83e7.js" crossorigin="anonymous"></script>
@@ -19,6 +21,12 @@
     <title>Arpad Media IO Login</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
+
+<script>
+    $(window).on('load', function () {
+  $(".se-pre-con").fadeOut("slow");
+ });
+  </script>
 <body>
                 <?php 
 
