@@ -1,6 +1,9 @@
 <?php
 
 include "translation.php";
+include "header.php";
+
+
 
 if(!isset($_SESSION['userId'])){
   header("Location: index.php?error=AccessViolation");}
@@ -93,81 +96,6 @@ if( isset($_POST['data'])){
  }?>
 <script>
 
-//WebSocket
-/*
-if ("WebSocket" in window) {
-               console.log("WebSocket is supported by your Browser!");
-               var ws = new WebSocket("ws://192.168.0.24:3000/ws");
-               // Let us open a web socket
-				
-               ws.onopen = function() {
-                  
-                  // Web Socket is connected, send data using send()
-                  sender={'method':'probe','user':'gutasiadam'}
-                  ws.send(JSON.parse(sender));
-                  document.getElementById('webSocketState').style.backgroundColor = ('lime');
-                  console.log("Message is sent to the network");
-               };
-				
-               ws.onmessage = function (evt) { 
-                var received_msg = evt.data;
-
-                try {
-                    let m = JSON.parse(evt.data);
-                     handleMessage(m);
-                } catch (err) {
-                    console.log('[Client] Message is not parseable to JSON.');
-                }
-
-                  console.log("Message recieved: " + received_msg);
-                  document.getElementById('recMsg').innerHTML = (received_msg);
-               };
-				
-               ws.onclose = function() { 
-                  
-                  // websocket is closed.
-                  console.log("Connection is closed..."); 
-                  document.getElementById('webSocketState').style.backgroundColor = ('red');
-                  document.getElementById("ServerMsg").style.backgroundColor = ('LightCoral');
-                  document.getElementById("ServerMsg").style.color = ('white');
-                  document.getElementById('ServerMsg').innerHTML = ('A szerverrel való kommunikáció megszakadt. Próbáld meg újratölteni az oldalt.');
-               };
-
-               let handlers = {
-                "set-background-color": function(m) {
-        // ...
-                console.log('[Client] set-background-color handler running.');
-                console.log('[Client] Color is ' + m.params.color);
-                document.getElementById('webSocketState').style.backgroundColor = (m.params.color);
-                }
-            };
-
-
-               function handleMessage(m) {
-
-                if (m.method == undefined) {
-                    return;
-                }
-
-                let method = m.method;
-
-                if (method) {
-
-                    if (handlers[method]) {
-                        let handler = handlers[method];
-                        handler(m);
-                    } else {
-                        console.log('[Client] No handler defined for method ' + method + '.');
-                    }
-
-                }
-        }
-            } else {
-              
-               // The browser doesn't support WebSocket
-               console.log("WebSocket NOT supported by your Browser!");
-            }
-*/
 var goStatus = 0;
 function checkGoBtn() {
       $("#add").one('click', function () { 
@@ -194,8 +122,10 @@ function checkGoBtn() {
       $('#goButton').remove();}
     });
       }</script>
+<script src="utility/jstree.js"></script>
+  <link href="utility/themes/default/style.min.css" rel="stylesheet"/>
 <html >
-<head>
+<!--<head>
   <script src="JTranslations.js"></script>
   <link rel="stylesheet" href="./main.css">
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
@@ -203,12 +133,13 @@ function checkGoBtn() {
   <script src="./utility/_initMenu.js" crossorigin="anonymous"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js">  </script>
   <script src="utility/jstree.js"></script>
+  <link href="utility/themes/default/style.min.css" rel="stylesheet"/>
   <script src="https://kit.fontawesome.com/2c66dc83e7.js" crossorigin="anonymous"></script>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Arpad Media IO</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-</head>
+</head>-->
       <title><?php echo $applicationTitleFull;?></title>
       <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
 					<a class="navbar-brand" href="index.php"><img src="./utility/logo2.png" height="50"></a>
@@ -242,7 +173,7 @@ function checkGoBtn() {
 </select>
 
 		<div class="container">
-    <button id="takeout2BTN">Új kivétel teszt</button>
+    
 			<br /><br />
 			<h2 class="rainbow" align="center" id="doTitle"><?php echo $applicationTitleShort;?></h2><br />
       <div class="row">
@@ -254,7 +185,7 @@ function checkGoBtn() {
     				<input id="id_itemNameAdd" type="text" name="add" class="form-control mb-2 mr-sm-2" placeholder='<?php echo $applicationSearchField;?>'></div></td>
             <td><button type="button" name="add" id="add" class="btn btn-info2 add_btn mb-2 mr-sm-2" onclick="checkGoBtn()"><?php echo $button_Add;?></button>     <span id='sendQueryButtonLoc'></span></td>
             <td><div class="col-md-9">
-      Keresés: <input type="text" id="search" autocomplete="off" /><button id="clear">Törlés</button>
+      Keresés: <input type="text" id="search" autocomplete="off" /><button id="clear">Törlés</button> <button id="takeout2BTN">Új kivétel teszt</button>
 <div id="jstree">
 </div>
 <p>Selected items:</p>
@@ -326,21 +257,22 @@ console.log(d)
  
 
 $('#jstree').jstree({
-  'plugins': ['search', 'checkbox', 'wholerow'],
-  'core': {
-    'data': d,
-    'animation': true,
-    'expand_selected_onload': true,
-    'themes': {
-      'icons': false,
+  "plugins": ["search", "checkbox", "wholerow"],
+  "core": {
+    "data": d,
+    "animation": true,
+    "expand_selected_onload": true,
+    "themes": {
+      "icons": false,
     }},
-  'search': {
-    'show_only_matches': true,
-    'show_only_matches_children': true
+  "search": {
+    "show_only_matches": true,
+    "show_only_matches_children": true
   }
 });
+
 /*
-$('#jstree').jstree({
+Fallback JSTREE$('#jstree').jstree({
     'core' : {
         'data' : d,
 
@@ -397,7 +329,7 @@ $('#jstree').on('changed.jstree', function (e, data) {
   })
 })
 
-$('#jstree_demo').jstree({
+/*$('#jstree_demo').jstree({
   "core" : {
     "animation" : 0,
     "check_callback" : true,
@@ -434,7 +366,7 @@ $('#jstree_demo').jstree({
     "contextmenu", "dnd", "search",
     "state", "types", "wholerow"
   ]
-});
+});*/
 //Right at load - start autologout.
 
   var selectList = [];
@@ -600,15 +532,22 @@ window.onload = function () {
 
   document.getElementById("takeout2BTN").addEventListener("click", function() {
     console.log("Kimenet:"+JSON.stringify(takeOutPrepJSON));
-    $.ajax({
+    alert("Kimenet:"+JSON.stringify(takeOutPrepJSON));
+      $.ajax({
       url:"./utility/takeout_administrator.php",
       //url:"./utility/dummy.php",
 			method:"POST",
 			data:{takeoutData: takeOutPrepJSON},
 			success:function(response)
 			{
-        console.log(response);
-        location.reload();
+        d=JSON.parse(response);
+        d = JSON.parse(JSON.stringify(d).split('"Nev":').join('"text":'));
+        d = JSON.parse(JSON.stringify(d).split('"ID":').join('"id":'));
+        console.log(d);
+        $('#jstree').jstree(true).settings.core.data = d;
+        //Fa újratöltése
+        $('#jstree').jstree().refresh();
+        //location.reload();
 			}
 		});
 });

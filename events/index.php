@@ -5,9 +5,8 @@ if(!isset($_SESSION['userId'])){
 #echo $_SESSION['color'];
 ?><html lang='en'>
   <head>
-  <link rel="stylesheet" href="../main.css">
-  <div class="se-pre-con"><img class="loadingAnimation" src="../utility/mediaIO_loading_logo_1b.gif"><div class="Loadtext">Betöltés..</div></div>
-
+  <link href='../main.css' rel='stylesheet' />
+  <div class="UI_loading"><img class="loadingAnimation" src="../utility/mediaIO_loading_logo_small.gif"></div>
     <meta charset='utf-8' />
     <script src="https://kit.fontawesome.com/2c66dc83e7.js" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -37,7 +36,7 @@ if(!isset($_SESSION['userId'])){
   </head>
   <script>
     $(window).on('load', function () {
-  $(".se-pre-con").fadeOut("slow");
+  $(".UI_loading").fadeOut("slow");
  });
   </script>
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">

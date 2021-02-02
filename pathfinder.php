@@ -1,14 +1,17 @@
 <?php 
 include "translation.php";
+include "header.php";
 if(isset($_SESSION['userId'])){
     error_reporting(E_ALL ^ E_NOTICE);
 ?>
 
-<html>  
+<html> 
+  <!-- <link rel="stylesheet" href="utility/timeline.min.css" /> -->
+  <!-- 
     <head>
         <script src="utility/timeline.min.js"></script>
         <link rel="stylesheet" href="utility/pathfinder.css" />
-        <!--<link rel="stylesheet" href="utility/timeline.min.css" />-->
+        
         <script src="utility/jquery.js"></script>
         <script src="utility/_initMenu.js" crossorigin="anonymous"></script>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
@@ -18,7 +21,8 @@ if(isset($_SESSION['userId'])){
   <link rel="stylesheet" href="utility/pfcss.css">
   <title>PathFinder</title>
   
-    </head>
+    </head>-->
+    <link rel="stylesheet" href="utility/pfcss.css">
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <a class="navbar-brand" href="index.php"><img src="./utility/logo2.png" height="50"></a>
 					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">

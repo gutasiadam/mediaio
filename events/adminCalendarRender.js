@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', function() {
     calendar.updateSize();
   },
   select: function(info) {
-    console.log("WHY ARE YOU RUNNING?");
+    //console.log("WHY ARE YOU RUNNING?");
     var startval = info.startStr;
     var endval = info.endStr;
     console.log(startval+' '+endval);
@@ -60,6 +60,7 @@ document.addEventListener('DOMContentLoaded', function() {
        data:{title:title, start:start, end:end, color:color, type:type},
        success:function(sVal)
        {
+         console.log(sVal);
         if(sVal==1){
           $('#exampleModal').modal('hide');      
         }
@@ -138,6 +139,5 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
    });
-
         calendar.render();
       });

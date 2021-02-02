@@ -1,15 +1,17 @@
 <?php 
 include "translation.php";
+include "header.php";
 if(!isset($_SESSION['userId'])){
   header("Location: index.php?error=AccessViolation");}
 ?>
+<!--
 <head>
 <script src="JTranslations.js"></script>
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 	  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   <script src="https://kit.fontawesome.com/2c66dc83e7.js" crossorigin="anonymous"></script>
   <script src="utility/_initMenu.js" crossorigin="anonymous"></script>
-</head>
+</head>-->
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
           <a class="navbar-brand" href="index.php"><img src="./utility/logo2.png" height="50"></a>

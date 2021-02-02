@@ -1,9 +1,14 @@
 
 <html>
-    <?php 
-    require("../header.php");
+    <?php
+    header('Pragma: public'); 
+    header("Cache-Control: max-age=2592000");
+    header('Expires: '. gmdate('D, d M Y H:i:s \G\M\T', time() + 86400));
+    
+    require("header.php");
     require("../translation.php");?>
     <script src="../utility/_initMenu.js" crossorigin="anonymous"></script>
+
 <script> $( document ).ready(function() {
               menuItems = importItem("../utility/menuitems.json");
               drawMenuItemsLeft("profile",menuItems,2);

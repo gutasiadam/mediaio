@@ -1,5 +1,6 @@
 //Draw menu:
-console.log("_initMenu laod started...")
+console.log("_initMenu file called, loading...");
+// Begin by displaying spinner
       //Import menu items
       var menuItems = null;
       function importItem(fileLoc) {

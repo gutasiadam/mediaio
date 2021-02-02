@@ -1,4 +1,5 @@
 <?php
+error_reporting(E_ERROR | E_WARNING | E_PARSE );
 session_start();
 $serverName = "localhost";
 $dbUserName = "root";
@@ -12,9 +13,9 @@ if( isset($_POST['takeoutData'])){
     //var_dump($data['items']);
     
     foreach ($takeoutData as $entry){
-      echo($entry['name']);
+      //echo($entry['name']);
       fwrite($logDump, $entry['name']."\n");
-      echo($entry['id']);
+      //echo($entry['id']);
       fwrite($logDump, $entry['id']."\n");
     }
     //file_put_contents("dump.txt", ob_get_flush());
@@ -34,7 +35,7 @@ if( isset($_POST['takeoutData'])){
       $result = $conn->query($sql);
       $conn->close();
       if ($result === TRUE) {
-        $conn = new mysqli($serverName, $dbUserName, $dbPassword, 'leltar_master');
+        $conn = new mysqli($serverName, $dbUserName, $dbPassword, 'mediaio');
         $sql2 = ("UPDATE leltar SET Status = 0, RentBy = '$SESSuserName' WHERE `Nev`='$nev'");
         $result2 = $conn->query($sql2);
         $conn->close();
@@ -45,7 +46,7 @@ if( isset($_POST['takeoutData'])){
         echo "Error: " . $sql . "<br>" . $conn->error;
     }
       }
-    echo $nev;
+    //echo $nev;
     }
     
   }

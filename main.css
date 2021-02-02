@@ -4,7 +4,9 @@
   }
 }
 
-.se-pre-con {
+/* UI INIT */
+
+.UI_loading {
   display: grid;
   place-items: center;
   position: fixed;
@@ -16,14 +18,16 @@
   background-color: rgba(0,0,0,1);
 }
 .loadingAnimation{
-  width: 300px;
-  height: 300px;
+  width: 100px;
+  height: 100px;
 }
 
 .loadText{
   color: #ffffff;
 }
 
+
+/*Other */
 .rainbow {
   -webkit-animation: color 15s linear infinite;
   animation: color 15s linear infinite;  

@@ -1,5 +1,6 @@
 <?php
 include "translation.php";
+include "header.php";
 if(!isset($_SESSION['userId'])){
   header("Location: index.php?error=AccessViolation");}
 
@@ -128,7 +129,7 @@ if( isset($_POST['data'])){
     $result = $conn->query($sql);
     
     if ($result === TRUE) {
-      $conn = new mysqli($serverName, $userName, $password, 'leltar_master');
+      $conn = new mysqli($serverName, $userName, $password, 'mediaio');
       $sql2 = ("UPDATE `leltar` SET `Status` = '1', `RentBy` = NULL, `AuthState` = NULL WHERE `Nev`='$d';");
       $sql2.= ("DELETE FROM authcodedb WHERE Item = '$d'");
       if (!$conn->multi_query($sql2)) {
@@ -153,7 +154,7 @@ var goStatus = 0;
 
 <html >
       <title><?php echo $applicationTitleFull; ?></title>
-  <head>
+  <!--<head>
   <script src="JTranslations.js"></script>
   <link rel="stylesheet" href="./main.css">
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
@@ -165,7 +166,7 @@ var goStatus = 0;
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Retrieve</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-</head>
+</head>-->
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
 					<a class="navbar-brand" href="index.php"><img src="./utility/logo2.png" height="50"></a>
 					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">

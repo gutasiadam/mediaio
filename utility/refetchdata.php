@@ -1,8 +1,5 @@
 <?php 
 include("../translation.php");
-if($_SESSION['role']=="Boss"){
-    echo "ALLOW";
-}
 
 $mysqli = new mysqli("localhost", "root", $application_DATABASE_PASS, "mediaio");
 $DB_Elements = fopen("DB_Elements.txt", "w");
@@ -20,7 +17,7 @@ if ($result = $mysqli->query($query)) {
     while ($row = $result->fetch_assoc()) {
         fwrite($DB_Elements, $row["Nev"]."\n");
     }
-    print json_encode($rows);
+    //print json_encode($rows);
     fclose($DB_Elements);
     /* free result set */
     $result->free();
@@ -41,7 +38,7 @@ if ($result = $mysqli->query($query)) {
 
 //NEW, JSON METHOD
 $rows = array();
-$query = "SELECT Nev, ID, UID, Category, Status FROM leltar WHERE TakeRestrict='' ";
+$query = "SELECT Nev, ID, UID, Category, Status FROM leltar WHERE TakeRestrict='' AND Status=1  ";
 if ($result = $mysqli->query($query)) {
 
     /* fetch associative array */
