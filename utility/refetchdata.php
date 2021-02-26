@@ -1,7 +1,6 @@
 <?php 
-include("../translation.php");
 
-$mysqli = new mysqli("localhost", "root", $application_DATABASE_PASS, "mediaio");
+$mysqli = new mysqli("localhost", "root", "umvHVAZ%", "mediaio");
 $DB_Elements = fopen("DB_Elements.txt", "w");
 /* check connection */
 if ($mysqli->connect_errno) {
@@ -38,7 +37,7 @@ if ($result = $mysqli->query($query)) {
 
 //NEW, JSON METHOD
 $rows = array();
-$query = "SELECT Nev, ID, UID, Category, Status FROM leltar WHERE TakeRestrict='' AND Status=1  ";
+$query = "SELECT Nev, ID, UID, Category, Status FROM leltar WHERE TakeRestrict='' AND Status=1 ";
 if ($result = $mysqli->query($query)) {
 
     /* fetch associative array */
@@ -51,9 +50,9 @@ if ($result = $mysqli->query($query)) {
         $rows[] = $row;
 
     }
-    print json_encode($rows);
+    //print json_encode($rows);
 
-    $itemsJSONFile = fopen('takeOutItems.json', 'w');
+    $itemsJSONFile = fopen('./utility/takeOutItems.json', 'w');
     fwrite($itemsJSONFile, json_encode($rows));
     fclose($itemsJSONFile);
     $result->free();

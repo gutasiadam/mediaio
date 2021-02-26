@@ -1,10 +1,11 @@
 <?php 
+set_include_path('F:/Programming/xampp/htdocs/.git/mediaio/server/batch_jobs');
 header('Content-type: text/plain');
-require_once('./PHPMailer-6.2.0/src/PHPMailer.php');
+require_once('F:/Programming/xampp/htdocs/.git/mediaio/server/batch_jobs/PHPMailer-6.2.0/src/PHPMailer.php');
 $today = new DateTime(date("Y-m-d H:i:s"));
 $todayString=$today->format("Y_m_d_H_i_s");
-$log = fopen("./logs/$todayString.txt", "w");
-fwrite($log, "Beginning BATCH [".$today->format("Y-m-d H:i:s")."\n]");
+$log = fopen(get_include_path()."/logs/$todayString.txt", "w");
+fwrite($log, "Beginning BATCH [".$today->format("Y-m-d H:i:s")."]\n");
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception; // A batch loghoz majd.
 /*Email küldése a következőkről:
@@ -103,6 +104,11 @@ function BATCH_notify_monthItems($today,$log){
     fwrite($log, "\n\n//// ".$batchName." //// \n*** Starting ***\n\n");
     
     $mysqli = new mysqli("localhost", "root", "umvHVAZ%", "mediaio");
+    if ($mysqli->connect_errno) {
+        echo("Connect failed: ".$mysqli->connect_error);
+        fwrite($log, $batchName.": Connect failed: ".$mysqli->connect_error);
+        exit();
+    }
     $todayFormatted=date_format($today, 'Y-m-d');
 
     //query1: Az összes kinn lévő tárgyak felsorolása
@@ -182,14 +188,23 @@ function BATCH_notify_monthItems($today,$log){
                                 echo "\t$batchName: Mail sent to $to\n";
                                 fwrite($log, "\t$batchName: Mail sent to $to\n");
                             }
+                        }else{
+                            echo "QUERY3 Error";
+                            fwrite($log, "QUERY3 Error".$query3_result->error);
                         }
                     }else{
                         echo "\n";
                         fwrite($log, "\n");
                     }
                 }
+            }else{
+                echo "QUERY2 Error";
+                fwrite($log, "QUERY2 Error".$query2_result->error);
             }
         }
+    }else{
+        echo "QUERY1 Error";
+        fwrite($log, "QUERY1 Error".$query1_result->error);
     }
     echo "\n".$batchName." Completed.\n\n";
     fwrite($log, "\n".$batchName." Completed.\n\n");
@@ -201,7 +216,9 @@ function BATCH_notify_monthItems($today,$log){
 BATCH_notify_Unconfirmed_Events($today,$log); // BATCH_JOB: Megerősítetlen eseményekről e-mailt kiküldeni
 //BATCH_JOB: 30 napnál tovább kinn levő tárgyakról e-mailt küldeni a megfelelő személynek.
 BATCH_notify_monthItems($today,$log);
-
+//fwrite($log, "\nBatch completed on\t".$endTime->format("Y-m-d H:i:s"));
+fwrite($log, "\n\nSending e-mail to admin");
+fclose($log);
 
 
 //Mail to admin:
@@ -209,18 +226,18 @@ BATCH_notify_monthItems($today,$log);
 $mail = new PHPMailer();
 
 /* Set the mail sender. */
-$mail->setFrom('arpadmedia@gmail.com', 'mediaIO BATCH');
+$mail->setFrom('arpadmedia@gmail.com', 'mediaIO cron');
 $mail->CharSet = 'UTF-8';
 $mail->Encoding = 'base64';
 /* Add a recipient. */
 $mail->addAddress('gutasi.guti@gmail.com', 'Media Admin');
 
 /* Set the subject. */
-$mail->Subject = 'Batch folyamat ['.$today->format("Y/m/d H:i:s").'] elkészült';
+$mail->Subject = 'Cron folyamat ['.$today->format("Y/m/d H:i:s").'] elkészült';
 
 /* Set the mail message body. */
-$mail->Body = 'Elkészült egy batch Folyamat a mediaio Szerverén. Csatolva küldöm a LOG-ot.';
-$mail->AddAttachment("./logs/$todayString.txt");
+$mail->Body = 'Elkészült egy cron Folyamat a mediaio Szerverén. Csatolva küldöm a LOG-ot.';
+$mail->AddAttachment(get_include_path()."/logs/$todayString.txt");
 
 /* Finally send the mail. */
 if (!$mail->send())
@@ -229,6 +246,5 @@ if (!$mail->send())
    echo $mail->ErrorInfo;
 }
 
-fwrite($log, "\n Batch completed on\t".$today->format("Y-m-d H:i:s"));
-fclose($log);
+
 ?>

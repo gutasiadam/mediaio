@@ -1,6 +1,8 @@
 <?php
 include "translation.php";
 include "header.php";
+include('./utility/refetchdata.php');
+
 if(!isset($_SESSION['userId'])){
   header("Location: index.php?error=AccessViolation");}
 
@@ -144,7 +146,7 @@ if( isset($_POST['data'])){
     }
   echo $d;
   }
-  include('./utility/refetchdata.php');
+  
   exit;
  }?>
 <script>
@@ -331,23 +333,17 @@ window.onload = function () {
       takeOutJSON = JSON.stringify(filtered);
       console.log(takeOutJSON);
       $.ajax({
-    type: 'POST',
+    method: 'POST',
+    url: './utility/Retrieve_Handler.php',
     data: {data : takeOutJSON},
-    success: function (response) { $('#doTitle').animate({'opacity': 0}, 400, function(){
-        $(this).html('<h2 class="text text-success" role="alert">'+retrieve_Success+'</h2>').animate({'opacity': 1}, 400);
-        $(this).html('<h2 class="text text-success" role="alert">'+retrieve_Success+'</h2>').animate({'opacity': 1}, 3000);
-        $(this).html('<h2 class="text text-success" role="alert">'+retrieve_Success+'</h2>').animate({'opacity': 0}, 400);
-        setTimeout(function() { $("#doTitle").text(applicationTitleShort).animate({'opacity': 1}, 400); }, 3800);;   
-        $('#dynamic_field').empty();
-        $('#dynamic_field_2').empty();
-        selectList = [];
-        needsVerification = [];
-
-    }); },
+    success: function (response){
+      alert(response);
+      location.reload();
+    },
     error: function(XMLHttpRequest, textStatus, errorThrown) { 
         alert("Status: " + textStatus); alert("Error: " + errorThrown); 
     }
-})
+});
   }else{
     alert("Ha a tárggyal gond van, jelezd a vezetőségnek!");
   }});
@@ -357,7 +353,7 @@ window.onload = function () {
     //console.log("CLICK!")
     $('.intactForm').fadeIn();
       if (goStatus == 0){
-        $('#sendQueryButtonLoc').append('<button type="submit" class="btn btn-success go_btn mb-2 mr-sm-2" id="goButton" >'+button_Go+'</button>');
+        $('#sendQueryButtonLoc').append('<button type="submit" class="btn btn-success go_btn mb-2 mr-sm-2" id="goButton" >Mehet</button>');
         goStatus++;
      }
     document.getElementById("liveSelArrayResult").innerHTML = "";

@@ -2,144 +2,17 @@
 
 include "translation.php";
 include "header.php";
-
-
-
+include('./utility/refetchdata.php');
 if(!isset($_SESSION['userId'])){
   header("Location: index.php?error=AccessViolation");}
 $SESSuserName = $_SESSION['UserUserName'];
 error_reporting(E_ALL ^ E_NOTICE);
 // Cookie for ITEM SELECTION (JS --> PHP :3)
-setcookie('Cookie_currentItemSel', 0, time() + (36000), "/");
+?>
 
-
-function PhparrayCookie(){
-  array_push($selItems, $_COOKIE['id_itemNameAdd']);
-  foreach ($selItems as $x){
-    echo $x . " ";
-  }
-}
-
-  // Database initialization - Get's total item number in the database and estabilishes connection.
-	$serverName="localhost";
-	$userName="root";
-	$password=$application_DATABASE_PASS;
-	$dbName="mediaio";
-	$countOfRec=0;
-
-	$conn = new mysqli($serverName, $userName, $password, $dbName);
-
-	if ($conn->connect_error) {
-		die("Connection fail: (Is the DB server maybe down?)" . $conn->connect_error);
-	}
-	$sql = "SELECT * FROM leltar";
-	$result = $conn->query($sql);
-
-if ($result->num_rows > 0) {
-
-    while($row = $result->fetch_assoc()) {
-		$countOfRec += 1;
-	}
-} else {
-    echo "0 results";
-}
-$conn->close();
-
-//CHECK WETHER SELECTED ITEM IS OUT OR NAH
-if(isset($_POST['takeoutCheck'])){
-  $checkitem= json_decode(stripslashes($_POST['takeoutCheck']));
-  $conn = new mysqli($serverName, $userName, $password, 'mediaio');
-  $sqlPreCheck = ("SELECT `leltar`.`Nev`, `leltar`.`Status`
-  FROM `leltar`
-  WHERE (( `Status` = 0) AND ( `Nev` = '$checkitem'))");
-  $preResult = $conn->query($sqlPreCheck);
-  $rowReturn = $preResult->num_rows;
-  if ($rowReturn != 0){ #Tehát 1, ki van véve
-    echo "1";
-  }if ($rowReturn == 0){
-    echo "0";
-  }
-  $conn->close();
-  exit;
-}
-
-
-// IF VERYTHING IS GOOD, WRITE TO DB
-if( isset($_POST['data'])){
-  $data = json_decode(($_POST['data']), true);
-  $dbName="mediaio";
-  foreach ($data as $d){
-    $conn = new mysqli($serverName, $userName, $password, $dbName);
-    $currDate = date("Y/m/d H:i:s");
-	if ($conn->connect_error) {
-    die("Connection fail: (Is the DB server maybe down?)" . $conn->connect_error);
-  }
-  else{  
-    $sql = ("INSERT INTO takelog (`ID`, `takeID`, `Date`, `User`, `Item`, `Event`) VALUES (NULL, '1', '$currDate', '$SESSuserName', '$d', 'OUT')");
-    $result = $conn->query($sql);
-    $conn->close();
-    if ($result === TRUE) {
-      $conn = new mysqli($serverName, $userName, $password, 'mediaio');
-      $sql2 = ("UPDATE leltar SET Status = 0, RentBy = '$SESSuserName' WHERE `Nev`='$d'");
-      $result2 = $conn->query($sql2);
-      $conn->close();
-      if ($result2 === TRUE){
-        echo "Success.";
-      }
-  } else {
-      echo "Error: " . $sql . "<br>" . $conn->error;
-  }
-    }
-  echo $d;
-  }
-  exit;
- }?>
-<script>
-
-var goStatus = 0;
-function checkGoBtn() {
-      $("#add").one('click', function () { 
-
-    console.log(selectList.lenght);
-    
-
-    if (selectList.length >= 1){
-      console.log("Gombhozzáadás");
-      if (goStatus == 0){
-        $('#sendQueryButtonLoc').append('<button type="submit" class="btn btn-success go_btn mb-2 mr-sm-2" id="goButton" >Go!</button>');
-        goStatus++;
-      }
-     }
-
-     if (selectList.lenght == 0){
-      console.log("GOMBTÖRLÉS");
-      $('#goButton').remove();}
-    });
-
-      $("#add").on('click', function () { 
-    if (selectList.lenght == 0){
-      console.log("GOMBTÖRLÉS");
-      $('#goButton').remove();}
-    });
-      }</script>
 <script src="utility/jstree.js"></script>
   <link href="utility/themes/default/style.min.css" rel="stylesheet"/>
 <html >
-<!--<head>
-  <script src="JTranslations.js"></script>
-  <link rel="stylesheet" href="./main.css">
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-  <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
-  <script src="./utility/_initMenu.js" crossorigin="anonymous"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js">  </script>
-  <script src="utility/jstree.js"></script>
-  <link href="utility/themes/default/style.min.css" rel="stylesheet"/>
-  <script src="https://kit.fontawesome.com/2c66dc83e7.js" crossorigin="anonymous"></script>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Arpad Media IO</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-</head>-->
       <title><?php echo $applicationTitleFull;?></title>
       <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
 					<a class="navbar-brand" href="index.php"><img src="./utility/logo2.png" height="50"></a>
@@ -181,16 +54,16 @@ function checkGoBtn() {
       <div class="alert alert-info"><?php echo $Welcomemsg_takeout?></div>
       </div></div>
 			<div class="form-group">
-        <table id="itemSearch" align="left"><tr><td><div class="autocomplete" method="GET">
-    				<input id="id_itemNameAdd" type="text" name="add" class="form-control mb-2 mr-sm-2" placeholder='<?php echo $applicationSearchField;?>'></div></td>
-            <td><button type="button" name="add" id="add" class="btn btn-info2 add_btn mb-2 mr-sm-2" onclick="checkGoBtn()"><?php echo $button_Add;?></button>     <span id='sendQueryButtonLoc'></span></td>
-            <td><div class="col-md-9">
-      Keresés: <input type="text" id="search" autocomplete="off" /><button id="clear">Törlés</button> <button id="takeout2BTN">Új kivétel teszt</button>
+        <table id="itemSearch" align="left"><tr>
+        <td class="selectedItemsDisplay" rowspan="2" style="text-align:left;vertical-align:top;padding:0;min-width:250px;">
+          <h3><u>Kiválasztva</u></h3>
+          <ul id="output"></ul>
+        </td>
+    				<td><div class="col-md-9">
+      Keresés: <input type="text" id="search" autocomplete="off" /><button class="btn btn-warning" id="clear">Keresés törlése</button> <button class="btn btn-success" id="takeout2BTN">Mehet</button>
 <div id="jstree">
 </div>
-<p>Selected items:</p>
-<ul id="output">
-</ul>
+
       </div></td>
   			</tr></table>
 			<form autocomplete="off" action="/index.php">
@@ -220,9 +93,22 @@ function checkGoBtn() {
 //Load takeOutItems.json
 d=({})
 
+function displayMessageInTitle(selector,message){
+  baseText=$(selector).text();
+  $(selector).animate({'opacity': 0}, 400, function(){
+        $(this).html('<h2 class="text text-success" role="alert">'+message+'</h2>').animate({'opacity': 1}, 400);
+        $(this).html('<h2 class="text text-success" role="alert">'+message+'</h2>').animate({'opacity': 1}, 3000);
+        $(this).html('<h2 class="text text-success" role="alert">'+message+'</h2>').animate({'opacity': 0}, 400);
+    setTimeout(function() { $(selector).text(baseText).animate({'opacity': 1}, 400); }, 3800);;});
+}
+
+function xd(){
+  alert("xd");
+}
+
 
 function loadJSON(callback) {   
-console.log("loadJSON function called")
+console.log("[loadJSON] - called.")
 var xobj = new XMLHttpRequest();
     xobj.overrideMimeType("application/json");
 xobj.open('GET', './utility/takeOutItems.json', false); // Replace 'my_data' with the path to your file
@@ -230,9 +116,9 @@ xobj.onreadystatechange = function () {
       if (xobj.readyState == 4 && xobj.status == "200") {
         // Required use of an anonymous callback as .open will NOT return a value but simply returns undefined in asynchronous mode
         callback(xobj.responseText);
+        
         d=JSON.parse(xobj.responseText);
-        //console.log("SYNC end:"+d)
-
+        setTimeout(function(){ console.log(JSON.parse(xobj.responseText));; }, 500);
       }
 };
 xobj.send(null);  
@@ -245,7 +131,7 @@ function renameKey ( obj, oldKey, newKey ) {
 
 loadJSON(function(response) {
   // Parse JSON string into object
-  console.log("loadJSON done");
+  console.log("[loadJSON] - done");
  });
 for (let i = 0; i < d.length; i++) {
   renameKey(d[i],'Nev','text');
@@ -253,7 +139,7 @@ for (let i = 0; i < d.length; i++) {
 }
 
 
-console.log(d)
+//console.log(d) Betöltött JSON kiírása
  
 
 $('#jstree').jstree({
@@ -270,23 +156,6 @@ $('#jstree').jstree({
     "show_only_matches_children": true
   }
 });
-
-/*
-Fallback JSTREE$('#jstree').jstree({
-    'core' : {
-        'data' : d,
-
-        "themes":{
-            "icons":false
-        }
-    },
-    "search": {
-        "show_only_matches": true,
-        "show_only_matches_children": true
-    },
-    "plugins" : ["checkbox", "search"]
-
-});*/
 
 $('#search').on("keyup change", function () {
   $('#jstree').jstree(true).search($(this).val())
@@ -329,44 +198,9 @@ $('#jstree').on('changed.jstree', function (e, data) {
   })
 })
 
-/*$('#jstree_demo').jstree({
-  "core" : {
-    "animation" : 0,
-    "check_callback" : true,
-    "themes" : { "stripes" : true },
-    'data' : {
-      'url' : function (node) {
-        return node.id === '#' ?
-          'ajax_demo_roots.json' : 'ajax_demo_children.json';
-      },
-      'data' : function (node) {
-        return { 'id' : node.id };
-      }
-    }
-  },
-  "types" : {
-    "#" : {
-      "max_children" : 1,
-      "max_depth" : 4,
-      "valid_children" : ["root"]
-    },
-    "root" : {
-      "icon" : "/static/3.3.10/assets/images/tree_icon.png",
-      "valid_children" : ["default"]
-    },
-    "default" : {
-      "valid_children" : ["default","file"]
-    },
-    "file" : {
-      "icon" : "glyphicon glyphicon-file",
-      "valid_children" : []
-    }
-  },
-  "plugins" : [
-    "contextmenu", "dnd", "search",
-    "state", "types", "wholerow"
-  ]
-});*/
+$('#jstree').jstree().refresh();
+
+
 //Right at load - start autologout.
 
   var selectList = [];
@@ -374,7 +208,6 @@ $('#jstree').on('changed.jstree', function (e, data) {
   $(document).ready(function(){
   
 //get items from takeOutItems.json
-
 
 function startTimer(duration, display) {
     var timer = duration, minutes, seconds;
@@ -402,74 +235,8 @@ window.onload = function () {
     updateTime();
 };
 
+
   
-	  $('#add').click(function(){
-
-      document.getElementById("liveSelArrayResult").innerHTML = "";
-
-      var currentItemSel = document.getElementById("id_itemNameAdd").value;
-      if (currentItemSel == ''){}
-      if (currentItemSel != ''){
-        document.cookie = "Cookie_currentItemSel = "+currentItemSel;
-        var PATTERN = currentItemSel,
-        dbTempDelIndex = dbItems.indexOf(currentItemSel);
-        console.log(dbTempDelIndex);
-        if (dbTempDelIndex==-1){
-          alert("Specified item NOT in list!");
-        }
-        else {
-          i++;
-          dbItems.splice(dbTempDelIndex,1);
-          //console.log(dbItems);
-          document.getElementById('id_itemNameAdd').value = '';
-          selectList.push(currentItemSel);
-          checkGoBtn();
-          $('#liveSelArrayResult').append('<td>'+selectList+'</td>');
-          $('#dynamic_field').append('<tr id="row'+i+'"><td>'+currentItemSel+'</td><td><button type="button" name="remove" id="'+i+'" class="btn btn-danger btn'+i+' btn_remove">X</button></td></tr>');
-         console.log(i + "id with "+ currentItemSel + " created and occupied.");
-        }
-      }  
-   });
-    // Let the ADD BTN work without Clicking
-    var input = document.getElementById("id_itemNameAdd");
-      input.addEventListener("keyup", function(event) {
-    // Number 13 is the "Enter" key on the keyboard
-    var input_checkviolationValue = document.getElementById("id_itemNameAdd").value;
-    if (event.keyCode === 13) {
-    // Cancel the default action, if needed
-      if (input_checkviolationValue == ''){
-      }
-      else{
-        event.preventDefault();
-    // Trigger the button element with a click
-    document.getElementById("add").click();
-      }
-    
-    }
-});
-    
-    
-  
-  
-
-	$(document).on('click', '.btn_remove', function(){
-    var button_id = $(this).attr("id");
-    dbItems.push(selectList[button_id-2]);
-    dbItems.sort;
-    //selectList[button_id-2]=null;
-    selectList.splice(selectList[button_id-2], 1);
-    $('#row'+button_id+'').remove();
-    console.log(selectList.length);
-    checkGoBtn();
-    document.getElementById("liveSelArrayResult").innerHTML = "";
-    $('#liveSelArrayResult').append('<td>'+selectList+'</td>');
-
-    // clear Empty items in selectList - WILL BE USED LATER TO NOT MIX UP ID CONSTRUCTION!
-
-    
-    //selectList = selectList.filter(Boolean);
-    
-	});
 
   $(document).on('click', '.go_btn', function(){
       var filtered = selectList.filter(function (el) {
@@ -498,41 +265,11 @@ window.onload = function () {
 })
     });
   
-  $(document).on('click', '.add_btn', function(){
-    itemCheckJSON = JSON.stringify(selectList[selectList.length-1]);
-    console.log(itemCheckJSON)
-    $.ajax({
-    //url: 'utility/Takeout_Handler.php',
-    type: 'POST',
-    data: {takeoutCheck : itemCheckJSON},
-    //dataType: 'json',
-    success: function (res) {
-          var tempAddCheck = res;
-          console.log("Tempcheck: " + tempAddCheck);
-          if (tempAddCheck == 0){console.log("Nincs hiba, folytatás");}
-          if (tempAddCheck == 1){
-            console.log("Err1 - Adatbázishiba, vagy a tárgy már ki van véve")
-            $('.btn'+(selectList.length+1)).click();
-            checkGoBtn();
-           //ERROR 001
-            $('#doTitle').animate({'opacity': 0}, 400, function(){
-        $(this).html('<h2 class="text text-warning" role="alert">'+takeout_Unavailible+'</h2>').animate({'opacity': 1}, 400);
-        $(this).html('<h2 class="text text-warning" role="alert">'+takeout_Unavailible+'</h2>').animate({'opacity': 1}, 3000);
-        $(this).html('<h2 class="text text-warning" role="alert">'+takeout_Unavailible+'</h2>').animate({'opacity': 0}, 400);
-    setTimeout(function() { $("#doTitle").text("Arpad Media IO").animate({'opacity': 1}, 400); }, 3800);;});
-          }
-          
-          },
-    error: function(XMLHttpRequest, textStatus, errorThrown) { 
-        alert("Status: " + textStatus); alert("Error: " + errorThrown); 
-    }
-})
-    });
 
 
   document.getElementById("takeout2BTN").addEventListener("click", function() {
     console.log("Kimenet:"+JSON.stringify(takeOutPrepJSON));
-    alert("Kimenet:"+JSON.stringify(takeOutPrepJSON));
+    //alert("Kimenet:"+JSON.stringify(takeOutPrepJSON));
       $.ajax({
       url:"./utility/takeout_administrator.php",
       //url:"./utility/dummy.php",
@@ -541,13 +278,15 @@ window.onload = function () {
 			success:function(response)
 			{
         d=JSON.parse(response);
+        //fa frissítése válasz alapján.
         d = JSON.parse(JSON.stringify(d).split('"Nev":').join('"text":'));
         d = JSON.parse(JSON.stringify(d).split('"ID":').join('"id":'));
         console.log(d);
+        displayMessageInTitle("#doTitle","Sikeres kivétel! \nAz oldal hamarosan újratölt");
         $('#jstree').jstree(true).settings.core.data = d;
         //Fa újratöltése
-        $('#jstree').jstree().refresh();
-        //location.reload();
+        setTimeout(() => {  $('#jstree').jstree().refresh(); }, 2000);
+        setTimeout(() => {  location.reload(); }, 1000);
 			}
 		});
 });
@@ -564,9 +303,8 @@ window.onload = function () {
 		});
 	});
 
-  
-
 });
+
 function loadFile(filePath) {
   var result = null;
   var xmlhttp = new XMLHttpRequest();
@@ -588,105 +326,6 @@ return arr.filter(function(ele){
 });
 
 }
-function autocomplete(inp, arr) {
-  /*the autocomplete function takes two arguments,
-  the text field element and an array of possible autocompleted values:*/
-  var currentFocus;
-  /*execute a function when someone writes in the text field:*/
-  inp.addEventListener("input", function(e) {
-      var a, b, i, val = this.value;
-      /*close any already open lists of autocompleted values*/
-      closeAllLists();
-      if (!val) { return false;}
-      currentFocus = -1;
-      /*create a DIV element that will contain the items (values):*/
-      a = document.createElement("DIV");
-      a.setAttribute("id", this.id + "autocomplete-list");
-      a.setAttribute("class", "autocomplete-items");
-      /*append the DIV element as a child of the autocomplete container:*/
-      this.parentNode.appendChild(a);
-      /*for each item in the array...*/
-      for (i = 0; i < arr.length; i++) {
-        /*check if the item starts with the same letters as the text field value:*/
-        if (arr[i].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
-          /*create a DIV element for each matching element:*/
-          b = document.createElement("DIV");
-          /*make the matching letters bold:*/
-          b.innerHTML = "<strong>" + arr[i].substr(0, val.length) + "</strong>";
-          b.innerHTML += arr[i].substr(val.length);
-          /*insert a input field that will hold the current array item's value:*/
-          b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
-          /*execute a function when someone clicks on the item value (DIV element):*/
-          b.addEventListener("click", function(e) {
-              /*insert the value for the autocomplete text field:*/
-              inp.value = this.getElementsByTagName("input")[0].value;
-              /*close the list of autocompleted values,
-              (or any other open lists of autocompleted values:*/
-              closeAllLists();
-          });
-          a.appendChild(b);
-        }
-      }
-  });
-  /*execute a function presses a key on the keyboard:*/
-  inp.addEventListener("keydown", function(e) {
-      var x = document.getElementById(this.id + "autocomplete-list");
-      if (x) x = x.getElementsByTagName("div");
-      if (e.keyCode == 40) {
-        /*If the arrow DOWN key is pressed,
-        increase the currentFocus variable:*/
-        currentFocus++;
-        /*and and make the current item more visible:*/
-        addActive(x);
-      } else if (e.keyCode == 38) { //up
-        /*If the arrow UP key is pressed,
-        decrease the currentFocus variable:*/
-        currentFocus--;
-        /*and and make the current item more visible:*/
-        addActive(x);
-      } else if (e.keyCode == 13) {
-        /*If the ENTER key is pressed, prevent the form from being submitted,*/
-        e.preventDefault();
-        if (currentFocus > -1) {
-          /*and simulate a click on the "active" item:*/
-          if (x) x[currentFocus].click();
-        }
-      }
-  });
-  function addActive(x) {
-    /*a function to classify an item as "active":*/
-    if (!x) return false;
-    /*start by removing the "active" class on all items:*/
-    removeActive(x);
-    if (currentFocus >= x.length) currentFocus = 0;
-    if (currentFocus < 0) currentFocus = (x.length - 1);
-    /*add class "autocomplete-active":*/
-    x[currentFocus].classList.add("autocomplete-active");
-  }
-  function removeActive(x) {
-    /*a function to remove the "active" class from all autocomplete items:*/
-    for (var i = 0; i < x.length; i++) {
-      x[i].classList.remove("autocomplete-active");
-    }
-  }
-  function closeAllLists(elmnt) {
-    /*close all autocomplete lists in the document,
-    except the one passed as an argument:*/
-    var x = document.getElementsByClassName("autocomplete-items");
-    for (var i = 0; i < x.length; i++) {
-      if (elmnt != x[i] && elmnt != inp) {
-        x[i].parentNode.removeChild(x[i]);
-      }
-    }
-  }
-    /*execute a function when someone clicks in the document:*/
-    document.addEventListener("click", function (e) {
-        closeAllLists(e.target);
-    });
-  }
-
-  autocomplete(document.getElementById("id_itemNameAdd"), dbItems);
-
 // autologout
 
   (function(){
@@ -723,6 +362,7 @@ function startTimer(duration, display) {
   body {
     font: 16px Arial;
     background-color: #ffffff; /*#363636 */
+    background: transparent;
   }
 
   /*the container must be positioned relative:*/
@@ -786,4 +426,21 @@ function startTimer(duration, display) {
   .jstree-hidden{
     display: none;
   }
+
+  .selectedItemsDisplay ul{
+    list-style: none;
+    background-color: #777777;
+    color: white;
+    font-size: 20px;
+    
+  }
+
+  .selectedItemsDisplay li{
+    list-style-type:none;
+    position: relative;
+    left: -30px;
+    /*background-color: #D3D3D3;*/
+    margin: 5px 0;
+  }
+
 </style>
