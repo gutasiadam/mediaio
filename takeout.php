@@ -277,16 +277,17 @@ window.onload = function () {
 			data:{takeoutData: takeOutPrepJSON},
 			success:function(response)
 			{
-        d=JSON.parse(response);
+        console.log(response);
+        /*d=JSON.parse(response);
         //fa frissítése válasz alapján.
         d = JSON.parse(JSON.stringify(d).split('"Nev":').join('"text":'));
         d = JSON.parse(JSON.stringify(d).split('"ID":').join('"id":'));
-        console.log(d);
+        console.log(d);*/
         displayMessageInTitle("#doTitle","Sikeres kivétel! \nAz oldal hamarosan újratölt");
         $('#jstree').jstree(true).settings.core.data = d;
         //Fa újratöltése
         setTimeout(() => {  $('#jstree').jstree().refresh(); }, 2000);
-        setTimeout(() => {  location.reload(); }, 1000);
+        setTimeout(() => {  window.location.href = window.location.href }, 1000);
 			}
 		});
 });

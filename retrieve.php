@@ -21,7 +21,7 @@ function PhparrayCookie(){
     echo $x . " ";
   }
 }
-
+/*
   // Database initialization - Get's total item number in the database and estabilishes connection.
 	$serverName="localhost";
 	$userName="root";
@@ -148,27 +148,14 @@ if( isset($_POST['data'])){
   }
   
   exit;
- }?>
+ }*/?>
 <script>
 var goStatus = 0;
 
 </script>
 
 <html >
-      <title><?php echo $applicationTitleFull; ?></title>
-  <!--<head>
-  <script src="JTranslations.js"></script>
-  <link rel="stylesheet" href="./main.css">
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-  <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
-  <script src="utility/_initMenu.js" crossorigin="anonymous"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js">  </script>
-  <script src="https://kit.fontawesome.com/2c66dc83e7.js" crossorigin="anonymous"></script>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Retrieve</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-</head>-->
+      <title>MediaIO</title>
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
 					<a class="navbar-brand" href="index.php"><img src="./utility/logo2.png" height="50"></a>
 					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -263,7 +250,7 @@ var dbItems=(loadFile("./utility/DB_Elements.txt"));
 //Right at load - start autologout.
 
   var selectList = [];
-  var i=1;
+  var id=1;
   var needsVerification = [];
   $(document).ready(function(){
 
@@ -312,9 +299,9 @@ window.onload = function () {
     }
 });
     
-	$(document).on('click', '.btn_remove', function(){
+	$(document).on('click', '.btn_remove', function(){ // Tárgy törlése
     var button_id = $(this).attr("id");
-    dbItems.push(selectList[button_id-2]);
+    dbItems.push(selectList[button_id]);
     dbItems.sort;
     selectList[button_id-2]=null;
     $('#row'+button_id+'').remove();
@@ -323,19 +310,29 @@ window.onload = function () {
     $('#liveSelArrayResult').append('<td>'+selectList+'</td>');
 	});
 //selectList = selectList.filter(Boolean);
+
+
+  function allowGO(){
+    if($('#intactItems').is(":checked")){
+      $('.go_btn').removeClass('disabled');
+    }
+  }
+  $(document).on('click', '#intactItems', function(){
+    allowGO();
+  });
+  //kivétel indítása.
   $(document).on('click', '.go_btn', function(){
     if($("#intactItems").prop("checked")){ // ha a felhasználó elfogadta, hogy a tárgyak rendben vannak.
-
       var filtered = selectList.filter(function (el) {
       return el != null;
     });
       console.log(filtered);
-      takeOutJSON = JSON.stringify(filtered);
-      console.log(takeOutJSON);
+      retrieveJSON = JSON.stringify(filtered);
+      alert("retrieve ajax:"+retrieveJSON);
       $.ajax({
     method: 'POST',
     url: './utility/Retrieve_Handler.php',
-    data: {data : takeOutJSON},
+    data: {data : retrieveJSON, mode: "handle"},
     success: function (response){
       alert(response);
       location.reload();
@@ -350,80 +347,61 @@ window.onload = function () {
   
   $(document).on('click', '.add_btn', function(){
 
-    //console.log("CLICK!")
-    $('.intactForm').fadeIn();
-      if (goStatus == 0){
-        $('#sendQueryButtonLoc').append('<button type="submit" class="btn btn-success go_btn mb-2 mr-sm-2" id="goButton" >Mehet</button>');
-        goStatus++;
-     }
-    document.getElementById("liveSelArrayResult").innerHTML = "";
-    var currentUser = getCookie("currentUser");
-    var currentItemSel = document.getElementById("id_itemNameAdd").value;
-if (currentItemSel == ''){}
-if (currentItemSel != ''){
-  document.cookie = "Cookie_currentItemSel = "+currentItemSel;
-  var PATTERN = currentItemSel,
-  dbTempDelIndex = dbItems.indexOf(currentItemSel);
-  console.log(dbTempDelIndex);
-  if (dbTempDelIndex==-1){
-    alert("Specified item NOT in list!");
-  }
-  else {
-    i++;
-    dbItems.splice(dbTempDelIndex,1);
-    //console.log(dbItems);
-    document.getElementById('id_itemNameAdd').value = '';
-    selectList.push(currentItemSel);
-    itemCheckJSON = JSON.stringify(selectList[selectList.length-1]);
-    console.log(itemCheckJSON)
-    $.ajax({
-    //url: 'utility/Takeout_Handler.php',
-    type: 'POST',
-    data: {takeoutCheck : itemCheckJSON},
-    //dataType: 'json',
-    success: function (res) {
-      var currentRentby = getCookie("currentRentby");
-          var tempAddCheck = res;
-          console.log("Tempcheck: " + tempAddCheck);
-          if (tempAddCheck == 1){ $('#liveSelArrayResult').append('<td>'+selectList+'</td>');
-    $('#dynamic_field').append('<tr id="row'+i+'"><td>'+currentItemSel+'</td><td><button type="button" name="remove" id="'+i+'"style="text-align:center;" class="btn btn-danger btn'+i+' btn_remove">X</button></td></tr>');
-    console.log(i + "id with "+ currentItemSel + " created and occupied.");
+    console.log("CLICK!"+id);
+    
+    //CSAK AKKOR Működhet GOMB, HA AZ INTACTFORM KI LETT PIPÁLVA.
+    
+     var currentItemSel = document.getElementById("id_itemNameAdd").value;
+     document.getElementById("id_itemNameAdd").innerHTML = "";
+     $.ajax({
+    method: 'POST',
+    url: './utility/Retrieve_Handler.php',
+    data: {data : currentItemSel, mode: "check"},
+    success: function (response){ // A generált ellenőrző karakter.
+      /* Lehetséges kimenetek:
+      A - A felhasználó visszahoz egy önmaga által kivett tárgyat.
+      B - A felhasználó egy bennlévő tárgyra hivatkozott.
+      C - A felhasználó egy más által kivett tárgyra mutat.
+      X - Hiba.*/
+      switch(response) {
+        case "A":
+          console.log("A: A felhasználó visszahoz egy önmaga által kivett tárgyat.");
+          $('.intactForm').fadeIn();
+          if (goStatus == 0){
+            $('#sendQueryButtonLoc').append('<button type="submit" class="btn btn-success go_btn mb-2 mr-sm-2 disabled" id="goButton" >Mehet</button>');
+            goStatus++;
           }
-          if (tempAddCheck == 2){
-            $('#dynamic_field_2').append('<tr id="row'+i+'"><td>'+currentItemSel+'<br><small>'+currentRentby+'</small></td><td><form><div class="form-group"><input type="number" class="form-control" id="authCodeInput'+i+'" placeholder="XXX-XXX"><input type="hidden" id="authCodeItem'+i+'" class="form-control" value='+currentItemSel+'></input></div></form></td><td><button type="button" class="verify_btn btn-success" name="verify" id="'+i+'" class="btn btn-success btnsucc'+i+' btn_auth">+</button></td><td><button type="button" name="remove" id="'+i+'" class="btn btn-danger btn'+i+' btn_remove">X</button></td></tr>');
-    console.log(i + "id with "+ currentItemSel + " created and occupied INTO TABLE 2");
-          needsVerification[i] = currentItemSel;
-            selectList[selectList.length-1] = null;
-          console.log(needsVerification);
-          }
-          if (tempAddCheck == 0){
-            console.log("Err1")
-            $('.btn'+(selectList.length+1)).click();
-            
-          // ERROR 002
-          //BÉNA, DE MŰKÖDŐ ANIMÁCIÓ
-          $('#doTitle').animate({'opacity': 0}, 400, function(){
-        $(this).html('<h2 class="text text-danger" role="alert">'+retrieve_Error+'</h2>').animate({'opacity': 1}, 400);
-        $(this).html('<h2 class="text text-danger" role="alert">'+retrieve_Error+'</h2>').animate({'opacity': 1}, 3000);
-        $(this).html('<h2 class="text text-danger" role="alert">'+retrieve_Error+'</h2>').animate({'opacity': 0}, 400);
-        setTimeout(function() { $("#doTitle").text(applicationTitleShort).animate({'opacity': 1}, 400); }, 3800);;   
-    }); 
-        
-            selectList[selectList.length-1] = null;
-            dbItems.push(currentItemSel);
-          }
-          
-          },
+          $('#dynamic_field').append('<tr id="row'+id+'"><td>'+currentItemSel+'</td><td><button type="button" name="remove" id="'+id+'"style="text-align:center;" class="btn btn-danger btn'+id+' btn_remove">X</button></td></tr>');
+          selectList[id-2]=currentItemSel; // bekerülhet az előkészítítő listába.
+          break;
+        case "B":
+          // code block
+          console.log("B: A felhasználó egy bennlévő tárgyra hivatkozott.");
+          break;
+        case "C":
+          console.log("C: A felhasználó egy más által kivett tárgyra mutat.");
+          $('#dynamic_field_2').append('<tr id="row'+id+'"><td>'+currentItemSel+'<br><small>Nem nálad van!</small></td><td>Ez a szolgáltatás átmenetileg nem elérhető. Csak a saját tárgyaidat tudod visszahozni.</td><td><button type="button" class="verify_btn btn-success" name="verify" id="'+id+'" class="btn btn-success disabled btnsucc'+id+' btn_auth">+</button></td><td><button type="button" name="remove" id="'+id+'" class="btn btn-danger btn'+id+' btn_remove">X</button></td></tr>');
+          //Hibás currentRentby..
+
+          //$('#dynamic_field_2').append('<tr id="row'+id+'"><td>'+currentItemSel+'<br><small>'+currentRentby+'</small></td><td><form><div class="form-group"><input type="number" class="form-control" id="authCodeInput'+id+'" placeholder="XXX-XXX"><input type="hidden" id="authCodeItem'+id+'" class="form-control" value='+currentItemSel+'></input></div></form></td><td><button type="button" class="verify_btn btn-success" name="verify" id="'+id+'" class="btn btn-success btnsucc'+id+' btn_auth">+</button></td><td><button type="button" name="remove" id="'+id+'" class="btn btn-danger btn'+id+' btn_remove">X</button></td></tr>');
+          break;
+        default:
+        console.log("Egyik sem. Hiba.");
+          // code block
+}
+      //alert("response from check:"+response);
+      //location.reload();
+
+    },
     error: function(XMLHttpRequest, textStatus, errorThrown) { 
         alert("Status: " + textStatus); alert("Error: " + errorThrown); 
     }
-})
-
-  }
-}  
+    
+});
+id++;
 });
 
-
+// AUTHCODE (átmenetileg NEM releváns)
 //On Verify Btn click
 
 $(document).on('click', '.verify_btn', function(){
@@ -514,9 +492,6 @@ $(document).on('click', '.verify_btn', function(){
   
 
 });
-
-//Process takeout
-
 
 // dbItem remover tool - Prevents an item to be added twice to the list
 function arrayRemove(arr, value) {
@@ -659,9 +634,7 @@ function startTimer(duration, display) {
 
   body {
     font: 16px Arial;  
-  }
-
-  /*the container must be positioned relative:*/
+  }/*the container must be positioned relative:*/
   .autocomplete {
     position: relative;
     display: inline-block;

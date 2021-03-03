@@ -52,7 +52,7 @@ if ($result = $mysqli->query($query)) {
     }
     //print json_encode($rows);
 
-    $itemsJSONFile = fopen('./utility/takeOutItems.json', 'w');
+    $itemsJSONFile = fopen('takeOutItems.json', 'w');
     fwrite($itemsJSONFile, json_encode($rows));
     fclose($itemsJSONFile);
     $result->free();

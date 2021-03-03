@@ -46,7 +46,6 @@ if( isset($_POST['takeoutData'])){
         echo "Error: " . $sql . "<br>" . $conn->error;
     }
       }
-    //echo $nev;
     }
     
   }

@@ -3,8 +3,11 @@ session_start();
 $currDate= date("Y/m/d H:i:s");
 $continue=FALSE;
 $SESSuserName = $_SESSION['UserUserName'];
+$mode = ($_POST['mode']);
 $data = json_decode(stripslashes($_POST['data']));
-foreach($data as $d){
+
+if ($mode=="handle"){ // A beérkező tárgy(ak) adminisztrálása, visszatevése.
+  foreach($data as $d){
     echo $d;
 
     //Assuming that query is valid. Begin procedure.
@@ -47,9 +50,49 @@ foreach($data as $d){
   }
   
 
-$conn->close();
-exit;
+  
 }
+$conn->close();
+  exit;
+}
+
+if ($mode=="check"){ // Egy ellenőrző karakter generálása, amiből megtudja a JScript, hogy vizuálisan hová kell tenni az adatot. a .add_btn hívja elő.
+  $serverName="localhost";
+  $userName="root";
+  $password="umvHVAZ%";
+  $dbName="mediaio";
+  $countOfRec=0;
+  $item = $_POST['data']; // Azért kell ide külön, mert a kód eleján megadott striplash-t nem kezeli jól itt a PHP.
+  $conn = new mysqli($serverName, $userName, $password, $dbName);
+  $sql = "SELECT RentBy, Status FROM leltar WHERE Nev='$item'";
+  /* Lehetséges kimenetek:
+  A - A felhasználó visszahoz egy önmaga által kivett tárgyat.
+  B - A felhasználó egy bennlévő tárgyra hivatkozott.
+  C - A felhasználó egy más által kivett tárgyra mutat.
+  X - Hiba.*/
+  $result = $conn->query($sql);
+  while($row = $result->fetch_assoc()){
+      if ($row['Status']=='0' && $row['RentBy']==$SESSuserName){ // "A" eset
+        echo "A";
+        exit;
+      }else if ($row['Status']=='1') { // "B" eset
+        echo "B";
+        exit;
+      }else if($row['Status']=='0' && $row['RentBy']!=$SESSuserName){// "C" eset
+        echo "C";
+        exit;
+      }
+      else{
+        echo "X"; //"X" eset: Hiba.
+      }
+  }
+}
+
+
+if ($mode=="auth"){
+  exit;
+}
+
 
 /*
 
