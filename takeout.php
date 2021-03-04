@@ -102,21 +102,18 @@ function displayMessageInTitle(selector,message){
     setTimeout(function() { $(selector).text(baseText).animate({'opacity': 1}, 400); }, 3800);;});
 }
 
-function xd(){
-  alert("xd");
-}
 
 
 function loadJSON(callback) {   
 console.log("[loadJSON] - called.")
 var xobj = new XMLHttpRequest();
     xobj.overrideMimeType("application/json");
-xobj.open('GET', './utility/takeOutItems.json', false); // Replace 'my_data' with the path to your file
+xobj.open('GET', './takeOutItems.json', false); // Replace 'my_data' with the path to your file
 xobj.onreadystatechange = function () {
       if (xobj.readyState == 4 && xobj.status == "200") {
         // Required use of an anonymous callback as .open will NOT return a value but simply returns undefined in asynchronous mode
         callback(xobj.responseText);
-        
+        console.log(xobj.responseText);
         d=JSON.parse(xobj.responseText);
         setTimeout(function(){ console.log(JSON.parse(xobj.responseText));; }, 500);
       }
@@ -138,8 +135,6 @@ for (let i = 0; i < d.length; i++) {
   renameKey(d[i],'ID','id');
 }
 
-
-//console.log(d) Betöltött JSON kiírása
  
 
 $('#jstree').jstree({

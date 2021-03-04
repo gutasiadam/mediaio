@@ -51,10 +51,12 @@ if ($result = $mysqli->query($query)) {
 
     }
     //print json_encode($rows);
-
-    $itemsJSONFile = fopen('takeOutItems.json', 'w');
+    //$JSONPath=dirname(__FILE__).'../TEJOutItems.json';
+    
+    $itemsJSONFile = fopen('./takeOutItems.json', 'w');
     fwrite($itemsJSONFile, json_encode($rows));
     fclose($itemsJSONFile);
+    //echo json_encode($rows);
     $result->free();
 }
 

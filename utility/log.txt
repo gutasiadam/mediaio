@@ -1,0 +1,9 @@
+Fresnel 1000W
+1
+Fresnel 650W
+2
+Fresnel 300W
+3
+RUN
+RUN
+RUN
