@@ -5,7 +5,7 @@
 
 if(isset($_POST["id"]))
 {
- $connect = new PDO("mysql:host=localhost;dbname=calendar", "root", "umvHVAZ%");
+ $connect = new PDO("mysql:host=localhost;dbname=mediaio", "root", "umvHVAZ%");
  $query = "
  DELETE from events WHERE id=:id
  ";

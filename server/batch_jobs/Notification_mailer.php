@@ -1,7 +1,7 @@
 <?php 
 set_include_path('F:/Programming/xampp/htdocs/.git/mediaio/server/batch_jobs');
 header('Content-type: text/plain');
-require_once('F:/Programming/xampp/htdocs/.git/mediaio/server/batch_jobs/PHPMailer-6.2.0/src/PHPMailer.php');
+require_once('F:/Programming/xampp/htdocs/.git/mediaio/PHPMailer/src/PHPMailer.php');
 $today = new DateTime(date("Y-m-d H:i:s"));
 $todayString=$today->format("Y_m_d_H_i_s");
 $log = fopen(get_include_path()."/logs/$todayString.txt", "w");

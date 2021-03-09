@@ -1,4 +1,8 @@
 <?php
+require_once('../PHPMailer/src/PHPMailer.php');
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
 //insert.php
 session_start();
 if(isset($_POST["date"]) && isset($_POST["user"]) && isset($_POST["task"]))
@@ -30,8 +34,8 @@ if(isset($_POST["date"]) && isset($_POST["user"]) && isset($_POST["task"]))
   )
  );
  //E-mail küldése a felhasználónak
- $subject = 'MediaIO - Feladatot kaptál!';
- $message = '
+ $mail = new PHPMailer(true);
+ $mail->Body = '
 <html>
 <head>
   <title>Arpad Media IO</title>
@@ -41,29 +45,33 @@ if(isset($_POST["date"]) && isset($_POST["user"]) && isset($_POST["task"]))
   <p>Új feladatot kaptál:
  <table style="border: 1px solid black; width: 50%">
  <tr>
- <th>Dátum</th>
- <th>Feladat<td></th>
+ <th>Dátum 📅</th>
+ <th>Feladat 📝<td></th>
  </tr>
  <tr>
  <td>'.$_POST['date'].'</h6>'.'</td><td>'.$_POST['task'].'</td></tr>
  </table>
 Ha szerinted ez az e-mail nem releváns, vagy hibás, jelezd a vezetőségnek.
-  <h5>Üdvözlettel: <br> Arpad Media Admin</h5>
+  <h5>Üdvözlettel: <br> Arpad Media Admin👋</h5>
 </body>
 </html>
 ';
 
-// To send HTML mail, the Content-type header must be set
-$headers[] = 'MIME-Version: 1.0';
-$headers[] = 'From: arpadmedia.io@gmail.com';
-$headers[] = 'Content-type: text/html; charset=utf-8';
 
-/* Additional headers
-$headers[] = 'To: Mary <mary@example.com>, Kelly <kelly@example.com>';
-$headers[] = 'From: Birthday Reminder <birthday@example.com>';
-$headers[] = 'Cc: birthdayarchive@example.com';*/
-mail($to, '=?utf-8?B?'.base64_encode($subject).'?=', $message, implode("\r\n", $headers));
-echo "3";//Sikeres
+$mail->isHTML(true);
+$mail->setFrom('arpadmedia@gmail.com', 'mediaIO');
+$mail->FromName = "mediaIO";
+$mail->CharSet = 'UTF-8';
+$mail->Encoding = 'base64';
+$mail->addAddress($to, $nev);
+$mail->Subject = 'mediaIO - Új feladat!';
+//mail($to, '=?utf-8?B?'.base64_encode($subject).'?=', $message, implode("\r\n", $headers));
+try {
+  $mail->send();
+  echo "3";
+} catch (Exception $e) {
+  echo "Mailer Error: " . $mail->ErrorInfo;
+}
 }else{
     echo "1";// Nincs ilyen felhasználó
 }

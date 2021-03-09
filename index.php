@@ -1,9 +1,10 @@
 <?php
-header("Cache-Control: public, max-age=3600, no-cache");
-header('Expires: '. gmdate('D, d M Y H:i:s \G\M\T', time() + 86400)); 
+//header("Cache-Control: public, max-age=3600, no-cache");
+//header('Expires: '. gmdate('D, d M Y H:i:s \G\M\T', time() + 10)); 
+
   include "translation.php";
   error_reporting(E_ALL ^ E_NOTICE);
-  include "header.php"
+  include "header.php";
   //require 'header.php'; NOT NECESSARY, SHOULD BE USED IN THE FUTURE
 ?>
 <!DOCTYPE html>

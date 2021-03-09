@@ -17,4 +17,6 @@ $connect=null;
     echo "500";//Üres cella, vagy formátumhiba.
 }
 
+
+
 ?>

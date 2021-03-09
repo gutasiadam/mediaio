@@ -23,11 +23,11 @@
     $statement2->execute();
 
     if($statement2){
-        echo "<strong>Az esemény hozzáadása sikeres!</strong>";}
+        echo "<h1><strong>Sikeresen megerősítetted az eseményt! 🎉</strong></h1>";}
 
     } 
     else{
-        echo "Az esemény kódja érvénytelen! Sikertelen hozzáadás.";}
+        echo "<h1>Az esemény kódja érvénytelen! Nem lehet, hogy már megerősítetted?</h1>";}
     }
 
 
@@ -37,9 +37,9 @@
         $statement->execute();
         $result = $statement->fetchAll();
         if ($statement->rowCount() == 0){
-            echo "Az esemény kódja érvénytelen! Törlés sikertelen.";
+            echo "<h1Az esemény kódja érvénytelen!</h1>";
         }else{
-            echo "Törölve.";}
+            echo "<h1>Törölve.</h1>";}
     }}
 
     $connect=null;

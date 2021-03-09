@@ -51,7 +51,7 @@ if(isset($_POST["title"]))
 
 
  echo "1";//E-mail elküldése a SESSION UserName felé
- include "./prep_mailer.php";
+ include "prep_mailer.php";
 
 }else{
     echo "0";

@@ -1,9 +1,17 @@
 <?php
+require_once('../PHPMailer/src/PHPMailer.php');
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+$mail = new PHPMailer(true);
 $to = $_SESSION['email'];
-$subject = 'MediaIO - Esemény hozzáadása';
-
+$mail->From = "arpadmedia.io@gmail.com";
+$mail->FromName = "mediaIO";
+$mail->addAddress($to);
+$mail->isHTML(true);
+$mail->Subject = 'Esemény hozzáadása - '.$_POST['title'].'';
+$mail->CharSet = 'UTF-8';
 // Message
-$message = '
+$mail->Body= '
 <html>
 <head>
   <title>Arpad Media IO</title>
@@ -21,21 +29,20 @@ $message = '
  <td>'.$_POST['title'].'</h6>'.'</td><td>'.$_POST['start'].'</td><td>'.$_POST['end'].'</td></tr>
  </table>
 Kérlek ellenőrizd az az adatokat, mielőtt jóváhagyod az eseményt.
-Ha az esemény adatait hibásan adtad meg, <a href="http://80.99.70.46/.git/mediaio/events/prepFinalise.php?secureId='.$secureId.'&mode=del">kattints ide.</a>
-<h2><a href="http://80.99.70.46/.git/mediaio/events/prepFinalise.php?secureId='.$secureId.'&mode=add">Esemény hozzáadása.</a></h2>
+Ha az esemény adatait hibásan adtad meg, <a href="http://80.99.70.46/.git/mediaio/events/prepFinalise.php?secureId='.$secureId.'&mode=del">kattints ide ❌</a>
+<h2><a href="http://80.99.70.46/.git/mediaio/events/prepFinalise.php?secureId='.$secureId.'&mode=add">Esemény hozzáadása ✔</a></h2>
   <h5>Üdvözlettel: <br> Arpad Media Admin</h5>
 </body>
 </html>
 ';
 
-// To send HTML mail, the Content-type header must be set
-$headers[] = 'MIME-Version: 1.0';
-$headers[] = 'From: arpadmedia.io@gmail.com';
-$headers[] = 'Content-type: text/html; charset=utf-8';
+try {
+  $mail->send();
+  echo 200;
+} catch (Exception $e) {
+  echo "Mailer Error: " . $mail->ErrorInfo;
+}
 
-/* Additional headers
-$headers[] = 'To: Mary <mary@example.com>, Kelly <kelly@example.com>';
-$headers[] = 'From: Birthday Reminder <birthday@example.com>';
-$headers[] = 'Cc: birthdayarchive@example.com';*/
-mail($to, '=?utf-8?B?'.base64_encode($subject).'?=', $message, implode("\r\n", $headers));
+
+
 ?>

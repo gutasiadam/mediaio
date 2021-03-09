@@ -85,7 +85,7 @@ error_reporting(E_ALL ^ E_NOTICE);
 			</div>
 		</div>
 	</body>
-<footer class="page-footer font-small blue"> <div class="fixed-bottom" align="center"><p><?php echo $applicationTitleFull; ?> <strong>ver. <?php echo $application_Version; ?></strong><br /> Code by <a href="https://github.com/d3rang3">Adam Gutasi</a></p></div></footer>
+<footer class="page-footer font-small blue"> <div class="fixed-bottom" align="center"><p>Code: <a href="https://github.com/d3rang3">Adam Gutasi</a></p></div></footer>
 </html>
 <script>
 

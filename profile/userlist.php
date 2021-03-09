@@ -59,7 +59,7 @@ if(!isset($_SESSION['userId'])){
 $serverName="localhost";
 	$userName="root";
 	$password="umvHVAZ%";
-	$dbName="loginsystem";
+	$dbName="mediaio";
 	$countOfRec=0;
 
 	$conn = new mysqli($serverName, $userName, $password, $dbName);

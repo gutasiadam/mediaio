@@ -183,6 +183,9 @@ $( ".send_Work_update" ).click(function( event ) {
           $('#processing').html("Siker! A felhasználót e-mailben értesítettem. Újratöltés...")
           setTimeout(function(){ location.reload(); }, 1000);
         }
+        else{
+          $('#processing').html(result);
+        }
         /*else if(result==4){
           $('#processing').html("Adj meg mai, vagy későbbi dátumot!")
           $('#work_Date').val("");
