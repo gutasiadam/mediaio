@@ -59,7 +59,7 @@ if(isset($_SESSION['UserUserName'])){
     <body>  
         <div class="container">
    <br />
-   <h1 align="center">PathFinder</h1>
+   <h1 align="center">Útvonal kereső</h1>
    <table id="itemSearch" align="left"><tr>
             <form action="./pathfinder.php" method="GET" autocomplete="off">
             
@@ -79,12 +79,12 @@ if(isset($_SESSION['UserUserName'])){
     <?php 
     if(isset($_GET['pfItem'])){
         $TKI = $_GET['pfItem'];      
-        $connect = new PDO("mysql:host=localhost;dbname=meidaio", "root", "umvHVAZ%");
+        $connect = new PDO("mysql:host=localhost;dbname=mediaio", "root", "umvHVAZ%");
         $query = "SELECT * FROM `takelog` WHERE `Item` = '$TKI' ORDER BY `Date` DESC";
         $statement = $connect->prepare($query);
         $statement->execute();
         $result = $statement->fetchAll();
-        echo '<h3 class="panel-title">Item Journey - '.$TKI.'</h3>
+        echo '<h3 class="panel-title">Tárgy útvonala - '.$TKI.'</h3>
         </div>
         <div class="panel-body">
          <div class="timeline">
@@ -172,7 +172,24 @@ var dbItems = ["Fresnel 1000W", "Fresnel 650W", "Fresnel 300W", "Softbox allo 1"
 "Kis mikrofonallvany", "Popfilter", "Mikrofonarto kengyel", "Carena kamera allvany", "Hama 79 kamera allvany", "Hama 63 kamera allvany", "Selecline laptop", "60*90 Bowens-es softbox", "Godox MS300 studiovaku 1", "Godox MS300 studiovaku 2",
 "40*180-as softbox (mehracs) 1", "40*180-as softbox (mehracs) 2", "120-as oktabox (mehracs)", "Godox X2T-C transmitter", "Hattertarto keresztrud (3m)"];
 
-
+var d = {};
+function loadJSON(callback) {   
+console.log("[loadJSON] - called.")
+var xobj = new XMLHttpRequest();
+    xobj.overrideMimeType("application/json");
+xobj.open('GET', '../takeOutItems.json', false); // Replace 'my_data' with the path to your file
+xobj.onreadystatechange = function () {
+      if (xobj.readyState == 4 && xobj.status == "200") {
+        // Required use of an anonymous callback as .open will NOT return a value but simply returns undefined in asynchronous mode
+        callback(xobj.responseText);
+        console.log(xobj.responseText);
+        d=JSON.parse(xobj.responseText);
+        setTimeout(function(){ console.log(JSON.parse(xobj.responseText));; }, 500);
+      }
+};
+xobj.send(null);  
+}
+console.log('d:'+d);
 //Process takeout
 
 

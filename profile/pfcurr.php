@@ -1,3 +1,4 @@
+<!-- A Felhasználónál levő tárgyak mutatása -->
 <?php 
 session_start();
 if(isset($_SESSION['userId'])){
@@ -116,7 +117,11 @@ $serverName="localhost";
               </div>';
               //$query = "SELECT * FROM `leltar` WHERE RentBy = '$TKI'";
               echo '<div class="col-2"><button class="btn btn-dark " id="auth'.$imodal.'" data-toggle="modal" data-target="#a'.$imodal.'">Generate AuthCode</button></div>
-             </div>';
+             <div class="col-2"><button class="btn btn-success " id="bringback'.$imodal.'" data-toggle="modal" data-target="#b'.$imodal.'">Visszahoztam</button></div>
+             </div>
+             '
+             
+             ;
             echo              
             '<div class="modal fade" id="a'.$imodal.'" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
@@ -139,7 +144,34 @@ $serverName="localhost";
             </div>
                   </div>      
               </div>
-            </div>';}
+            </div>
+            
+            <div class="modal fade" id="b'.$imodal.'" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">'.$row["Nev"].' Visszahozása</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <form action="./pfcurr.php" class="form-group" method=post>
+              <input type="hidden" name="retrieveItem" value="'.$row["Nev"].'"/> 
+              <input type="hidden" name="User" value="'.$TKI.'"/>
+              <div class="form-check">
+              <input class="form-check-input intactItems" type="checkbox" value="" id="intactItems'.$imodal.'">
+              </div>
+              <h6></h6>
+              <h6 id="emailHelp" class="form-text text-muted">A kipipálással igazolom, hogy amit visszahoztam sérülésmentes és kifogástalanul működik. Sérülés esetén azonnal jelezd azt a vezetőségnek.</h6>
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Mégsem</button>
+                  <button type="submit" class="btn go_btn btn-success disabled">Mehet!</button>
+                  </form>
+            </div>
+                  </div>      
+              </div>
+            </div>
+            ';}
             $imodal++;
             if($row["Event"]=="IN"){
               echo '';
@@ -172,6 +204,30 @@ else{
 }
 //AUTH Handling
 session_start();
+
+      if (isset($_POST["retrieveItem"])){//Tárgy visszahozása
+        $serverName = "localhost";
+        $dbUserName = "root";
+        $dbPassword = "umvHVAZ%";
+        $dbDatabase = "mediaio";
+
+        $d = $_POST["retrieveItem"];
+        $User = $_SESSION['UserUserName'];
+
+        $conn = new mysqli($serverName, $dbUserName, $dbPassword, $dbDatabase); // FIRST, This database stores the currently used authCodes,
+              if ($conn->connect_error){
+                die("Connection failed: ".mysqli_connect_error());}
+        echo $Item;
+
+    $sql = ("UPDATE `leltar` SET `Status` = '1', `RentBy` = NULL, `AuthState` = NULL WHERE `leltar`.`Nev` = '$d';");
+    $sql.= ("DELETE FROM authcodedb WHERE Item = '$d';");
+    $sql.= ("INSERT INTO takelog (`ID`, `takeID`, `Date`, `User`, `Item`, `Event`) VALUES (NULL, '1', '$currDate', '$SESSuserName', '$d', 'IN')");
+    if (!$conn->multi_query($sql)) {
+      echo "Multi query fail!: (" . $conn->errno . ") " . $conn->error;
+    }
+    //else{}
+
+      }
       if (isset($_POST["authItem"])){
         //echo 'Data recieved, process!'.$_POST["authItem"].'</br>';
         //echo 'Your AuthCode is'.$_POST["authGen"];
@@ -224,6 +280,16 @@ session_start();
       }
 ?>
 <script>
+
+function allowGO(){
+    if($('.intactItems').is(":checked")){
+      $('.go_btn').removeClass('disabled');
+    }
+  }
+  $(document).on('click', '.intactItems', function(){
+    allowGO();
+  });
+
 function copyText(item) {
   /* Get the text field */
   var copyText = document.getElementById('$code'.item);

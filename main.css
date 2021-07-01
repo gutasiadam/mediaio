@@ -53,15 +53,18 @@
 
 
 .successtable{
-  width: 30%;
+  z-index: 999;
+  position: relative !important;
+  width: 80%;
   margin: 0 auto;
   margin-bottom: 10px;
 }
 
 .successtable2{
-  width: 30%;
+  z-index: 999;
+  width: 80%;
   margin: 0 auto;
-  margin-bottom: 10px;
+  margin-top: 60px;
   color: white;
 }
 
