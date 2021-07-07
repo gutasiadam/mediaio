@@ -28,7 +28,7 @@ error_reporting(E_ALL ^ E_NOTICE);
               drawMenuItemsLeft('takeout',menuItems);
             });
             </script>
-            <li><a class="nav-link disabled" href="#"><?php echo $nav_timeLockTitle;?> <span id="time"><?php echo $nav_timeLock_StartValue;?></span></a></li>
+            <li><a class="nav-link disabled" href="#">⏳: <span id="time"><?php echo $nav_timeLock_StartValue;?></span></a></li>
             <?php if (($_SESSION['role']=="Admin") || ($_SESSION['role']=="Boss")){
               echo '<li><a class="nav-link disabled" href="#">Admin jogokkal rendelkezel</a></li>';}?>
 					  </ul>
@@ -51,7 +51,7 @@ error_reporting(E_ALL ^ E_NOTICE);
 			<h2 class="rainbow" align="center" id="doTitle"><?php echo $applicationTitleShort;?></h2><br />
       <div class="row">
       <div class="col-md-3">
-      <div class="alert alert-info"><?php echo $Welcomemsg_takeout?></div>
+      <div class="alert alert-info">Szia <strong><?php echo $_SESSION['firstName']?></strong>, mit vinnél el?👀</div>
       </div></div>
 			<div class="form-group">
         <table id="itemSearch" align="left"><tr>
@@ -60,7 +60,7 @@ error_reporting(E_ALL ^ E_NOTICE);
           <ul id="output"></ul>
         </td>
     				<td><div class="col-md-9">
-      Keresés a bennlevő tárgyak közül <input type="text" id="search" placeholder="Kezdd el ide írni, mit vinnél el.." autocomplete="off" /><button class="btn btn-warning" id="clear">Keresés törlése</button> <button class="btn btn-success" id="takeout2BTN">Mehet</button>
+      Keresés🔎 <input type="text" id="search" placeholder="Kezdd el ide írni, mit vinnél el.." autocomplete="off" /><button class="btn btn-warning" id="clear">Keresés törlése</button> <button class="btn btn-success" id="takeout2BTN">Mehet</button>
 <div id="jstree">
 </div>
 

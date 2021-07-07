@@ -60,7 +60,7 @@ else
 					  <ul class="navbar-nav mr-auto navbarUl">
             <li>
             <a class="nav-link disabled" id="ServerMsg" href="#"></a>
-            </li><li><a class="nav-link disabled" href="#">'.$nav_timeLockTitle.' <span id="time">'.$nav_timeLock_StartValue.'</span></a></li></ul>'; ?>
+            </li><li><a class="nav-link disabled" href="#">⌛: <span id="time">'.$nav_timeLock_StartValue.'</span></a></li></ul>'; ?>
             <script>
             $( document ).ready(function() {
               menuItems = importItem("./utility/menuitems.json");
@@ -282,13 +282,12 @@ $(".login").submit(function(){
   </button>
   <strong>Kedves <?php echo $_SESSION['firstName'] ?>!</strong> Az oldal <u>folyamatos fejlesztés</u> alatt áll. Ha hibát szeretnél bejelenteni/észrevételed van, írj az arpadmedia.io@gmail.com címre, vagy <a href="mailto:arpadmedia.io@gmail.com?Subject=MediaIO%20Hibabejelent%C3%A9s" target="_top">írj most egy e-mailt!</a>
 </div>
-              <h1 align=center class="rainbow">Árpád Média IO </h1>
+              <h1 align=center class="rainbow">Árpád Média IO</h1>
                     <div class="row justify-content-center mainRow1" style="text-align: center; width:100%; margin: 0 auto;"></div><br>
                     <div class="row justify-content-center mainRow2" style="text-align: center; width:100%; margin: 0 auto;"></div><br>
                     <div class="row justify-content-center mainRow3" style="text-align: center; width:100%; margin: 0 auto;"></div><br>
                     <div class="row justify-content-center mainRow4" style="text-align: center; width:100%; margin: 0 auto;"></div><br>
-              <footer class="page-footer font-small blue"> <div class="fixed-bottom" align="center"><p></strong><br /> Code by <a href="https://github.com/d3rang3">Adam Gutasi</a>
-            Socket kommunikáció állapota: <span id='webSocketState' style="width: 10px; height:10px; display: inline-block;"></span>
+              <footer class="page-footer font-small blue"> <div class="fixed-bottom" align="center"><p></strong><br /> dev: <a href="https://github.com/d3rang3">Gutási Ádám</a>
             </p></div></footer>';
             <script type = "text/javascript">
             $( document ).ready(function() {             

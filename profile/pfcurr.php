@@ -67,7 +67,7 @@ $serverName="localhost";
     <body>  
         <div class="container">
    <br />
-   <h3 align="center">PathFinder <?php echo $_SESSION['UserUserName'];?> felhasználónak<i class="fas fa-project-diagram fa-lg"></i></h3>
+   <!--<h3 align="center">PathFinder <?php echo $_SESSION['UserUserName'];?> felhasználónak<i class="fas fa-project-diagram fa-lg"></i></h3>-->
 			
 <div class="form-group">
    <div class="panel panel-default">
@@ -78,7 +78,7 @@ $serverName="localhost";
         $sql = ("SELECT * FROM `leltar` WHERE `RentBy` = '$TKI'");
         $result = $result = mysqli_query($conn, $sql);
         $conn->close();
-        echo '<h3 class="panel-title">User Journal - '.$TKI.'</h3>
+        echo '<h3 class="panel-title">👇'.$_SESSION['firstName'].', ezek a tárgyak vannak most nálad 👇</h3>
         </div>
         <div class="panel-body">
          <div class="timeline">
@@ -116,7 +116,7 @@ $serverName="localhost";
                <p>'. $row["Tipus"].'</p>
               </div>';
               //$query = "SELECT * FROM `leltar` WHERE RentBy = '$TKI'";
-              echo '<div class="col-2"><button class="btn btn-dark " id="auth'.$imodal.'" data-toggle="modal" data-target="#a'.$imodal.'">Generate AuthCode</button></div>
+              echo '<div class="col-2"><button class="btn btn-dark disabled" id="auth'.$imodal.'" data-toggle="modal" data-target="#a'.$imodal.'">AuthCode Készítése</button></div>
              <div class="col-2"><button class="btn btn-success " id="bringback'.$imodal.'" data-toggle="modal" data-target="#b'.$imodal.'">Visszahoztam</button></div>
              </div>
              '
@@ -139,7 +139,7 @@ $serverName="localhost";
               <h6 id="emailHelp" class="form-text text-muted">Kérlek vedd figyelembe, hogy a generált kódot <strong>bárki</strong> felhasználhatja!
               A gomb lenyomása után töltsd újra az odlalt!</h6>
               <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                  <button type="submit" class="btn btn-success authToggle">Generate!</button>
+                  <button type="submit" class="btn btn-success authToggle">Generálás</button>
                   </form>
             </div>
                   </div>      
@@ -157,16 +157,17 @@ $serverName="localhost";
                 </div>
                 <div class="modal-body">
                   <form action="./pfcurr.php" class="form-group" method=post>
-              <input type="hidden" name="retrieveItem" value="'.$row["Nev"].'"/> 
+              <input type="hidden" id="retrieveItem_'.$imodal.'" name="retrieveItem" value="'.$row["Nev"].'"/> 
               <input type="hidden" name="User" value="'.$TKI.'"/>
               <div class="form-check">
               <input class="form-check-input intactItems" type="checkbox" value="" id="intactItems'.$imodal.'">
               </div>
               <h6></h6>
-              <h6 id="emailHelp" class="form-text text-muted">A kipipálással igazolom, hogy amit visszahoztam sérülésmentes és kifogástalanul működik. Sérülés esetén azonnal jelezd azt a vezetőségnek.</h6>
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">Mégsem</button>
-                  <button type="submit" class="btn go_btn btn-success disabled">Mehet!</button>
+              <h6 id="emailHelp" class="form-text text-muted">A kipipálással igazzolom, hogy amit visszahoztam sérülésmentes és kifogástalanul működik. Sérülés esetén azonnal jelezd azt a vezetőségnek.</h6>
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">❌</button>
+                  <button type="submit" id="'.$imodal.'" onClick="reply_click(this.id)" class="btn go_btn btn-success disabled">☑</button>
                   </form>
+                  <p class="sysResponse"> </p>
             </div>
                   </div>      
               </div>
@@ -205,7 +206,7 @@ else{
 //AUTH Handling
 session_start();
 
-      if (isset($_POST["retrieveItem"])){//Tárgy visszahozása
+      /*if (isset($_POST["retrieveItem"])){//Tárgy visszahozása
         $serverName = "localhost";
         $dbUserName = "root";
         $dbPassword = "umvHVAZ%";
@@ -227,7 +228,7 @@ session_start();
     }
     //else{}
 
-      }
+      }*/
       if (isset($_POST["authItem"])){
         //echo 'Data recieved, process!'.$_POST["authItem"].'</br>';
         //echo 'Your AuthCode is'.$_POST["authGen"];
@@ -270,7 +271,7 @@ session_start();
         if ($result===TRUE){
           //echo"Success!! AuthCode given, and done.";
           $conn->close();
-          $conn = new mysqli($serverName, $dbUserName, $dbPassword, 'leltar_master'); // SECOND CONN, Sets status in master!
+          $conn = new mysqli($serverName, $dbUserName, $dbPassword, 'mediaio'); // SECOND CONN, Sets status in master!
           $sql=("UPDATE leltar SET `AuthState` = 1 WHERE `leltar`.`Nev` = '$authItem'");
           $result = $conn->query($sql); if($result===TRUE){}
           $conn->close();
@@ -280,14 +281,43 @@ session_start();
       }
 ?>
 <script>
-
-function allowGO(){
+//Visszahozás ellenőrzése a handlernél
+function retrieve(i){ // i=> item
+  console.log("Begin retrieve by handler");
+  retrieveItem_list=[i];
+  retrieveJSON = JSON.stringify(retrieveItem_list);
+  console.log(retrieveJSON);
+      $.ajax({
+    method: 'POST',
+    url: '../utility/Retrieve_Handler.php',
+    data: {data : retrieveJSON, mode: "handle"},
+    success: function (response){
+      //alert('Válasz:'+response);
+      $('.sysResponse').append('Sikeres művelet! Az oldal hamarosan újratölt.');
+      setTimeout(function(){location.reload();},5000);
+    },
+    error: function(XMLHttpRequest, textStatus, errorThrown) { 
+        alert("Status: " + textStatus); alert("Hiba: " + errorThrown); 
+    }
+    
+});
+  };
+  function reply_click(clicked_id) //Begyűjti a tárgy nevét, amit vissza akar a felhasználó hozni.
+  {
+    retrieveItem=document.getElementById('retrieveItem_'+(clicked_id)).value
+    //alert(retrieveItem);
     if($('.intactItems').is(":checked")){
+      retrieve(retrieveItem);// AJAXos visszahozás megkezdése
+    }else{
+      alert('Ha probléma akad a tárggyal, jelezd azt a vezetőségnek!');
+      //$( ".intactItems" ).effect( "shake" );
+    }
+    
+  }
+$(document).on('click', '.intactItems', function(){ // Submit gomb engedélyezése, ha az Intact form ki lett pipálva.
+  if($('.intactItems').is(":checked")){
       $('.go_btn').removeClass('disabled');
     }
-  }
-  $(document).on('click', '.intactItems', function(){
-    allowGO();
   });
 
 function copyText(item) {
@@ -299,7 +329,6 @@ function copyText(item) {
   /* Copy the text inside the text field */
   document.execCommand("copy");
   /* Alert the copied text */
-  alert("Lol");
   alert("Copied the text: " + copyText.value);
 }
 function startTimer(duration, display) {

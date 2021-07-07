@@ -43,7 +43,7 @@
 					<div class="collapse navbar-collapse" id="navbarSupportedContent">
 					  <ul class="navbar-nav mr-auto navbarUl">
             <li>
-              <a class="nav-link disabled" href="#">Időzár <span id="time">10:00</span></a>
+              <a class="nav-link disabled" href="#">⏳: <span id="time">10:00</span></a>
             </li>';
             if (($_SESSION['role']=="Admin") || ($_SESSION['role']=="Boss")){
               echo '<li><a class="nav-link disabled" href="#">Admin jogokkal rendelkezel</a></li>';}

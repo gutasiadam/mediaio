@@ -9,7 +9,6 @@ $data = json_decode(stripslashes($_POST['data']));
 if ($mode=="handle"){ // A beérkező tárgy(ak) adminisztrálása, visszatevése.
   foreach($data as $d){
     echo $d;
-
     //Assuming that query is valid. Begin procedure.
 
 
@@ -93,7 +92,10 @@ if ($mode=="auth"){
   exit;
 }
 
-
+if ($mode=="test"){
+  echo "TEST";
+  exit;
+}
 /*
 
 

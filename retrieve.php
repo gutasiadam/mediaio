@@ -170,7 +170,7 @@ var goStatus = 0;
               drawMenuItemsLeft('retrieve',menuItems);
             });
             </script>
-            <li><a class="nav-link disabled" href="#"><?php echo $nav_timeLockTitle;?> <span id="time"><?php echo $nav_timeLock_StartValue;?></span></a></li>
+            <li><a class="nav-link disabled" href="#">⏳:<span id="time"><?php echo $nav_timeLock_StartValue;?></span></a></li>
             <?php if (($_SESSION['role']=="Admin") || ($_SESSION['role']=="Boss")){
               echo '<li><a class="nav-link disabled" href="#">Admin jogokkal rendelkezel</a></li>';}?>
 					  </ul>
@@ -326,7 +326,7 @@ window.onload = function () {
       var filtered = selectList.filter(function (el) {
       return el != null;
     });
-      console.log(filtered);
+      console.log('filterelt:'+filtered);
       retrieveJSON = JSON.stringify(filtered);
       alert("retrieve ajax:"+retrieveJSON);
       $.ajax({
@@ -401,7 +401,7 @@ window.onload = function () {
 id++;
 });
 
-// AUTHCODE (átmenetileg NEM releváns)
+// AUTHCODE (átmenetileg NEM használt funkció)
 //On Verify Btn click
 
 $(document).on('click', '.verify_btn', function(){
