@@ -64,25 +64,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
-                <h1 align=center>Költségvetés</br><div style="padding-top: 10px;"><button class="btn btn-warning" data-toggle="modal" data-target="#budgetModal">Bevétel/Kiadás hozzáadása</button></div></h1>
+<div style="margin: 0 auto; padding-top: 50px;  text-align: center;"><button class="btn btn-warning" data-toggle="modal" data-target="#budgetModal">Tétel hozzáadása</button></div>
+<div class="two_col">
+<div>
+                <h1 align=center>Költségvetés (média)</br></h1>
                 <table class="budget_table">
                 <tr><td class="tdTitle"><h3>Bevételek</h3></td>
                 <td class="tdTitle"><h3>Kiadások</h3></td></tr>
                 <tr>
                 <td><table class="income_table money_table"><tr>
                 <?php 
-                $query = "SELECT * FROM `main_budget` WHERE `Type` = 'INC' ORDER BY `Year` DESC, `Month` DESC, `Day` DESC";
+                $query = "SELECT * FROM `main_budget` WHERE (`Type` = 'INC' AND budget_type='m') ORDER BY `Year` DESC, `Month` DESC, `Day` DESC";
                 $statement = $connect->prepare($query);
                 $statement->execute();
                 $result = $statement->fetchAll();
                 foreach($result as $row){
-                  echo '<tr><td><h3 class="text text-success entry">+'.$row["Amount"].' Ft</h3><h5><strong>'.$row["Year"].'/'.$row["Month"].'/'.$row["Day"].'</strong> '.$row["Description"].'</h5></td></tr>';
+                  echo '<tr><td><h3 class="text text-success entry">+'.$row["Amount"].' Ft</h3><h5><strong>'.$row["Year"].'/'.$row["Month"].'/'.$row["Day"].'</strong> '.$row["Description"].'</h5></td></tr>'; //' '.$row["budget_type"].
                 }
                 ?>
                 </tr></table></td>
                 <td><table class="expense_table money_table "><tr>
                 <?php 
-                $query = "SELECT * FROM `main_budget` WHERE `Type` = 'EXP' ORDER BY `Year` DESC, `Month` DESC, `Day` DESC";
+                $query = "SELECT * FROM `main_budget` WHERE (`Type` = 'EXP' AND budget_type='m') ORDER BY `Year` DESC, `Month` DESC, `Day` DESC";
                 $statement = $connect->prepare($query);
                 $statement->execute();
                 $result = $statement->fetchAll();
@@ -93,7 +96,52 @@
                 </tr></table></td>
                 </tr></table>
                 <?php 
-                $query = "SELECT * FROM `main_budget` ORDER BY `Year` DESC, `Month` DESC, `Day` DESC";
+                $query = "SELECT * FROM `main_budget` WHERE budget_type='m' ORDER BY `Year` DESC, `Month` DESC, `Day` DESC";
+                $statement = $connect->prepare($query);
+                $statement->execute();
+                $result = $statement->fetchAll();
+                $TotalMoney=0;
+                foreach($result as $row){
+                    if ($row["Type"]=="EXP"){
+                        $row["Amount"]=$row["Amount"]*-1;
+                    }
+                    $TotalMoney += $row["Amount"];
+                }
+                echo '<h3 class="finalValue">Megmaradt összeg: '.$TotalMoney.' Ft</h3>';
+                ?>
+                </div>
+                
+<div>
+<h1 align=center>Költségvetés (egyesületi)</br></h1>
+                <table class="budget_table">
+                <tr><td class="tdTitle"><h3>Bevételek</h3></td>
+                <td class="tdTitle"><h3>Kiadások</h3></td></tr>
+                <tr>
+                <td><table class="income_table money_table"><tr>
+                <?php 
+                $query = "SELECT * FROM `main_budget` WHERE (`Type` = 'INC' AND budget_type='s') ORDER BY `Year` DESC, `Month` DESC, `Day` DESC";
+                $statement = $connect->prepare($query);
+                $statement->execute();
+                $result = $statement->fetchAll();
+                foreach($result as $row){
+                  echo '<tr><td><h3 class="text text-success entry">+'.$row["Amount"].' Ft</h3><h5><strong>'.$row["Year"].'/'.$row["Month"].'/'.$row["Day"].'</strong> '.$row["Description"].'</h5></td></tr>';
+                }
+                ?>
+                </tr></table></td>
+                <td><table class="expense_table money_table "><tr>
+                <?php 
+                $query = "SELECT * FROM `main_budget` WHERE (`Type` = 'EXP' AND budget_type='s') ORDER BY `Year` DESC, `Month` DESC, `Day` DESC";
+                $statement = $connect->prepare($query);
+                $statement->execute();
+                $result = $statement->fetchAll();
+                foreach($result as $row){
+                    echo '<tr><td><h3 class="text text-danger entry">-'.$row["Amount"].' Ft</h3><h5><strong>'.$row["Year"].'/'.$row["Month"].'/'.$row["Day"].'</strong> '.$row["Description"].'</h5></td></tr>';
+                }
+                ?>
+                </tr></table></td>
+                </tr></table>
+                <?php 
+                $query = "SELECT * FROM `main_budget` WHERE budget_type='s' ORDER BY `Year` DESC, `Month` DESC, `Day` DESC";
                 $statement = $connect->prepare($query);
                 $statement->execute();
                 $result = $statement->fetchAll();
@@ -107,6 +155,16 @@
                 echo '<h3 class="finalValue">Megmaradt összeg: '.$TotalMoney.' Ft</h3>';
                 $connect=null;
                 ?>
+                </div>
+
+<style>
+.two_col {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+  grid-auto-rows: 50%;
+  height: 100vh;
+}
+</style>
 <div class="modal fade" id="budgetModal" tabindex="-1" role="dialog" aria-labelledby="budgetModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -123,14 +181,19 @@
       <div class="form-group">
       <label class="form-check-label" for="budgetTypeSelect1">Típus</label>
       <select class="form-control" id="budgetTypeSelect" required>
-      <option value="" selected disabled hidden>Válassz</option>
+      <option value="" selected disabled hidden>Válassz a legördülő menüből...</option>
       <option value="INC">Bevétel</option>
       <option value="EXP">Kiadás</option>
     </select></div>
     <div class="form-group"><input autocomplete="off" class="form-control" id="budgetName" type="text" placeholder="Bevétel/Kiadás címe" required></input></div>
+    <div class="form-group"><input autocomplete="off" value='<?php echo $_SESSION['UserUserName'];?>' class="form-control" id="userName" type="text" placeholder='none' hidden required></input></div>
     <div class="form-group"><input autocomplete="off" class="form-control" id="budgetValue" type="number" placeholder="Érték" required></input></div>
-    <div class="form-group"><input autocomplete="off" type="hidden" id="userName" value=<?php echo $_SESSION["UserUserName"];?>></input></div>
-      </div>
+    <label class="form-check-label" for="budgetTypeSelect2">Kassza</label>
+    <select class="form-control" id="kassza" required>
+      <option value="" selected disabled hidden>Válassz a legördülő menüből..</option>
+      <option value="m">Médiás</option>
+      <option value="s">Egyesületi</option>
+    </select></div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Mégsem</button>
         <input type="submit" id="sendBudget" class="btn btn-primary" value="Küldés"></input>
@@ -149,10 +212,11 @@ var bName = document.getElementById('budgetName').value;
 var bVal = document.getElementById('budgetValue').value;
 var bUser = document.getElementById('userName').value;
 var bDate = document.getElementById('datepicker').value;
+var bKassza = $( "#kassza").val();
 $.ajax({
        url:"budgetHandler.php",
        type:"POST",
-       data:{bType:bType, bName:bName, bVal:bVal, bUser:bUser, bDate:bDate},
+       data:{bType:bType, bName:bName, bVal:bVal, bUser:bUser, bDate:bDate, bKassza:bKassza},
        success:function(successNum){
         if(successNum == 1){ // if true (1)
       setTimeout(function(){// wait for 5 secs(2)

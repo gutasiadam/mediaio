@@ -66,14 +66,17 @@ $serverName="localhost";
 	$result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
-	echo "<table width='50' id="."dataTable"." align=center class="."table"."><th onclick=sortTable(0)>UID</th><th onclick=sortTable(1)>Name</th><th>Type</th><th>Out by</th>";
+	echo "<table width='50' id="."dataTable"." align=center class="."table"."><th onclick=sortTable(0)>UID</th><th onclick=sortTable(1)>Név</th><th onclick=sortTable(2)>Típus</th><th onclick=sortTable(3)>Kivette</th>";
      //output data of each row
     //Displays amount of records found in leltar_master DB
     while($row = $result->fetch_assoc()) {
-		if ($countOfRec == 50){
-		}
+		/*if ($countOfRec == 50){
+		}*/
 		if($row["TakeRestrict"]=="*"){
 			echo "<tr style='background-color:#fffeab;' ><td><a id=#".$row["UID"]."></a>".$row["UID"]. "</td><td>" . $row["Nev"]. "</td><td>" . $row["Tipus"]. "</td><td><strong>". $row["RentBy"]."</strong></td></tr>";
+		}
+    else if($row["TakeRestrict"]=="s"){
+			echo "<tr style='background-color:#7db3e8;' ><td><a id=#".$row["UID"]."></a>".$row["UID"]. "</td><td>" . $row["Nev"]. "</td><td>" . $row["Tipus"]. "</td><td><strong>". $row["RentBy"]."</strong></td></tr>";
 		}
 		else if($row["Status"]==0){
 			echo "<tr style='background-color:#F5B8B8;' ><td><a id=#".$row["UID"]."></a>".$row["UID"]. "</td><td>" . $row["Nev"]. "</td><td>" . $row["Tipus"]. "</td><td><strong>". $row["RentBy"]."</strong></td></tr>";
@@ -83,7 +86,7 @@ if ($result->num_rows > 0) {
 		$countOfRec += 1;
 	}
 } else {
-    echo "0 results";
+    echo "// Nem található tárgy a rendszerben. A hibát jelezd a rendszergazdának. //";
 }
 echo "</table>";
 $conn->close();?>
@@ -249,13 +252,20 @@ function autocomplete(inp, arr) {
 </script>
 
 <script>
+//UID, Név, Típus, Kivette 
 function sortTable(n) {
-  if(n==1){
-    sMode="név";
-  }else{
-    sMode="UID";
+  switch (n) {
+    case 1:
+      sMode="név";
+      break;
+    case 2:
+      sMode="Típus";
+    case 3:
+      sMode="Kivette";
+    default:
+      sMode="UID";
   }
-  
+  s=sMode;
   var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
   table = document.getElementById("dataTable");
   switching = true;
@@ -313,10 +323,10 @@ function sortTable(n) {
     }
   }
   $('#doTitle').animate({'opacity': 0}, 400, function(){
-        $(this).html('<h4 class="text text-info" role="alert">Rendezés '+sMode+' szerint '+dMode+' sorrendben.</h4>').animate({'opacity': 1}, 400);
-        $(this).html('<h4 class="text text-info" role="alert">Rendezés '+sMode+' szerint '+dMode+' sorrendben.').animate({'opacity': 1}, 100);
-        $(this).html('<h4 class="text text-info" role="alert">Rendezés '+sMode+' szerint '+dMode+' sorrendben.').animate({'opacity': 0}, 400);
-    setTimeout(function() { $("#doTitle").text("Rendezés "+sMode+" szerint "+dMode+" sorrendben.").animate({'opacity': 1}, 400); }, 900);;});
+        $(this).html('<h4 class="text text-info" role="alert">Rendezés '+s+' szerint '+dMode+' sorrendben.</h4>').animate({'opacity': 1}, 400);
+        $(this).html('<h4 class="text text-info" role="alert">Rendezés '+s+' szerint '+dMode+' sorrendben.').animate({'opacity': 1}, 100);
+        $(this).html('<h4 class="text text-info" role="alert">Rendezés '+s+' szerint '+dMode+' sorrendben.').animate({'opacity': 0}, 400);
+    setTimeout(function() { $("#doTitle").text("Rendezés "+s+" szerint "+dMode+" sorrendben.").animate({'opacity': 1}, 400); }, 900);;});
 }
 </script>
 

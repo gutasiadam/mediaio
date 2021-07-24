@@ -51,7 +51,7 @@ error_reporting(E_ALL ^ E_NOTICE);
 			<h2 class="rainbow" align="center" id="doTitle"><?php echo $applicationTitleShort;?></h2><br />
       <div class="row">
       <div class="col-md-3">
-      <div class="alert alert-info">Szia <strong><?php echo $_SESSION['firstName']?></strong>, mit vinnél el?👀</div>
+      <div class="alert alert-info">Szia <strong><?php echo $_SESSION['firstName']?></strong>, mit vinnél el?</div>
       </div></div>
 			<div class="form-group">
         <table id="itemSearch" align="left"><tr>
@@ -273,11 +273,6 @@ window.onload = function () {
 			success:function(response)
 			{
         console.log(response);
-        /*d=JSON.parse(response);
-        //fa frissítése válasz alapján.
-        d = JSON.parse(JSON.stringify(d).split('"Nev":').join('"text":'));
-        d = JSON.parse(JSON.stringify(d).split('"ID":').join('"id":'));
-        console.log(d);*/
         displayMessageInTitle("#doTitle","Sikeres kivétel! \nAz oldal hamarosan újratölt");
         $('#jstree').jstree(true).settings.core.data = d;
         //Fa újratöltése

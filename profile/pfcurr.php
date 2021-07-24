@@ -78,7 +78,7 @@ $serverName="localhost";
         $sql = ("SELECT * FROM `leltar` WHERE `RentBy` = '$TKI'");
         $result = $result = mysqli_query($conn, $sql);
         $conn->close();
-        echo '<h3 class="panel-title">👇'.$_SESSION['firstName'].', ezek a tárgyak vannak most nálad 👇</h3>
+        echo '<h3 class="panel-title">'.$_SESSION['firstName'].', ezek a tárgyak vannak most nálad:</h3>
         </div>
         <div class="panel-body">
          <div class="timeline">
@@ -163,7 +163,7 @@ $serverName="localhost";
               <input class="form-check-input intactItems" type="checkbox" value="" id="intactItems'.$imodal.'">
               </div>
               <h6></h6>
-              <h6 id="emailHelp" class="form-text text-muted">A kipipálással igazzolom, hogy amit visszahoztam sérülésmentes és kifogástalanul működik. Sérülés esetén azonnal jelezd azt a vezetőségnek.</h6>
+              <h6 id="emailHelp" class="form-text text-muted">A kipipálással igazolom, hogy amit visszahoztam sérülésmentes, és kifogástalanul működik. Sérülés esetén azonnal jelezd azt a vezetőségnek.</h6>
               <button type="button" class="btn btn-secondary" data-dismiss="modal">❌</button>
                   <button type="submit" id="'.$imodal.'" onClick="reply_click(this.id)" class="btn go_btn btn-success disabled">☑</button>
                   </form>
@@ -178,6 +178,9 @@ $serverName="localhost";
               echo '';
             }
             
+           }
+           if($imodal==0){
+             echo '// Jelenleg nincs nálad egy tárgy sem ';
            }
            echo '
            </div>
@@ -297,7 +300,8 @@ function retrieve(i){ // i=> item
       setTimeout(function(){location.reload();},5000);
     },
     error: function(XMLHttpRequest, textStatus, errorThrown) { 
-        alert("Status: " + textStatus); alert("Hiba: " + errorThrown); 
+        console.log("Status: " + textStatus); console.log("Hiba: " + errorThrown); 
+        setTimeout(function(){location.reload();},5000);
     }
     
 });
