@@ -1,9 +1,3 @@
-Fresnel allvany A
-7
-Fresnel allvany B
-8
-Fresnel allvany C
-9
-RUN
-RUN
+Fresnel 1000W
+1
 RUN

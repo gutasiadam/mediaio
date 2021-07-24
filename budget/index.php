@@ -64,10 +64,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
-<div style="margin: 0 auto; padding-top: 50px;  text-align: center;"><button class="btn btn-warning" data-toggle="modal" data-target="#budgetModal">Tétel hozzáadása</button></div>
+<div style="margin: 0 auto; padding-top: 50px;  text-align: center;"><button class="btn btn-warning noprint" data-toggle="modal" data-target="#budgetModal">Tétel hozzáadása</button></div>
 <div class="two_col">
 <div>
-                <h1 align=center>Költségvetés (média)</br></h1>
+                <h1 align=center>Médiás költségvetés</br></h1>
                 <table class="budget_table">
                 <tr><td class="tdTitle"><h3>Bevételek</h3></td>
                 <td class="tdTitle"><h3>Kiadások</h3></td></tr>
@@ -79,7 +79,7 @@
                 $statement->execute();
                 $result = $statement->fetchAll();
                 foreach($result as $row){
-                  echo '<tr><td><h3 class="text text-success entry">+'.$row["Amount"].' Ft</h3><h5><strong>'.$row["Year"].'/'.$row["Month"].'/'.$row["Day"].'</strong> '.$row["Description"].'</h5></td></tr>'; //' '.$row["budget_type"].
+                  echo '<tr><td style="text-align: center;"><h3 class="text text-success entry" style="margin-bottom: 0px;">+'.$row["Amount"].' Ft</h3><h5 style="margin-bottom: 10px;"><strong>'.$row["Year"].'/'.$row["Month"].'/'.$row["Day"].'</strong> '.$row["Description"].' '.$row["addedBy"].'</h5></td></tr>'; //' '.$row["budget_type"].
                 }
                 ?>
                 </tr></table></td>
@@ -90,7 +90,7 @@
                 $statement->execute();
                 $result = $statement->fetchAll();
                 foreach($result as $row){
-                    echo '<tr><td><h3 class="text text-danger entry">-'.$row["Amount"].' Ft</h3><h5><strong>'.$row["Year"].'/'.$row["Month"].'/'.$row["Day"].'</strong> '.$row["Description"].'</h5></td></tr>';
+                    echo '<tr><td style="text-align: center;"><h3 class="text text-danger entry" style="margin-bottom: 0px;">-'.$row["Amount"].' Ft</h3><h5 style="margin-bottom: 10px;"><strong>'.$row["Year"].'/'.$row["Month"].'/'.$row["Day"].'</strong> '.$row["Description"].' '.$row["addedBy"].'</h5></td></tr>';
                 }
                 ?>
                 </tr></table></td>
@@ -112,7 +112,7 @@
                 </div>
                 
 <div>
-<h1 align=center>Költségvetés (egyesületi)</br></h1>
+<h1 align=center>Egyesületi költségvetés</br></h1>
                 <table class="budget_table">
                 <tr><td class="tdTitle"><h3>Bevételek</h3></td>
                 <td class="tdTitle"><h3>Kiadások</h3></td></tr>
@@ -124,7 +124,7 @@
                 $statement->execute();
                 $result = $statement->fetchAll();
                 foreach($result as $row){
-                  echo '<tr><td><h3 class="text text-success entry">+'.$row["Amount"].' Ft</h3><h5><strong>'.$row["Year"].'/'.$row["Month"].'/'.$row["Day"].'</strong> '.$row["Description"].'</h5></td></tr>';
+                  echo '<tr><td style="text-align: center;"><h3 class="text text-success entry" style="margin-bottom: 0px;">+'.$row["Amount"].' Ft</h3><h5 style="margin-bottom: 10px;"><strong>'.$row["Year"].'/'.$row["Month"].'/'.$row["Day"].'</strong> '.$row["Description"].' '.$row["addedBy"].'</h5></td></tr>';
                 }
                 ?>
                 </tr></table></td>
@@ -135,7 +135,7 @@
                 $statement->execute();
                 $result = $statement->fetchAll();
                 foreach($result as $row){
-                    echo '<tr><td><h3 class="text text-danger entry">-'.$row["Amount"].' Ft</h3><h5><strong>'.$row["Year"].'/'.$row["Month"].'/'.$row["Day"].'</strong> '.$row["Description"].'</h5></td></tr>';
+                    echo '<tr><td style="text-align: center;"><h3 class="text text-danger entry" style="margin-bottom: 0px;">-'.$row["Amount"].' Ft</h3><h5 style="margin-bottom: 10px;"><strong>'.$row["Year"].'/'.$row["Month"].'/'.$row["Day"].'</strong> '.$row["Description"].' '.$row["addedBy"].'</h5></td></tr>';
                 }
                 ?>
                 </tr></table></td>
@@ -267,6 +267,13 @@ $( document ).ready(function() {
 </script>
 
 <style>
+
+@media print{
+  .noprint {
+    display: none;
+  }
+}
+
 .budget_table{
   width: 500px;
   border-style: solid;
@@ -282,13 +289,8 @@ $( document ).ready(function() {
   margin: 0 auto; 
 }
 
-.income_table{
-  text-align: right;
-}
-
 .money_table{
   padding-left: 5px;
-  margin-left: 20px;
 }
 
 .entry{

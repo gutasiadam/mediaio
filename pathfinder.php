@@ -96,14 +96,14 @@ if(isset($_SESSION['UserUserName'])){
               echo '<div class="timeline__item ">
               <div class="timeline__content out">
                <h2>'. $row["Date"]. ' by '. $row["User"] . '</h2>
-               <p>'. $row["Event"]. '</p>
+               <p>'. 'ki'. '</p>
               </div>
              </div>';} 
             if($row["Event"]=="IN"){
               echo '<div class="timeline__item ">
               <div class="timeline__content in">
                <h2>'. $row["Date"]. ' by '. $row["User"] . '</h2>
-               <p>'. $row["Event"]. '</p>
+               <p>'. 'be'. '</p>
               </div>
              </div>';
             }
@@ -111,7 +111,7 @@ if(isset($_SESSION['UserUserName'])){
               echo '<div class="timeline__item ">
               <div class="timeline__content inwa">
                <h2>'. $row["Date"]. ' by '. $row["User"] . '</h2>
-               <p> In w\ AuthCode </p>
+               <p> Authkóddal jött be. </p>
               </div>
              </div>';
             }
@@ -162,7 +162,7 @@ window.onload = function () {
   //Remove this comment for see Timeline in Horizontal Format otherwise it will display in Vertical Direction Timeline
  });
 });*/
-var dbItems = ["Fresnel 1000W", "Fresnel 650W", "Fresnel 300W", "Softbox allo 1", "Softbox allo 2", "Softbox fekvo",
+/*var dbItems = ["Fresnel 1000W", "Fresnel 650W", "Fresnel 300W", "Softbox allo 1", "Softbox allo 2", "Softbox fekvo",
  "Fresnel allvany A", "Fresnel allvany B", "Fresnel allvany C", "Softbox allvany 1", "Softbox allvany 2", "Softbox allvany 3", 
  "Hatter allvany 1", "Hatter allvany 2", "Genius hangfal",
   "HP laptop", "Spanyolfal", "Neon lampa", "Asztali LED lampa", "Szerver ventillator", "Feher allo ventillator",
@@ -170,26 +170,38 @@ var dbItems = ["Fresnel 1000W", "Fresnel 650W", "Fresnel 300W", "Softbox allo 1"
   "Negyes kapcsolhato eloszto 5", "Negyes kapcsolhato eloszto 6", "Negyes eloszto (5m)", "Harmas eloszto (1m)", "Harmas eloszto (3m)", "2/2-es eloszto (3m)", "Harmas eloszto (5m)", "Otos kapcsolhato eloszto (3m)", 
 "Otos eloszto (5m)", "3/6-os eloszto (1,5m) 1", "3/6-os eloszto (1,5m) 2", "Studiomikrofon", "Hattertarto keresztrud (2m)", "Logic kek hangfal", "Halogen reflektor (400W)", "Behringer kevero", "Dimmer", "Deritolap",
 "Kis mikrofonallvany", "Popfilter", "Mikrofonarto kengyel", "Carena kamera allvany", "Hama 79 kamera allvany", "Hama 63 kamera allvany", "Selecline laptop", "60*90 Bowens-es softbox", "Godox MS300 studiovaku 1", "Godox MS300 studiovaku 2",
-"40*180-as softbox (mehracs) 1", "40*180-as softbox (mehracs) 2", "120-as oktabox (mehracs)", "Godox X2T-C transmitter", "Hattertarto keresztrud (3m)"];
-
+"40*180-as softbox (mehracs) 1", "40*180-as softbox (mehracs) 2", "120-as oktabox (mehracs)", "Godox X2T-C transmitter", "Hattertarto keresztrud (3m)"];*/
+var dbItems=[];
 var d = {};
 function loadJSON(callback) {   
 console.log("[loadJSON] - called.")
-var xobj = new XMLHttpRequest();
-    xobj.overrideMimeType("application/json");
-xobj.open('GET', '../takeOutItems.json', false); // Replace 'my_data' with the path to your file
-xobj.onreadystatechange = function () {
-      if (xobj.readyState == 4 && xobj.status == "200") {
-        // Required use of an anonymous callback as .open will NOT return a value but simply returns undefined in asynchronous mode
-        callback(xobj.responseText);
-        console.log(xobj.responseText);
-        d=JSON.parse(xobj.responseText);
-        setTimeout(function(){ console.log(JSON.parse(xobj.responseText));; }, 500);
-      }
-};
-xobj.send(null);  
+var jqxhr = $.getJSON( "takeOutItems.json", function() {
+  console.log( "[loadJSON] - OK" );
+})
+  .done(function(data) {
+    console.log('load complete');
+    $.each( data, function( i, item ) {
+      //console.log(i+item);
+      dbItems.push(item['Nev']);
+    })
+  })
+  .fail(function() {
+    console.log( "hiba" );
+  })
+  .always(function() {
+    console.log( "Adatok betöltése kész" );
+  });
+ 
+// Perform other work here ...
+
+// Set another completion function for the request above
+/*jqxhr.always(function() {
+  console.log( "second complete" );
+});*/
 }
+loadJSON();
 console.log('d:'+d);
+
 //Process takeout
 
 
