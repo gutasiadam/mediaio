@@ -8,24 +8,6 @@
   //require 'header.php'; NOT NECESSARY, SHOULD BE USED IN THE FUTURE
 ?>
 <!DOCTYPE html>
-
-<!--
-<head>
-<link rel="stylesheet" href="./main.css">
-  <div class="UI_loading"><img class="loadingAnimation" src="./utility/mediaIO_loading_logo_small.gif"></div>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
-  <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js">  </script>
-  <script src="https://kit.fontawesome.com/2c66dc83e7.js" crossorigin="anonymous"></script>
-  <script src="utility/_initMenu.js" crossorigin="anonymous"></script>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Arpad Media IO Login</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-</head>-->
-
-
 <body>
                 <?php 
 
@@ -58,9 +40,7 @@ else
 				  
 					<div class="collapse navbar-collapse" id="navbarSupportedContent">
 					  <ul class="navbar-nav mr-auto navbarUl">
-            <li>
-            <a class="nav-link disabled" id="ServerMsg" href="#"></a>
-            </li><li><a class="nav-link disabled" href="#">⌛: <span id="time">'.$nav_timeLock_StartValue.'</span></a></li></ul>'; ?>
+            '; ?>
             <script>
             $( document ).ready(function() {
               menuItems = importItem("./utility/menuitems.json");
@@ -69,9 +49,10 @@ else
             </script>
             
             <?php
+            echo '</ul>';
             if (($_SESSION['role']=="Admin") || ($_SESSION['role']=="Boss")){
-              echo '<ul class="navbar-nav navbarPhP">';
-              echo '<li><a class="nav-link disabled" href="#">Admin jogokkal rendelkezel</a></li>';
+              echo '<ul class="navbar-nav navbarPhP"><li><a class="nav-link disabled timelock" href="#">⌛ <span id="time"> 10:00 </span></a></li>';
+              echo '<li><a class="nav-link disabled" href="#">Admin jogok</a></li>';
               echo '</ul>
               <form class="form-inline my-2 my-lg-0" action=utility/logout.ut.php>
                         <button class="btn btn-danger my-2 my-sm-0" type="submit">'.$nav_logOut.'</button>
@@ -91,7 +72,7 @@ else
       </nav>
       ';
             }
-					  
+            
                     ?>
                     
                     <?php

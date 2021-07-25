@@ -1,5 +1,5 @@
-<!-- A Felhasználónál levő tárgyak mutatása -->
-<?php 
+<?php
+include "header.php";
 session_start();
 if(isset($_SESSION['userId'])){
     error_reporting(E_ALL ^ E_NOTICE);
@@ -12,62 +12,43 @@ $serverName="localhost";
 
 <html>  
     <head>
-        <script src="utility/timeline.min.js"></script>
-        <link rel="stylesheet" href="utility/pathfinder.css" />
-        <link rel="stylesheet" href="utility/timeline.min.css" />
-        <script src="utility/jquery.js"></script>
+        <script src="../utility/jquery.js"></script>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js">  </script>
   <script src="https://kit.fontawesome.com/2c66dc83e7.js" crossorigin="anonymous"></script>
-  <title>PathFinder/AuthCodeGen</title>
+  <title>A náladlevő tárgyak</title>
   
     </head>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-					<a class="navbar-brand" href="../index.php">Arpad Media IO</a>
+          <a class="navbar-brand" href="index.php"><img src="../utility/logo2.png" height="50"></a>
 					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 					  <span class="navbar-toggler-icon"></span>
 					</button>
 				  
 					<div class="collapse navbar-collapse" id="navbarSupportedContent">
-					  <ul class="navbar-nav mr-auto">
-						<li class="nav-item ">
-						  <a class="nav-link" href="../index.php"><i class="fas fa-home fa-lg"></i><span class="sr-only">(current)</span></a>
-						</li>
-						<li class="nav-item">
-						  <a class="nav-link" href="../takeout.php"><i class="fas fa-upload fa-lg"></i></a>
-						</li>
-						<li class="nav-item">
-						  <a class="nav-link" href="../retrieve.php"><i class="fas fa-download fa-lg"></i></a>
-						</li>
-            <li class="nav-item">
-						  <a class="nav-link" href="../adatok.php"><i class="fas fa-database fa-lg"></i></a>
-            </li>
-            <li class="nav-item">
-                        	<a class="nav-link active" href="./pfcurr.php"><i class="fas fa-project-diagram fa-lg"></i></a>
-            			</li>
-                  <li class="nav-item">
-                        <a class="nav-link" href="../events/"><i class="fas fa-calendar-alt fa-lg"></i></a>
-            </li>
-            <li class="nav-item">
-                        <a class="nav-link" href="../profile/index.php"><i class="fas fa-user-alt fa-lg"></i></a>
-            </li>
-						<li>
-              <a class="nav-link disabled" href="#">Időzár <span id="time">10:00</span></a>
-            </li>
+					  <ul class="navbar-nav mr-auto navbarUl">
+						<script>
+            $( document ).ready(function() {
+              menuItems = importItem("../utility/menuitems.json");
+              drawMenuItemsLeft('profile',menuItems,2);
+            });
+            </script>
+            </ul>
+            <ul class="navbar-nav navbarPhP"><li><a class="nav-link disabled timelock" href="#">⌛ <span id="time"> 10:00 </span></a></li>
             <?php if (($_SESSION['role']=="Admin") || ($_SESSION['role']=="Boss")){
-              echo '<li><a class="nav-link disabled" href="#">Admin jogokkal rendelkezel</a></li>';}?>
+              echo '<li><a class="nav-link disabled" href="#">Admin jogok</a></li>';}?>
 					  </ul>
-						<form class="form-inline my-2 my-lg-0" action=../utility/logout.ut.php>
+						<form class="form-inline my-2 my-lg-0" action=utility/logout.ut.php>
                       <button class="btn btn-danger my-2 my-sm-0" type="submit">Kijelentkezés</button>
-                      </form></form>
-              <a class="nav-link my-2 my-sm-0" href="../help.php"><i class="fas fa-question-circle fa-lg"></i></a>
+                      </form>
+					  <a class="nav-link my-2 my-sm-0" href="./help.php"><i class="fas fa-question-circle fa-lg"></i></a>
 					</div>
 </nav>
     <body>  
         <div class="container">
    <br />
-   <!--<h3 align="center">PathFinder <?php echo $_SESSION['UserUserName'];?> felhasználónak<i class="fas fa-project-diagram fa-lg"></i></h3>-->
+
 			
 <div class="form-group">
    <div class="panel panel-default">
@@ -90,25 +71,22 @@ $serverName="localhost";
           while($row = $result->fetch_assoc()) { 
               array_push($resultArray, $row);
               $authGen = random_int(100000,999999);
-              if ($row["AuthState"] != NULL){ // Tehát már van kód generálva
+              //if ($row["AuthState"] != NULL){ // Tehát már van kód generálva
                 //Keressük meg az itemhez tartozó kód értékét és hogy melyik felhasználó használhatja ezt a kódot.
                 $conn = new mysqli($serverName, $userName, $password, $dbName);
                 $rowItem = $row["Nev"];
-                $query = ("SELECT * FROM `authcodedb` WHERE Item = '$rowItem'");
-                $result2 = mysqli_query($conn, $query);
+                //$query = ("SELECT * FROM `authcodedb` WHERE Item = '$rowItem'");
+                //$result2 = mysqli_query($conn, $query);
                 $conn->close();
-                while($codeRow = $result2->fetch_assoc()) {$dbCode = $codeRow["Code"]; $dbUser = $codeRow["AuthUser"];}
+                //while($codeRow = $result2->fetch_assoc()) {$dbCode = $codeRow["Code"]; $dbUser = $codeRow["AuthUser"];}
                 
-                echo '<div class="row">
+                /*echo '<div class="row">
               <div class="col-4">
                <h2>'. $row["Nev"].'</h2>
                <p>'. $row["Tipus"].'</p> 
               </div>
-              <div class="col-2"><button class="btn btn-danger disabled" id="auth'.$imodal.'"">AuthCode generated!</button></div>
-              <div class="col-2">AuthCode: <br><h6 id="code'.$imodal.'"><strong>'.$dbCode.'</strong></h6></div>
-              <div class="col-2"><button id="copy'.$imodal.'" onclick="copyText(xd) class="x">Copy text</button></div>
-             </div>';
-            }else{
+             </div>';*/
+            //}else{
               echo '
               <div class="row">
               <div class="col-4">
@@ -116,13 +94,13 @@ $serverName="localhost";
                <p>'. $row["Tipus"].'</p>
               </div>';
               //$query = "SELECT * FROM `leltar` WHERE RentBy = '$TKI'";
-              echo '<div class="col-2"><button class="btn btn-dark disabled" id="auth'.$imodal.'" data-toggle="modal" data-target="#a'.$imodal.'">AuthCode Készítése</button></div>
+              echo '
              <div class="col-2"><button class="btn btn-success " id="bringback'.$imodal.'" data-toggle="modal" data-target="#b'.$imodal.'">Visszahoztam</button></div>
              </div>
              '
              
              ;
-            echo              
+            /*echo              
             '<div class="modal fade" id="a'.$imodal.'" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
               <div class="modal-content">
@@ -144,8 +122,8 @@ $serverName="localhost";
             </div>
                   </div>      
               </div>
-            </div>
-            
+            </div>*/
+            echo '
             <div class="modal fade" id="b'.$imodal.'" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
               <div class="modal-content">
@@ -172,7 +150,7 @@ $serverName="localhost";
                   </div>      
               </div>
             </div>
-            ';}
+            ';//}
             $imodal++;
             if($row["Event"]=="IN"){
               echo '';
@@ -204,84 +182,10 @@ $serverName="localhost";
 <?php
 }
 else{
-    echo("Acces Denied.");
+    echo("A tartalom megtekintéséhez először jelentkezz be.");
 }
 //AUTH Handling
-session_start();
 
-      /*if (isset($_POST["retrieveItem"])){//Tárgy visszahozása
-        $serverName = "localhost";
-        $dbUserName = "root";
-        $dbPassword = "umvHVAZ%";
-        $dbDatabase = "mediaio";
-
-        $d = $_POST["retrieveItem"];
-        $User = $_SESSION['UserUserName'];
-
-        $conn = new mysqli($serverName, $dbUserName, $dbPassword, $dbDatabase); // FIRST, This database stores the currently used authCodes,
-              if ($conn->connect_error){
-                die("Connection failed: ".mysqli_connect_error());}
-        echo $Item;
-
-    $sql = ("UPDATE `leltar` SET `Status` = '1', `RentBy` = NULL, `AuthState` = NULL WHERE `leltar`.`Nev` = '$d';");
-    $sql.= ("DELETE FROM authcodedb WHERE Item = '$d';");
-    $sql.= ("INSERT INTO takelog (`ID`, `takeID`, `Date`, `User`, `Item`, `Event`) VALUES (NULL, '1', '$currDate', '$SESSuserName', '$d', 'IN')");
-    if (!$conn->multi_query($sql)) {
-      echo "Multi query fail!: (" . $conn->errno . ") " . $conn->error;
-    }
-    //else{}
-
-      }*/
-      if (isset($_POST["authItem"])){
-        //echo 'Data recieved, process!'.$_POST["authItem"].'</br>';
-        //echo 'Your AuthCode is'.$_POST["authGen"];
-        $serverName = "localhost";
-        $dbUserName = "root";
-        $dbPassword = "umvHVAZ%";
-        $dbDatabase = "mediaio";
-        
-        $authCode = $_POST["authGen"];
-        $authItem = $_POST["authItem"];
-        $SESSuserName = $_SESSION['UserUserName'];
-            $conn = new mysqli($serverName, $dbUserName, $dbPassword, $dbDatabase); // FIRST, This database stores the currently used authCodes,
-              if ($conn->connect_error){
-                die("Connection failed: ".mysqli_connect_error());}
-        //Check whether the specific code exists.
-        $checkCodeRowNum = 1;
-        while($checkCodeRowNum != 0){
-          $codeCheckSQl = ("SELECT * FROM `authcodedb` WHERE `Code` = '$authCode'");
-          $checkcoderes = $conn->query($codeCheckSQl);
-          $checkCodeRowNum = $checkcoderes->num_rows;
-          //echo $authCode.'The AuthCode did exist, generating a new keypair...<br>';
-          $authCode = random_int(0,999999);
-        }
-        //Prevent Double Generation
-        $itemCheckSQl = ("SELECT * FROM `authcodedb` WHERE `Item` = '$authItem'");
-        $checkitemRes = $conn->query($itemCheckSQl);
-        $checkItemRowNum = $checkitemRes->num_rows;
-        if ($checkItemRowNum!=0){
-          //echo "Desired Item Already In AuthCodeDB, can't generate a code for you. :( ";
-          exit();
-        }else{
-        $sql=("INSERT IGNORE INTO authcodedb (`ID`,`Code`, `AuthBy`, `TakeID`, `Item`) VALUES (NULL, '$authCode', '$SESSuserName', '1', '$authItem')");
-        //$sql=("INSERT INTO authcodedb (`ID`,`Code`, `AuthBy`, `AuthUser`, `TakeID`, `Item`)
-        //SELECT * FROM (SELECT '$authItem') AS tmp
-        //WHERE NOT EXISTS (
-        //    SELECT name FROM authcodedb WHERE name = 'name1'
-        //) LIMIT 1;");
-        $result = $conn->query($sql);
-        
-        if ($result===TRUE){
-          //echo"Success!! AuthCode given, and done.";
-          $conn->close();
-          $conn = new mysqli($serverName, $dbUserName, $dbPassword, 'mediaio'); // SECOND CONN, Sets status in master!
-          $sql=("UPDATE leltar SET `AuthState` = 1 WHERE `leltar`.`Nev` = '$authItem'");
-          $result = $conn->query($sql); if($result===TRUE){}
-          $conn->close();
-          
-        }
-        }
-      }
 ?>
 <script>
 //Visszahozás ellenőrzése a handlernél

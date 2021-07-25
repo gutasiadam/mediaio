@@ -8,7 +8,7 @@
 <script> $( document ).ready(function() {
               menuItems = importItem("../utility/menuitems.json");
               drawMenuItemsLeft("maintenance",menuItems,2);
-              drawMenuItemsRight('maintenance',menuItems);
+              drawMenuItemsRight('maintenance',menuItems,2);
             });</script>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark nav-all" id="nav-head">
 					<a class="navbar-brand" href="../index.php"><img src="../utility/logo2.png" height="50"></a>
@@ -21,12 +21,12 @@
             <li>
             <a class="nav-link disabled" id="ServerMsg" href="#"></a>
             </li></ul>
+            <ul class="navbar-nav navbarPhP"><li><a class="nav-link disabled timelock" href="#">⌛ <span id="time"> 10:00 </span></a></li>
             <?php
             if (($_SESSION['role']=="Admin") || ($_SESSION['role']=="Boss")){
-              echo '<ul class="navbar-nav navbarPhP">';
-              echo '<li><a class="nav-link disabled" href="#">Admin jogokkal rendelkezel</a></li>';
-              echo '</ul>
-              <form class="form-inline my-2 my-lg-0" action=utility/logout.ut.php>
+              echo '<li><a class="nav-link disabled" href="#">Admin jogok</a></li>';
+              echo '
+              </ul><form class="form-inline my-2 my-lg-0" action=utility/logout.ut.php>
                         <button class="btn btn-danger my-2 my-sm-0" type="submit">'.$nav_logOut.'</button>
                         </form>
                         <div class="menuRight"></div>
@@ -38,7 +38,7 @@
                         </form>
                         <div class="menuRight"></div>
             </div></nav>';} ?>
-    </nav>
+    
 <h1 align=center class="rainbow">Takarítási rend, feladatok </h1>
 
 <div class="tableParent">

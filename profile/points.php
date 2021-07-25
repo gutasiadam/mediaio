@@ -1,4 +1,5 @@
-<?php 
+<?php
+include "header.php";
 session_start();
 
 if($_SESSION['role']=="Default") {
@@ -31,44 +32,28 @@ $serverName="localhost";
   
     </head>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-					<a class="navbar-brand" href="../index.php">Arpad Media IO</a>
+          <a class="navbar-brand" href="index.php"><img src="../utility/logo2.png" height="50"></a>
 					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 					  <span class="navbar-toggler-icon"></span>
 					</button>
 				  
 					<div class="collapse navbar-collapse" id="navbarSupportedContent">
-					  <ul class="navbar-nav mr-auto">
-						<li class="nav-item ">
-						  <a class="nav-link" href="../index.php"><i class="fas fa-home fa-lg"></i><span class="sr-only">(current)</span></a>
-						</li>
-						<li class="nav-item">
-						  <a class="nav-link" href="../takeout.php"><i class="fas fa-upload fa-lg"></i></a>
-						</li>
-						<li class="nav-item">
-						  <a class="nav-link" href="../retrieve.php"><i class="fas fa-download fa-lg"></i></a>
-						</li>
-            <li class="nav-item">
-						  <a class="nav-link" href="../adatok.php"><i class="fas fa-database fa-lg"></i></a>
-            </li>
-            <li class="nav-item">
-                        	<a class="nav-link" href="../pathfinder.php"><i class="fas fa-project-diagram fa-lg"></i></a>
-            			</li>
-                  <li class="nav-item">
-                        <a class="nav-link" href="../events/"><i class="fas fa-calendar-alt fa-lg"></i></a>
-            </li>
-            <li class="nav-item">
-                        <a class="nav-link active" href="../profile/index.php"><i class="fas fa-user-alt fa-lg"></i></a>
-            </li>
-						<li>
-              <a class="nav-link disabled" href="#">Időzár <span id="time">10:00</span></a>
-            </li>
+					  <ul class="navbar-nav mr-auto navbarUl">
+						<script>
+            $( document ).ready(function() {
+              menuItems = importItem("../utility/menuitems.json");
+              drawMenuItemsLeft('profile',menuItems,2);
+            });
+            </script>
+            </ul>
+            <ul class="navbar-nav navbarPhP"><li><a class="nav-link disabled timelock" href="#">⌛ <span id="time"> 10:00 </span></a></li>
             <?php if (($_SESSION['role']=="Admin") || ($_SESSION['role']=="Boss")){
-              echo '<li><a class="nav-link disabled" href="#">Admin jogokkal rendelkezel</a></li>';}?>
+              echo '<li><a class="nav-link disabled" href="#">Admin jogok</a></li>';}?>
 					  </ul>
-						<form class="form-inline my-2 my-lg-0" action=../utility/logout.ut.php>
+						<form class="form-inline my-2 my-lg-0" action=utility/logout.ut.php>
                       <button class="btn btn-danger my-2 my-sm-0" type="submit">Kijelentkezés</button>
-                      </form></form>
-              <a class="nav-link  my-2 my-sm-0" href="../help.php"><i class="fas fa-question-circle fa-lg"></i></a>
+                      </form>
+					  <a class="nav-link my-2 my-sm-0" href="./help.php"><i class="fas fa-question-circle fa-lg"></i></a>
 					</div>
 </nav>
     <body>  

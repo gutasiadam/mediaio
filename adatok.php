@@ -27,11 +27,10 @@ if(!isset($_SESSION['userId'])){
               drawMenuItemsLeft('adatok',menuItems);
             });
             </script>
-            <li>
-              <a class="nav-link disabled" href="#">⏳: <span id="time"><?php echo $nav_timeLock_StartValue;?></span></a>
-            </li>
+            </ul>
+            <ul class="navbar-nav navbarPhP"><li><a class="nav-link disabled timelock" href="#">⌛ <span id="time"> 10:00 </span></a></li>
             <?php if (($_SESSION['role']=="Admin") || ($_SESSION['role']=="Boss")){
-              echo '<li><a class="nav-link disabled" href="#">Admin jogokkal rendelkezel</a></li>';}?>
+              echo '<li><a class="nav-link disabled" href="#">Admin jogok</a></li>';}?>
 					  </ul>
 						<form class="form-inline my-2 my-lg-0" action=utility/logout.ut.php>
                       <button class="btn btn-danger my-2 my-sm-0" type="submit">Kijelentkezés</button>

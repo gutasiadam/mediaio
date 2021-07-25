@@ -1,3 +1,3 @@
-Fresnel 1000W
-1
+Softbox tapkabel (adapterrel) 3
+213
 RUN

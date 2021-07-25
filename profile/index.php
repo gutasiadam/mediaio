@@ -42,11 +42,10 @@
           
 					<div class="collapse navbar-collapse" id="navbarSupportedContent">
 					  <ul class="navbar-nav mr-auto navbarUl">
-            <li>
-              <a class="nav-link disabled" href="#">⏳: <span id="time">10:00</span></a>
-            </li>';
+            </ul>
+            <ul class="navbar-nav navbarPhP"><li><a class="nav-link disabled timelock" href="#">⌛ <span id="time"> 10:00 </span></a></li>';
             if (($_SESSION['role']=="Admin") || ($_SESSION['role']=="Boss")){
-              echo '<li><a class="nav-link disabled" href="#">Admin jogokkal rendelkezel</a></li>';}
+              echo '<li><a class="nav-link disabled" href="#">Admin jogok</a></li>';}
             echo '</ul>
 						<form class="form-inline my-2 my-lg-0" action=../utility/logout.ut.php>
                       <button class="btn btn-danger my-2 my-sm-0" type="submit">Kijelentkezés</button>

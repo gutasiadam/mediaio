@@ -9,7 +9,7 @@
   <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js">  </script>
   <script src="https://kit.fontawesome.com/2c66dc83e7.js" crossorigin="anonymous"></script>
-  <script src="./utility/_initMenu.js" crossorigin="anonymous"></script>
+  <script src="../utility/_initMenu.js" crossorigin="anonymous"></script>
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Arpad Media IO</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">

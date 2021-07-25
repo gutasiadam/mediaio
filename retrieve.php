@@ -21,134 +21,7 @@ function PhparrayCookie(){
     echo $x . " ";
   }
 }
-/*
-  // Database initialization - Get's total item number in the database and estabilishes connection.
-	$serverName="localhost";
-	$userName="root";
-	$password=$application_DATABASE_PASS;
-	$dbName="mediaio";
-	$countOfRec=0;
-
-	$conn = new mysqli($serverName, $userName, $password, $dbName);
-
-	if ($conn->connect_error) {
-		die("Connection fail: (Is the DB server maybe down?)" . $conn->connect_error);
-	}
-	$sql = "SELECT * FROM leltar";
-	$result = $conn->query($sql);
-
-if ($result->num_rows > 0) {
-    //Outputs data of each row
-    //Displays amount of records found in leltar_master DB
-    while($row = $result->fetch_assoc()) {
-		$countOfRec += 1;
-	}
-} else {
-    echo "0 results";
-}
-$conn->close();
-
-//CHECK WETHER SELECTED ITEM IS OUT OR NAH
-
-//ECHO CODES
-// 1: successful row, AND SESSION match
-// 0: Error in row fetch
-// 2: successful row, BUT no SESSION match, should go to table 2.
-if(isset($_POST['takeoutCheck'])){
-  $checkitem= json_decode(stripslashes($_POST['takeoutCheck']));
-  $conn = new mysqli($serverName, $userName, $password, 'mediaio');
-  $sqlPreCheck = ("SELECT `leltar`.`Nev`, `leltar`.`Status`, leltar.RentBy
-  FROM `leltar`
-  WHERE (( `Status` = 0) AND ( `Nev` = '$checkitem')) LIMIT 1");
-  $preResult = $conn->query($sqlPreCheck);
-  $rowData = mysqli_fetch_array($preResult);
-  $rowNumReturn = $preResult->num_rows;
-  
-  if ($rowNumReturn == 1){
-    if ($rowData['RentBy'] == $SESSuserName){
-      setcookie("currentItemRentByMatch", "MATCH", time() + (1000), "/");
-      echo "1";
-    }
-    if ($rowData['RentBy'] != $SESSuserName){
-      setcookie("currentItemRentByMatch", $rowData['RentBy'] , time() + (1000), "/");
-      setcookie("currentRentby", $rowData['RentBy'], time() + (1000), "/");
-      echo "2";
-    }
-    
-  }if ($rowNumReturn == 0){
-    echo "0";
-  }
-  $conn->close();
-  exit;
-}
-
-//AuthCode Check
-if(isset($_POST['authCheck'])){
-  $authItemName = $_COOKIE["currentVerifItem"];
-  $check_authCode= json_decode(stripslashes($_POST['authCheck']));
-  $conn = new mysqli($serverName, $userName, $password, 'mediaio');
-  $sqlPreCheck = ("SELECT `authcodedb`.`Code`, `authcodedb`.`Item`
-  FROM `authcodedb`
-  WHERE  `Code` = '$check_authCode' AND `Item` = '$authItemName'");
-  $preResult = $conn->query($sqlPreCheck);
-  $rowData = mysqli_fetch_array($preResult);
-  $rowNumReturn = $preResult->num_rows;
-  
-  if ($rowNumReturn == 1){
-    $currDate = date("Y/m/d H:i:s");
-    // Code Exists, prepare retrieve procedure.
-    
-    $sql = ("UPDATE `leltar` SET `Status` = '1', `RentBy` = NULL, `AuthState` = NULL WHERE `leltar`.`Nev` = '$authItemName';");
-    $sql.= ("DELETE FROM authcodedb WHERE Item = '$authItemName';");
-    $sql.= ("INSERT INTO takelog (`ID`, `takeID`, `Date`, `User`, `Item`, `Event`) VALUES (NULL, '1', '$currDate', '$SESSuserName', '$authItemName', 'INwA')");
-    if (!$conn->multi_query($sql)) {
-      echo "Multi query fail!: (" . $conn->errno . ") " . $conn->error;
-    }else{
-      echo "Success";
-    }
-  }
-  if ($rowNumReturn == 0){
-    //Invalid code, throws an error.
-    echo "Non-exist authCode";
-  }
-  $conn->close();
-  exit;
-}
-
-
-// IF VERYTHING IS GOOD, WRITE TO DB
-if( isset($_POST['data'])){
-  $data = json_decode(($_POST['data']), true);
-  $dbName="mediaio";
-  foreach ($data as $d){
-    $conn = new mysqli($serverName, $userName, $password, $dbName);
-    $currDate = date("Y/m/d H:i:s");
-	if ($conn->connect_error) {
-    die("Connection fail: (Is the DB server maybe down?)" . $conn->connect_error);
-  }
-  else{  
-    $sql = ("INSERT INTO takelog (`ID`, `takeID`, `Date`, `User`, `Item`, `Event`) VALUES (NULL, '1', '$currDate', '$SESSuserName', '$d', 'IN')");
-    $result = $conn->query($sql);
-    
-    if ($result === TRUE) {
-      $conn = new mysqli($serverName, $userName, $password, 'mediaio');
-      $sql2 = ("UPDATE `leltar` SET `Status` = '1', `RentBy` = NULL, `AuthState` = NULL WHERE `Nev`='$d';");
-      $sql2.= ("DELETE FROM authcodedb WHERE Item = '$d'");
-      if (!$conn->multi_query($sql2)) {
-        echo "Multi query fail!: (" . $conn->errno . ") " . $conn->error;
-      }else{
-        echo "Success.";
-      }
-      $conn->close();
-  } else {
-      echo "Error: " . $sql . "<br>" . $conn->error;
-  }
-    }
-  echo $d;
-  }
-  
-  exit;
- }*/?>
+?>
 <script>
 var goStatus = 0;
 
@@ -170,9 +43,10 @@ var goStatus = 0;
               drawMenuItemsLeft('retrieve',menuItems);
             });
             </script>
-            <li><a class="nav-link disabled" href="#">⏳:<span id="time"><?php echo $nav_timeLock_StartValue;?></span></a></li>
+            </ul>
+            <ul class="navbar-nav navbarPhP"><li><a class="nav-link disabled timelock" href="#">⌛ <span id="time"> 10:00 </span></a></li>
             <?php if (($_SESSION['role']=="Admin") || ($_SESSION['role']=="Boss")){
-              echo '<li><a class="nav-link disabled" href="#">Admin jogokkal rendelkezel</a></li>';}?>
+              echo '<li><a class="nav-link disabled" href="#">Admin jogok</a></li>';}?>
 					  </ul>
 						<form class="form-inline my-2 my-lg-0" action=utility/logout.ut.php>
                       <button class="btn btn-danger my-2 my-sm-0" type="submit"><?php echo $nav_logOut;?></button>
@@ -208,10 +82,10 @@ var goStatus = 0;
 </div></div>
       </div>
       <br>
-          <div class="row">
+          <div class="row justify-content-md-center">
           <!-- THIS TABLE HOLDS THE TWO CHILDS-->
-            <div class="col-md-6"><table class="table table-bordered table-dark" style="line-height: 10px;" id="dynamic_field"><tr><div style="text-align:center;" class="text-primary"><strong><?php echo $retrieve_table1;?> </strong></div></tr></table></div>
-            <div class="col-md-6"><table class="table table-bordered table-dark" style="line-height: 30px;" id="dynamic_field_2"><tr><div style="text-align:center;" class="text-primary"><strong><?php echo $retrieve_table2;?></strong></div></tr></table></div>
+            <div class="col-md-6"><table class="table table-bordered table-dark" style="line-height: 10px;" id="dynamic_field"><tr><div style="text-align:center;" class="text-primary"><strong></hr></strong></div></tr></table></div>
+            <!--<div class="col-md-6"><table class="table table-bordered table-dark" style="line-height: 30px;" id="dynamic_field_2"><tr><div style="text-align:center;" class="text-primary"><strong><?php //echo $retrieve_table2;?></strong></div></tr></table></div>-->
           </div>
           
 						
@@ -328,14 +202,20 @@ window.onload = function () {
     });
       console.log('filterelt:'+filtered);
       retrieveJSON = JSON.stringify(filtered);
-      alert("retrieve ajax:"+retrieveJSON);
+      //alert("retrieve ajax:"+retrieveJSON);
       $.ajax({
     method: 'POST',
     url: './utility/Retrieve_Handler.php',
     data: {data : retrieveJSON, mode: "handle"},
     success: function (response){
-      alert(response);
-      location.reload();
+      //alert(response);
+      $('#doTitle').animate({'opacity': 0}, 400, function(){
+        $(this).html('<h2 class="text text-info" role="success">Sikeresen visszakerültek a tárgyak 🙂! Az oldal újratölt.</h2>').animate({'opacity': 1}, 400);
+        $(this).html('<h2 class="text text-info" role="success">Sikeresen visszakerültek a tárgyak 🙂! Az oldal újratölt.</h2>').animate({'opacity': 1}, 3000);
+        $(this).html('<h2 class="text text-info" role="success">Sikeresen visszakerültek a tárgyak 🙂! Az oldal újratölt.</h2>').animate({'opacity': 0}, 400);
+        setTimeout(function() { $("#doTitle").text(applicationTitleShort).animate({'opacity': 1}, 400); }, 3800);;   
+    });
+    setTimeout(function() { location.reload(); }, 2000);
     },
     error: function(XMLHttpRequest, textStatus, errorThrown) { 
         alert("Status: " + textStatus); alert("Error: " + errorThrown); 
@@ -347,7 +227,7 @@ window.onload = function () {
   
   $(document).on('click', '.add_btn', function(){
 
-    console.log("CLICK!"+id);
+    //console.log("CLICK!"+id);
     
     //CSAK AKKOR Működhet GOMB, HA AZ INTACTFORM KI LETT PIPÁLVA.
     
@@ -375,12 +255,23 @@ window.onload = function () {
           selectList[id-2]=currentItemSel; // bekerülhet az előkészítítő listába.
           break;
         case "B":
-          // code block
           console.log("B: A felhasználó egy bennlévő tárgyra hivatkozott.");
+          $('#doTitle').animate({'opacity': 0}, 400, function(){
+        $(this).html('<h2 class="text text-info" role="alert">A keresett tárgy benn van.</h2>').animate({'opacity': 1}, 400);
+        $(this).html('<h2 class="text text-info" role="alert">A keresett tárgy benn van.</h2>').animate({'opacity': 1}, 3000);
+        $(this).html('<h2 class="text text-info" role="alert">A keresett tárgy benn van.</h2>').animate({'opacity': 0}, 400);
+        setTimeout(function() { $("#doTitle").text(applicationTitleShort).animate({'opacity': 1}, 400); }, 3800);;   
+    }); 
           break;
         case "C":
           console.log("C: A felhasználó egy más által kivett tárgyra mutat.");
-          $('#dynamic_field_2').append('<tr id="row'+id+'"><td>'+currentItemSel+'<br><small>Nem nálad van!</small></td><td>Ez a szolgáltatás átmenetileg nem elérhető. Csak a saját tárgyaidat tudod visszahozni.</td><td><button type="button" class="verify_btn btn-success" name="verify" id="'+id+'" class="btn btn-success disabled btnsucc'+id+' btn_auth">+</button></td><td><button type="button" name="remove" id="'+id+'" class="btn btn-danger btn'+id+' btn_remove">X</button></td></tr>');
+          $('#doTitle').animate({'opacity': 0}, 400, function(){
+        $(this).html('<h2 class="text text-info" role="alert"><strong>Nem nálad van! </strong> Csak a saját tárgyaidat tudod visszahozni.</h2>').animate({'opacity': 1}, 400);
+        $(this).html('<h2 class="text text-info" role="alert"><strong>Nem nálad van! </strong> Csak a saját tárgyaidat tudod visszahozni.</h2>').animate({'opacity': 1}, 3000);
+        $(this).html('<h2 class="text text-info" role="alert"><strong>Nem nálad van! </strong> Csak a saját tárgyaidat tudod visszahozni.</h2>').animate({'opacity': 0}, 400);
+        setTimeout(function() { $("#doTitle").text(applicationTitleShort).animate({'opacity': 1}, 400); }, 3800);;   
+    }); 
+          /*$('#dynamic_field_2').append('<tr id="row'+id+'"><td>'+currentItemSel+'<br><small>Nem nálad van!</small></td><td>Csak a saját tárgyaidat tudod visszahozni.</td>/tr>');*/
           //Hibás currentRentby..
 
           //$('#dynamic_field_2').append('<tr id="row'+id+'"><td>'+currentItemSel+'<br><small>'+currentRentby+'</small></td><td><form><div class="form-group"><input type="number" class="form-control" id="authCodeInput'+id+'" placeholder="XXX-XXX"><input type="hidden" id="authCodeItem'+id+'" class="form-control" value='+currentItemSel+'></input></div></form></td><td><button type="button" class="verify_btn btn-success" name="verify" id="'+id+'" class="btn btn-success btnsucc'+id+' btn_auth">+</button></td><td><button type="button" name="remove" id="'+id+'" class="btn btn-danger btn'+id+' btn_remove">X</button></td></tr>');
@@ -389,6 +280,7 @@ window.onload = function () {
         console.log("Egyik sem. Hiba.");
           // code block
 }
+      $('#id_itemNameAdd').val('');
       //alert("response from check:"+response);
       //location.reload();
 
@@ -401,80 +293,10 @@ window.onload = function () {
 id++;
 });
 
-// AUTHCODE (átmenetileg NEM használt funkció)
+// AUTHCODE (kikerülőben levő funkció)
 //On Verify Btn click
 
-$(document).on('click', '.verify_btn', function(){
-    var button_id = $(this).attr("id");
-
-    var check_authCodeInput = document.getElementById("authCodeInput"+button_id).value;
-    console.log("IN! Code to verify : "+check_authCodeInput+" with a CodeItem value of"+needsVerification[button_id]);
-
-    if (check_authCodeInput == ""){
-      $('#doTitle').animate({'opacity': 0}, 400, function(){
-        $(this).html('<h2 class="text text-info" role="alert"><strong>Warn: </strong>'+retrieve_no_AuthCode_given+'</h2>').animate({'opacity': 1}, 400);
-        $(this).html('<h2 class="text text-info" role="alert"><strong>Warn: </strong>'+retrieve_no_AuthCode_given+'</h2>').animate({'opacity': 1}, 3000);
-        $(this).html('<h2 class="text text-info" role="alert"><strong>Warn: </strong>'+retrieve_no_AuthCode_given+'</h2>').animate({'opacity': 0}, 400);
-        setTimeout(function() { $("#doTitle").text(applicationTitleShort).animate({'opacity': 1}, 400); }, 3800);;   
-    }); 
-      /*document.getElementById("doTitle").innerHTML = '<h6 class="alert alert-warning" role="alert">Nem adtál meg kódot!</h6>';
-          setTimeout(function() { $("#doTitle").text("Arpad Media IO"); }, 3000);;*/
-      //setTimeout(function() { $("#doTitle").text("Arpad Media IO"); }, 3500);;
-      document.getElementById("row"+button_id).animate([
-  // keyframes
-  { color: 'white' }, 
-  { color: 'red' },
-  { color: 'white' }
-], { 
-  // timing options
-  duration: 5000,
-  iterations: 3
-  });
-    }else{
-    // Prepare ajax call, and verification of the given code BIG ASS AJAX SHIfT
-    document.cookie = "currentVerifItem = "+needsVerification[needsVerification.length - 1];
-    //document.cookie = "Cookie_currentItemSel = "+currentItemSel;
-    authCheckJSON = JSON.stringify(check_authCodeInput);
-    console.log("JSON:"+authCheckJSON);
-    $.ajax({
-    //url: 'utility/Takeout_Handler.php',
-    type: 'POST',
-    data: {authCheck : authCheckJSON},
-    //dataType: 'json',
-    success: function (res) {
-          
-          var tempAuthCheck = res;
-          console.log("Tempcheck: " + tempAuthCheck);
-          if (tempAuthCheck == "Success"){
-          console.log("Auth Successful.");
-          $('#row'+button_id+'').remove();
-          //document.getElementById("doTitle").InnerHTML = '<div class="alert alert-success" role="alert">Sikeresen visszahoztad és felhasználtad a kódot!</div>';
-          $('#doTitle').animate({'opacity': 0}, 400, function(){
-        $(this).html('<h2 class="text text-success" role="alert">'+retrieve_AuthCode_success+'</h2>').animate({'opacity': 1}, 400);
-        $(this).html('<h2 class="text text-success" role="alert">'+retrieve_AuthCode_success+'</h2>').animate({'opacity': 1}, 3000);
-        $(this).html('<h2 class="text text-success" role="alert">'+retrieve_AuthCode_success+'</h2>').animate({'opacity': 0}, 400);
-        setTimeout(function() { $("#doTitle").text(applicationTitleShort).animate({'opacity': 1}, 400); }, 3800);;   
-        }); 
-          }
-          if (tempAuthCheck == 'Non-exist authCode'){
-            console.log("Auth Non-existent.");
-            $('#doTitle').animate({'opacity': 0}, 400, function(){
-        $(this).html('<h2 class="text text-warning" role="alert">'+retrieve_Error_AuthCode_General+'</h2>').animate({'opacity': 1}, 400);
-        $(this).html('<h2 class="text text-warning" role="alert">'+retrieve_Error_AuthCode_General+'</h2>').animate({'opacity': 1}, 3000);
-        $(this).html('<h2 class="text text-warning" role="alert">'+retrieve_Error_AuthCode_General+'</h2>').animate({'opacity': 0}, 400);
-        setTimeout(function() { $("#doTitle").text(applicationTitleShort).animate({'opacity': 1}, 400); }, 3800);;   
-        }); 
-          }
-          if (tempAuthCheck == "Db-error"){
-            console.log("Error");
-          }
-          
-          },
-    error: function(XMLHttpRequest, textStatus, errorThrown) { 
-        alert("Status: " + textStatus); alert("Error: " + errorThrown); 
-    }
-	});}
-  });//Random fix
+//Random fix
   
 	$('#submit').click(function(){		
 		$.ajax({
@@ -630,6 +452,11 @@ function startTimer(duration, display) {
     box-sizing: border-box;
   }
 
+  #dynamic_field td {
+    font-size: xx-large;
+    margin: 0 auto;
+    vertical-align: middle;
+  }
   .btn-info2{color:white;background-color:#000658;border-color:#000658;border-width:2px}.btn-info2:hover{color:black;background-color:#ffffff;border-color:#000658;border-width:2px}
 
   body {
