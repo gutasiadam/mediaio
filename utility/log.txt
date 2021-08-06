@@ -1,3 +1,6 @@
-Softbox tapkabel (adapterrel) 3
-213
+Fresnel allvany C
+9
+Softbox allvany 1
+10
+RUN
 RUN

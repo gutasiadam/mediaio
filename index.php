@@ -264,10 +264,10 @@ $(".login").submit(function(){
   <strong>Kedves <?php echo $_SESSION['firstName'] ?>!</strong> Az oldal <u>folyamatos fejlesztés</u> alatt áll. Ha hibát szeretnél bejelenteni/észrevételed van, írj az arpadmedia.io@gmail.com címre, vagy <a href="mailto:arpadmedia.io@gmail.com?Subject=MediaIO%20Hibabejelent%C3%A9s" target="_top">írj most egy e-mailt!</a>
 </div>
               <h1 align=center class="rainbow">Árpád Média IO</h1>
-                    <div class="row justify-content-center mainRow1" style="text-align: center; width:100%; margin: 0 auto;"></div><br>
-                    <div class="row justify-content-center mainRow2" style="text-align: center; width:100%; margin: 0 auto;"></div><br>
-                    <div class="row justify-content-center mainRow3" style="text-align: center; width:100%; margin: 0 auto;"></div><br>
-                    <div class="row justify-content-center mainRow4" style="text-align: center; width:100%; margin: 0 auto;"></div><br>
+                    <div class="row justify-content-center mainRow1" style="text-align: center; width:100%; max-width: 1000px; margin: 0 auto;"></div><br>
+                    <div class="row justify-content-center mainRow2" style="text-align: center; width:100%; max-width: 1000px; margin: 0 auto;"></div><br>
+                    <div class="row justify-content-center mainRow3" style="text-align: center; width:100%; max-width: 1000px; margin: 0 auto;"></div><br>
+                    <div class="row justify-content-center mainRow4" style="text-align: center; width:100%; max-width: 1000px; margin: 0 auto;"></div><br>
               <footer class="page-footer font-small blue"> <div class="fixed-bottom" align="center"><p></strong><br /> dev: <a href="https://github.com/d3rang3">Gutási Ádám</a>
             </p></div></footer>';
             <script type = "text/javascript">

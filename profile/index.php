@@ -12,7 +12,7 @@
 <script> $( document ).ready(function() {
               menuItems = importItem("../utility/menuitems.json");
               drawMenuItemsLeft("profile",menuItems,2);
-              drawMenuItemsRight('profile',menuItems);
+              drawMenuItemsRight('profile',menuItems,2);
             });</script>
     <?php
     $servername = "localhost";
@@ -68,14 +68,14 @@
                     <tr><td><form action="points.php"><button class="btn btn-success">Pontszámok <i class="fas fa-calculator"></i></button></form></td></tr>
                     <tr><td><form action="../budget/"><button class="btn btn-info">Költségvetés <i class="fas fa-coins"></i></button>
                     </form> </td></tr>';
-                    if($_SESSION['role']=="Boss"){
-                      echo '<tr><td><form action="../utility/refetchData.php"><button class="btn btn-success">Adattáblák frissítése <i class="fas fa-sync"></i></i></button></form></td></tr>';
-                    }
+                    
                     
                     echo '<tr><td><form action="roles.php"><button class="btn btn-danger">Felhasználói engedélyek módosítása <i class="fas fa-radiation"></i></i></button></form></td></tr>
-                    <tr><td><form action="stats.php"><button class="btn btn-dark">Áttekintés <i class="fas fa-chart-pie"></i></i></button></form></td></tr>
-                    
-                    </table>';
+                    <tr><td><form action="stats.php"><button class="btn btn-dark">Áttekintés <i class="fas fa-chart-pie"></i></i></button></form></td></tr>';
+                    if($_SESSION['role']=="Boss"){
+                      echo '<tr><td><form action="../utility/refetchData.php"><button class="btn btn-success">Adattáblák frissítése <i class="fas fa-sync"></i></i></button></form></td></tr>';
+                    } ?>
+                    </table><?php
           }
         }else{
             header("Location: ../index.php?error=AccessViolation");

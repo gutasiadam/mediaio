@@ -1,9 +1,34 @@
 <?php
 session_start();
 include("header.php");
- if (($_SESSION['role']=="Admin") || ($_SESSION['role']=="Boss")){
+ if (($_SESSION['role']=="Admin") || ($_SESSION['role']=="Boss")){ ?>
 
-
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      
+    <a class="navbar-brand" href="../index.php"><img src="../utility/logo2.png" height="50"></a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+  
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+              <ul class="navbar-nav mr-auto navbarUl">
+    </ul>
+    <ul class="navbar-nav navbarPhP">
+    <?php if (($_SESSION['role']=="Admin") || ($_SESSION['role']=="Boss")){ ?>
+      <li><a class="nav-link disabled" href="#">Admin jogok</a></li> <?php  }?>
+    </ul>
+                <form class="form-inline my-2 my-lg-0" action=../utility/logout.ut.php>
+              <button class="btn btn-danger my-2 my-sm-0" type="submit">Kijelentkezés</button>
+              </form>
+              <div class="menuRight"></div>
+            </div>
+  <script> $( document ).ready(function() {
+      menuItems = importItem("../utility/menuitems.json");
+      drawMenuItemsLeft("profile",menuItems,2);
+      drawMenuItemsRight('profile',menuItems,2);
+    });</script>
+</nav>
+<?php
 $search = date('Y-m-d');
 $search2 = date('Y-m-d', strtotime($search. ' - 7 days'));
 

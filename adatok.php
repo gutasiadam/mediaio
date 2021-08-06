@@ -13,6 +13,8 @@ if(!isset($_SESSION['userId'])){
   <script src="utility/_initMenu.js" crossorigin="anonymous"></script>
 </head>-->
 
+
+
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
           <a class="navbar-brand" href="index.php"><img src="./utility/logo2.png" height="50"></a>
 					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -38,6 +40,12 @@ if(!isset($_SESSION['userId'])){
 					  <a class="nav-link my-2 my-sm-0" href="./help.php"><i class="fas fa-question-circle fa-lg"></i></a>
 					</div>
 </nav>
+
+<!--<div id="workingMsg" class="alert alert-warning" style="z-index: 10000; position: relative">
+<p id="workingMsg_2" hidden>
+  <strong>Rendezés... </strong>ez egy kis időt vehet igénybe
+  </p>
+</div>-->
 <!--<div class="form-group">
         <table id="itemSearch" align="left"><tr><td><div class="autocomplete" method="GET">
     				<input id="id_itemNameAdd" type="text" name="add" class="form-control mb-2 mr-sm-2" placeholder='<?php echo $applicationSearchField;?>'></div></td>
@@ -65,7 +73,7 @@ $serverName="localhost";
 	$result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
-	echo "<table width='50' id="."dataTable"." align=center class="."table"."><th onclick=sortTable(0)>UID</th><th onclick=sortTable(1)>Név</th><th onclick=sortTable(2)>Típus</th><th onclick=sortTable(3)>Kivette</th>";
+	echo "<table width='50' id="."dataTable"." align=center class="."table"."><th onclick=sort(0)>UID</th><th onclick=sort(1)>Név</th><th onclick=sort(2)>Típus</th><th onclick=sort(3)>Kivette</th>";
      //output data of each row
     //Displays amount of records found in leltar_master DB
     while($row = $result->fetch_assoc()) {
@@ -251,20 +259,27 @@ function autocomplete(inp, arr) {
 </script>
 
 <script>
+function sort(n){
+  console.log('Working..')
+  sortTable(n);
+}
 //UID, Név, Típus, Kivette 
 function sortTable(n) {
   switch (n) {
     case 1:
-      sMode="név";
+      sMode="tárgynév";
       break;
     case 2:
-      sMode="Típus";
+      sMode="típus";
+      break;
     case 3:
-      sMode="Kivette";
+      sMode='"Kivette"';
+      break;
     default:
       sMode="UID";
+      break;
   }
-  s=sMode;
+  //s=sMode;
   var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
   table = document.getElementById("dataTable");
   switching = true;
@@ -322,10 +337,10 @@ function sortTable(n) {
     }
   }
   $('#doTitle').animate({'opacity': 0}, 400, function(){
-        $(this).html('<h4 class="text text-info" role="alert">Rendezés '+s+' szerint '+dMode+' sorrendben.</h4>').animate({'opacity': 1}, 400);
-        $(this).html('<h4 class="text text-info" role="alert">Rendezés '+s+' szerint '+dMode+' sorrendben.').animate({'opacity': 1}, 100);
-        $(this).html('<h4 class="text text-info" role="alert">Rendezés '+s+' szerint '+dMode+' sorrendben.').animate({'opacity': 0}, 400);
-    setTimeout(function() { $("#doTitle").text("Rendezés "+s+" szerint "+dMode+" sorrendben.").animate({'opacity': 1}, 400); }, 900);;});
+        $(this).html('<h4 class="text text-info" role="alert">Rendezés '+sMode+' szerint '+dMode+' sorrendben.</h4>').animate({'opacity': 1}, 400);
+        $(this).html('<h4 class="text text-info" role="alert">Rendezés '+sMode+' szerint '+dMode+' sorrendben.').animate({'opacity': 1}, 100);
+        $(this).html('<h4 class="text text-info" role="alert">Rendezés '+sMode+' szerint '+dMode+' sorrendben.').animate({'opacity': 0}, 400);
+    setTimeout(function() { $("#doTitle").text("Rendezés "+sMode+" szerint "+dMode+" sorrendben.").animate({'opacity': 1}, 400); }, 900);;});
 }
 </script>
 

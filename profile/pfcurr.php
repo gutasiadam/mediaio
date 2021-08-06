@@ -21,30 +21,30 @@ $serverName="localhost";
   
     </head>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-          <a class="navbar-brand" href="index.php"><img src="../utility/logo2.png" height="50"></a>
+      
+            <a class="navbar-brand" href="../index.php"><img src="../utility/logo2.png" height="50"></a>
 					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 					  <span class="navbar-toggler-icon"></span>
 					</button>
-				  
+          
 					<div class="collapse navbar-collapse" id="navbarSupportedContent">
 					  <ul class="navbar-nav mr-auto navbarUl">
-						<script>
-            $( document ).ready(function() {
-              menuItems = importItem("../utility/menuitems.json");
-              drawMenuItemsLeft('profile',menuItems,2);
-            });
-            </script>
             </ul>
-            <ul class="navbar-nav navbarPhP"><li><a class="nav-link disabled timelock" href="#">⌛ <span id="time"> 10:00 </span></a></li>
-            <?php if (($_SESSION['role']=="Admin") || ($_SESSION['role']=="Boss")){
-              echo '<li><a class="nav-link disabled" href="#">Admin jogok</a></li>';}?>
-					  </ul>
-						<form class="form-inline my-2 my-lg-0" action=utility/logout.ut.php>
+            <ul class="navbar-nav navbarPhP"><li><a class="nav-link disabled timelock" href="#">⌛ <span id="time"> 10:00 </span></a></li>';
+            <?php if (($_SESSION['role']=="Admin") || ($_SESSION['role']=="Boss")){ ?>
+              <li><a class="nav-link disabled" href="#">Admin jogok</a></li> <?php  }?>
+            </ul>
+						<form class="form-inline my-2 my-lg-0" action=../utility/logout.ut.php>
                       <button class="btn btn-danger my-2 my-sm-0" type="submit">Kijelentkezés</button>
                       </form>
-					  <a class="nav-link my-2 my-sm-0" href="./help.php"><i class="fas fa-question-circle fa-lg"></i></a>
+                      <div class="menuRight"></div>
 					</div>
-</nav>
+          <script> $( document ).ready(function() {
+              menuItems = importItem("../utility/menuitems.json");
+              drawMenuItemsLeft("profile",menuItems,2);
+              drawMenuItemsRight('profile',menuItems,2);
+            });</script>
+    </nav>
     <body>  
         <div class="container">
    <br />
@@ -91,7 +91,7 @@ $serverName="localhost";
               <div class="row">
               <div class="col-4">
                <h2>'. $row["Nev"].'</h2>
-               <p>'. $row["Tipus"].'</p>
+               <p>'. $row["UID"].'</p>
               </div>';
               //$query = "SELECT * FROM `leltar` WHERE RentBy = '$TKI'";
               echo '
@@ -100,29 +100,7 @@ $serverName="localhost";
              '
              
              ;
-            /*echo              
-            '<div class="modal fade" id="a'.$imodal.'" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h5 class="modal-title" id="exampleModalLabel">Generate AuthCode for '.$row["Nev"].'</h5>
-                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
-                </div>
-                <div class="modal-body">
-                  <form action="./pfcurr.php" class="form-group" method=post>
-              <input type="hidden" name="authItem" value="'.$row["Nev"].'"/> 
-              <input type="hidden" name="authGen" value="'.$authGen.'"/> 
-              <h6 id="emailHelp" class="form-text text-muted">Kérlek vedd figyelembe, hogy a generált kódot <strong>bárki</strong> felhasználhatja!
-              A gomb lenyomása után töltsd újra az odlalt!</h6>
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                  <button type="submit" class="btn btn-success authToggle">Generálás</button>
-                  </form>
-            </div>
-                  </div>      
-              </div>
-            </div>*/
+            
             echo '
             <div class="modal fade" id="b'.$imodal.'" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">

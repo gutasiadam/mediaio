@@ -4,10 +4,14 @@ header('Content-type: text/plain');
 require_once('F:/Programming/xampp/htdocs/.git/mediaio/PHPMailer/src/PHPMailer.php');
 $today = new DateTime(date("Y-m-d H:i:s"));
 $todayString=$today->format("Y_m_d_H_i_s");
-$log = fopen(get_include_path()."/logs/$todayString.txt", "w");
-fwrite($log, "Beginning BATCH [".$today->format("Y-m-d H:i:s")."]\n");
+$log = fopen(get_include_path()."/logs/$todayString.txt", "a");
+//$myfile = fopen("testfile.txt", "w")
+echo get_include_path()."/logs/$todayString.txt";
+fwrite($log, "BATCH-folyamat megkezdése [".$today->format("Y-m-d H:i:s")."]\n");
+require '../../PHPMailer/src/SMTP.php';
 use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception; // A batch loghoz majd.
+use PHPMailer\PHPMailer\Exception;
+use PHPMailer\SMTP; // A batch loghoz majd.
 /*Email küldése a következőkről:
 * Több, mint egy hete nem megerősített esemémy
 * Több, mint egy hónapja kivett tárgy, ami nem lett visszahozva.
@@ -28,24 +32,24 @@ function BATCH_notify_Unconfirmed_Events($today,$log){
     $batchName="BATCH_notify_Unconfirmed_Events";
 
     echo "\n".$batchName." service starting, see log for further info.\n";
-    fwrite($log, "\n\n//// ".$batchName." //// \n*** Starting ***\n\n");
+    fwrite($log, "\n\n//// ".$batchName." //// \n*** Kezdés ***\n\n");
 
-    fwrite($log, "\n".$batchName." connecting to database\n");
+    fwrite($log, "\n".$batchName." csatlakozás az adatbázishoz\n");
     $mysqli = new mysqli("localhost", "root", "umvHVAZ%", "mediaio");
 
     //echo "\n".$batchName." service starting\n";
    
 
     $todayFormatted=date_format($today, 'Y-m-d');
-    fwrite($log, "\n".$batchName." query 1 starting\n");
+    fwrite($log, "\n".$batchName." [Query] - starting\n");
     if ($result = $mysqli->query("SELECT *, (date_Created-'$todayFormatted') FROM eventprep WHERE (date_Created-'$todayFormatted')>0")) {
         //Felhasználóknak elküldeni újra az esemény megerősítéséhez szükséges e-mailt:
-        fwrite($log, "\n".$batchName." Select returned $result->num_rows rows.\n");
+        fwrite($log, "\n".$batchName." [Query] - Query returned $result->num_rows rows.\n");
         //printf("Select returned %d rows.\n", $result->num_rows); //Ilyen feltétellel egyező sorok száma
         while($obj = $result->fetch_object()){
             //Minden visszatért objekt ellenőrzése
             echo $obj->date_Created;
-            fwrite($log, "\n".$batchName." query 2 starting\n");
+            fwrite($log, "\n".$batchName." [Query] - starting\n");
             if ($result2 = $mysqli->query("SELECT emailUsers FROM users WHERE usernameUsers='$obj->user'")){ // Második lekérdezés
                 while($obj2 = $result2->fetch_object()){
                 fwrite($log, "\n".$batchName." match, sending  E-mail to $obj2->emailUsers....");
@@ -53,7 +57,7 @@ function BATCH_notify_Unconfirmed_Events($today,$log){
 
                 //E-mail
                 $to=$obj2->emailUsers;
-                $subject = 'MediaIO - Elfelejtetted megerősíteni az eseményt?';
+                $subject = 'Elfelejtetted megerősíteni az eseményt?';
                 $message = '
                 <html>
                 <head>
@@ -62,7 +66,7 @@ function BATCH_notify_Unconfirmed_Events($today,$log){
                 <body>
                 <h3>Kedves '.$obj->user.'!</h3><p>
                 Találtunk egy eseményt, amit már több, mint 2 napja hoztál létre, de még mindig nem erősítettél meg.
-                MIt szeretnél tenni az eseménnyel?</p>
+                Mit szeretnél tenni az eseménnyel?</p>
                 <table style="border: 1px solid black; width: 50%">
                 <tr>
                 <th>Esemény neve</th>
@@ -91,9 +95,9 @@ function BATCH_notify_Unconfirmed_Events($today,$log){
             };// Második lekérdezés ( e-mail) vége
             
             };// Összes esemény vége
-            fwrite($log, "\n".$batchName." query 2 finished\n");
+            fwrite($log, "\n".$batchName." [Query] - finished\n");
         };// Első lekérdezés vége
-        fwrite($log, "\n".$batchName." All queries finished. stopping service\n\n---------\n\n");
+        fwrite($log, "\n".$batchName." completed.\n\n---------\n\n");
     $mysqli->close();
 };
 
@@ -101,7 +105,7 @@ function BATCH_notify_monthItems($today,$log){
     $batchName="BATCH_notify_monthItems";
 
     echo "\n".$batchName." service starting\n";
-    fwrite($log, "\n\n//// ".$batchName." //// \n*** Starting ***\n\n");
+    fwrite($log, "\n\n//// ".$batchName." //// \n*** Kezdés ***\n\n");
     
     $mysqli = new mysqli("localhost", "root", "umvHVAZ%", "mediaio");
     if ($mysqli->connect_errno) {
@@ -117,21 +121,21 @@ function BATCH_notify_monthItems($today,$log){
             //ha igaz, query3: a felhasználó e-mail címének lekérése
             //e-mail
 
-    echo $batchName.": query 1 start..\t [SELECT Nev, RentBy FROM leltar WHERE Status=0]\n";
-    fwrite($log, $batchName.": query 1 start..\t [SELECT Nev, RentBy FROM leltar WHERE Status=0]\n");
+    echo $batchName.": [Query] - SQL:\t [SELECT Nev, RentBy FROM leltar WHERE Status=0]\n";
+    fwrite($log, $batchName.": [Query] - SQL:\t [SELECT Nev, RentBy FROM leltar WHERE Status=0]\n");
 
     if ($query1_result = $mysqli->query("SELECT Nev, RentBy FROM leltar WHERE Status=0")){// Az összes kinn lévő tárgyak felsorolása
         while($query1_obj = $query1_result->fetch_object()){
             // Minden kinn lévő tárgy:
-            echo "$batchName : query 1 obj \tItem: $query1_obj->Nev \t RentBy: $query1_obj->RentBy\n";
-            fwrite($log, "$batchName : query 1 obj \tItem: $query1_obj->Nev \t RentBy: $query1_obj->RentBy\n");
+            echo "$batchName: [Query] - \tItem: $query1_obj->Nev \t RentBy: $query1_obj->RentBy\n";
+            fwrite($log, "$batchName: [Query] - \tItem: $query1_obj->Nev \t RentBy: $query1_obj->RentBy\n");
 
             $query2_query=("SELECT Date, User, Event FROM takelog WHERE Item='$query1_obj->Nev' AND User='$query1_obj->RentBy' AND Event='OUT' ORDER BY Date DESC LIMIT 1");
             if($query2_result=$mysqli->query($query2_query)){ //HA VAN olyan tárgy ami megfelel ennek
                 while($query2_obj = $query2_result->fetch_object()){
 
-                    echo $batchName.": query 2 obj.\n";
-                    fwrite($log, $batchName.": query 2 obj.\n");
+                    echo $batchName.": [Query]\n";
+                    fwrite($log, $batchName.": [Query]\n");
 
                     //Egy tárgyra (feltehetően egy rekord)
                     $query2_item_eventDate=new DateTime($query2_obj->Date); // Új ellenőrizendő dátum
@@ -217,14 +221,29 @@ BATCH_notify_Unconfirmed_Events($today,$log); // BATCH_JOB: Megerősítetlen ese
 //BATCH_JOB: 30 napnál tovább kinn levő tárgyakról e-mailt küldeni a megfelelő személynek.
 BATCH_notify_monthItems($today,$log);
 //fwrite($log, "\nBatch completed on\t".$endTime->format("Y-m-d H:i:s"));
-fwrite($log, "\n\nSending e-mail to admin");
+fwrite($log, "\n\nE-mail küldése az adminnak");
 fclose($log);
 
 
 //Mail to admin:
 /* Create a new PHPMailer object. */
 $mail = new PHPMailer();
+$mail->SMTPOptions = array(
+    'ssl' => array(
+    'verify_peer' => false,
+    'verify_peer_name' => false,
+    'allow_self_signed' => true
+    )
+    );
 
+
+$mail->Mailer = "smtp";
+$mail->SMTPAuth   = TRUE;
+$mail->SMTPSecure = "tls";
+$mail->Port       = 587;
+$mail->Host       = "smtp.gmail.com";
+$mail->Username   = "arpadmedia.io@gmail.com";
+$mail->Password   = "xlr8VGA%";
 /* Set the mail sender. */
 $mail->setFrom('arpadmedia@gmail.com', 'mediaIO cron');
 $mail->CharSet = 'UTF-8';
@@ -236,7 +255,7 @@ $mail->addAddress('gutasi.guti@gmail.com', 'Media Admin');
 $mail->Subject = 'Cron folyamat ['.$today->format("Y/m/d H:i:s").'] elkészült';
 
 /* Set the mail message body. */
-$mail->Body = 'Elkészült egy cron Folyamat a mediaio Szerverén. Csatolva küldöm a LOG-ot.';
+$mail->Body = 'Elkészült egy cron Folyamat a mediaio Szerverén.';
 $mail->AddAttachment(get_include_path()."/logs/$todayString.txt");
 
 /* Finally send the mail. */

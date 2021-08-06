@@ -24,30 +24,30 @@ $serverName="localhost";
   <title>Felhasználói jogok</title>
     </head>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-          <a class="navbar-brand" href="index.php"><img src="../utility/logo2.png" height="50"></a>
+      
+            <a class="navbar-brand" href="../index.php"><img src="../utility/logo2.png" height="50"></a>
 					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 					  <span class="navbar-toggler-icon"></span>
 					</button>
-				  
+          
 					<div class="collapse navbar-collapse" id="navbarSupportedContent">
 					  <ul class="navbar-nav mr-auto navbarUl">
-						<script>
-            $( document ).ready(function() {
-              menuItems = importItem("../utility/menuitems.json");
-              drawMenuItemsLeft('profile',menuItems,2);
-            });
-            </script>
             </ul>
-            <ul class="navbar-nav navbarPhP"><li><a class="nav-link disabled timelock" href="#">⌛ <span id="time"> 10:00 </span></a></li>
-            <?php if (($_SESSION['role']=="Admin") || ($_SESSION['role']=="Boss")){
-              echo '<li><a class="nav-link disabled" href="#">Admin jogok</a></li>';}?>
-					  </ul>
-						<form class="form-inline my-2 my-lg-0" action=utility/logout.ut.php>
+            <ul class="navbar-nav navbarPhP"><li><a class="nav-link disabled timelock" href="#">⌛ <span id="time"> 10:00 </span></a></li>';
+            <?php if (($_SESSION['role']=="Admin") || ($_SESSION['role']=="Boss")){ ?>
+              <li><a class="nav-link disabled" href="#">Admin jogok</a></li> <?php  }?>
+            </ul>
+						<form class="form-inline my-2 my-lg-0" action=../utility/logout.ut.php>
                       <button class="btn btn-danger my-2 my-sm-0" type="submit">Kijelentkezés</button>
                       </form>
-					  <a class="nav-link my-2 my-sm-0" href="./help.php"><i class="fas fa-question-circle fa-lg"></i></a>
+                      <div class="menuRight"></div>
 					</div>
-</nav>
+          <script> $( document ).ready(function() {
+              menuItems = importItem("../utility/menuitems.json");
+              drawMenuItemsLeft("profile",menuItems,2);
+              drawMenuItemsRight('profile',menuItems,2);
+            });</script>
+    </nav>
     <body>  
         <div class="container">
    <br />

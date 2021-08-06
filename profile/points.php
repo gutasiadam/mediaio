@@ -32,30 +32,30 @@ $serverName="localhost";
   
     </head>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-          <a class="navbar-brand" href="index.php"><img src="../utility/logo2.png" height="50"></a>
+      
+            <a class="navbar-brand" href="../index.php"><img src="../utility/logo2.png" height="50"></a>
 					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 					  <span class="navbar-toggler-icon"></span>
 					</button>
-				  
+          
 					<div class="collapse navbar-collapse" id="navbarSupportedContent">
 					  <ul class="navbar-nav mr-auto navbarUl">
-						<script>
-            $( document ).ready(function() {
-              menuItems = importItem("../utility/menuitems.json");
-              drawMenuItemsLeft('profile',menuItems,2);
-            });
-            </script>
             </ul>
-            <ul class="navbar-nav navbarPhP"><li><a class="nav-link disabled timelock" href="#">⌛ <span id="time"> 10:00 </span></a></li>
-            <?php if (($_SESSION['role']=="Admin") || ($_SESSION['role']=="Boss")){
-              echo '<li><a class="nav-link disabled" href="#">Admin jogok</a></li>';}?>
-					  </ul>
-						<form class="form-inline my-2 my-lg-0" action=utility/logout.ut.php>
+            <ul class="navbar-nav navbarPhP"><li><a class="nav-link disabled timelock" href="#">⌛ <span id="time"> 10:00 </span></a></li>';
+            <?php if (($_SESSION['role']=="Admin") || ($_SESSION['role']=="Boss")){ ?>
+              <li><a class="nav-link disabled" href="#">Admin jogok</a></li> <?php  }?>
+            </ul>
+						<form class="form-inline my-2 my-lg-0" action=../utility/logout.ut.php>
                       <button class="btn btn-danger my-2 my-sm-0" type="submit">Kijelentkezés</button>
                       </form>
-					  <a class="nav-link my-2 my-sm-0" href="./help.php"><i class="fas fa-question-circle fa-lg"></i></a>
+                      <div class="menuRight"></div>
 					</div>
-</nav>
+          <script> $( document ).ready(function() {
+              menuItems = importItem("../utility/menuitems.json");
+              drawMenuItemsLeft("profile",menuItems,2);
+              drawMenuItemsRight('profile',menuItems,2);
+            });</script>
+    </nav>
     <body>  
         <div class="container">
    <br />
@@ -137,29 +137,6 @@ $serverName="localhost";
             }
             
     $connect = null;
-      /*if (isset($_POST["points"])){
-        $serverName = "localhost";
-        $dbUserName = "root";
-        $dbPassword = "umvHVAZ%";
-        $dbDatabase = "loginsystem";
-        
-        $score = $_POST["points"];
-        $score_User = $_POST['user'];
-        $def_points= $_POST["currentpoints"];
-        $newScore=floatval($score+$def_points);
-            $conn = new mysqli($serverName, $dbUserName, $dbPassword, $dbDatabase);
-              if ($conn->connect_error){
-                die("Connection failed: ".mysqli_connect_error());}
-        $SQL = ("UPDATE `users` SET `UserPoints` = '$newScore' WHERE `users`.`userNameUsers` = '$score_User'");
-        $WriteResult = $conn->query($SQL);
-        /*if ($WriteResult==TRUE){
-            echo "SIKER";
-        }
-        else{
-            echo "OOF";
-        }*/
-      #}
-
 ?>
     </body>  
 </html>
@@ -197,26 +174,6 @@ function submitData(val) {
     });
 }
 
-/*$(document).on('click', '#authToggle', function(){
-      var pointUpdate = document.getElementById('PValue').value;
-      var userUpdate = document.getElementById('user').value;
-      var pointsCurrent = document.getElementById('currentpoints').value;
-      alert(pointUpdate+userUpdate+pointsCurrent);
-      var newScore= (parseFloat(pointUpdate)+parseFloat(pointsCurrent)).toFixed(2);
-      alert(newScore);
-      $.ajax({
-    type: 'POST',
-    url: "./pointUpdate.php",
-    data: {newScore:parseFloat(newScore), userUpdate:userUpdate},
-    success: function (response) {
-     alert(response);
-    //document.getElementById("mainTitle").innerHTML = "Ponttábla";
-    },//window.location.href = './takeout.php?state=Success';;
-    error: function(XMLHttpRequest, textStatus, errorThrown) { 
-        alert("Status: " + textStatus); alert("Error: " + errorThrown); 
-    }
-})
-    });*/
 
 function startTimer(duration, display) {
     var timer = duration, minutes, seconds;
