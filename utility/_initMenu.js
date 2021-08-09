@@ -54,9 +54,9 @@ console.log("_initMenu file called, loading...");
         //draw item on top side
          //console.log(menuItems.menu.left[i]);
          if (menuItems.menu.left[i].name == activeName){
-          $('.navbarUl').append('<li class="nav-item active imported"><a class="nav-link" href="'+(".").repeat(jumpupFolderStruct)+menuItems.menu.left[i].href+'"><i class="'+menuItems.menu.left[i].icon+'"></i></a></li>');
+          $('.navbarUl').append('<li class="nav-item active imported"><a class="nav-link" href="'+("../").repeat(jumpupFolderStruct-1)+menuItems.menu.left[i].href+'"><i class="'+menuItems.menu.left[i].icon+'"></i></a></li>');
          }else{
-          $('.navbarUl').append('<li class="nav-item imported"><a class="nav-link" href="'+(".").repeat(jumpupFolderStruct)+menuItems.menu.left[i].href+'"><i class="'+menuItems.menu.left[i].icon+'"></i></a></li>');
+          $('.navbarUl').append('<li class="nav-item imported"><a class="nav-link" href="'+("../").repeat(jumpupFolderStruct-1)+menuItems.menu.left[i].href+'"><i class="'+menuItems.menu.left[i].icon+'"></i></a></li>');
          }
          }};
         function drawMenuItemsRight(activeName,menuItems,jumpupFolderStruct=1){
@@ -66,9 +66,9 @@ console.log("_initMenu file called, loading...");
                     //draw item on top side
                      console.log(menuItems.menu.right[i]);
                      if (menuItems.menu.right[i].name == activeName){
-                      $('.menuRight').append('<a class="nav-link my-2 my-sm-0 active" href="'+(".").repeat(jumpupFolderStruct)+menuItems.menu.right[i].href+'"><i class="'+menuItems.menu.right[i].icon+'"></i></a>');
+                      $('.menuRight').append('<a class="nav-link my-2 my-sm-0 active" href="'+("../").repeat(jumpupFolderStruct-1)+menuItems.menu.right[i].href+'"><i class="'+menuItems.menu.right[i].icon+'"></i></a>');
                      }else{
-                      $('.menuRight').append('<a class="nav-link my-2 my-sm-0" href="'+(".").repeat(jumpupFolderStruct)+menuItems.menu.right[i].href+'"><i class="'+menuItems.menu.right[i].icon+'"></i></a>');
+                      $('.menuRight').append('<a class="nav-link my-2 my-sm-0" href="'+("../").repeat(jumpupFolderStruct-1)+menuItems.menu.right[i].href+'"><i class="'+menuItems.menu.right[i].icon+'"></i></a>');
                      } 
             }}else{
                 console.log("menItems not defined!")

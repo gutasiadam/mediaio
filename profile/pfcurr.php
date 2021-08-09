@@ -57,7 +57,7 @@ $serverName="localhost";
         $TKI = $_SESSION['UserUserName'];    
         $conn = new mysqli($serverName, $userName, $password, $dbName);
         $sql = ("SELECT * FROM `leltar` WHERE `RentBy` = '$TKI'");
-        $result = $result = mysqli_query($conn, $sql);
+        $result = mysqli_query($conn, $sql);
         $conn->close();
         echo '<h3 class="panel-title">'.$_SESSION['firstName'].', ezek a tárgyak vannak most nálad:</h3>
         </div>
@@ -122,7 +122,9 @@ $serverName="localhost";
               <h6 id="emailHelp" class="form-text text-muted">A kipipálással igazolom, hogy amit visszahoztam sérülésmentes, és kifogástalanul működik. Sérülés esetén azonnal jelezd azt a vezetőségnek.</h6>
               <button type="button" class="btn btn-secondary" data-dismiss="modal">❌</button>
                   <button type="submit" id="'.$imodal.'" onClick="reply_click(this.id)" class="btn go_btn btn-success disabled">☑</button>
+                  <a href="../utility/damage_report/annouce_Damage.php" class="btn go_btn btn-warning">Problémát jelentek be</a>
                   </form>
+                  
                   <p class="sysResponse"> </p>
             </div>
                   </div>      
