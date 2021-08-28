@@ -9,7 +9,8 @@
 ?>
 <!DOCTYPE html>
 <body>
-                <?php 
+                <?php
+
 
 
                 if(isset($_SESSION['userId'])){
@@ -274,7 +275,7 @@ $(".login").submit(function(){
             $( document ).ready(function() {             
               //WebSocketTest();
               drawMenuItemsRight('index',menuItems);
-              drawIndexTable(menuItems);
+              drawIndexTable(menuItems,0);
             });
             </script>
             <?php }
