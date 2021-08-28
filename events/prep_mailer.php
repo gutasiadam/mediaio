@@ -1,7 +1,12 @@
 <?php
 require_once('../PHPMailer/src/PHPMailer.php');
+include ('../network/ip.php');
+
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
+
+
+
 $mail = new PHPMailer(true);
 $to = $_SESSION['email'];
 $mail->From = "arpadmedia.io@gmail.com";
@@ -29,9 +34,10 @@ $mail->Body= '
  <td>'.$_POST['title'].'</h6>'.'</td><td>'.$_POST['start'].'</td><td>'.$_POST['end'].'</td></tr>
  </table>
 Kérlek ellenőrizd az az adatokat, mielőtt jóváhagyod az eseményt.
-Ha az esemény adatait hibásan adtad meg, <a href="http://80.99.70.46/.git/mediaio/events/prepFinalise.php?secureId='.$secureId.'&mode=del">kattints ide ❌</a>
-<h2><a href="http://80.99.70.46/.git/mediaio/events/prepFinalise.php?secureId='.$secureId.'&mode=add">Esemény hozzáadása ✔</a></h2>
+Ha az esemény adatait hibásan adtad meg, <a href="http://'.$ip_address.'/.git/mediaio/events/prepFinalise.php?secureId='.$secureId.'&mode=del">kattints ide ❌</a>
+<h2><a href="http://'.$ip_address.'/.git/mediaio/events/prepFinalise.php?secureId='.$secureId.'&mode=add">Esemény hozzáadása ✔</a></h2>
   <h5>Üdvözlettel: <br> Arpad Media Admin</h5>
+'.$ip_address.'
 </body>
 </html>
 ';

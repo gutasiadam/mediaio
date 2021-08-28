@@ -165,7 +165,18 @@ $('#clear').click(function (e) {
 takeOutPrepJSON = {
   'items':[]
 }
+
+function deselect_node(ID){
+  $("#jstree").jstree("deselect_node", ID);
+  //Elem törlése a kijelölt elemek közül.
+  var tmp_filtered = $.grep(takeOutPrepJSON['items'], function(e){ 
+     return e.id != ID; 
+});
+takeOutPrepJSON['items']=tmp_filtered;
+}
+
 $('#jstree').on("changed.jstree", function (e, data) {
+
   len=$('#jstree').jstree().get_selected(true).length
   for (i=0; i < len; i++){
     itemName=$('#jstree').jstree().get_selected(true)[i].text
@@ -177,7 +188,7 @@ $('#jstree').on("changed.jstree", function (e, data) {
     takeOutPrepJSON.items[i]=itemArr;
     //takeOutPrepJSON.items[i].name=$('#jstree').jstree().get_selected(true)[i].text
     //takeOutPrepJSON.items[i].id=$('#jstree').jstree().get_selected(true)[i].id
-    console.log("takeOutPrepJSON:"+takeOutPrepJSON);
+    console.log("takeOutPrepJSON:"+takeOutPrepJSON.items);
   }
     }).jstree();
 
@@ -191,9 +202,16 @@ $('#jstree').on('changed.jstree', function (e, data) {
   var list = $('#output')
   list.empty()
   $.each(leaves, function (i, o) {
-    $('<li/>').text(o.text).appendTo(list)
+    iName=o.text
+    //console.log(i,o);
+    //$('<li/>').appendTo(list);
+    toAdd=o.text+' <button class="btn btn-danger removeSelection" onclick="deselect_node('+o.id+')" id="deselectBtn_'+i+'">X</button>';
+    //console.log(toAdd);
+    $('<li/>').html(toAdd).appendTo(list);
   })
 })
+
+
 
 $('#jstree').jstree().refresh();
 

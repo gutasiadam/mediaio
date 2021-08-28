@@ -50,7 +50,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
-<div class="printonly" style="margin: 0 auto; padding-top: 50px;  text-align: center; display: none;"><div id="date"><?php echo date("Y/m/d"); ?></div></div>
+<div class="date" style="margin: 0 auto; padding-top: 50px;  text-align: center;"><div id="date"><?php echo date("Y/m/d"); ?></div></div>
 <div style="margin: 0 auto; padding-top: 50px;  text-align: center;"><button class="btn btn-warning noprint" data-toggle="modal" data-target="#budgetModal">Tétel hozzáadása</button></div>
 <div class="two_col">
 <div>

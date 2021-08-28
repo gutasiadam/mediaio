@@ -85,10 +85,11 @@ $serverName="localhost";
               }
                 ?>
               </select>
-              <form action='<?php __FILE__ ?>' method="post" enctype="multipart/form-data" disabled>Tölts fel egy képet a hibáról:
-            <input disabled type="file" name="fileToUpload" id="fileToUpload">
-            <input disabled type="submit" value="Felöltés" name="submit">
-            </form>
+              <form action="../upload-image.php" method="post" enctype="multipart/form-data">
+  Select image to upload:
+  <input type="file" name="fileToUpload" id="fileToUpload">
+  <input type="submit" value="Upload Image" name="submit">
+</form>
             <div class="form-group">
               <label for="message-text" class="col-form-label">Leírás (mi történt pontosan?)</label>
               <textarea class="form-control" id="err_description_long"></textarea>
@@ -153,6 +154,25 @@ input.on('keydown', function () {
 function doneTyping () {
   //do something
   document.getElementById("error_description").innerHTML = document.getElementById("err_description_long").value;
+}
+
+function upload_image(){
+  document.getElementById("mailSendState").innerHTML="E-mail küldése...";
+  $.ajax({
+    method: 'POST',
+    url: './send_damage_report.php',
+    data: {data :mailJSON},
+    success: function (response){
+      //alert('Válasz:'+response);
+      document.getElementById("mailSendState").innerHTML =('Sikeres művelet! Az oldal hamarosan újratölt.');
+      setTimeout(function(){location.reload();},5000);
+    },
+    error: function(XMLHttpRequest, textStatus, errorThrown) { 
+      document.getElementById("mailSendState").innerHTML =("Hiba: " + errorThrown); 
+        setTimeout(function(){location.reload();},5000);
+    }
+    
+});
 }
 
 

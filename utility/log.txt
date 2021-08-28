@@ -1,6 +1,3 @@
-Fresnel allvany C
-9
-Softbox allvany 1
-10
-RUN
+Fresnel 1000W
+1
 RUN

@@ -40,7 +40,22 @@ if(!isset($_SESSION['userId'])){
 					  <a class="nav-link my-2 my-sm-0" href="./help.php"><i class="fas fa-question-circle fa-lg"></i></a>
 					</div>
 </nav>
-
+<form>
+Ezeket a tárgyakat mutasd:
+<div class="form-check form-check-inline">
+  <input class="form-check-input" type="checkbox" name="toDisplay1" id="inlinea" value="1">
+  <label class="form-check-label" for="inlinea">Kölcsönözhető</label>
+</div>
+<div class="form-check form-check-inline">
+  <input class="form-check-input" type="checkbox" name="toDisplay2" id="inlineb" value="2">
+  <label class="form-check-label" for="inlineb">Stúdiós</label>
+</div>
+<div class="form-check form-check-inline">
+  <input class="form-check-input" type="checkbox" name="toDisplay3" id="inlinec" value="3">
+  <label class="form-check-label" for="inlinec">Nem Kölcsönözhető</label>
+</div>
+<button class="btn btn-success my-2 my-sm-0" type="submit">Mehet</button>
+</form>
 <!--<div id="workingMsg" class="alert alert-warning" style="z-index: 10000; position: relative">
 <p id="workingMsg_2" hidden>
   <strong>Rendezés... </strong>ez egy kis időt vehet igénybe
@@ -48,7 +63,7 @@ if(!isset($_SESSION['userId'])){
 </div>-->
 <!--<div class="form-group">
         <table id="itemSearch" align="left"><tr><td><div class="autocomplete" method="GET">
-    				<input id="id_itemNameAdd" type="text" name="add" class="form-control mb-2 mr-sm-2" placeholder='<?php echo $applicationSearchField;?>'></div></td>
+    				<input id="id_itemNameAdd" type="text" name="add" class="form-control mb-2 mr-sm-2" placeholder=''></div></td>
             <td><button type="button" name="add" id="keres1" class="btn btn-info2 add_btn mb-2 mr-sm-2">Keress</button> </button>     <span id='sendQueryButtonLoc'></span></td>-->
   			<td><h4 id="doTitle">Rendezés név szerint növekvő sorrendben</h4></td></tr></table>
 <?php 
@@ -69,7 +84,35 @@ $serverName="localhost";
 	if ($conn->connect_error) {
 		die("Connection fail: (Is the DB server maybe down?)" . $conn->connect_error);
 	}
-	$sql = "SELECT * FROM leltar ORDER BY Nev ASC";
+  $displayed="";
+  $sql= 'SELECT * FROM leltar WHERE';
+  if ($_GET['toDisplay1']==1){//Kölcsönözhető
+    $sql = $sql.' TakeRestrict=""';
+    $displayed=$displayed." Kölcsönözhető";
+  }
+  if ($_GET['toDisplay2']==2){//Stúdiós
+    if (isset($_GET['toDisplay1'])){
+      $sql = $sql.' OR TakeRestrict="s"';
+      $displayed=$displayed.", Stúdiós";
+    }else{
+      $sql = $sql.' TakeRestrict="s"';
+      $displayed=$displayed." Stúdiós";
+    }
+    
+  }
+  if ($_GET['toDisplay3']==3){//Nem kölcsönözhető
+    if (isset($_GET['toDisplay1']) || isset($_GET['toDisplay2'])){
+      $sql = $sql.' OR TakeRestrict="*"';
+      $displayed=$displayed.", Nem kölcsönözhető";
+    }else{
+      $sql = $sql.' TakeRestrict="*"';
+      $displayed=$displayed."Nem kölcsönözhető";
+    }
+  }
+  $sql= $sql." ORDER BY Nev ASC";
+  $displayed=$displayed." tárgyak mutatása.";
+  echo $displayed;
+	
 	$result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
