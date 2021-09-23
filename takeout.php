@@ -115,9 +115,9 @@ xobj.onreadystatechange = function () {
       if (xobj.readyState == 4 && xobj.status == "200") {
         // Required use of an anonymous callback as .open will NOT return a value but simply returns undefined in asynchronous mode
         callback(xobj.responseText);
-        console.log(xobj.responseText);
+        //console.log(xobj.responseText);
         d=JSON.parse(xobj.responseText);
-        setTimeout(function(){ console.log(JSON.parse(xobj.responseText));; }, 500);
+        //setTimeout(function(){ //console.log(JSON.parse(xobj.responseText));; }, 500);
       }
 };
 xobj.send(null);  
@@ -135,6 +135,9 @@ loadJSON(function(response) {
 for (let i = 0; i < d.length; i++) {
   renameKey(d[i],'Nev','text');
   renameKey(d[i],'ID','id');
+  renameKey(d[i],'UID','uid');
+  //alert(d[i].uid);
+  d[i].text=d[i].text+' - '+d[i].uid;
 }
 
  
@@ -165,7 +168,7 @@ $('#clear').click(function (e) {
 takeOutPrepJSON = {
   'items':[]
 }
-
+ 
 function deselect_node(ID){
   $("#jstree").jstree("deselect_node", ID);
   //Elem törlése a kijelölt elemek közül.
@@ -179,12 +182,14 @@ $('#jstree').on("changed.jstree", function (e, data) {
 
   len=$('#jstree').jstree().get_selected(true).length
   for (i=0; i < len; i++){
-    itemName=$('#jstree').jstree().get_selected(true)[i].text
-    itemId=$('#jstree').jstree().get_selected(true)[i].id
+    itemName=$('#jstree').jstree().get_selected(true)[i].original.text;
+    itemId=$('#jstree').jstree().get_selected(true)[i].id;
+    //itemUid=$('#jstree').jstree().get_selected(true)[i].uid;
     //var item = takeOutPrepJSON[i];   
     itemArr={};
     itemArr.name=itemName;
     itemArr.id=itemId;
+    //itemArr.uid=itemUid;
     takeOutPrepJSON.items[i]=itemArr;
     //takeOutPrepJSON.items[i].name=$('#jstree').jstree().get_selected(true)[i].text
     //takeOutPrepJSON.items[i].id=$('#jstree').jstree().get_selected(true)[i].id
@@ -202,10 +207,10 @@ $('#jstree').on('changed.jstree', function (e, data) {
   var list = $('#output')
   list.empty()
   $.each(leaves, function (i, o) {
-    iName=o.text
-    //console.log(i,o);
+    iName=o.text;
+    console.log(o);
     //$('<li/>').appendTo(list);
-    toAdd=o.text+' <button class="btn btn-danger removeSelection" onclick="deselect_node('+o.id+')" id="deselectBtn_'+i+'">X</button>';
+    toAdd=o.text+'<button class="btn btn-danger removeSelection" onclick="deselect_node('+o.id+')" id="deselectBtn_'+i+'">X</button>';
     //console.log(toAdd);
     $('<li/>').html(toAdd).appendTo(list);
   })
@@ -253,13 +258,13 @@ window.onload = function () {
 
   
 
-  $(document).on('click', '.go_btn', function(){
+  /*$(document).on('click', '.go_btn', function(){
       var filtered = selectList.filter(function (el) {
       return el != null;
     });
       console.log(filtered);
       takeOutJSON = JSON.stringify(filtered);
-      console.log(takeOutJSON);
+      alert(takeOutJSON);
       $.ajax({
     type: 'POST',
     data: {data : takeOutJSON},
@@ -278,11 +283,15 @@ window.onload = function () {
         alert("Status: " + textStatus); alert("Error: " + errorThrown); 
     }
 })
-    });
+    });*/
   
 
 
   document.getElementById("takeout2BTN").addEventListener("click", function() {
+    if (takeOutPrepJSON.items.length==0){
+      displayMessageInTitle("#doTitle","Nem választottál ki semmit!");
+      return;
+    }
     console.log("Kimenet:"+JSON.stringify(takeOutPrepJSON));
     //alert("Kimenet:"+JSON.stringify(takeOutPrepJSON));
       $.ajax({
@@ -313,7 +322,6 @@ window.onload = function () {
 			}
 		});
 	});
-
 });
 
 function loadFile(filePath) {
