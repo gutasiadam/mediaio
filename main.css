@@ -29,26 +29,26 @@
 
 /*Other */
 .rainbow {
-  -webkit-animation: color 15s linear infinite;
-  animation: color 15s linear infinite;  
+  -webkit-animation: color 10s linear infinite;
+  animation: color 10s linear infinite;  
 }
 
 @-webkit-keyframes color {
-  0% { color: #000000; }
-  20% { color: #c91d2b; } 
-  40% { color: #ba833e; }
-  60% { color: #0f6344; }
-  80% { color: #09457a; }
-  100% { color: #5f0976; }
+  0% { color: #316B83; }
+  20% { color: #22577A; } 
+  40% { color: #38A3A5; }
+  60% { color: #57CC99; }
+  80% { color: #38A3A5; }
+  100% { color: #316B83; }
 }
 
 @keyframes color {
-  0% { color: #000000; }
-  20% { color: #c91d2b; } 
-  40% { color: #ba833e; }
-  60% { color: #0f6344; }
-  80% { color: #09457a; } 
-  100% { color: #5f0976; }
+  0% { color: #316B83; }
+  20% { color: #22577A; } 
+  40% { color: #38A3A5; }
+  60% { color: #57CC99; }
+  80% { color: #38A3A5; }
+  100% { color: #316B83; }
 }
 
 nav {

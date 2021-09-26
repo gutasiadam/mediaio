@@ -55,7 +55,7 @@ if(!isset($_SESSION['userId'])){
             </script>
            </ul>
             <ul class="navbar-nav navbarPhP"><li><a class="nav-link disabled timelock" href="#">⌛ <span id="time"> 10:00 </span></a></li>
-            <?php if (($_SESSION['role']=="Admin") || ($_SESSION['role']=="Boss")){
+            <?php if ($_SESSION['role']>=3){
               echo '<li><a class="nav-link disabled" href="#">Admin jogok</a></li>';}?>
 					  </ul>
 						<form class="form-inline my-2 my-lg-0" action=../utility/logout.ut.php>
@@ -87,7 +87,7 @@ if(!isset($_SESSION['userId'])){
         <form id="sendAddEvent" class="form-group">
         <select class="form-control" id="eventTypeSelect" required>
       <option value="" selected disabled hidden>Típus</option>
-      <?php if(($_SESSION['role']=="Admin") || ($_SESSION['role']=="Boss")){
+      <?php if ($_SESSION['role']>=3){
         echo '<option value="#ff6363">Délelőtti iskolai esemény</option>
         <option value="#db4040">Délutáni iskolai esemény</option>
         <option value="#bd7966">Hétvégi iskolai esemény</option>
@@ -125,7 +125,7 @@ if(!isset($_SESSION['userId'])){
         </button>
       </div>
       <div class="modal-body">
-      <?php if(($_SESSION['role']=="Admin") || ($_SESSION['role']=="Boss")){
+      <?php if ($_SESSION['role']>=3){
         echo ' <form id="sendDelEvent">
         <input type="submit" class="btn btn-danger" value="Törlés"></button>
         <input type="hidden" id="delEventId"></input>

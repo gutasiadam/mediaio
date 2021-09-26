@@ -37,7 +37,7 @@ if ($result = $mysqli->query($query)) {
 
 //NEW, JSON METHOD
 $rows = array();
-$query = "SELECT Nev, ID, UID, Category, Status FROM leltar WHERE TakeRestrict='' AND Status=1 ";
+$query = "SELECT Nev, ID, UID, Category, Status FROM leltar WHERE TakeRestrict='' "; //AND Status=1 
 if ($result = $mysqli->query($query)) {
 
     /* fetch associative array */

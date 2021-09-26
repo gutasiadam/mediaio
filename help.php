@@ -1,3 +1,4 @@
+
 <?php 
   include "translation.php";
   require "logincheck.php";
@@ -39,7 +40,7 @@
             </script>
             </ul>
             <ul class="navbar-nav navbarPhP"><li><a class="nav-link disabled timelock" href="#">⌛ <span id="time"> 10:00 </span></a></li>
-            <?php if (($_SESSION['role']=="Admin") || ($_SESSION['role']=="Boss")){
+            <?php if ($_SESSION['role']>=3){
               echo '<li><a class="nav-link disabled" href="#">Admin jogok</a></li>';}?>
 					  </ul>
 						<form class="form-inline my-2 my-lg-0" action=utility/logout.ut.php>
@@ -48,7 +49,6 @@
 					  <a class="nav-link my-2 my-sm-0" href="./help.php"><i class="fas fa-question-circle fa-lg"></i></a>
 					</div>
 </nav>
-    <footer class="page-footer font-small blue"> <div class="fixed-bottom" align="center"><p>'.$applicationTitleFull.' <strong>ver. '.$application_Version.'</strong><br /> Code by <a href="https://github.com/d3rang3">Adam Gutasi</a></p></div></footer>
                     <?php
                 }else{
                     echo '';
@@ -125,7 +125,7 @@
     </li><li>Második gomb: A jelszavad tudod megváltoztatni.</li><li>Harmadik gomb: A többiek elérhetősége itt található meg.</ul>
     </p></div>
 
-    <div id="szoveg-segitseg" class="szoveg"><p><h2><?php echo $index_Help_Further; ?></h2><br><h4 class="text text-danger">Ha a weboldalon hibát észleltél, vagy további kérdésed van, keresed <strong>Gutási Ádám</strong>-ot személyesen, <br/>Facebookon, az arpadmedia.io@gmail.com e-mail címen, vagy <a href="mailto:arpadmedia.io@gmail.com?Subject=MediaIO%20Hibabejelent%C3%A9s" target="_top">írj most egy e-mailt!</a></h4>
+    <div id="szoveg-segitseg" class="szoveg"><p><h2><?php echo $index_Help_Further; ?></h2><br><h4 class="text text-danger">Ha a weboldalon hibát észleltél, vagy további kérdésed van, keresed minket Facebookon, az arpadmedia.io@gmail.com e-mail címen, vagy <a href="mailto:arpadmedia.io@gmail.com?Subject=MediaIO%20Hibabejelent%C3%A9s" target="_top">írj most egy e-mailt!</a></h4>
     </p></div>
       
 	</body>

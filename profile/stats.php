@@ -1,7 +1,7 @@
 <?php
 session_start();
 include("header.php");
- if (($_SESSION['role']=="Admin") || ($_SESSION['role']=="Boss")){ ?>
+ if ($_SESSION['role']>=3){ ?>
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
       
@@ -14,7 +14,7 @@ include("header.php");
               <ul class="navbar-nav mr-auto navbarUl">
     </ul>
     <ul class="navbar-nav navbarPhP">
-    <?php if (($_SESSION['role']=="Admin") || ($_SESSION['role']=="Boss")){ ?>
+    <?php if ($_SESSION['role']>=3){ ?>
       <li><a class="nav-link disabled" href="#">Admin jogok</a></li> <?php  }?>
     </ul>
                 <form class="form-inline my-2 my-lg-0" action=../utility/logout.ut.php>

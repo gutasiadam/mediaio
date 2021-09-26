@@ -23,7 +23,7 @@
             </li></ul>
             <ul class="navbar-nav navbarPhP"><li><a class="nav-link disabled timelock" href="#">⌛ <span id="time"> 10:00 </span></a></li>
             <?php
-            if (($_SESSION['role']=="Admin") || ($_SESSION['role']=="Boss")){
+            if ($_SESSION['role']>=3){
               echo '<li><a class="nav-link disabled" href="#">Admin jogok</a></li>';
               echo '
               </ul><form class="form-inline my-2 my-lg-0" action=utility/logout.ut.php>
@@ -43,13 +43,13 @@
 
 <div class="tableParent">
 <div class="form-check">
-  <input class="form-check-input" type="checkbox" value="" id="showOnlyMyTasks_checkBox" data-toggle="toggle">
-  <label class="form-check-label" for="defaultCheck1">
+  <input class="form-check-input noprint" type="checkbox" value="" id="showOnlyMyTasks_checkBox" data-toggle="toggle">
+  <label class="form-check-label noprint" for="defaultCheck1">
     Csak a saját feladataimat mutasd
   </label>
   </div>
 <?php
-            if (($_SESSION['role']=="Admin") || ($_SESSION['role']=="Boss")){
+            if ($_SESSION['role']>=3){
               echo '<table>
               <tr><td><button type="button" class="btn btn-warning table-Control edit_Table_Button noprint" data-toggle="modal" data-target="#add_Work_Modal">Módosítás</button></td>
               <td><button type="button" class="btn btn-danger table-Control delete_Table_Button noprint">Törlés</button></td></tr>

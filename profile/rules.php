@@ -11,7 +11,7 @@ if(!isset($_SESSION['userId'])){
 	  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
   <script src="https://kit.fontawesome.com/2c66dc83e7.js" crossorigin="anonymous"></script>
 </head>
-<title>Elérhetőségek</title>
+<title>mediaIO - Dokumentumok</title>
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
       
@@ -38,37 +38,25 @@ if(!isset($_SESSION['userId'])){
               drawMenuItemsRight('profile',menuItems,2);
             });</script>
     </nav>
+    <h2 class="rainbow" align="center" style="margin-top:50px;" id="doTitle">Dokumentumok</h2><br />
+    <table class="logintable">
+    <?php
 
+if ($handle = opendir('../data/documents/')) {
+    //Doksik beolvasása vagy mi
 
-<?php 
-$serverName="localhost";
-	$userName="root";
-	$password="umvHVAZ%";
-	$dbName="mediaio";
-	$countOfRec=0;
-
-	$conn = new mysqli($serverName, $userName, $password, $dbName);
-
-	if ($conn->connect_error) {
-		die("Connection fail: (Is the DB server maybe down?)" . $conn->connect_error);
-	}
-	$sql = "SELECT usernameUsers, emailUsers, lastName, firstName, teleNum FROM users ORDER BY usernameUsers ASC";
-	$result = $conn->query($sql);
-
-if ($result->num_rows > 0) {
-	echo "<table width='50' align=center class="."table"."><th>Vezetéknév</th><th>Keresztnév</th><th>Felhasználónév</th><th>e-mail cím</th><th>Telefonszám</th>";
-     //output data of each row
-    //Displays amount of records found in leltar_master DB
-    while($row = $result->fetch_assoc()) {
-		echo "<tr><td>".$row["lastName"]."</td><td>".$row["firstName"]."</td><td>".$row["usernameUsers"]. "</td><td><a href=mailto:".$row["emailUsers"]." target=_top>".$row["emailUsers"]."</a></td><td>".$row["teleNum"]."</td><td></tr>";
-       
-		$countOfRec += 1;
-	}
-} else {
-    echo "0 results";
+    /* This is the correct way to loop over the directory. */
+    while (false !== ($entry = readdir($handle))) {
+        if((($entry)!='.') and (($entry)!='..')){
+        ?>
+        <tr><td><a target="_blank" href='../data/documents/<?php echo "$entry\n";?>'><button class="btn btn-light"> <?php echo "$entry\n";?></button></a></td></tr>
+       <?php
+        }
+    }
+    closedir($handle);
 }
-echo "</table>";
-$conn->close();?>
+?>
+</table>
 <script>
 (function(){
   setInterval(updateTime, 1000);
@@ -100,4 +88,12 @@ window.onload = function () {
     updateTime();
 };
 </script>
+
+<style>
+    .logintable button {
+        font-size: 1.75rem;
+        min-width: 400px;
+        margin-top: 20px;
+    }
+</style>
 

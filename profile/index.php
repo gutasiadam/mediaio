@@ -44,7 +44,7 @@
 					  <ul class="navbar-nav mr-auto navbarUl">
             </ul>
             <ul class="navbar-nav navbarPhP"><li><a class="nav-link disabled timelock" href="#">⌛ <span id="time"> 10:00 </span></a></li>';
-            if (($_SESSION['role']=="Admin") || ($_SESSION['role']=="Boss")){
+            if ($_SESSION['role']>=3){
               echo '<li><a class="nav-link disabled" href="#">Admin jogok</a></li>';}
             echo '</ul>
 						<form class="form-inline my-2 my-lg-0" action=../utility/logout.ut.php>
@@ -53,16 +53,16 @@
                       <div class="menuRight"></div>
 					</div>
     </nav>
-    <footer class="page-footer font-small blue"> <div class="fixed-bottom" align="center"><p>'.$applicationTitleFull.' <strong>ver. '.$application_Version.'</strong><br /> Code by <a href="https://github.com/d3rang3">Adam Gutasi</a></p></div></footer>
 
                     <body>
-                    <h1 align=center>Opciók</h1>
+                    <h1 align=center class="rainbow">Opciók</h1>
                     <table class="logintable">
                     <tr><td><form action="pfcurr.php"><button class="btn btn-dark">Mutasd a nálam levő tárgyakat <i class="fas fa-project-diagram"></i></button></form></td></tr>
                     <tr><td><form action="chpwd.php"><button class="btn btn-warning">Jelszócsere <i class="fas fa-key"></i></button></form></td></tr>
                     <tr><td><form action="userlist.php"><button class="btn btn-dark">Felhasználók eléhetőségeinek megtekintése <i class="fas fa-address-book"></i></i></button></form></td></tr>
+                    <tr><td><form action="rules.php"><button class="btn btn-secondary">Dokumentumok <i class="fas fa-folder-open"></i></i></button></form></td></tr>
                     ';
-          if (($_SESSION['role']=="Admin") || ($_SESSION['role']=="Boss")){
+          if ($_SESSION['role']>=3){
             echo '
                     <table class="logintable">
                     <tr><td><form action="points.php"><button class="btn btn-success">Pontszámok <i class="fas fa-calculator"></i></button></form></td></tr>

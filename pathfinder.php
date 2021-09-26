@@ -35,7 +35,7 @@ if(isset($_SESSION['UserUserName'])){
             </script>
             </ul>
             <ul class="navbar-nav navbarPhP"><li><a class="nav-link disabled timelock" href="#">⌛ <span id="time"> 10:00 </span></a></li>
-            <?php if (($_SESSION['role']=="Admin") || ($_SESSION['role']=="Boss")){
+            <?php if ($_SESSION['role']>=3){
               echo '<li><a class="nav-link disabled" href="#">Admin jogok</a></li>';}?>
 					  </ul>
 						<form class="form-inline my-2 my-lg-0" action=utility/logout.ut.php>
@@ -47,7 +47,7 @@ if(isset($_SESSION['UserUserName'])){
     <body>  
         <div class="container">
    <br />
-   <h1 align="center">Útvonalkereső</h1>
+   <h1 align="center" class="rainbow">Útvonalkereső</h1>
    <table id="itemSearch" align="left"><tr>
             <form action="./pathfinder.php" method="GET" autocomplete="off">
             
@@ -84,14 +84,12 @@ if(isset($_SESSION['UserUserName'])){
               echo '<div class="timeline__item ">
               <div class="timeline__content out">
                <h2>'. $row["Date"]. ' ('. $row["User"] .')</h2>
-               <p>'. 'ki'. '</p>
               </div>
              </div>';} 
             if($row["Event"]=="IN"){
               echo '<div class="timeline__item ">
               <div class="timeline__content in">
                <h2>'. $row["Date"]. ' ('. $row["User"] . ')</h2>
-               <p>'. 'be'. '</p>
               </div>
              </div>';
             }

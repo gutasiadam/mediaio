@@ -21,7 +21,7 @@ if (!$conn){
         $email = $_POST['email'];
         $password = $_POST['pwd'];
         $passwordrepeat = $_POST['pwd-Re'];
-        $role = "Default";
+        $role = "1";
 
         //Hibakezelés
 

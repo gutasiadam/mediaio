@@ -51,7 +51,7 @@ else
             
             <?php
             echo '</ul>';
-            if (($_SESSION['role']=="Admin") || ($_SESSION['role']=="Boss")){
+            if ($_SESSION['role']>=3){
               echo '<ul class="navbar-nav navbarPhP"><li><a class="nav-link disabled timelock" href="#">⌛ <span id="time"> 10:00 </span></a></li>';
               echo '<li><a class="nav-link disabled" href="#">Admin jogok</a></li>';
               echo '</ul>
@@ -99,7 +99,7 @@ else
                     <h6 align=center id="SystemMsg" class="successtable2" style="display:none;"></h6>
                     <form class="login" action="utility/login.ut.php" method="post" autocomplete="off">
                       <fieldset>
-  	                    <legend class="legend">
+  	                    <legend id="zsoka" class="legend">
                         MediaIO
                         </legend>
                        
@@ -282,44 +282,44 @@ $(".login").submit(function(){
             //GET változók kezelése
             
             if($_GET['signup'] == "success"){
-              echo '<script>document.getElementById("SystemMsg").innerHTML="Sikeres regisztráció!";
-              document.getElementById("SystemMsg").className = "alert alert-success successtable";
-              $("#SystemMsg").fadeIn();
-              setTimeout(function(){ $("#SystemMsg").fadeOut(); }, 6000);
+              echo '<script>document.getElementById("zsoka").innerHTML="Sikeres regisztráció!";
+              document.getElementById("zsoka").className = "alert alert-success successtable";
+              $("#zsoka").fadeIn();
+              setTimeout(function(){ $("#zsoka").fadeOut(); }, 6000);
               </script>';
             }
             if($_GET['logout'] == "success"){
-              echo '<script>document.getElementById("SystemMsg").innerHTML="Sikeres kijelentkezés!";
-              document.getElementById("SystemMsg").className = "alert alert-success successtable";
-              $("#SystemMsg").fadeIn();
-              setTimeout(function(){ $("#SystemMsg").fadeOut(); }, 6000);
+              echo '<script>document.getElementById("zsoka").innerHTML="Sikeres kijelentkezés!";
+              document.getElementById("zsoka").className = "alert alert-success successtable";
+              $("#zsoka").fadeIn();
+              setTimeout(function(){ $("#zsoka").fadeOut(); }, 6000);
               </script>';} // ÁTMÁSOLNI
             if($_GET['logout'] == "pwChange"){
-              echo '<script>document.getElementById("SystemMsg").innerHTML="Sikeres jelszócsere!";
-              document.getElementById("SystemMsg").className = "alert alert-success successtable";
-              $("#SystemMsg").fadeIn();
-              setTimeout(function(){ $("#SystemMsg").fadeOut(); }, 6000);
+              echo '<script>document.getElementById("zsoka").innerHTML="Sikeres jelszócsere!";
+              document.getElementById("zsoka").className = "alert alert-success successtable";
+              $("#zsoka").fadeIn();
+              setTimeout(function(){ $("#zsoka").fadeOut(); }, 6000);
               </script>';
             }
             if($_GET['error'] == "WrongPass"){
-              echo '<script>document.getElementById("SystemMsg").innerHTML="Helytelen jelszó!";
-              document.getElementById("SystemMsg").className = "alert alert-danger successtable";
-              $("#SystemMsg").fadeIn();
-              setTimeout(function(){ $("#SystemMsg").fadeOut(); }, 6000);
+              echo '<script>document.getElementById("zsoka").innerHTML="Helytelen jelszó!";
+              document.getElementById("zsoka").className = "alert alert-danger successtable";
+              $("#zsoka").fadeIn();
+              setTimeout(function(){ $("#zsoka").fadeOut(); }, 6000);
               </script>';
             }
             if($_GET['error'] == "NoUser"){
-              echo '<script>document.getElementById("SystemMsg").innerHTML="Hibás felhasználónév / jelszó!";
-              document.getElementById("SystemMsg").className = "alert alert-danger successtable";
-              $("#SystemMsg").fadeIn();
-              setTimeout(function(){ $("#SystemMsg").fadeOut(); }, 6000);
+              echo '<script>document.getElementById("zsoka").innerHTML="Hibás felhasználónév / jelszó!";
+              document.getElementById("zsoka").className = "alert alert-danger successtable";
+              $("#zsoka").fadeIn();
+              setTimeout(function(){ $("#zsoka").fadeOut(); }, 6000);
               </script>';
             }
             if($_GET['error'] == "AccessViolation"){
-              echo '<script>document.getElementById("SystemMsg").innerHTML="Ehhez a funkcióhoz be kell jelentkezned!";
-              document.getElementById("SystemMsg").className = "alert alert-danger successtable";
-              $("#SystemMsg").fadeIn();
-              setTimeout(function(){ $("#SystemMsg").fadeOut(); }, 6000);
+              echo '<script>document.getElementById("zsoka").innerHTML="Ehhez a funkcióhoz be kell jelentkezned!";
+              document.getElementById("zsoka").className = "alert alert-danger successtable";
+              $("#zsoka").fadeIn();
+              setTimeout(function(){ $("#zsoka").fadeOut(); }, 6000);
               </script>';
             }?>
 

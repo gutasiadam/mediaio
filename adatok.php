@@ -31,7 +31,7 @@ if(!isset($_SESSION['userId'])){
             </script>
             </ul>
             <ul class="navbar-nav navbarPhP"><li><a class="nav-link disabled timelock" href="#">⌛ <span id="time"> 10:00 </span></a></li>
-            <?php if (($_SESSION['role']=="Admin") || ($_SESSION['role']=="Boss")){
+            <?php if ($_SESSION['role']>=3){
               echo '<li><a class="nav-link disabled" href="#">Admin jogok</a></li>';}?>
 					  </ul>
 						<form class="form-inline my-2 my-lg-0" action=utility/logout.ut.php>

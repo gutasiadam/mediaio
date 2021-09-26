@@ -2,7 +2,7 @@
 
     include ("../profile/header.php");
         session_start();
-        if (($_SESSION['role']=="Admin") || ($_SESSION['role']=="Boss")){
+        if ($_SESSION['role']>=3){
             $connect = new PDO("mysql:host=localhost;dbname=mediaio", "root", "umvHVAZ%");?>
             <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
       
@@ -15,7 +15,7 @@
       <ul class="navbar-nav mr-auto navbarUl">
       </ul>
       <ul class="navbar-nav navbarPhP"><li><a class="nav-link disabled timelock" href="#">⌛ <span id="time"> 10:00 </span></a></li>';
-      <?php if (($_SESSION['role']=="Admin") || ($_SESSION['role']=="Boss")){ ?>
+      <?php if ($_SESSION['role']>=3){ ?>
         <li><a class="nav-link disabled" href="#">Admin jogok</a></li> <?php  }?>
       </ul>
       <form class="form-inline my-2 my-lg-0" action=../utility/logout.ut.php>

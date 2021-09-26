@@ -2,7 +2,7 @@
 include "header.php";
 session_start();
 if(($_SESSION['role']=="Admin") || ($_SESSION['role']=="Boss")){
-    error_reporting(E_ALL ^ E_NOTICE);
+    error_reporting(E_ALL ^ E_NOTICE);}
 
 $serverName="localhost";
 	$userName="root";
@@ -21,6 +21,40 @@ $serverName="localhost";
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js">  </script>
   <script src="https://kit.fontawesome.com/2c66dc83e7.js" crossorigin="anonymous"></script>
+  <script>
+  var imodal=0;
+  function rangTipus(i){
+    switch(i){
+      case(2):
+        return "studio";
+      case(4):
+        return "admin";
+      case(6):
+        return "sadmin";
+      default:
+        return "default";
+    }
+  }
+//$('input#adminCheckBox.form-check-input')[0].checked
+</script>
+<script>
+function ertek(imodal){
+var ertek;
+if($('input#adminCheckBox'+imodal+'.form-check-input')[0].checked==false && $('input#studioCheckBox'+imodal+'.form-check-input')[0].checked==true){
+  ertek=2;
+}else if($('input#adminCheckBox'+imodal+'.form-check-input')[0].checked==true && $('input#studioCheckBox'+imodal+'.form-check-input')[0].checked==false){
+  ertek=4;
+}else if($('input#adminCheckBox'+imodal+'.form-check-input')[0].checked==true && $('input#studioCheckBox'+imodal+'.form-check-input')[0].checked==true){
+  ertek=3;
+}else{
+  ertek=1;
+}
+  var uName=$('p#uN'+imodal)[0].innerText;
+  alert(uName);
+  return ertek;
+}
+imodal++;
+</script>
   <title>Felhasználói jogok</title>
     </head>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -33,8 +67,8 @@ $serverName="localhost";
 					<div class="collapse navbar-collapse" id="navbarSupportedContent">
 					  <ul class="navbar-nav mr-auto navbarUl">
             </ul>
-            <ul class="navbar-nav navbarPhP"><li><a class="nav-link disabled timelock" href="#">⌛ <span id="time"> 10:00 </span></a></li>';
-            <?php if (($_SESSION['role']=="Admin") || ($_SESSION['role']=="Boss")){ ?>
+            <ul class="navbar-nav navbarPhP"><li><a class="nav-link disabled timelock" href="#">⌛ <span id="time"> 10:00 </span></a></li>
+            <?php if ($_SESSION['role']>=3){ ?>
               <li><a class="nav-link disabled" href="#">Admin jogok</a></li> <?php  }?>
             </ul>
 						<form class="form-inline my-2 my-lg-0" action=../utility/logout.ut.php>
@@ -49,14 +83,11 @@ $serverName="localhost";
             });</script>
     </nav>
     <body>  
-        <div class="container">
+  <div class="container">
    <br />
    <h1 align="center">Felhasználói jogok</h1><br>
-			
-<div class="form-group">
-   <div class="panel panel-default">
-    <div class="panel-heading">
-    <?php 
+
+   <?php 
         $TKI = $_SESSION['UserUserName'];    
         $conn = new mysqli($serverName, $userName, $password, $dbName);
         $sql = ("SELECT * FROM `users`");
@@ -67,88 +98,40 @@ $serverName="localhost";
 
           while($row = $result->fetch_assoc()) { 
               array_push($resultArray, $row);
-
+                $rangok=["default","stúdiós","sadmin","admin","böss"];
                 $conn = new mysqli($serverName, $userName, $password, $dbName);
                 $rowItem = $row["firstName"].$row["lastName"];
                 $query = ("SELECT * FROM `users`");
                 $result2 = mysqli_query($conn, $query);
                 $conn->close();
-                while($codeRow = $result2->fetch_assoc()) {$dbCode = $codeRow["Code"]; $dbUser = $codeRow["AuthUser"];}
-                
                 echo '
                 <div class="row">
                 <div class="col-4">
                  <h2>'.$row["lastName"]." ".$row["firstName"].'</h2>
-                 <p>'.$row["usernameUsers"].'</p>
+                 <p id=uN'.$imodal.'>'.$row["usernameUsers"].'</p>
                 </div>
-                <div class="col-2">';
-                if($row["usernameUsers"]==$_SESSION['UserUserName']){
-                    echo '<h2 class="text text-success">'.$_SESSION['role'].'</h2><p>jogok</p></div></div>';
-                }else{
-                  if($row["Userrole"] == "Boss"){echo '<h2 class="text text-danger">Boss</h2><p>jogok</p></div></div>';}
-                if($row["Userrole"] == "Admin"){
-                    echo '<h2 class="text text-info">Admin</h2><p>jogok</p>
-                    </div>';
-                    echo '<div class="col-1"><button class="btn btn-danger " id="auth'.$imodal.'" data-toggle="modal" data-target="#a'.$imodal.'">Lerontás</button></div>
-               </div>';
-  
-              echo              
-              '<div class="modal fade" id="a'.$imodal.'" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-              <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">'.$row["usernameUsers"].' admin jogának megvonása</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                      <span aria-hidden="true">&times;</span>
-                    </button>
-                  </div>
-                  <div class="modal-body">
-                    <form action="./roles.php" class="form-group" method=post>
-                <input type="hidden" class="form-control" name="user" value="'.$row["usernameUsers"].'"/>
-                <input type="hidden" class="form-control" name="mode" value="revert"/> 
-                <h6 id="emailHelp" class="form-text text-muted"> A módosítás gomb megynomásával megvonod '.$row["usernameUsers"].' felhasználót admin jogaitól.<br>A gomb lenyomása után töltsd újra az oldalt, hogy a tábla frissüljön!</h6>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Mégsem</button>
-                    <button type="submit" class="btn btn-danger authToggle">Módosítás</button>
-                    </form>
-              </div>
-                    </div>      
-                </div>
-              </div>';
+                <div class="col-2">
+                <h2 class="text text-danger">'.$rangok[$row["Userrole"]-1].'</h2></div>';
+                if($_SESSION['role']=="5"){
+                  ?>
+                  <div class="form-check form-check-inline">
+  <input class="form-check-input" type="checkbox" id='adminCheckBox<?php echo $imodal; ?>' value="4">
+  <label class="form-check-label" for="adminCheckBoxLabel">admin</label>
+</div>
+<div class="form-check form-check-inline">
+  <input class="form-check-input" type="checkbox" id='studioCheckBox<?php echo $imodal; ?>' value="2">
+  <label class="form-check-label" for="studioCheckBoxLabel">stúdiós</label>
+</div>
+
+<button  " class="btn btn-warning">Módosítás</button> <!-- type="submit"-->
+</div>
+                  <?php
+                  $imodal++;
                 }
-                if($row["Userrole"] == "Default"){
-                    echo '<h2>Default</h2><p>jogok</p>
-                    </div>';
-                    echo '<div class="col-1"><button class="btn btn-success " id="auth'.$imodal.'" data-toggle="modal" data-target="#a'.$imodal.'">Felemelés</button></div>
-               </div>';
-  
-              echo              
-              '<div class="modal fade" id="a'.$imodal.'" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-              <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Admin jogok megadása '.$row["usernameUsers"].' számára</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                      <span aria-hidden="true">&times;</span>
-                    </button>
-                  </div>
-                  <div class="modal-body">
-                    <form action="./roles.php" class="form-group" method=post>
-                <input type="hidden" class="form-control" name="user" value="'.$row["usernameUsers"].'"/>
-                <input type="hidden" class="form-control" name="mode" value="grant"/> 
-                <h6 id="emailHelp" class="form-text text-muted">A módosítás gomb megynomásával felruházod '.$row["usernameUsers"].' felhasználót admin jogokkal.<br>A gomb lenyomása után töltsd újra az oldalt, hogy a tábla frissüljön!</h6>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Mégsem</button>
-                    <button type="submit" class="btn btn-danger authToggle">Módosítás</button>
-                    </form>
-              </div>
-                    </div>      
-                </div>
-              </div>';
-                }}
-                $imodal++;}
-            }
-            
-    $connect = null;
-    //session_start();
+
+            }?>
+
+<?php
       if (isset($_POST["mode"])){
         $serverName = "localhost";
         $dbUserName = "root";
@@ -159,15 +142,23 @@ $serverName="localhost";
               if ($conn->connect_error){
                 die("Connection failed: ".mysqli_connect_error());}
 
-          if ($_POST["mode"]=="grant"){
+          if ($_POST["mode"]=="admin"){
             $SQL = ("UPDATE `users` SET `Userrole` = 'Admin' WHERE `users`.`userNameUsers` = '$targetUser'");
           }
-          if ($_POST["mode"]=="revert"){
+          if ($_POST["mode"]=="studio"){
+            $SQL = ("UPDATE `users` SET `Userrole` = 'Admin' WHERE `users`.`userNameUsers` = '$targetUser'");
+          }
+          if ($_POST["mode"]=="default"){
             $SQL = ("UPDATE `users` SET `Userrole` = 'Default' WHERE `users`.`userNameUsers` = '$targetUser'");
           }
         $WriteResult = $conn->query($SQL);
       }
 ?>
+
+<div class="form-group">
+   <div class="panel panel-default">
+    <div class="panel-heading">        
+
     </body>  
 </html>
 <style>
@@ -175,13 +166,11 @@ $serverName="localhost";
   background-color: #ededed;
 }
 </style>
-
 <script>
-
 function startTimer(duration, display) {
     var timer = duration, minutes, seconds;
     setInterval(function () {
-        minutes = parseInt(timer / 60, 10)
+        minutes = parseInt(timer / 60, 10);
         seconds = parseInt(timer % 60, 10);
 
         minutes = minutes < 10 ? "0" + minutes : minutes;
@@ -191,7 +180,7 @@ function startTimer(duration, display) {
 
         if (--timer < 0) {
             timer = duration;
-            window.location.href = "../utility/logout.ut.php"
+            window.location.href = "../utility/logout.ut.php";
         }
     }, 1000);
 }
@@ -204,6 +193,4 @@ window.onload = function () {
     updateTime();
 };
 
-/*$(document).on('click', '.authToggle', function(){
-  setTimeout(function(){ window.location.href = "./utility/logout.ut.php"; }, 3000);});*/
 </script>

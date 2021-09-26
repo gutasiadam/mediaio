@@ -1,3 +1,3 @@
-Softbox fekvo - stb006
-6
+Fresnel 300W
+3
 RUN

@@ -31,7 +31,7 @@ error_reporting(E_ALL ^ E_NOTICE);
             </script>
             </ul>
             <ul class="navbar-nav navbarPhP"><li><a class="nav-link disabled timelock" href="#">⌛ <span id="time"> 10:00 </span></a></li>
-            <?php if (($_SESSION['role']=="Admin") || ($_SESSION['role']=="Boss")){
+            <?php if ($_SESSION['role']>=3){
               echo '<li><a class="nav-link disabled" href="#">Admin jogok</a></li>';}?>
 					  </ul>
 						<form class="form-inline my-2 my-lg-0" action=utility/logout.ut.php>
@@ -87,7 +87,7 @@ error_reporting(E_ALL ^ E_NOTICE);
 			</div>
 		</div>
 	</body>
-<footer class="page-footer font-small blue"> <div class="fixed-bottom" align="center"><p>Code: <a href="https://github.com/d3rang3">Adam Gutasi</a></p></div></footer>
+<!--<footer class="page-footer font-small blue"> <div class="fixed-bottom" align="center"><p>Code: <a href="https://github.com/d3rang3">Adam Gutasi</a></p></div></footer>-->
 </html>
 <script>
 
@@ -137,6 +137,7 @@ for (let i = 0; i < d.length; i++) {
   renameKey(d[i],'ID','id');
   renameKey(d[i],'UID','uid');
   //alert(d[i].uid);
+  d[i].originalName=d[i].text;
   d[i].text=d[i].text+' - '+d[i].uid;
 }
 
@@ -182,7 +183,8 @@ $('#jstree').on("changed.jstree", function (e, data) {
 
   len=$('#jstree').jstree().get_selected(true).length
   for (i=0; i < len; i++){
-    itemName=$('#jstree').jstree().get_selected(true)[i].original.text;
+    itemName=$('#jstree').jstree().get_selected(true)[i].original.originalName;
+    alert(itemName);
     itemId=$('#jstree').jstree().get_selected(true)[i].id;
     //itemUid=$('#jstree').jstree().get_selected(true)[i].uid;
     //var item = takeOutPrepJSON[i];   
