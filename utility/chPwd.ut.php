@@ -43,7 +43,7 @@
                         $hashedpwd = password_hash($password, PASSWORD_BCRYPT);
 
 
-                        $sql = "UPDATE users SET pwdUsers='$hashedpwd' WHERE idUsers='$username' ;";}
+                        $sql = "UPDATE users SET pwdUsers='$hashedpwd' WHERE usernameUSers='$username' ;";}
 
                             if (!mysqli_query($conn,$sql))
                             {

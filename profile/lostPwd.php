@@ -8,22 +8,21 @@
             <form action="../utility/lostPwd.ut.php" method="post">
             <tr><td><h3><strong>1. lépés</strong>: kérj egy tokent!</strong></h3></td></tr>
             <tr><td>Ezt megadva tudsz majd új jelszót beállítani.</td></tr>
-            <tr><td><input class="form-control mb-2 mr-sm-2" type="email" name="emailAddr" placeholder="e-mail"></td></tr> <br>
-            <tr><td><input class="form-control mb-2 mr-sm-2" type="text" name="userName" placeholder="felhasználónév" ></td></tr> <br>
-            <tr><td><br><button class="btn btn-dark" id="submitPwdCh"align=center type="submit" name="pwdLost-submit">Token küldése</button></td></tr>
+            <tr><td><input class="form-control mb-2 mr-sm-2" type="email" name="emailAddr" placeholder="e-mail" required></td></tr> <br>
+            <tr><td><input class="form-control mb-2 mr-sm-2" type="text" name="userName" placeholder="felhasználónév" required></td></tr> <br>
+            <tr><td><br><button class="btn btn-dark" id="submitPwdCh"align=center type="submit" name="pwdLost-submit" required>Token küldése</button></td></tr>
             <tr><td><div class="spinner-border" role="status">
             <span class="sr-only">Folyamatban...</span>
             </div></tr></td>
             </form>
             <form action="../utility/lostPwd.ut.php" method="post">
             <tr><td><h3><strong>2. lépés</strong>: új jelszó</strong></h3></td></tr>
-            <tr><td>A Tokened és felhasználóneved megadásával már adhatsz is egy új jelszót!
-            </td></tr>
-            <tr><td><input class="form-control mb-2 mr-sm-2" type="text" name="emailAddr" placeholder="token"></td></tr> <br>
-            <tr><td><input class="form-control mb-2 mr-sm-2" type="text" name="userName" placeholder="felhasználónév" ></td></tr> <br>
-            <tr><td><input class="form-control mb-2 mr-sm-2" type="text" name="chPwd-1" placeholder="új jelszó" ></td></tr> <br>
-            <tr><td><input class="form-control mb-2 mr-sm-2" type="text" name="chPwd-2" placeholder="új jelszó még egyszer" ></td></tr> <br>
-            <tr><td><br><button class="btn btn-dark" id="submitPwdCh"align=center type="submit" name="pwdLost-submit">Csere</button></td></tr>
+            <tr><td>A Tokened és felhasználóneved megadásával már adhatsz is egy új jelszót!</td></tr>
+            <tr><td><input class="form-control mb-2 mr-sm-2" type="text" name="token" placeholder="token" required></td></tr> <br>
+            <tr><td><input class="form-control mb-2 mr-sm-2" type="text" name="userName" placeholder="felhasználónév" required></td></tr> <br>
+            <tr><td><input class="form-control mb-2 mr-sm-2" type="password" name="chPwd-1" placeholder="új jelszó" required></td></tr> <br>
+            <tr><td><input class="form-control mb-2 mr-sm-2" type="password" name="chPwd-2" placeholder="új jelszó még egyszer" required></td></tr> <br>
+            <tr><td><br><button class="btn btn-dark" id="submitPwdCh"align=center type="submit" name="pwdLost-change-submit">Csere</button></td></tr>
             <tr><td><div class="spinner-border" role="status">
             <span class="sr-only">Folyamatban...</span>
             </div></tr></td>
@@ -40,11 +39,13 @@
                         echo '<tr><td><h5 class="registererror text-danger">Hibásan adtad meg a jelenlegi jelszavadat!</h5></td></tr>';
                     }else if ($_GET['error'] == 'none'){
                     echo '<tr><td><p class="success">A tokenedet elküldtük az e-mail címedre! Ezt tudod használni a második lépésben.</p></td></tr>';
-                    //session_unset();
-                    //session_destroy();
-                    //header("Location: ../index.php");
+                    }else if ($_GET['error'] == 'none'){
+                    echo '<tr><td><p class="success"><strong>Sikeres jelszócsere.</strong> Mostmár beléphetsz az új jelszavaddal.</p></td></tr>';
                 }
                 }
+                ?>
+                <tr><td><a href="../index.php"><button class="btn btn-dark">Vissza a belépéshez</button></a></td></tr>
+                <?php
             echo "</table>";
 
     ?>

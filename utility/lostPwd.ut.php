@@ -53,45 +53,106 @@ use PHPMailer\SMTP;
             $mail->Encoding = 'base64';
             $mail->addAddress($emailAddr, 'Felhasználó');
             $mail->IsHTML(true); 
-// Subject
-$mail->Subject = 'MediaIO - Elfelejtett jelszó';
+            // Subject
+            $mail->Subject = 'MediaIO - Elfelejtett jelszó';
 
 // Message
-$mail->Body = '
-<html>
-<head>
-  <title>Arpad Media IO</title>
-</head>
-<body>
-  <h3>Kedves '.$username.'!</h3><p>
- Ezúton értesítünk, hogy fiókodhoz új jelszót igényeltek.
- Az új jelszavadat az alábbi tokennel tudod beállítani, a 2. lépésben:</p>
- <h1>'.$TOKEN.'</h1>
-  <h6>Ez egy automatikus üzenet. Kérjük ne válaszolj rá.<br>Üdvözlettel: <br> Arpad Media Admin</h6>
+            $mail->Body = '
+            <html>
+            <head>
+                <title>Arpad Media IO</title>
+            </head>
+                <body>
+                    <h3>Kedves '.$username.'!</h3><p>
+                    Ezúton értesítünk, hogy fiókodhoz új jelszót igényeltek.
+                    Az új jelszavadat az alábbi tokennel tudod beállítani, a 2. lépésben:</p>
+                    <h1>'.$TOKEN.'</h1>
+            <h6>Ez egy automatikus üzenet. Kérjük ne válaszolj rá.<br>Üdvözlettel: <br> Arpad Media Admin</h6>
+                </body>
+            </html>';
 
+            if (!$mail->send())
+            {/* PHPMailer error. */echo $mail->ErrorInfo;}
 
-  ne kódolj hajnalban. ha ezt látod, ez annak az eredménye.
-</body>
-</html>
-';
-
-if (!$mail->send())
-{
-   /* PHPMailer error. */
-   echo $mail->ErrorInfo;
-}
-
-// To send HTML mail, the Content-type header must be set
-$Mail_headers[] = 'MIME-Version: 1.0';
-$Mail_headers[] = 'From: arpadmedia.io@gmail.com';
-$Mail_headers[] = 'Content-type: text/html; charset=utf-8';
-
-//$headers[] = 'Bcc: gutasi.guti@gmail.com';
+            // To send HTML mail, the Content-type header must be set
+            //$Mail_headers[] = 'MIME-Version: 1.0';
+            //$Mail_headers[] = 'From: arpadmedia.io@gmail.com';
+            //$Mail_headers[] = 'Content-type: text/html; charset=utf-8';
 
                     }
         mysqli_close($conn);
         header("Location: ../profile/lostPwd.php?error=none");
         exit();
     }
-}
+}elseif(isset($_POST['pwdLost-change-submit'])){
+    require 'dbHandler.ut.php';
+    $TOKEN=$_POST['token'];
+    $username=$_POST['userName'];
+    $newPwd_text=$_POST['chPwd-1'];
+    $newPwd_text_2=$_POST['chPwd-2'];
+    if($newPwd_text!=$newPwd_text_2 || empty($newPwd_text) || empty($newPwd_text_2) || strlen($newPwd_text)<8){
+        header("Location: ../profile/lostPwd.php?error=pwdNoMatch");
+        exit();
+    }
+    $sql = "SELECT * FROM users WHERE usernameUsers='$username' AND TOKEN='$TOKEN';";
+    $result = mysqli_query($conn, $sql);
+    $num_rows = mysqli_num_rows($result);
+    if($num_rows==1){
+        $row = mysqli_fetch_array($result);
+        $emailAddr=$row['emailUsers'];
+        $hashedpwd = password_hash($newPwd_text, PASSWORD_BCRYPT);
+        $sql = "UPDATE users SET pwdUsers='$hashedpwd', TOKEN=NULL WHERE usernameUsers='$username' ;";}
+        if (!mysqli_query($conn,$sql))
+        {
+        echo("Error description: " . mysqli_error($conn));
+        }else{
+            $to=$emailAddr;
+            $mail = new PHPMailer();
+            $mail->SMTPOptions = array(
+                'ssl' => array(
+                'verify_peer' => false,
+                'verify_peer_name' => false,
+                'allow_self_signed' => true
+                )
+                );
+            
+            
+            $mail->Mailer = "smtp";
+            $mail->SMTPAuth   = TRUE;
+            $mail->SMTPSecure = "tls";
+            $mail->Port       = 587;
+            $mail->Host       = "smtp.gmail.com";
+            $mail->Username   = "arpadmedia.io@gmail.com";
+            $mail->Password   = "xlr8VGA%";
+            /* Set the mail sender. */
+            $mail->setFrom('arpadmedia@gmail.com', 'mediaIO cron');
+            $mail->CharSet = 'UTF-8';
+            $mail->Encoding = 'base64';
+            $mail->addAddress($emailAddr, 'Felhasználó');
+            $mail->IsHTML(true); 
+            // Subject
+            $mail->Subject = 'MediaIO - Új jelszót állítottál ne';
+
+// Message
+            $mail->Body = '
+            <html>
+            <head>
+                <title>Arpad Media IO</title>
+            </head>
+                <body>
+                    <h3>Kedves '.$username.'!</h3><p>
+                    Új jelszavadat sikeresen beállítottuk.
+            <h6>Ez egy automatikus üzenet. Kérjük ne válaszolj rá.<br>Üdvözlettel: <br> Arpad Media Admin</h6>
+                </body>
+            </html>';
+
+            if (!$mail->send())
+            {/* PHPMailer error. */echo $mail->ErrorInfo;}
+        }
+        header("Location: ../profile/lostPwd.php?error=none2");
+        exit();
+    }else{
+        header("Location: ../profile/lostPwd.php?error=wtf");
+        exit();
+    }
 ?>
