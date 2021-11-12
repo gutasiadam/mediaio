@@ -96,7 +96,7 @@ else
                     </div>
                     </form>
                     -->
-                    <h6 align=center id="SystemMsg" class="successtable2" style="display:none;"></h6>
+                    
                     <form class="login" action="utility/login.ut.php" method="post" autocomplete="off">
                       <fieldset>
   	                    <legend id="zsoka" class="legend">
@@ -117,8 +117,14 @@ else
                       <div class="feedback">
   	                  átirányítás.. <br />
                       </div>
+                      
                       </form>
-                    <footer class="page-footer font-small blue"> <div class="fixed-bottom" align="center"><p></strong><br /> Code by <a href="https://github.com/d3rang3">Adam Gutasi</a></p></div></footer>
+                      <h6 align=center id="SystemMsg" class="successtable2" style="display:none;"></h6>
+                      
+                    <footer class="page-footer font-small blue">
+                    
+                    <div class="fixed-bottom" align="center">
+                    <a href="./profile/lostPwd.php"><h6>Elfelejtett jelszó?</h6></a>  <p></strong><br /> Code by <a href="https://github.com/gutasiadam">Adam Gutasi</a></p></div></footer>
                     </div>
                     <script>
                     $( ".input" ).focusin(function() {
