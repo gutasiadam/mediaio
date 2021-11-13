@@ -97,6 +97,7 @@ else
                     </form>
                     -->
                     
+                    
                     <form class="login" action="utility/login.ut.php" method="post" autocomplete="off">
                       <fieldset>
   	                    <legend id="zsoka" class="legend">
@@ -117,7 +118,9 @@ else
                       <div class="feedback">
   	                  átirányítás.. <br />
                       </div>
-                      
+                      <div>
+                      <h3 id="errorbox"></h3>
+                    </div>
                       </form>
                       <h6 align=center id="SystemMsg" class="successtable2" style="display:none;"></h6>
                       
@@ -144,6 +147,11 @@ $(".login").submit(function(){
 });
                     </script>
                     <style>
+
+  #errorbox{
+	  position: relative;
+    text-align: center;
+  }
                     .login{
   position: relative;
   top: 50%;
@@ -288,44 +296,44 @@ $(".login").submit(function(){
             //GET változók kezelése
             
             if($_GET['signup'] == "success"){
-              echo '<script>document.getElementById("zsoka").innerHTML="Sikeres regisztráció!";
-              document.getElementById("zsoka").className = "alert alert-success successtable";
+              echo '<script>document.getElementById("errorbox").innerHTML="Sikeres regisztráció!";
+              document.getElementById("errorbox").className = "alert alert-success successtable";
               $("#zsoka").fadeIn();
-              setTimeout(function(){ $("#zsoka").fadeOut(); }, 6000);
+              setTimeout(function(){ $("#errorbox").fadeOut(); }, 6000);
               </script>';
             }
             if($_GET['logout'] == "success"){
-              echo '<script>document.getElementById("zsoka").innerHTML="Sikeres kijelentkezés!";
-              document.getElementById("zsoka").className = "alert alert-success successtable";
+              echo '<script>document.getElementById("errorbox").innerHTML="Sikeres kijelentkezés!";
+              document.getElementById("errorbox").className = "alert alert-success successtable";
               $("#zsoka").fadeIn();
-              setTimeout(function(){ $("#zsoka").fadeOut(); }, 6000);
+              setTimeout(function(){ $("#errorbox").fadeOut(); }, 6000);
               </script>';} // ÁTMÁSOLNI
             if($_GET['logout'] == "pwChange"){
-              echo '<script>document.getElementById("zsoka").innerHTML="Sikeres jelszócsere!";
-              document.getElementById("zsoka").className = "alert alert-success successtable";
+              echo '<script>document.getElementById("errorbox").innerHTML="Sikeres jelszócsere!";
+              document.getElementById("errorbox").className = "alert alert-success successtable";
               $("#zsoka").fadeIn();
-              setTimeout(function(){ $("#zsoka").fadeOut(); }, 6000);
+              setTimeout(function(){ $("#errorbox").fadeOut(); }, 6000);
               </script>';
             }
             if($_GET['error'] == "WrongPass"){
-              echo '<script>document.getElementById("zsoka").innerHTML="Helytelen jelszó!";
-              document.getElementById("zsoka").className = "alert alert-danger successtable";
+              echo '<script>document.getElementById("errorbox").innerHTML="Helytelen jelszó!";
+              document.getElementById("errorbox").className = "alert alert-danger successtable";
               $("#zsoka").fadeIn();
-              setTimeout(function(){ $("#zsoka").fadeOut(); }, 6000);
+              setTimeout(function(){ $("#errorbox").fadeOut(); }, 6000);
               </script>';
             }
             if($_GET['error'] == "NoUser"){
-              echo '<script>document.getElementById("zsoka").innerHTML="Hibás felhasználónév / jelszó!";
-              document.getElementById("zsoka").className = "alert alert-danger successtable";
+              echo '<script>document.getElementById("errorbox").innerHTML="Hibás felhasználónév / jelszó!";
+              document.getElementById("errorbox").className = "alert alert-danger successtable";
               $("#zsoka").fadeIn();
-              setTimeout(function(){ $("#zsoka").fadeOut(); }, 6000);
+              setTimeout(function(){ $("#errorbox").fadeOut(); }, 6000);
               </script>';
             }
             if($_GET['error'] == "AccessViolation"){
-              echo '<script>document.getElementById("zsoka").innerHTML="Ehhez a funkcióhoz be kell jelentkezned!";
-              document.getElementById("zsoka").className = "alert alert-danger successtable";
+              echo '<script>document.getElementById("errorbox").innerHTML="Ehhez a funkcióhoz be kell jelentkezned!";
+              document.getElementById("errorbox").className = "alert alert-danger successtable";
               $("#zsoka").fadeIn();
-              setTimeout(function(){ $("#zsoka").fadeOut(); }, 6000);
+              setTimeout(function(){ $("#errorbox").fadeOut(); }, 6000);
               </script>';
             }?>
 

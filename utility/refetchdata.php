@@ -2,6 +2,7 @@
 
 $mysqli = new mysqli("localhost", "root", "umvHVAZ%", "mediaio");
 $DB_Elements = fopen("DB_Elements.txt", "w");
+$mysqli->set_charset("utf8");
 /* check connection */
 if ($mysqli->connect_errno) {
     printf("Connect failed: %s\n", $mysqli->connect_error);
@@ -37,10 +38,8 @@ if ($result = $mysqli->query($query)) {
 
 //NEW, JSON METHOD
 $rows = array();
-$query = "SELECT Nev, ID, UID, Category, Status FROM leltar WHERE TakeRestrict='' "; //AND Status=1 
+$query = "SELECT Nev, ID, UID, Category, TakeRestrict, Status FROM leltar"; //AND Status=1 
 if ($result = $mysqli->query($query)) {
-
-    /* fetch associative array */
     while ($row = $result->fetch_assoc()) {
         if($row['Status']==="0"){
             $row['state']=['disabled' => true];
@@ -49,17 +48,11 @@ if ($result = $mysqli->query($query)) {
         }
         $rows[] = $row;
 
-    }
-    //print json_encode($rows);
-    //$JSONPath=dirname(__FILE__).'../TEJOutItems.json';
-    
-    $itemsJSONFile = fopen('./takeOutItems.json', 'w');
-    fwrite($itemsJSONFile, json_encode($rows));
-    fclose($itemsJSONFile);
-    //echo json_encode($rows);
-    $result->free();
 }
-
-/* close connection */
-$mysqli->close();
+$a=json_encode($rows);
+//echo $rows;    
+    $itemsJSONFile = fopen('../takeOutItems.json', 'w');
+    fwrite($itemsJSONFile, $a);
+    fclose($itemsJSONFile);
+}
 ?>

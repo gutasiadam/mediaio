@@ -2,19 +2,21 @@
 
 include "translation.php";
 include "header.php";
+
+
 include('./utility/refetchdata.php');
 if(!isset($_SESSION['userId'])){
   header("Location: index.php?error=AccessViolation");}
 $SESSuserName = $_SESSION['UserUserName'];
+setcookie("user_roleLevel",$_SESSION['role'],0,);
 error_reporting(E_ALL ^ E_NOTICE);
-// Cookie for ITEM SELECTION (JS --> PHP :3)
 ?>
 
 <script src="utility/jstree.js"></script>
   <link href='main.css' rel='stylesheet' />
   <link href="utility/themes/default/style.min.css" rel="stylesheet"/>
 <html >
-      <title><?php echo $applicationTitleFull;?></title>
+      <title>MediaIo - takeout</title>
       <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
 					<a class="navbar-brand" href="index.php"><img src="./utility/logo2.png" height="50"></a>
 					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -50,7 +52,7 @@ error_reporting(E_ALL ^ E_NOTICE);
 		<div class="container">
     
 			<br /><br />
-			<h2 class="rainbow" align="center" id="doTitle"><?php echo $applicationTitleShort;?></h2><br />
+			<h2 class="rainbow" align="center" id="doTitle">Tárgy kivétel</h2><br />
       <div class="row">
       <div class="col-md-3">
       <div class="alert alert-info">Szia <strong><?php echo $_SESSION['firstName']?></strong>, mit vinnél el?</div>
@@ -73,21 +75,13 @@ error_reporting(E_ALL ^ E_NOTICE);
 					<div class="table-responsive">
 						<table class="table table-bordered table-dark" id="dynamic_field">
 				<form name="sendRequest" method="POST" action='/index.php'>
-							<!--<tr>
-								<td><button type="button" name="aadd" id="addd" class="btn btn-warning">Add More lines for items</button></td>
-							</tr>-->
-              
 						</table>
-						<!--<div id="livesearch"></div>
-							<input type="submit" name="subm" value="Take Out!" class="btn btn-primary"/>
-					</div>-->
 				</form>
         <table class="table table-bordered livearray" id="liveSelArrayResult"><td></td></table>
         
 			</div>
 		</div>
 	</body>
-<!--<footer class="page-footer font-small blue"> <div class="fixed-bottom" align="center"><p>Code: <a href="https://github.com/d3rang3">Adam Gutasi</a></p></div></footer>-->
 </html>
 <script>
 
@@ -123,6 +117,17 @@ xobj.onreadystatechange = function () {
 xobj.send(null);  
 }
 
+function getCookie(cName) {
+  const name = cName + "=";
+  const cDecoded = decodeURIComponent(document.cookie); //to be careful
+  const cArr = cDecoded.split('; ');
+  let res;
+  cArr.forEach(val => {
+    if (val.indexOf(name) === 0) res = val.substring(name.length);
+  })
+  return res
+}
+
 function renameKey ( obj, oldKey, newKey ) {
   obj[newKey] = obj[oldKey];
   delete obj[oldKey];
@@ -132,14 +137,29 @@ loadJSON(function(response) {
   // Parse JSON string into object
   console.log("[loadJSON] - done");
  });
-for (let i = 0; i < d.length; i++) {
+
+//megjelenítés felhasználó roleLevel-je alapján:
+var roleNum=getCookie("user_roleLevel");
+  for (let i = 0; i < d.length; i++) {
   renameKey(d[i],'Nev','text');
   renameKey(d[i],'ID','id');
   renameKey(d[i],'UID','uid');
   //alert(d[i].uid);
+  if(d[i].TakeRestrict!='' && roleNum<2){// nem stúdiós, vagy afölötti
+    d[i].state.disabled=true;
+  }
   d[i].originalName=d[i].text;
-  d[i].text=d[i].text+' - '+d[i].uid;
+  d[i].restrict=d[i].TakeRestrict;
+  if(d[i].restrict!=''){
+    d[i].text=d[i].text+' - '+d[i].uid+'('+ d[i].restrict+')';
+  }else{
+    d[i].text=d[i].text+' - '+d[i].uid;
+  }
+  
 }
+
+
+
 
  
 
@@ -184,7 +204,7 @@ $('#jstree').on("changed.jstree", function (e, data) {
   len=$('#jstree').jstree().get_selected(true).length
   for (i=0; i < len; i++){
     itemName=$('#jstree').jstree().get_selected(true)[i].original.originalName;
-    alert(itemName);
+    //alert(itemName);
     itemId=$('#jstree').jstree().get_selected(true)[i].id;
     //itemUid=$('#jstree').jstree().get_selected(true)[i].uid;
     //var item = takeOutPrepJSON[i];   
@@ -256,39 +276,6 @@ window.onload = function () {
     setInterval(updateTime, 1000);
     updateTime();
 };
-
-
-  
-
-  /*$(document).on('click', '.go_btn', function(){
-      var filtered = selectList.filter(function (el) {
-      return el != null;
-    });
-      console.log(filtered);
-      takeOutJSON = JSON.stringify(filtered);
-      alert(takeOutJSON);
-      $.ajax({
-    type: 'POST',
-    data: {data : takeOutJSON},
-    success: function (response) {
-      $('#doTitle').animate({'opacity': 0}, 400, function(){
-        $(this).html('<h2 class="text text-success" role="alert">'+takeout_Success+'</h2>').animate({'opacity': 1}, 400);
-        $(this).html('<h2 class="text text-success" role="alert">'+takeout_Success+'</h2>').animate({'opacity': 1}, 3000);
-        $(this).html('<h2 class="text text-success" role="alert">'+takeout_Success+'</h2>').animate({'opacity': 0}, 400);
-    setTimeout(function() { $("#doTitle").text("Arpad Media IO").animate({'opacity': 1}, 400); }, 3800);;});
-    $('#dynamic_field').empty();
-    var selectList = [];
-    console.log("selectList:"+selectList);
-    $('#goButton').fadeOut();
-    },//window.location.href = './takeout.php?state=Success';;
-    error: function(XMLHttpRequest, textStatus, errorThrown) { 
-        alert("Status: " + textStatus); alert("Error: " + errorThrown); 
-    }
-})
-    });*/
-  
-
-
   document.getElementById("takeout2BTN").addEventListener("click", function() {
     if (takeOutPrepJSON.items.length==0){
       displayMessageInTitle("#doTitle","Nem választottál ki semmit!");

@@ -1,8 +1,9 @@
 <?php 
 require_once('F:/Programming/xampp/htdocs/.git/mediaio/PHPMailer/src/PHPMailer.php');
     require '../PHPMailer/src/SMTP.php';
+    require '../PHPMailer/src/Exception.php';
 use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
+use PHPMailer\Exception;
 use PHPMailer\SMTP;
 
     function generateRandomString($length = 25) {
