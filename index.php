@@ -1,11 +1,7 @@
 <?php
-//header("Cache-Control: public, max-age=3600, no-cache");
-//header('Expires: '. gmdate('D, d M Y H:i:s \G\M\T', time() + 10)); 
-
   include "translation.php";
   error_reporting(E_ALL ^ E_NOTICE);
   include "header.php";
-  //require 'header.php'; NOT NECESSARY, SHOULD BE USED IN THE FUTURE
 ?>
 <!DOCTYPE html>
 <body>
@@ -78,26 +74,11 @@ else
                     
                     <?php
                 }
-          // Handle specific GET requests
                 ?>
-                <!-- </ul -->
         </nav>
 	<body>
 		
     <?php if(!isset($_SESSION['userId'])){?>
-                    <!--<div class="loginbox">
-                    <form action="utility/login.ut.php" method="post" class="formmain" id="formmain" autocomplete="off" >
-                    <h6 align=center width="100%" id="SystemMsg" class="successtable2" style="display:none;"></h6>
-                    <h1 align=center class="rainbow"><?php echo $applicationTitleFull;?></h1>
-                   <div class="row justify-content-center" style="text-align: center;"><div class="col-7 col-sm-4"><input type="text" name="useremail" placeholder="Felhasználónév/E-mail" class="form-control mb-2 mr-sm-2"></div></div>
-                    <div class="row justify-content-center" style="text-align: center;"><div class="col-7 col-sm-4"><input type="password" name="pwd" placeholder="Jelszó" class="form-control mb-2 mr-sm-2"></div></div>
-                    <div class="row justify-content-center" style="text-align: center;"><div class="col-5 col-sm-4"><button class="btn btn-dark" type="submit" name="login-submit" align=center>Bejelentkezés</button></div></div>
-                    <div class="row justify-content-center" style="text-align: center;"><div class="col-5 col-sm-4"><a href="./pwReset.php">Elfelejtett jelszó</a></div></div>
-                    </div>
-                    </form>
-                    -->
-                    
-                    
                     <form class="login" action="utility/login.ut.php" method="post" autocomplete="off">
                       <fieldset>
   	                    <legend id="zsoka" class="legend">
@@ -287,7 +268,6 @@ $(".login").submit(function(){
             </p></div></footer>';
             <script type = "text/javascript">
             $( document ).ready(function() {             
-              //WebSocketTest();
               drawMenuItemsRight('index',menuItems);
               drawIndexTable(menuItems,0);
             });
@@ -347,11 +327,4 @@ window.onload = function () {
     setInterval(updateTime, 1000);
     updateTime();
 };
-/*window.onload = function () {
-    var fiveMinutes = 60 * 10 - 1,
-        display = document.querySelector('#time');
-    startTimer(fiveMinutes, display);
-    setInterval(updateTime, 1000);
-    updateTime();
-};*/
 </script>
