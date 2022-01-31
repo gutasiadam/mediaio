@@ -3,18 +3,13 @@ include "translation.php";
 include "header.php";
 if(!isset($_SESSION['userId'])){
   header("Location: index.php?error=AccessViolation");}
+  $serverType = parse_ini_file(realpath('./server/init.ini')); // Server type detect
+  if($serverType['type']=='dev'){
+    $setup = parse_ini_file(realpath('../../mediaio-config/config.ini')); // @ Dev
+  }else{
+    $setup = parse_ini_file(realpath('../mediaio-config/config.ini')); // @ Production
+  }
 ?>
-<!--
-<head>
-<script src="JTranslations.js"></script>
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-	  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-  <script src="https://kit.fontawesome.com/2c66dc83e7.js" crossorigin="anonymous"></script>
-  <script src="utility/_initMenu.js" crossorigin="anonymous"></script>
-</head>-->
-
-
-
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
           <a class="navbar-brand" href="index.php"><img src="./utility/logo2.png" height="50"></a>
 					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -73,13 +68,13 @@ Ezeket a tárgyakat mutasd:
   //exit();
 //}
 
-$serverName="localhost";
-	$userName="root";
-	$password="umvHVAZ%";
-	$dbName="mediaio";
+  //$serverName="localhost";
+	//$userName="root";
+	//$password="umvHVAZ%";
+	//$dbName="mediaio";
 	$countOfRec=0;
 
-	$conn = new mysqli($serverName, $userName, $password, $dbName);
+	$conn = mysqli_connect($setup['dbserverName'], $setup['dbUserName'], $setup['dbPassword'], $setup['dbDatabase']);
 
 	if ($conn->connect_error) {
 		die("Connection fail: (Is the DB server maybe down?)" . $conn->connect_error);
@@ -122,14 +117,14 @@ if ($result->num_rows > 0) {
     while($row = $result->fetch_assoc()) {
 		/*if ($countOfRec == 50){
 		}*/
-		if($row["TakeRestrict"]=="*"){
-			echo "<tr style='background-color:#fffeab;' ><td><a id=#".$row["UID"]."></a>".$row["UID"]. "</td><td>" . $row["Nev"]. "</td><td>" . $row["Tipus"]. "</td><td><strong>". $row["RentBy"]."</strong></td></tr>";
+		if($row["Status"]==0){
+			echo "<tr style='background-color:#F5B8B8;' ><td><a id=#".$row["UID"]."></a>".$row["UID"]. "</td><td>" . $row["Nev"]. "</td><td>" . $row["Tipus"]. "</td><td><strong>". $row["RentBy"]."</strong></td></tr>";
 		}
     else if($row["TakeRestrict"]=="s"){
 			echo "<tr style='background-color:#7db3e8;' ><td><a id=#".$row["UID"]."></a>".$row["UID"]. "</td><td>" . $row["Nev"]. "</td><td>" . $row["Tipus"]. "</td><td><strong>". $row["RentBy"]."</strong></td></tr>";
 		}
-		else if($row["Status"]==0){
-			echo "<tr style='background-color:#F5B8B8;' ><td><a id=#".$row["UID"]."></a>".$row["UID"]. "</td><td>" . $row["Nev"]. "</td><td>" . $row["Tipus"]. "</td><td><strong>". $row["RentBy"]."</strong></td></tr>";
+		else if($row["TakeRestrict"]=="*"){
+			echo "<tr style='background-color:#fffeab;' ><td><a id=#".$row["UID"]."></a>".$row["UID"]. "</td><td>" . $row["Nev"]. "</td><td>" . $row["Tipus"]. "</td><td><strong>". $row["RentBy"]."</strong></td></tr>";
 		}else{
 			echo "<tr><td><a id=#".$row["UID"]."></a>".$row["UID"]. "</td><td>" . $row["Nev"]. "</td><td>" . $row["Tipus"]. "</td><td>". "</td></tr>";
 		}

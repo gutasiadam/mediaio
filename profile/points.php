@@ -1,6 +1,12 @@
 <?php
 include "header.php";
 session_start();
+$serverType = parse_ini_file(realpath('../server/init.ini')); // Server type detect
+    if($serverType['type']=='dev'){
+      $setup = parse_ini_file(realpath('../../../mediaio-config/config.ini')); // @ Dev
+    }else{
+      $setup = parse_ini_file(realpath('../../mediaio-config/config.ini')); // @ Production
+    }
 
 if($_SESSION['role']=="Default") {
     header("Location: ../index.php?notboss");
@@ -8,12 +14,6 @@ if($_SESSION['role']=="Default") {
 if(isset($_SESSION['userId']) && (($_SESSION['role']=="Admin") || ($_SESSION['role']=="Boss"))){
     error_reporting(E_ALL ^ E_NOTICE);
 
-//index.php
-
-$serverName="localhost";
-	$userName="root";
-	$password="umvHVAZ%";
-	$dbName="mediaio";
 
 ?>
 
@@ -21,9 +21,9 @@ $serverName="localhost";
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <script src="utility/timeline.min.js"></script>
-        <link rel="stylesheet" href="utility/pathfinder.css" />
-        <link rel="stylesheet" href="utility/timeline.min.css" />
-        <script src="utility/jquery.js"></script>
+        <link rel="stylesheet" href="../utility/pathfinder.css" />
+        <link rel="stylesheet" href="../utility/timeline.min.css" />
+        <script src="../utility/jquery.js"></script>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js">  </script>
@@ -66,7 +66,7 @@ $serverName="localhost";
     <div class="panel-heading">
     <?php 
         $TKI = $_SESSION['UserUserName'];    
-        $conn = new mysqli($serverName, $userName, $password, $dbName);
+        $conn = new mysqli($setup['dbserverName'], $setup['dbUserName'], $setup['dbPassword'], $setup['dbDatabase']);
         $sql = ("SELECT * FROM `users` ORDER BY `UserPoints` DESC");
         $result = $result = mysqli_query($conn, $sql);
         $conn->close();

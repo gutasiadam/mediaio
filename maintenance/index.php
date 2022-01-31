@@ -252,13 +252,14 @@ $('#showOnlyMyTasks_checkBox').change(function() {
             console.log("Check!");
             $('table#takaritasirend > tbody > tr').not(':first').remove();//Címsor után minden törlése
             $.ajax({
-       url:"render_work_Data.php",
+       url:"./render_work_Data.php",
        type:"POST",
        async: true,
        // a PHP szkript utasítást kap, hogy csak egy felhasználóra vagyunk kíváncsiak.
        data:{mode:'UserFiltered'}, 
        success:function(result)
        {
+        alert(result);
         sentBack_result=JSON.parse(result);
         console.log(sentBack_result);
 

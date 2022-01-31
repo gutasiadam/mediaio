@@ -4,10 +4,12 @@ session_start();
 if(isset($_SESSION['userId'])){
     error_reporting(E_ALL ^ E_NOTICE);
 //index.php
-$serverName="localhost";
-	$userName="root";
-	$password="umvHVAZ%";
-	$dbName="mediaio";
+$serverType = parse_ini_file(realpath('../server/init.ini')); // Server type detect
+    if($serverType['type']=='dev'){
+      $setup = parse_ini_file(realpath('../../../mediaio-config/config.ini')); // @ Dev
+    }else{
+      $setup = parse_ini_file(realpath('../../mediaio-config/config.ini')); // @ Production
+    }
 ?>
 
 <html>  
@@ -17,7 +19,6 @@ $serverName="localhost";
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js">  </script>
   <script src="https://kit.fontawesome.com/2c66dc83e7.js" crossorigin="anonymous"></script>
-  <title>A náladlevő tárgyak</title>
   
     </head>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -56,7 +57,7 @@ $serverName="localhost";
     <div class="panel-heading">
     <?php 
         $TKI = $_SESSION['UserUserName'];    
-        $conn = new mysqli($serverName, $userName, $password, $dbName);
+        $conn = new mysqli($setup['dbserverName'], $setup['dbUserName'], $setup['dbPassword'], $setup['dbDatabase']);
         $sql = ("SELECT * FROM `leltar` WHERE `RentBy` = '$TKI'");
         $result = mysqli_query($conn, $sql);
         $conn->close();
@@ -74,7 +75,7 @@ $serverName="localhost";
               $authGen = random_int(100000,999999);
               //if ($row["AuthState"] != NULL){ // Tehát már van kód generálva
                 //Keressük meg az itemhez tartozó kód értékét és hogy melyik felhasználó használhatja ezt a kódot.
-                $conn = new mysqli($serverName, $userName, $password, $dbName);
+                $conn = new mysqli($setup['dbserverName'], $setup['dbUserName'], $setup['dbPassword'], $setup['dbDatabase']);
                 $rowItem = $row["Nev"];
                 //$query = ("SELECT * FROM `authcodedb` WHERE Item = '$rowItem'");
                 //$result2 = mysqli_query($conn, $query);

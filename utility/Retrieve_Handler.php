@@ -5,7 +5,12 @@ $continue=FALSE;
 $SESSuserName = $_SESSION['UserUserName'];
 $mode = ($_POST['mode']);
 $data = json_decode(stripslashes($_POST['data']));
-
+$serverType = parse_ini_file(realpath('../server/init.ini')); // Server type detect
+    if($serverType['type']=='dev'){
+      $setup = parse_ini_file(realpath('../../../mediaio-config/config.ini')); // @ Dev
+    }else{
+      $setup = parse_ini_file(realpath('../../mediaio-config/config.ini')); // @ Production
+    }
 if ($mode=="handle"){ // A beérkező tárgy(ak) adminisztrálása, visszatevése.
   foreach($data as $d){
     echo $d;
@@ -13,13 +18,9 @@ if ($mode=="handle"){ // A beérkező tárgy(ak) adminisztrálása, visszatevés
 
 
   // Database init 
-  $serverName="localhost";
-  $userName="root";
-  $password="umvHVAZ%";
-  $dbName="mediaio";
   $countOfRec=0;
 
-  $conn = new mysqli($serverName, $userName, $password, $dbName);
+  $conn = new mysqli($setup['dbserverName'], $setup['dbUserName'], $setup['dbPassword'], $setup['dbDatabase']);
 
   if ($conn->connect_error) {
       die("Connection fail: (Is the DB server maybe down?)" . $conn->connect_error);
@@ -62,7 +63,7 @@ if ($mode=="check"){ // Egy ellenőrző karakter generálása, amiből megtudja 
   $dbName="mediaio";
   $countOfRec=0;
   $item = $_POST['data']; // Azért kell ide külön, mert a kód eleján megadott striplash-t nem kezeli jól itt a PHP.
-  $conn = new mysqli($serverName, $userName, $password, $dbName);
+  $conn = new mysqli($setup['dbserverName'], $setup['dbUserName'], $setup['dbPassword'], $setup['dbDatabase']);
   $sql = "SELECT RentBy, Status FROM leltar WHERE Nev='$item'";
   /* Lehetséges kimenetek:
   A - A felhasználó visszahoz egy önmaga által kivett tárgyat.

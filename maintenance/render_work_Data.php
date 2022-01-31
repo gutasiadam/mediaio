@@ -1,9 +1,16 @@
 <?php
 //insert.php
 session_start();
+$serverType = parse_ini_file(realpath('../server/init.ini')); // Server type detect
+    if($serverType['type']=='dev'){
+      $setup = parse_ini_file(realpath('../../../mediaio-config/config.ini')); // @ Dev
+    }else{
+      $setup = parse_ini_file(realpath('../../mediaio-config/config.ini')); // @ Production
+    }
 $n=0;
 function renderUsersDraggable(){
-    $conn = new mysqli("localhost", "root", "umvHVAZ%", "mediaio");
+  global $setup;
+  $conn = new mysqli($setup['dbserverName'], $setup['dbUserName'], $setup['dbPassword'], $setup['dbDatabase']);
     $result = $conn->query("SELECT usernameUsers FROM users");
     if ($result->num_rows > 0) {
         while($row = $result->fetch_assoc()) {
@@ -14,10 +21,10 @@ function renderUsersDraggable(){
 }
 
 function renderWorkTable($selectedUser){
-
+  global $setup;
   $today=date("Y/m/d");
     //Először töröljük a mainál régebbi dátumú feladokat, ha van ilyen.
-    $conn = new mysqli("localhost", "root", "umvHVAZ%", "mediaio");
+    $conn = new mysqli($setup['dbserverName'], $setup['dbUserName'], $setup['dbPassword'], $setup['dbDatabase']);
     if ($conn->connect_error) {
         die("Connection failed: " . $conn->connect_error);
       }
@@ -62,7 +69,10 @@ function renderWorkTable($selectedUser){
 $connect=null;}
 
 if(isset($_POST['mode']) & $_POST['mode']=='UserFiltered'){
+  echo "Fasz";
+  echo $setup['dbPassword'];
   renderWorkTable($_SESSION['UserUserName']);
+ 
 }
 
 

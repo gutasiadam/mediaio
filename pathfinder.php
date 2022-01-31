@@ -3,6 +3,12 @@ include "translation.php";
 include "header.php";
 session_start();
 if(isset($_SESSION['UserUserName'])){
+  $serverType = parse_ini_file(realpath('./server/init.ini')); // Server type detect
+  if($serverType['type']=='dev'){
+    $setup = parse_ini_file(realpath('../../mediaio-config/config.ini')); // @ Dev
+  }else{
+    $setup = parse_ini_file(realpath('../mediaio-config/config.ini')); // @ Production
+  }
     error_reporting(E_ALL ^ E_NOTICE);
 ?>
 
@@ -66,8 +72,8 @@ if(isset($_SESSION['UserUserName'])){
 
     <?php 
     if(isset($_GET['pfItem'])){
-        $TKI = $_GET['pfItem'];      
-        $connect = new PDO("mysql:host=localhost;dbname=mediaio", "root", "umvHVAZ%");
+        $TKI = $_GET['pfItem'];
+        $connect = new PDO("mysql:host=localhost;dbname=mediaio", $setup['dbUserName'], $setup['dbPassword']);
         $query = "SELECT * FROM `takelog` WHERE `Item` = '$TKI' ORDER BY `Date` DESC";
         $statement = $connect->prepare($query);
         $statement->execute();
@@ -148,15 +154,6 @@ window.onload = function () {
   //Remove this comment for see Timeline in Horizontal Format otherwise it will display in Vertical Direction Timeline
  });
 });*/
-/*var dbItems = ["Fresnel 1000W", "Fresnel 650W", "Fresnel 300W", "Softbox allo 1", "Softbox allo 2", "Softbox fekvo",
- "Fresnel allvany A", "Fresnel allvany B", "Fresnel allvany C", "Softbox allvany 1", "Softbox allvany 2", "Softbox allvany 3", 
- "Hatter allvany 1", "Hatter allvany 2", "Genius hangfal",
-  "HP laptop", "Spanyolfal", "Neon lampa", "Asztali LED lampa", "Szerver ventillator", "Feher allo ventillator",
-  "Negyes kapcsolhato eloszto 1", "Negyes kapcsolhato eloszto 2", "Negyes kapcsolhato eloszto 3", "Negyes kapcsolhato eloszto 4",
-  "Negyes kapcsolhato eloszto 5", "Negyes kapcsolhato eloszto 6", "Negyes eloszto (5m)", "Harmas eloszto (1m)", "Harmas eloszto (3m)", "2/2-es eloszto (3m)", "Harmas eloszto (5m)", "Otos kapcsolhato eloszto (3m)", 
-"Otos eloszto (5m)", "3/6-os eloszto (1,5m) 1", "3/6-os eloszto (1,5m) 2", "Studiomikrofon", "Hattertarto keresztrud (2m)", "Logic kek hangfal", "Halogen reflektor (400W)", "Behringer kevero", "Dimmer", "Deritolap",
-"Kis mikrofonallvany", "Popfilter", "Mikrofonarto kengyel", "Carena kamera allvany", "Hama 79 kamera allvany", "Hama 63 kamera allvany", "Selecline laptop", "60*90 Bowens-es softbox", "Godox MS300 studiovaku 1", "Godox MS300 studiovaku 2",
-"40*180-as softbox (mehracs) 1", "40*180-as softbox (mehracs) 2", "120-as oktabox (mehracs)", "Godox X2T-C transmitter", "Hattertarto keresztrud (3m)"];*/
 var dbItems=[];
 var d = {};
 function loadJSON(callback) {   

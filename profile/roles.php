@@ -3,11 +3,13 @@ include "header.php";
 session_start();
 if(($_SESSION['role']=="Admin") || ($_SESSION['role']=="Boss")){
     error_reporting(E_ALL ^ E_NOTICE);}
+    $serverType = parse_ini_file(realpath('../server/init.ini')); // Server type detect
+    if($serverType['type']=='dev'){
+      $setup = parse_ini_file(realpath('../../../mediaio-config/config.ini')); // @ Dev
+    }else{
+      $setup = parse_ini_file(realpath('../../mediaio-config/config.ini')); // @ Production
+    }
 
-$serverName="localhost";
-	$userName="root";
-	$password="umvHVAZ%";
-	$dbName="mediaio";
 
 ?>
 
@@ -89,7 +91,7 @@ imodal++;
 
    <?php 
         $TKI = $_SESSION['UserUserName'];    
-        $conn = new mysqli($serverName, $userName, $password, $dbName);
+        $conn = new mysqli($setup['dbserverName'], $setup['dbUserName'], $setup['dbPassword'], $setup['dbDatabase']);
         $sql = ("SELECT * FROM `users`");
         $result = $result = mysqli_query($conn, $sql);
         $conn->close();
@@ -99,7 +101,7 @@ imodal++;
           while($row = $result->fetch_assoc()) { 
               array_push($resultArray, $row);
                 $rangok=["default","stúdiós","sadmin","admin","böss"];
-                $conn = new mysqli($serverName, $userName, $password, $dbName);
+                $conn = new mysqli($setup['dbserverName'], $setup['dbUserName'], $setup['dbPassword'], $setup['dbDatabase']);
                 $rowItem = $row["firstName"].$row["lastName"];
                 $query = ("SELECT * FROM `users`");
                 $result2 = mysqli_query($conn, $query);
@@ -123,7 +125,7 @@ imodal++;
   <label class="form-check-label" for="studioCheckBoxLabel">stúdiós</label>
 </div>
 
-<button  " class="btn btn-warning">Módosítás</button> <!-- type="submit"-->
+<button class="btn btn-warning">Módosítás</button> <!-- type="submit"-->
 </div>
                   <?php
                   $imodal++;
@@ -133,12 +135,8 @@ imodal++;
 
 <?php
       if (isset($_POST["mode"])){
-        $serverName = "localhost";
-        $dbUserName = "root";
-        $dbPassword = "umvHVAZ%";
-        $dbDatabase = "mediaio";
         $targetUser = $_POST["user"];
-        $conn = new mysqli($serverName, $dbUserName, $dbPassword, $dbDatabase);
+        $conn = new mysqli($setup['dbserverName'], $setup['dbUserName'], $setup['dbPassword'], $setup['dbDatabase']);
               if ($conn->connect_error){
                 die("Connection failed: ".mysqli_connect_error());}
 

@@ -32,7 +32,7 @@
             });</script>
     </nav> <?php 
             
-            echo '<table class="logintable"><tr><td><p>Jelszócsere <br><h3 class="rainbow">'.$_SESSION['lastName'].' '.$_SESSION['firstName'].'</h3><br>Számára</p></td></tr>
+            echo '<table class="logintable"><tr><td><p>Jelszócsere <br><h3 class="rainbow">'.$_SESSION['lastName'].' '.$_SESSION['firstName'].'</h3><br>Számára</br>Sikeres jelszócsere esetén az oldal kijelentkeztet, és e-mailt is küld.</p></td></tr>
             <form action="../utility/chPwd.ut.php" method="post">
             <tr><td><input class="form-control mb-2 mr-sm-2" type="password" name="pwd-Old" placeholder="Jelenlegi jelszó"></td></tr> <br>
             <tr><td><input class="form-control mb-2 mr-sm-2" type="password" name="pwd-New" placeholder="Új jelszó" ></td></tr> <br>
@@ -41,6 +41,7 @@
             <tr><td><div class="spinner-border" role="status">
             <span class="sr-only">Loading...</span>
             </div></tr></td>
+            
             </form>
             ';
                 if (isset($_GET['error'])){
@@ -56,8 +57,7 @@
                     echo '<tr><td><p class="success">Successfully changed password! Please log out in order to use your brand new, shiny password! </p></td></tr>';
                     session_unset();
                     session_destroy();
-
-                    header("Location: ../index.php?logout=pwChange");}
+                    header("Location: ../utility/logout.ut.php");}
                 }
             echo "</table>";
         }else{

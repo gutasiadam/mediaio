@@ -1,6 +1,9 @@
-Hattertarto keresztrud (2m)
-97
-Elgato capture card
-216
+Kis passziv habgfal 1
+224
+Kis passziv habgfal 2
+225
+Nagy passziv habgfal 1
+226
+RUN
 RUN
 RUN

@@ -1,7 +1,13 @@
 <?php 
+$serverType = parse_ini_file(realpath('./server/init.ini')); // Server type detect
+if($serverType['type']=='dev'){
+  $setup = parse_ini_file(realpath('../../mediaio-config/config.ini')); // @ Dev
+}else{
+  $setup = parse_ini_file(realpath('../mediaio-config/config.ini')); // @ Production
+}
 
-$mysqli = new mysqli("localhost", "root", "umvHVAZ%", "mediaio");
-$DB_Elements = fopen("DB_Elements.txt", "w");
+$mysqli = new mysqli($setup['dbserverName'], $setup['dbUserName'], $setup['dbPassword'], $setup['dbDatabase']);
+$DB_Elements = fopen("./DB_Elements.txt", "w");
 $mysqli->set_charset("utf8");
 /* check connection */
 if ($mysqli->connect_errno) {
@@ -9,13 +15,13 @@ if ($mysqli->connect_errno) {
     exit();
 }
 //OLD TXT Method
-$query = "SELECT Nev FROM leltar WHERE TakeRestrict='' ";
+$query = "SELECT Nev, UID FROM leltar"; // WHERE TakeRestrict=''
 
 if ($result = $mysqli->query($query)) {
 
     /* fetch associative array */
     while ($row = $result->fetch_assoc()) {
-        fwrite($DB_Elements, $row["Nev"]."\n");
+        fwrite($DB_Elements, $row["Nev"]."\t".$row["UID"]."\n");
     }
     //print json_encode($rows);
     fclose($DB_Elements);

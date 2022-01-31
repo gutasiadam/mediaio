@@ -7,10 +7,17 @@ use PHPMailer\PHPMailer\SMTP;
 
 //insert.php
 session_start();
+$serverType = parse_ini_file(realpath('../server/init.ini')); // Server type detect
+    if($serverType['type']=='dev'){
+      $setup = parse_ini_file(realpath('../../../mediaio-config/config.ini')); // @ Dev
+    }else{
+      $setup = parse_ini_file(realpath('../../mediaio-config/config.ini')); // @ Production
+    }
+
 if(isset($_POST["date"]) && isset($_POST["user"]) && isset($_POST["task"]))
 {
     //Először nézzük meg, létezik-e a felhasználó:
-    $conn = new mysqli("localhost", "root", "umvHVAZ%", "mediaio");
+    $conn = new mysqli($setup['dbserverName'], $setup['dbUserName'], $setup['dbPassword'], $setup['dbDatabase']);
     $user=$_POST["user"];
     $result = $conn->query("SELECT emailUsers, firstName FROM users WHERE userNameUsers='$user'");
     $conn->close();
@@ -20,7 +27,7 @@ if(isset($_POST["date"]) && isset($_POST["user"]) && isset($_POST["task"]))
         $nev=$row['firstName'];
     }
      
-    $connect = new PDO("mysql:host=localhost;dbname=mediaio", "root", "umvHVAZ%");
+    $connect = new PDO("mysql:host=localhost;dbname=mediaio", $setup['dbUserName'], $setup['dbPassword']);
  
  $query = "
  INSERT INTO feladatok 
@@ -51,8 +58,8 @@ $mail->SMTPAuth   = TRUE;
 $mail->SMTPSecure = "tls";
 $mail->Port       = 587;
 $mail->Host       = "smtp.gmail.com";
-$mail->Username   = "arpadmedia.io@gmail.com";
-$mail->Password   = "xlr8VGA%";
+$mail->Username   = $setup['app_email'];
+$mail->Password   = $setup['app_email_pass'];
  $mail->Body = '
 <html>
 <head>
@@ -61,15 +68,13 @@ $mail->Password   = "xlr8VGA%";
 <body>
   <h3>Kedves '.$nev.'!</h3>
   <p>Új feladatot kaptál:
- <table style="border: 1px solid black; width: 50%">
- <tr>
- <th>Dátum 📅</th>
- <th>Feladat 📝<td></th>
- </tr>
- <tr>
- <td>'.$_POST['date'].'</h6>'.'</td><td>'.$_POST['task'].'</td></tr>
- </table>
-Ha szerinted ez az e-mail nem releváns, vagy hibás, jelezd a vezetőségnek.
+  <table max-width="600px" display: block; margin: 0 auto ; border="1px solid black" cellspacing="0" cellpadding="0">
+  <th style="text-align: center;">Dátum 📅</th>
+  <th style="text-align: center;">Feladat 📝</th>
+  <tr><td style="text-align: center;">'.$_POST['date'].'</h6>'.'</td><td style="text-align: center;">'.$_POST['task'].'</td></tr>
+</table>
+
+Ha szerinted ez az e-mail nem releváns, vagy hibás, jelezd azt a vezetőségnek.
   <h5>Üdvözlettel: <br> Arpad Media Admin👋</h5>
 </body>
 </html>
@@ -77,7 +82,7 @@ Ha szerinted ez az e-mail nem releváns, vagy hibás, jelezd a vezetőségnek.
 
 
 $mail->isHTML(true);
-$mail->setFrom('arpadmedia@gmail.com', 'mediaIO');
+$mail->setFrom($setup['app_email'], 'mediaIO');
 $mail->FromName = "mediaIO";
 $mail->CharSet = 'UTF-8';
 $mail->Encoding = 'base64';

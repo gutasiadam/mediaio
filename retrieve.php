@@ -28,7 +28,6 @@ var goStatus = 0;
 </script>
 
 <html >
-      <title>MediaIO</title>
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
 					<a class="navbar-brand" href="index.php"><img src="./utility/logo2.png" height="50"></a>
 					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -59,7 +58,7 @@ var goStatus = 0;
 	<body >
 		<div class="container">
 			<br /><br />
-      <h2 class="rainbow" align="center" id="doTitle"><?php echo $applicationTitleShort;?></h2><br />
+      <h2 class="rainbow" align="center" id="doTitle">Visszahozás</h2><br />
       <div class="row">
       <div class="col-md-4">
       <div class="alert alert-info"><?php echo $Welcomemsg_retrieve?></div>
@@ -120,7 +119,8 @@ var goStatus = 0;
   
 }
 
-var dbItems=(loadFile("./utility/DB_Elements.txt"));
+var dbItems=(loadFile("./DB_Elements.txt"));
+console.log(dbItems);
 //Right at load - start autologout.
 
   var selectList = [];
@@ -277,7 +277,7 @@ window.onload = function () {
           //$('#dynamic_field_2').append('<tr id="row'+id+'"><td>'+currentItemSel+'<br><small>'+currentRentby+'</small></td><td><form><div class="form-group"><input type="number" class="form-control" id="authCodeInput'+id+'" placeholder="XXX-XXX"><input type="hidden" id="authCodeItem'+id+'" class="form-control" value='+currentItemSel+'></input></div></form></td><td><button type="button" class="verify_btn btn-success" name="verify" id="'+id+'" class="btn btn-success btnsucc'+id+' btn_auth">+</button></td><td><button type="button" name="remove" id="'+id+'" class="btn btn-danger btn'+id+' btn_remove">X</button></td></tr>');
           break;
         default:
-        console.log("Egyik sem. Hiba.");
+        console.log("X: Egyik sem. Hiba.");
           // code block
 }
       $('#id_itemNameAdd').val('');
@@ -523,6 +523,6 @@ function startTimer(duration, display) {
 
 <?php //Message handler
 if($_GET['state'] == "Success"){
-  echo '<table align=center width=200px class=successtable><tr><td><div class="alert alert-success"><strong>Retrieve - </strong>Sikeresen bekerültek a tárgyak a raktárba! Újra otthon érezhetik magukat!</div></tr></td></table>';
+  echo '<table align=center width=200px class=successtable><tr><td><div class="alert alert-success"><strong>Retrieve - </strong>Sikeresen bekerültek a tárgyak a raktárba.</div></tr></td></table>';
 }
 ?>

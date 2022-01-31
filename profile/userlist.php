@@ -1,6 +1,12 @@
 <?php 
 include "header.php";
 session_start();
+$serverType = parse_ini_file(realpath('../server/init.ini')); // Server type detect
+    if($serverType['type']=='dev'){
+      $setup = parse_ini_file(realpath('../../../mediaio-config/config.ini')); // @ Dev
+    }else{
+      $setup = parse_ini_file(realpath('../../mediaio-config/config.ini')); // @ Production
+    }
 if(!isset($_SESSION['userId'])){
   header("Location: index.php?error=AccessViolation");}?>
 
@@ -47,7 +53,7 @@ $serverName="localhost";
 	$dbName="mediaio";
 	$countOfRec=0;
 
-	$conn = new mysqli($serverName, $userName, $password, $dbName);
+	$conn = new mysqli($setup['dbserverName'], $setup['dbUserName'], $setup['dbPassword'], $setup['dbDatabase']);
 
 	if ($conn->connect_error) {
 		die("Connection fail: (Is the DB server maybe down?)" . $conn->connect_error);

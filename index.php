@@ -2,6 +2,12 @@
   include "translation.php";
   error_reporting(E_ALL ^ E_NOTICE);
   include "header.php";
+  $serverType = parse_ini_file(realpath('./server/init.ini')); // Server type detect
+  if($serverType['type']=='dev'){
+    $setup = parse_ini_file(realpath('../../mediaio-config/config.ini')); // @ Dev
+  }else{
+    $setup = parse_ini_file(realpath('../mediaio-config/config.ini')); // @ Production
+  }
 ?>
 <!DOCTYPE html>
 <body>

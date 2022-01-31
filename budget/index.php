@@ -2,8 +2,14 @@
 
     include ("../profile/header.php");
         session_start();
+        $serverType = parse_ini_file(realpath('../server/init.ini')); // Server type detect
+    if($serverType['type']=='dev'){
+      $setup = parse_ini_file(realpath('../../../mediaio-config/config.ini')); // @ Dev
+    }else{
+      $setup = parse_ini_file(realpath('../../mediaio-config/config.ini')); // @ Production
+    }
         if ($_SESSION['role']>=3){
-            $connect = new PDO("mysql:host=localhost;dbname=mediaio", "root", "umvHVAZ%");?>
+            $connect = new PDO("mysql:host=localhost;dbname=mediaio",$setup['dbUserName'], $setup['dbPassword']);?>
             <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
       
       <a class="navbar-brand" href="../index.php"><img src="../utility/logo2.png" height="50"></a>
@@ -52,77 +58,64 @@
 <body>
 <div class="date" style="margin: 0 auto; padding-top: 50px;  text-align: center;"><div id="date"><?php echo date("Y/m/d"); ?></div></div>
 <div style="margin: 0 auto; padding-top: 50px;  text-align: center;"><button class="btn btn-warning noprint" data-toggle="modal" data-target="#budgetModal">Tétel hozzáadása</button></div>
-<div class="two_col">
-<div>
-                <h1 align=center>Médiás költségvetés</br></h1>
-                <table class="budget_table">
-                <tr><td class="tdTitle"><h3>Bevételek</h3></td>
-                <td class="tdTitle"><h3>Kiadások</h3></td></tr>
-                <tr>
-                <td><table class="income_table money_table"><tr>
-                <?php 
-                $query = "SELECT * FROM `main_budget` WHERE (`Type` = 'INC' AND budget_type='m') ORDER BY `Year` DESC, `Month` DESC, `Day` DESC";
+<div class="row">
+<div class="col-sm-6">
+<h1 align=center>Médiás költségvetés</br></h1>
+  <table class="budget_table">
+    <!--<tr><td class="tdTitle"><h3>Bevételek</h3></td>-->
+    <tr>
+      <td><table class="income_table money_table"><tr>
+        <?php 
+                $query = "SELECT * FROM `main_budget` WHERE (budget_type='m') ORDER BY `Year` DESC, `Month` DESC, `Day` DESC";
                 $statement = $connect->prepare($query);
                 $statement->execute();
                 $result = $statement->fetchAll();
                 foreach($result as $row){
-                  echo '<tr><td style="text-align: center;"><h3 class="text text-success entry" style="margin-bottom: 0px;">+'.$row["Amount"].' Ft</h3><h5 style="margin-bottom: 10px;"><strong>'.$row["Year"].'/'.$row["Month"].'/'.$row["Day"].'</strong> '.$row["Description"].' '.$row["addedBy"].'</h5></td></tr>'; //' '.$row["budget_type"].
+                  if ($row["Type"]=="EXP"){
+                    echo '<tr><td style="text-align: center;"><h3 class="text text-danger entry" style="margin-bottom: 0px;">-'.$row["Amount"].' Ft</h3><h5 style="margin-bottom: 10px;"><strong>'.$row["Year"].'/'.$row["Month"].'/'.$row["Day"].'</strong> '.$row["Description"].' '.$row["addedBy"].'</h5></td></tr>'; //' '.$row["budget_type"].
+                  }
+                  else{
+                    echo '<tr><td style="text-align: center;"><h3 class="text text-success entry" style="margin-bottom: 0px;">+'.$row["Amount"].' Ft</h3><h5 style="margin-bottom: 10px;"><strong>'.$row["Year"].'/'.$row["Month"].'/'.$row["Day"].'</strong> '.$row["Description"].' '.$row["addedBy"].'</h5></td></tr>'; //' '.$row["budget_type"].  
+                  }
                 }
                 ?>
                 </tr></table></td>
-                <td><table class="expense_table money_table "><tr>
-                <?php 
-                $query = "SELECT * FROM `main_budget` WHERE (`Type` = 'EXP' AND budget_type='m') ORDER BY `Year` DESC, `Month` DESC, `Day` DESC";
-                $statement = $connect->prepare($query);
-                $statement->execute();
-                $result = $statement->fetchAll();
-                foreach($result as $row){
-                    echo '<tr><td style="text-align: center;"><h3 class="text text-danger entry" style="margin-bottom: 0px;">-'.$row["Amount"].' Ft</h3><h5 style="margin-bottom: 10px;"><strong>'.$row["Year"].'/'.$row["Month"].'/'.$row["Day"].'</strong> '.$row["Description"].' '.$row["addedBy"].'</h5></td></tr>';
-                }
-                ?>
-                </tr></table></td>
-                </tr></table>
-                <?php 
+                
+              </tr></table>
+              <?php 
                 $query = "SELECT * FROM `main_budget` WHERE budget_type='m' ORDER BY `Year` DESC, `Month` DESC, `Day` DESC";
                 $statement = $connect->prepare($query);
                 $statement->execute();
                 $result = $statement->fetchAll();
                 $TotalMoney=0;
                 foreach($result as $row){
-                    if ($row["Type"]=="EXP"){
-                        $row["Amount"]=$row["Amount"]*-1;
-                    }
-                    $TotalMoney += $row["Amount"];
+                  if ($row["Type"]=="EXP"){
+                    $row["Amount"]=$row["Amount"]*-1;
+                  }
+                  $TotalMoney += $row["Amount"];
                 }
-                echo '<h3 class="finalValue">Megmaradt összeg: '.$TotalMoney.' Ft</h3>';
+                echo '<h3 class="finalValue">Összesen: '.$TotalMoney.' Ft</h3>';
                 ?>
                 </div>
                 
-<div>
+                
+<div class="col-sm-6">
 <h1 align=center>Egyesületi költségvetés</br></h1>
                 <table class="budget_table">
-                <tr><td class="tdTitle"><h3>Bevételek</h3></td>
-                <td class="tdTitle"><h3>Kiadások</h3></td></tr>
                 <tr>
-                <td><table class="income_table money_table"><tr>
+                <td><table class="money_table"><tr>
                 <?php 
-                $query = "SELECT * FROM `main_budget` WHERE (`Type` = 'INC' AND budget_type='s') ORDER BY `Year` DESC, `Month` DESC, `Day` DESC";
+                $query = "SELECT * FROM `main_budget` WHERE (budget_type='s') ORDER BY `Year` DESC, `Month` DESC, `Day` DESC";
                 $statement = $connect->prepare($query);
                 $statement->execute();
                 $result = $statement->fetchAll();
                 foreach($result as $row){
-                  echo '<tr><td style="text-align: center;"><h3 class="text text-success entry" style="margin-bottom: 0px;">+'.$row["Amount"].' Ft</h3><h5 style="margin-bottom: 10px;"><strong>'.$row["Year"].'/'.$row["Month"].'/'.$row["Day"].'</strong> '.$row["Description"].' '.$row["addedBy"].'</h5></td></tr>';
-                }
-                ?>
-                </tr></table></td>
-                <td><table class="expense_table money_table "><tr>
-                <?php 
-                $query = "SELECT * FROM `main_budget` WHERE (`Type` = 'EXP' AND budget_type='s') ORDER BY `Year` DESC, `Month` DESC, `Day` DESC";
-                $statement = $connect->prepare($query);
-                $statement->execute();
-                $result = $statement->fetchAll();
-                foreach($result as $row){
-                    echo '<tr><td style="text-align: center;"><h3 class="text text-danger entry" style="margin-bottom: 0px;">-'.$row["Amount"].' Ft</h3><h5 style="margin-bottom: 10px;"><strong>'.$row["Year"].'/'.$row["Month"].'/'.$row["Day"].'</strong> '.$row["Description"].' '.$row["addedBy"].'</h5></td></tr>';
+                  if ($row["Type"]=="EXP"){
+                    echo '<tr><td style="text-align: center;"><h3 class="text text-danger entry" style="margin-bottom: 0px;">-'.$row["Amount"].' Ft</h3><h5 style="margin-bottom: 10px;"><strong>'.$row["Year"].'/'.$row["Month"].'/'.$row["Day"].'</strong> '.$row["Description"].' '.$row["addedBy"].'</h5></td></tr>'; //' '.$row["budget_type"].
+                  }
+                  else{
+                    echo '<tr><td style="text-align: center;"><h3 class="text text-success entry" style="margin-bottom: 0px;">+'.$row["Amount"].' Ft</h3><h5 style="margin-bottom: 10px;"><strong>'.$row["Year"].'/'.$row["Month"].'/'.$row["Day"].'</strong> '.$row["Description"].' '.$row["addedBy"].'</h5></td></tr>'; //' '.$row["budget_type"].  
+                  }
                 }
                 ?>
                 </tr></table></td>
@@ -139,7 +132,7 @@
                     }
                     $TotalMoney += $row["Amount"];
                 }
-                echo '<h3 class="finalValue">Megmaradt összeg: '.$TotalMoney.' Ft</h3>';
+                echo '<h3 class="finalValue">Összesen: '.$TotalMoney.' Ft</h3>';
                 $connect=null;
                 ?>
                 </div>
@@ -270,22 +263,23 @@ $( document ).ready(function() {
 }
 
 .budget_table{
-  width: 500px;
+  max-width: 1000px;
   border-style: solid;
   text-align: center;
   margin: 0 auto; 
 }
 
 .finalValue{
-  padding-top: 25px;
+  /*padding-top: 25px;
   padding-left: 20px;
-  width: 500px;
+  width: 500px;*/
   text-align: center;
   margin: 0 auto; 
 }
 
 .money_table{
   padding-left: 5px;
+  margin: 0 auto;
 }
 
 .entry{
