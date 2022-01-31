@@ -1,9 +1,6 @@
-Kis passziv habgfal 1
-224
-Kis passziv habgfal 2
-225
-Nagy passziv habgfal 1
-226
-RUN
+Fujitsu monitor 1
+15
+Fujitsu monitor 2
+16
 RUN
 RUN

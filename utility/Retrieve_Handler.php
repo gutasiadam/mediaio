@@ -25,7 +25,7 @@ if ($mode=="handle"){ // A beérkező tárgy(ak) adminisztrálása, visszatevés
   if ($conn->connect_error) {
       die("Connection fail: (Is the DB server maybe down?)" . $conn->connect_error);
   }
-  $sql = "SELECT Status FROM leltar WHERE Nev='$d'";
+  $sql = "SELECT Status FROM leltar WHERE UID='$d'";
   $result = $conn->query($sql);
   while($row = $result->fetch_assoc()){
       if ($row['Status']=='0'){ // A tárgy nincs a raktárban
@@ -38,13 +38,13 @@ if ($mode=="handle"){ // A beérkező tárgy(ak) adminisztrálása, visszatevés
 
   //Prepare retrieve procedure.
   if ($continue){
-    $sql = ("UPDATE `leltar` SET `Status` = '1', `RentBy` = NULL WHERE `leltar`.`Nev` = '$d';");
+    $sql = ("UPDATE `leltar` SET `Status` = '1', `RentBy` = NULL WHERE `leltar`.`UID` = '$d';");
     //$sql.= ("DELETE FROM authcodedb WHERE Item = '$d';");
     $sql.= ("INSERT INTO takelog (`ID`, `takeID`, `Date`, `User`, `Item`, `Event`) VALUES (NULL, '1', '$currDate', '$SESSuserName', '$d', 'IN')");
     if (!$conn->multi_query($sql)) {
       echo "Multi query fail!: (" . $conn->errno . ") " . $conn->error;
     }else{
-      echo "200";
+      echo "OK";
       
     }
   }
@@ -64,7 +64,7 @@ if ($mode=="check"){ // Egy ellenőrző karakter generálása, amiből megtudja 
   $countOfRec=0;
   $item = $_POST['data']; // Azért kell ide külön, mert a kód eleján megadott striplash-t nem kezeli jól itt a PHP.
   $conn = new mysqli($setup['dbserverName'], $setup['dbUserName'], $setup['dbPassword'], $setup['dbDatabase']);
-  $sql = "SELECT RentBy, Status FROM leltar WHERE Nev='$item'";
+  $sql = "SELECT RentBy, Status FROM leltar WHERE UID='$item'";
   /* Lehetséges kimenetek:
   A - A felhasználó visszahoz egy önmaga által kivett tárgyat.
   B - A felhasználó egy bennlévő tárgyra hivatkozott.

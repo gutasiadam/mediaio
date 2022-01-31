@@ -62,17 +62,13 @@ $serverType = parse_ini_file(realpath('../server/init.ini')); // Server type det
         $result = mysqli_query($conn, $sql);
         $conn->close();
         echo '<h3 class="panel-title">'.$_SESSION['firstName'].', ezek a tárgyak vannak most nálad:</h3>
-        </div>
-        <div class="panel-body">
-         <div class="timeline">
-          <div class="timeline__wrap">
-           <div class="timeline__items">';
+        </div>';
         $imodal=0;
         $resultArray = [];
         //$rows = mysqli_fetch_all($result);
           while($row = $result->fetch_assoc()) { 
               array_push($resultArray, $row);
-              $authGen = random_int(100000,999999);
+              //$authGen = random_int(100000,999999);
               //if ($row["AuthState"] != NULL){ // Tehát már van kód generálva
                 //Keressük meg az itemhez tartozó kód értékét és hogy melyik felhasználó használhatja ezt a kódot.
                 $conn = new mysqli($setup['dbserverName'], $setup['dbUserName'], $setup['dbPassword'], $setup['dbDatabase']);
@@ -115,7 +111,7 @@ $serverType = parse_ini_file(realpath('../server/init.ini')); // Server type det
                 </div>
                 <div class="modal-body">
                   <form action="./pfcurr.php" class="form-group" method=post>
-              <input type="hidden" id="retrieveItem_'.$imodal.'" name="retrieveItem" value="'.$row["Nev"].'"/> 
+              <input type="hidden" id="retrieveItem_'.$imodal.'" name="retrieveItem" value="'.$row["UID"].'"/> 
               <input type="hidden" name="User" value="'.$TKI.'"/>
               <div class="form-check">
               <input class="form-check-input intactItems" type="checkbox" value="" id="intactItems'.$imodal.'">
