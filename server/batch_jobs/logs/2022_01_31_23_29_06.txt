@@ -1,0 +1,33 @@
+BATCH-folyamat megkezdése [2022-01-31 23:29:06]
+
+
+//// BATCH_notify_Unconfirmed_Events //// 
+*** Kezdés ***
+
+
+BATCH_notify_Unconfirmed_Events csatlakozás az adatbázishoz
+
+BATCH_notify_Unconfirmed_Events [Query] - starting
+
+BATCH_notify_Unconfirmed_Events completed.
+
+---------
+
+
+
+//// BATCH_notify_monthItems //// 
+*** Kezdés ***
+
+BATCH_notify_monthItems: [Query] - SQL:	 [SELECT Nev, RentBy FROM leltar WHERE Status=0]
+BATCH_notify_monthItems: [Query] - 	Item: Fresnel 1000W 	 RentBy: gutasiadam
+BATCH_notify_monthItems: [Query]
+BATCH_notify_monthItems: dateDiff: 	2022-01-31	2022-01-31	0
+BATCH_notify_monthItems: [Query] - 	Item: Fresnel 650W 	 RentBy: gutasiadam
+BATCH_notify_monthItems: [Query]
+BATCH_notify_monthItems: dateDiff: 	2022-01-31	2022-01-31	0
+
+BATCH_notify_monthItems Completed.
+
+
+
+E-mail küldése az adminnak

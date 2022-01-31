@@ -1,12 +1,20 @@
-<?php 
-set_include_path('F:/Programming/xampp/htdocs/.git/mediaio/server/batch_jobs');
+<?php
 header('Content-type: text/plain');
-require_once('F:/Programming/xampp/htdocs/.git/mediaio/PHPMailer/src/PHPMailer.php');
+$serverType = parse_ini_file(realpath('../init.ini')); // Server type detect
+if($serverType['type']=='dev'){
+  $setup = parse_ini_file(realpath('../../../../mediaio-config/config.ini')); // @ Dev
+  set_include_path('F:/Programming/xampp/htdocs/.git/mediaio/server/batch_jobs');
+  require_once('F:/Programming/xampp/htdocs/.git/mediaio/PHPMailer/src/PHPMailer.php');
+}else{
+  $setup = parse_ini_file(realpath('../../../mediaio-config/config.ini')); // @ Production
+  set_include_path('C:/xampp/htdocs/mediaio/server/batch_jobs');
+  require_once('C:/xampp/htdocs/mediaio/PHPMailer/src/PHPMailer.php');
+}
 $today = new DateTime(date("Y-m-d H:i:s"));
 $todayString=$today->format("Y_m_d_H_i_s");
-$log = fopen(get_include_path()."/logs/$todayString.txt", "a");
+$log = fopen(get_include_path().'/logs/'.$todayString.'.txt', "w");
 //$myfile = fopen("testfile.txt", "w")
-echo get_include_path()."/logs/$todayString.txt";
+//echo get_include_path().'/logs/'.$todayString.'.txt';
 fwrite($log, "BATCH-folyamat megkezdése [".$today->format("Y-m-d H:i:s")."]\n");
 require '../../PHPMailer/src/SMTP.php';
 use PHPMailer\PHPMailer\PHPMailer;
@@ -28,14 +36,14 @@ echo $diff;
 //Példa a dátumok különbségére:
 //SELECT *, DATE("2021/01/25")-DATE(Date) FROM takelog WHERE (DATE("2021/01/25")-DATE(Date))>0 ORDER BY Date DESC
 function BATCH_notify_Unconfirmed_Events($today,$log){
-
+    global $setup;
     $batchName="BATCH_notify_Unconfirmed_Events";
 
     echo "\n".$batchName." service starting, see log for further info.\n";
     fwrite($log, "\n\n//// ".$batchName." //// \n*** Kezdés ***\n\n");
 
     fwrite($log, "\n".$batchName." csatlakozás az adatbázishoz\n");
-    $mysqli = new mysqli("localhost", "root", "umvHVAZ%", "mediaio");
+    $mysqli = new mysqli($setup['dbserverName'], $setup['dbUserName'], $setup['dbPassword'], $setup['dbDatabase']);
 
     //echo "\n".$batchName." service starting\n";
    
