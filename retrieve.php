@@ -175,13 +175,12 @@ $('table > tbody  > tr > td > button ').each(function(index, tr) {
    uids.push(this.innerText.trim());
 });
       retrieveJSON = JSON.stringify(uids);
-      alert("retrieve ajax:"+retrieveJSON);
       $.ajax({
     method: 'POST',
     url: './utility/Retrieve_Handler.php',
     data: {data : retrieveJSON, mode: "handle"},
     success: function (response){
-      alert(response);
+      //alert(response);
       $('#doTitle').animate({'opacity': 0}, 400, function(){
         $(this).html('<h2 class="text text-info" role="success">Sikeresen visszakerültek a tárgyak 🙂! Az oldal újratölt.</h2>').animate({'opacity': 1}, 400);
         $(this).html('<h2 class="text text-info" role="success">Sikeresen visszakerültek a tárgyak 🙂! Az oldal újratölt.</h2>').animate({'opacity': 1}, 3000);

@@ -1,6 +1,18 @@
-Fujitsu monitor 1
-15
-Fujitsu monitor 2
-16
+Fresnel 1000W
+1
+Fresnel 650W
+2
+Fresnel 300W
+3
+Softbox allo 1
+4
+Softbox allo 2
+5
+Softbox fekvo
+6
+RUN
+RUN
+RUN
+RUN
 RUN
 RUN

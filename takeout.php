@@ -59,7 +59,7 @@ error_reporting(E_ALL ^ E_NOTICE);
       </div></div>
 			<div class="form-group">
         <table id="itemSearch" align="left"><tr>
-        <td class="selectedItemsDisplay" rowspan="2" style="text-align:left;vertical-align:top;padding:0;min-width:250px;">
+        <td class="selectedItemsDisplay" rowspan="2" style="text-align:left;vertical-align:top;padding:0;min-width:300px;">
           <h3><u>Kiválasztva</u></h3>
           <ul id="output"></ul>
         </td>
@@ -145,7 +145,10 @@ var roleNum=getCookie("user_roleLevel");
   renameKey(d[i],'ID','id');
   renameKey(d[i],'UID','uid');
   //alert(d[i].uid);
-  if(d[i].TakeRestrict!='' && roleNum<2){// nem stúdiós, vagy afölötti
+  if(d[i].TakeRestrict=='s' && roleNum<2){// nem stúdiós, vagy afölötti
+    d[i].state.disabled=true;
+  }
+  else if(d[i].TakeRestrict=='*' && roleNum<=2){// nem stúdiós, vagy afölötti
     d[i].state.disabled=true;
   }
   d[i].originalName=d[i].text;
@@ -154,14 +157,8 @@ var roleNum=getCookie("user_roleLevel");
     d[i].text=d[i].text+' - '+d[i].uid+'('+ d[i].restrict+')';
   }else{
     d[i].text=d[i].text+' - '+d[i].uid;
-  }
-  
+  } 
 }
-
-
-
-
- 
 
 $('#jstree').jstree({
   "plugins": ["search", "checkbox", "wholerow"],
