@@ -1,6 +1,0 @@
-Fujitsu monitor 1
-15
-Fujitsu monitor 2
-16
-RUN
-RUN
