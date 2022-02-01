@@ -23,7 +23,6 @@ $log = fopen(get_include_path().'/logs/'.$todayString.'.txt', "w");
 //$myfile = fopen("testfile.txt", "w")
 //echo get_include_path().'/logs/'.$todayString.'.txt';
 fwrite($log, "BATCH-folyamat megkezdése [".$today->format("Y-m-d H:i:s")."]\n");
-require '../../PHPMailer/src/SMTP.php';
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 use PHPMailer\SMTP; // A batch loghoz majd.
@@ -31,15 +30,6 @@ use PHPMailer\SMTP; // A batch loghoz majd.
 * Több, mint egy hete nem megerősített esemémy
 * Több, mint egy hónapja kivett tárgy, ami nem lett visszahozva.
 */
-//Mai nap:
-
-
-
-//PÉLDA két dátum közti különbségre.
-$earlier = new DateTime("2010-07-06");
-$diff = $today->diff($earlier)->format("%a");
-echo $diff;
-
 //Példa a dátumok különbségére:
 //SELECT *, DATE("2021/01/25")-DATE(Date) FROM takelog WHERE (DATE("2021/01/25")-DATE(Date))>0 ORDER BY Date DESC
 function BATCH_notify_Unconfirmed_Events($today,$log){

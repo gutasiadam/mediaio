@@ -2,9 +2,8 @@
 <html>
     <?php 
     include "header.php";
-            
             ?>
-            <table class="logintable"><tr><td><p>Elfelejtett jelszó pótlása</td></tr>
+            <table class="logintable"><tr><td><h1>Elfelejtett jelszó pótlása</h1></td></tr>
             <form action="../utility/lostPwd.ut.php" method="post">
             <tr><td><h3><strong>1. lépés</strong>: kérj egy tokent!</strong></h3></td></tr>
             <tr><td>Ezt megadva tudsz majd új jelszót beállítani.</td></tr>
@@ -44,6 +43,7 @@
                 }
                 }
                 ?>
+                <tr><td>Sikeres jelszóváltoztatásról e-mailben értesítünk. Eztuán lépj vissza a belépéshez.</td></tr>
                 <tr><td><a href="../index.php"><button class="btn btn-dark">Vissza a belépéshez</button></a></td></tr>
                 <?php
             echo "</table>";
@@ -90,7 +90,7 @@ window.onload = function () {
 </script>
 <style>
 .logintable{
-  width: 15%;
+  width: 30%;
   text-align: center;
   margin: 0 auto; 
 }

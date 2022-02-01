@@ -1,12 +1,10 @@
 <?php 
-$serverType = parse_ini_file(realpath('../init.ini')); // Server type detect
+$serverType = parse_ini_file(realpath('../server/init.ini')); // Server type detect
 if($serverType['type']=='dev'){
   $setup = parse_ini_file(realpath('../../../../mediaio-config/config.ini')); // @ Dev
-  set_include_path('F:/Programming/xampp/htdocs/.git/mediaio/server/batch_jobs');
   require_once('F:/Programming/xampp/htdocs/.git/mediaio/PHPMailer/src/PHPMailer.php');
 }else{
-  $setup = parse_ini_file(realpath('../../../mediaio-config/config.ini')); // @ Production
-  set_include_path('C:/xampp/htdocs/mediaio/server/batch_jobs');
+  $setup = parse_ini_file(realpath('../../mediaio-config/config.ini')); // @ Production
   require_once('C:/xampp/htdocs/mediaio/PHPMailer/src/PHPMailer.php');
 }
     require '../PHPMailer/src/SMTP.php';
@@ -16,9 +14,8 @@ use PHPMailer\Exception;
 use PHPMailer\SMTP;
 
     function generateRandomString($length = 6) {
-        return substr(str_shuffle(str_repeat($x='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil($length/strlen($x)) )),1,$length);
+        return substr(str_shuffle(str_repeat($x='0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil($length/strlen($x)) )),1,$length);
     }
-    
 
     if (isset($_POST['pwdLost-submit'])){
         $TOKEN = generateRandomString();
@@ -136,7 +133,7 @@ use PHPMailer\SMTP;
             $mail->Username   = "arpadmedia.io@gmail.com";
             $mail->Password   = "xlr8VGA%";
             /* Set the mail sender. */
-            $mail->setFrom('arpadmedia@gmail.com', 'mediaIO cron');
+            $mail->setFrom('arpadmedia@gmail.com', 'mediaIO');
             $mail->CharSet = 'UTF-8';
             $mail->Encoding = 'base64';
             $mail->addAddress($emailAddr, 'Felhasználó');
