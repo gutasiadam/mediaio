@@ -1,5 +1,5 @@
 <?php
-include "header.php";
+include "./header.php";
 session_start();
 $serverType = parse_ini_file(realpath('../server/init.ini')); // Server type detect
     if($serverType['type']=='dev'){

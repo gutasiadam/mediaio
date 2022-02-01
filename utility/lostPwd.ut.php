@@ -1,19 +1,29 @@
 <?php 
-require_once('F:/Programming/xampp/htdocs/.git/mediaio/PHPMailer/src/PHPMailer.php');
+$serverType = parse_ini_file(realpath('../init.ini')); // Server type detect
+if($serverType['type']=='dev'){
+  $setup = parse_ini_file(realpath('../../../../mediaio-config/config.ini')); // @ Dev
+  set_include_path('F:/Programming/xampp/htdocs/.git/mediaio/server/batch_jobs');
+  require_once('F:/Programming/xampp/htdocs/.git/mediaio/PHPMailer/src/PHPMailer.php');
+}else{
+  $setup = parse_ini_file(realpath('../../../mediaio-config/config.ini')); // @ Production
+  set_include_path('C:/xampp/htdocs/mediaio/server/batch_jobs');
+  require_once('C:/xampp/htdocs/mediaio/PHPMailer/src/PHPMailer.php');
+}
     require '../PHPMailer/src/SMTP.php';
     require '../PHPMailer/src/Exception.php';
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\Exception;
 use PHPMailer\SMTP;
 
-    function generateRandomString($length = 25) {
+    function generateRandomString($length = 6) {
         return substr(str_shuffle(str_repeat($x='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil($length/strlen($x)) )),1,$length);
     }
     
 
     if (isset($_POST['pwdLost-submit'])){
         $TOKEN = generateRandomString();
-        require 'dbHandler.ut.php';
+        //require 'dbHandler.ut.php';
+        $conn = new mysqli($setup['dbserverName'], $setup['dbUserName'], $setup['dbPassword'], $setup['dbDatabase']);
 
         $username = $_POST['userName'];
         $emailAddr = $_POST['emailAddr'];

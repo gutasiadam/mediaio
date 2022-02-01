@@ -4,7 +4,12 @@
     header('Pragma: public'); 
     header("Cache-Control: max-age=2592000");
     header('Expires: '. gmdate('D, d M Y H:i:s \G\M\T', time() + 86400));
-    
+    $serverType = parse_ini_file(realpath('../server/init.ini')); // Server type detect
+    if($serverType['type']=='dev'){
+      $setup = parse_ini_file(realpath('../../../mediaio-config/config.ini')); // @ Dev
+    }else{
+      $setup = parse_ini_file(realpath('../../mediaio-config/config.ini')); // @ Production
+    }
     require("header.php");
     require("../translation.php");?>
     <script src="../utility/_initMenu.js" crossorigin="anonymous"></script>
@@ -19,7 +24,7 @@
     $username = "root";
     $password = $application_DATABASE_PASS;
     $dbname = "mediaio";
-    $conn = new mysqli($servername, $username, $password, $dbname);
+    $conn = new mysqli($setup['dbserverName'], $setup['dbUserName'], $setup['dbPassword'], $setup['dbDatabase']);
     $uName = $_SESSION['UserUserName'];
     $sql = "SELECT idUsers FROM users WHERE usernameUsers = '$uName' AND GAUTH_SECRET IS NOT NULL";
     $result = $conn->query($sql);

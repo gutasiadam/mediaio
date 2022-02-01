@@ -1,14 +1,21 @@
 <?php
 header('Content-type: text/plain');
-$serverType = parse_ini_file(realpath('../init.ini')); // Server type detect
-if($serverType['type']=='dev'){
-  $setup = parse_ini_file(realpath('../../../../mediaio-config/config.ini')); // @ Dev
-  set_include_path('F:/Programming/xampp/htdocs/.git/mediaio/server/batch_jobs');
-  require_once('F:/Programming/xampp/htdocs/.git/mediaio/PHPMailer/src/PHPMailer.php');
-}else{
-  $setup = parse_ini_file(realpath('../../../mediaio-config/config.ini')); // @ Production
-  set_include_path('C:/xampp/htdocs/mediaio/server/batch_jobs');
-  require_once('C:/xampp/htdocs/mediaio/PHPMailer/src/PHPMailer.php');
+$n=0;
+switch ($n) {
+    case 0:
+        set_include_path('F:/Programming/xampp/htdocs/.git/mediaio/server/batch_jobs');
+        require_once('F:/Programming/xampp/htdocs/.git/mediaio/PHPMailer/src/PHPMailer.php');
+        $setup = parse_ini_file(realpath('../../../../mediaio-config/config.ini')); // @ Dev
+        require 'F:/Programming/xampp/htdocs/.git/mediaio/PHPMailer/src/SMTP.php';
+        require 'F:/Programming/xampp/htdocs/.git/mediaio/PHPMailer/src/Exception.php';
+        break;
+    default:
+        $setup = parse_ini_file('C:/xampp/htdocs/mediaio-config/config.ini'); // @ Production
+        set_include_path('C:/xampp/htdocs/mediaio/server/batch_jobs');
+        require_once('C:/xampp/htdocs/mediaio/PHPMailer/src/PHPMailer.php');
+        require 'C:/xampp/htdocs/mediaio/PHPMailer/src/SMTP.php';
+        require 'C:/xampp/htdocs/mediaio/PHPMailer/src/Exception.php';
+        break;
 }
 $today = new DateTime(date("Y-m-d H:i:s"));
 $todayString=$today->format("Y_m_d_H_i_s");
