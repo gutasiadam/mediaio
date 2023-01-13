@@ -1,14 +1,14 @@
-<?php 
+<?php
+namespace Mediao;
 include "translation.php";
 include "header.php";
-if(!isset($_SESSION['userId'])){
-  header("Location: index.php?error=AccessViolation");}
-  $serverType = parse_ini_file(realpath('./server/init.ini')); // Server type detect
-  if($serverType['type']=='dev'){
-    $setup = parse_ini_file(realpath('../../mediaio-config/config.ini')); // @ Dev
-  }else{
-    $setup = parse_ini_file(realpath('../mediaio-config/config.ini')); // @ Production
-  }
+
+namespace Mediaio;
+//require "./Mediaio_autoload.php";
+
+use Mediaio\itemDataManager;
+require "./itemManager.php";
+
 ?>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
           <a class="navbar-brand" href="index.php"><img src="./utility/logo2.png" height="50"></a>
@@ -29,8 +29,8 @@ if(!isset($_SESSION['userId'])){
             <?php if ($_SESSION['role']>=3){
               echo '<li><a class="nav-link disabled" href="#">Admin jogok</a></li>';}?>
 					  </ul>
-						<form class="form-inline my-2 my-lg-0" action=utility/logout.ut.php>
-                      <button class="btn btn-danger my-2 my-sm-0" type="submit">Kijelentkezés</button>
+						<form method='post' class="form-inline my-2 my-lg-0" action=utility/userLogging.php>
+                      <button class="btn btn-danger my-2 my-sm-0" name="logout-submit" type="submit">Kijelentkezés</button>
                       </form>
 					  <a class="nav-link my-2 my-sm-0" href="./help.php"><i class="fas fa-question-circle fa-lg"></i></a>
 					</div>
@@ -51,66 +51,15 @@ Ezeket a tárgyakat mutasd:
 </div>
 <button class="btn btn-success my-2 my-sm-0" type="submit">Mehet</button>
 </form>
-<!--<div id="workingMsg" class="alert alert-warning" style="z-index: 10000; position: relative">
-<p id="workingMsg_2" hidden>
-  <strong>Rendezés... </strong>ez egy kis időt vehet igénybe
-  </p>
-</div>-->
-<!--<div class="form-group">
-        <table id="itemSearch" align="left"><tr><td><div class="autocomplete" method="GET">
-    				<input id="id_itemNameAdd" type="text" name="add" class="form-control mb-2 mr-sm-2" placeholder=''></div></td>
-            <td><button type="button" name="add" id="keres1" class="btn btn-info2 add_btn mb-2 mr-sm-2">Keress</button> </button>     <span id='sendQueryButtonLoc'></span></td>-->
+
   			<td><h4 id="doTitle">Rendezés név szerint növekvő sorrendben</h4></td></tr></table>
 <?php 
-//$allowedIP = array("31.46.204.50", "80.99.70.46", "192.168.0.1", "127.0.0.1", "77.234.86.20");
-//if(!in_array($_SERVER['REMOTE_ADDR'], $allowedIP) && !in_array($_SERVER["HTTP_X_FORWARDED_FOR"], $allowedIP)) {
-  //header("Location: https://www.google.com"); //redirect
-  //exit();
-//}
-
-  //$serverName="localhost";
-	//$userName="root";
-	//$password="umvHVAZ%";
-	//$dbName="mediaio";
 	$countOfRec=0;
 
-	$conn = mysqli_connect($setup['dbserverName'], $setup['dbUserName'], $setup['dbPassword'], $setup['dbDatabase']);
 
-	if ($conn->connect_error) {
-		die("Connection fail: (Is the DB server maybe down?)" . $conn->connect_error);
-	}
-  $displayed="";
-  $sql= 'SELECT * FROM leltar WHERE';
-  if ($_GET['toDisplay1']==1){//Kölcsönözhető
-    $sql = $sql.' TakeRestrict=""';
-    $displayed=$displayed." Kölcsönözhető";
-  }
-  if ($_GET['toDisplay2']==2){//Stúdiós
-    if (isset($_GET['toDisplay1'])){
-      $sql = $sql.' OR TakeRestrict="s"';
-      $displayed=$displayed.", Stúdiós";
-    }else{
-      $sql = $sql.' TakeRestrict="s"';
-      $displayed=$displayed." Stúdiós";
-    }
-    
-  }
-  if ($_GET['toDisplay3']==3){//Nem kölcsönözhető
-    if (isset($_GET['toDisplay1']) || isset($_GET['toDisplay2'])){
-      $sql = $sql.' OR TakeRestrict="*"';
-      $displayed=$displayed.", Nem kölcsönözhető";
-    }else{
-      $sql = $sql.' TakeRestrict="*"';
-      $displayed=$displayed."Nem kölcsönözhető";
-    }
-  }
-  $sql= $sql." ORDER BY Nev ASC";
-  $displayed=$displayed." tárgyak mutatása.";
-  echo $displayed;
-	
-	$result = $conn->query($sql);
-
-if ($result->num_rows > 0) {
+  $displayData= array("toDisplay1"=>$_GET['toDisplay1'],"toDisplay2"=>$_GET['toDisplay2'],"toDisplay3"=>$_GET['toDisplay3']);
+  $result=itemDataManager::getItemData($displayData);
+if ($result!=NULL && $result->num_rows > 0) {
 	echo "<table width='50' id="."dataTable"." align=center class="."table"."><th onclick=sort(0)>UID</th><th onclick=sort(1)>Név</th><th onclick=sort(2)>Típus</th><th onclick=sort(3)>Kivette</th>";
      //output data of each row
     //Displays amount of records found in leltar_master DB
@@ -131,10 +80,10 @@ if ($result->num_rows > 0) {
 		$countOfRec += 1;
 	}
 } else {
-    echo "// Nem található tárgy a rendszerben. A hibát jelezd a rendszergazdának. //";
+    echo "// Nem található a keresési feltéleknek megfelelő tárgy a rendszerben. //";
 }
 echo "</table>";
-$conn->close();?>
+?>
 <script>
 
 function startTimer(duration, display) {
@@ -155,148 +104,6 @@ function startTimer(duration, display) {
     }, 1000);
 }
 
-window.onload = function () {
-    var fiveMinutes = 60 * 10 - 1,
-        display = document.querySelector('#time');
-    startTimer(fiveMinutes, display);
-    setInterval(updateTime, 1000);
-    updateTime();
-};
-
-$('#keres1').click(function(){
-  var keres1Val=  document.getElementById("id_itemNameAdd").value;
-  console.log(keres1Val);
-/*AJAX CALL EGY PHP Fájlba, onnan már formázva return*/
-}); 
-
-function loadFile(filePath) {
-  var result = null;
-  var xmlhttp = new XMLHttpRequest();
-  xmlhttp.open("GET", filePath, false);
-  xmlhttp.send();
-  if (xmlhttp.status==200) {
-    result = xmlhttp.responseText;
-  }
-  return result.split("\n");
-  
-}
-
-var dbItems=(loadFile("./utility/DB_Elements.txt"));
-// dbItem remover tool - Prevents an item to be added twice to the list
-function arrayRemove(arr, value) {
-
-return arr.filter(function(ele){
-    return ele != value;
-});
-
-}
-function autocomplete(inp, arr) {
-  /*the autocomplete function takes two arguments,
-  the text field element and an array of possible autocompleted values:*/
-  var currentFocus;
-  /*execute a function when someone writes in the text field:*/
-  inp.addEventListener("input", function(e) {
-      var a, b, i, val = this.value;
-      /*close any already open lists of autocompleted values*/
-      closeAllLists();
-      if (!val) { return false;}
-      currentFocus = -1;
-      /*create a DIV element that will contain the items (values):*/
-      a = document.createElement("DIV");
-      a.setAttribute("id", this.id + "autocomplete-list");
-      a.setAttribute("class", "autocomplete-items");
-      /*append the DIV element as a child of the autocomplete container:*/
-      this.parentNode.appendChild(a);
-      /*for each item in the array...*/
-      for (i = 0; i < arr.length; i++) {
-        /*check if the item starts with the same letters as the text field value:*/
-        if (arr[i].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
-          /*create a DIV element for each matching element:*/
-          b = document.createElement("DIV");
-          /*make the matching letters bold:*/
-          b.innerHTML = "<strong>" + arr[i].substr(0, val.length) + "</strong>";
-          b.innerHTML += arr[i].substr(val.length);
-          /*insert a input field that will hold the current array item's value:*/
-          b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
-          /*execute a function when someone clicks on the item value (DIV element):*/
-          b.addEventListener("click", function(e) {
-              /*insert the value for the autocomplete text field:*/
-              inp.value = this.getElementsByTagName("input")[0].value;
-              /*close the list of autocompleted values,
-              (or any other open lists of autocompleted values:*/
-              closeAllLists();
-          });
-          a.appendChild(b);
-        }
-      }
-  });
-  /*execute a function presses a key on the keyboard:*/
-  inp.addEventListener("keydown", function(e) {
-      var x = document.getElementById(this.id + "autocomplete-list");
-      if (x) x = x.getElementsByTagName("div");
-      if (e.keyCode == 40) {
-        /*If the arrow DOWN key is pressed,
-        increase the currentFocus variable:*/
-        currentFocus++;
-        /*and and make the current item more visible:*/
-        addActive(x);
-      } else if (e.keyCode == 38) { //up
-        /*If the arrow UP key is pressed,
-        decrease the currentFocus variable:*/
-        currentFocus--;
-        /*and and make the current item more visible:*/
-        addActive(x);
-      } else if (e.keyCode == 13) {
-        /*If the ENTER key is pressed, prevent the form from being submitted,*/
-        e.preventDefault();
-        if (currentFocus > -1) {
-          /*and simulate a click on the "active" item:*/
-          if (x) x[currentFocus].click();
-        }
-      }
-  });
-  function addActive(x) {
-    /*a function to classify an item as "active":*/
-    if (!x) return false;
-    /*start by removing the "active" class on all items:*/
-    removeActive(x);
-    if (currentFocus >= x.length) currentFocus = 0;
-    if (currentFocus < 0) currentFocus = (x.length - 1);
-    /*add class "autocomplete-active":*/
-    x[currentFocus].classList.add("autocomplete-active");
-  }
-  function removeActive(x) {
-    /*a function to remove the "active" class from all autocomplete items:*/
-    for (var i = 0; i < x.length; i++) {
-      x[i].classList.remove("autocomplete-active");
-    }
-  }
-  function closeAllLists(elmnt) {
-    /*close all autocomplete lists in the document,
-    except the one passed as an argument:*/
-    var x = document.getElementsByClassName("autocomplete-items");
-    for (var i = 0; i < x.length; i++) {
-      if (elmnt != x[i] && elmnt != inp) {
-        x[i].parentNode.removeChild(x[i]);
-      }
-    }
-  }
-    /*execute a function when someone clicks in the document:*/
-    document.addEventListener("click", function (e) {
-        closeAllLists(e.target);
-    });
-  }
-
-  autocomplete(document.getElementById("id_itemNameAdd"), dbItems);
-
-(function(){
-  setInterval(updateTime, 1000);
-});
-
-
-</script>
-
-<script>
 function sort(n){
   console.log('Working..')
   sortTable(n);

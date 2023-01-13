@@ -36,8 +36,8 @@ $serverType = parse_ini_file(realpath('../server/init.ini')); // Server type det
                ?>
               <li><a class="nav-link disabled" href="#">Admin jogok</a></li> <?php  }?>
             </ul>
-						<form class="form-inline my-2 my-lg-0" action=../utility/logout.ut.php>
-                      <button class="btn btn-danger my-2 my-sm-0" type="submit">Kijelentkezés</button>
+						<form method='post' class="form-inline my-2 my-lg-0" action=../utility/userLogging.php>
+                      <button class="btn btn-danger my-2 my-sm-0" name="logout-submit" type="submit">Kijelentkezés</button>
                       </form>
                       <div class="menuRight"></div>
 					</div>

@@ -1,3 +1,6 @@
 DB_Elements.txt
 DB_UID.txt
 log.txt
+server/secretSetup.php;
+vendor/phpmailer
+vendor/league

@@ -3,13 +3,6 @@ include "translation.php";
 include "header.php";
 session_start();
 if(isset($_SESSION['UserUserName'])){
-  $serverType = parse_ini_file(realpath('./server/init.ini')); // Server type detect
-  if($serverType['type']=='dev'){
-    $setup = parse_ini_file(realpath('../../mediaio-config/config.ini')); // @ Dev
-  }else{
-    $setup = parse_ini_file(realpath('../mediaio-config/config.ini')); // @ Production
-  }
-    error_reporting(E_ALL ^ E_NOTICE);
 ?>
 
 <html>  
@@ -44,8 +37,8 @@ if(isset($_SESSION['UserUserName'])){
             <?php if ($_SESSION['role']>=3){
               echo '<li><a class="nav-link disabled" href="#">Admin jogok</a></li>';}?>
 					  </ul>
-						<form class="form-inline my-2 my-lg-0" action=utility/logout.ut.php>
-                      <button class="btn btn-danger my-2 my-sm-0" type="submit">Kijelentkezés</button>
+						<form method='post' class="form-inline my-2 my-lg-0" action=utility/userLogging.php>
+                      <button class="btn btn-danger my-2 my-sm-0" name="logout-submit" type="submit">Kijelentkezés</button>
                       </form>
 					  <a class="nav-link my-2 my-sm-0" href="./help.php"><i class="fas fa-question-circle fa-lg"></i></a>
 					</div>
@@ -53,7 +46,7 @@ if(isset($_SESSION['UserUserName'])){
     <body>  
         <div class="container">
    <br />
-   <h1 align="center" class="rainbow">Útvonalkereső</h1>
+   <h1 align="center" class="rainbow">Tárgy kölcsönzési története</h1>
    <table id="itemSearch" align="left"><tr>
             <form action="./pathfinder.php" method="GET" autocomplete="off">
             

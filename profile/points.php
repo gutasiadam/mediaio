@@ -11,7 +11,7 @@ $serverType = parse_ini_file(realpath('../server/init.ini')); // Server type det
 if($_SESSION['role']=="Default") {
     header("Location: ../index.php?notboss");
 }
-if(isset($_SESSION['userId']) && (($_SESSION['role']=="Admin") || ($_SESSION['role']=="Boss"))){
+if(isset($_SESSION['userId']) && ($_SESSION['role'] > 3)){
     error_reporting(E_ALL ^ E_NOTICE);
 
 
@@ -28,7 +28,7 @@ if(isset($_SESSION['userId']) && (($_SESSION['role']=="Admin") || ($_SESSION['ro
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js">  </script>
   <script src="https://kit.fontawesome.com/2c66dc83e7.js" crossorigin="anonymous"></script>
-  <title>PathFinder/AuthCodeGen</title>
+  <title>Pontok</title>
   
     </head>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -45,8 +45,8 @@ if(isset($_SESSION['userId']) && (($_SESSION['role']=="Admin") || ($_SESSION['ro
             <?php if ($_SESSION['role']>=3){ ?>
               <li><a class="nav-link disabled" href="#">Admin jogok</a></li> <?php  }?>
             </ul>
-						<form class="form-inline my-2 my-lg-0" action=../utility/logout.ut.php>
-                      <button class="btn btn-danger my-2 my-sm-0" type="submit">Kijelentkezés</button>
+						<form method='post' class="form-inline my-2 my-lg-0" action=../utility/userLogging.php>
+                      <button class="btn btn-danger my-2 my-sm-0" name="logout-submit" type="submit">Kijelentkezés</button>
                       </form>
                       <div class="menuRight"></div>
 					</div>
