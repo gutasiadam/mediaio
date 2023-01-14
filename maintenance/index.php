@@ -1,9 +1,10 @@
+<?php
 
-<html>
-    <?php 
-    require("./header.php");
-    require("../translation.php");
+
+    require_once("./header.php");
+    require_once("../translation.php");
    ?>
+   <html>
     <script src="../utility/_initMenu.js" crossorigin="anonymous"></script>
 <script> $( document ).ready(function() {
               menuItems = importItem("../utility/menuitems.json");
@@ -68,7 +69,7 @@
   ?>
 
 </table></br>
-<i class="noprint">// A rendszer csak a mai, vagy újabb feladatokat mutatja.
+<i id="statusMessage" class="noprint">// A rendszer csak a mai, vagy újabb feladatokat mutatja.
   Ha a mai napnál régebbi feladatott állítottál be, akkor az automatikusan törölve lett :( //</i>
 </div>
 </html>
@@ -162,8 +163,6 @@ $( ".send_Work_update" ).click(function( event ) {
   //Beírt adatok ellenőrzése regEXel
   for (let index = 0; index < Szemelyek.length; index++) {
     szemely=Szemelyek[index].innerHTML;
-    
-  
   if(/*nDatum.length==2 && nszemely.length==0 ha működne a REGEX*/ datum!="" & szemely!="" & feladat!=""){
   $.ajax({
        url:"add_work.php",
@@ -186,12 +185,6 @@ $( ".send_Work_update" ).click(function( event ) {
         else{
           $('#processing').html(result);
         }
-        /*else if(result==4){
-          $('#processing').html("Adj meg mai, vagy későbbi dátumot!")
-          $('#work_Date').val("");
-          $('#work_Date').css("borderColor","red");
-          setTimeout(function(){ $("#processing").fadeOut(200);}, 2000);
-        }*/
        }
       })
     }else{
@@ -259,7 +252,8 @@ $('#showOnlyMyTasks_checkBox').change(function() {
        data:{mode:'UserFiltered'}, 
        success:function(result)
        {
-        alert(result);
+        //alert(result);
+        if(result!=400){
         sentBack_result=JSON.parse(result);
         console.log(sentBack_result);
 
@@ -268,7 +262,10 @@ $('#showOnlyMyTasks_checkBox').change(function() {
             $('#takaritasirend tr:last').after('<tr><td>'+sentBack_result.data[index].datum+'</td><td>'+sentBack_result.data[index].szemely+'</td><td>'+sentBack_result.data[index].feladat+'</td></tr>');
           }
         }
+       }else{
+        $('#statusMessage').text("Nincs megjeleníthető adat.");
        }
+      }
       })
             
         }else{

@@ -1,8 +1,10 @@
 <?php
 namespace Mediaio;
-require 'Database.php';
+require_once 'Database.php';
+require_once 'Mailer.php';
 use Mediaio\Database;
-
+use Mediaio\MailService;
+session_start();
 
 class Core{
     public $userID;
@@ -77,6 +79,60 @@ class Core{
         session_destroy();
         header("Location: ../index.php?logout=success");
     }
+    function changePassword($postData){
+        if(empty($postData['oldpwd']) || empty($postData['password']) || empty($postData['passwordrepeat'])){
+            header("Location: ./profile/chPwd.php?error=emptyField");
+            exit();
+        }else if ($postData['password'] != $postData['passwordrepeat']){
+        header("Location: ./profile/chPwd.php?error=PasswordCheck");
+        exit();
+        }else if(strlen($postData['password']) < 8 ){
+            header("Location: ./profile/chPwd.php?error=PasswordCheck");
+            exit();
+        }else{
+            //Check if current password is correct.
+
+                $result=Database::runQuery("SELECT * FROM users WHERE usernameUsers='".$postData['username']."';");
+                if($row = mysqli_fetch_assoc($result)){
+                    $pwdcheck = password_verify($postData['oldpwd'], $row['pwdUsers']);
+                    if ($pwdcheck == false){
+                        header("Location: ./profile/chPwd.php?error=OldPwdError");
+                    }else if ($pwdcheck == true){
+                        $hashedpwd = password_hash($postData['password'], PASSWORD_BCRYPT); 
+                        $sql = "UPDATE users SET pwdUsers='$hashedpwd' WHERE usernameUsers='".$postData['username']."';";
+                        $result=Database::runQuery($sql);
+                                //E-mail küldése a felhasznßálónak
+                                $content = '
+                                <html>
+                                <head>
+                                <title>Arpad Media IO</title>
+                                </head>
+                                <body>
+                                <h3>Kedves '.$_SESSION['UserUserName'].'!</h3>
+                                <p>Ezúton tájékoztatunk, hogy jelszavadat sikeresen megváltoztattad!</p>
+
+                                Ha nem te változtattad meg a jelszavadat, azonnal jelezd azt a vezetőségnek!
+                                <h5>Üdvözlettel: <br> Arpad Media Admin👋</h5>
+                                </body>
+                                </html>
+                                ';
+                                try {
+                                    MailService::sendContactMail('MediaIO - jelszócsere',$_SESSION['email'],'Sikeres jelszócsere!',$content);
+                                    header("Location: ./profile/chPwd.php?error=none");
+                                } catch (Exception $e) {
+                                    echo "Mailer Error: " . $mail->ErrorInfo;
+                                }
+                            
+                        }
+                    }     
+            }
+    }
 }
 
+//Jelszocsere
+if (isset($_POST['pwdCh-submit'])){
+    $postData=array('userId'=>$_SESSION['userId'],'username'=>$_SESSION['UserUserName'],'oldpwd'=>$_POST['pwd-Old'], 
+    'password'=>$_POST['pwd-New'],'passwordrepeat'=>$_POST['pwd-New-Check']);
+    Core::changePassword($postData);
+}
 ?>

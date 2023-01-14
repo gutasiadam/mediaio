@@ -1,5 +1,9 @@
 <?php 
+namespace Mediaio;
+use Mediaio\Database;
+require_once '../Database.php';
 include "header.php";
+
 session_start();
 if(($_SESSION['role']=="Admin") || ($_SESSION['role']=="Boss")){
     error_reporting(E_ALL ^ E_NOTICE);}
@@ -91,21 +95,17 @@ imodal++;
 
    <?php 
         $TKI = $_SESSION['UserUserName'];    
-        $conn = new mysqli($setup['dbserverName'], $setup['dbUserName'], $setup['dbPassword'], $setup['dbDatabase']);
         $sql = ("SELECT * FROM `users`");
-        $result = $result = mysqli_query($conn, $sql);
-        $conn->close();
+        $result = Database::runQuery($sql);
         $imodal=0;
         $resultArray = [];
-
+        
           while($row = $result->fetch_assoc()) { 
               array_push($resultArray, $row);
                 $rangok=["default","stúdiós","sadmin","admin","böss"];
-                $conn = new mysqli($setup['dbserverName'], $setup['dbUserName'], $setup['dbPassword'], $setup['dbDatabase']);
                 $rowItem = $row["firstName"].$row["lastName"];
                 $query = ("SELECT * FROM `users`");
-                $result2 = mysqli_query($conn, $query);
-                $conn->close();
+                $result2 = Database::runQuery($query);
                 echo '
                 <div class="row">
                 <div class="col-4">
@@ -116,16 +116,18 @@ imodal++;
                 <h2 class="text text-danger">'.$rangok[$row["Userrole"]-1].'</h2></div>';
                 if($_SESSION['role']=="5"){
                   ?>
+                  <form type='post'>
                   <div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" id='adminCheckBox<?php echo $imodal; ?>' value="4">
+  <input class="form-check-input" type="checkbox" name='adminCheckbox'<?php echo $imodal; ?>' value="4">
   <label class="form-check-label" for="adminCheckBoxLabel">admin</label>
 </div>
 <div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" id='studioCheckBox<?php echo $imodal; ?>' value="2">
+  <input class="form-check-input" type="checkbox" name='studioCheckbox' id='studioCheckBox<?php echo $imodal; ?>' value="2">
   <label class="form-check-label" for="studioCheckBoxLabel">stúdiós</label>
 </div>
 
-<button class="btn btn-warning">Módosítás</button> <!-- type="submit"-->
+<button class="btn btn-warning" type="submit">Módosítás</button> <!-- type="submit"-->
+                </form>
 </div>
                   <?php
                   $imodal++;
@@ -134,22 +136,21 @@ imodal++;
             }?>
 
 <?php
-      if (isset($_POST["mode"])){
+      if (isset($_POST["adminCheckbox"]) or isset($_POST["studioCheckbox"])){
+        $myfile = fopen("testfile.txt", "w");
+        fwrite($myfile, $_POST["user"].' chosen!');
         $targetUser = $_POST["user"];
-        $conn = new mysqli($setup['dbserverName'], $setup['dbUserName'], $setup['dbPassword'], $setup['dbDatabase']);
-              if ($conn->connect_error){
-                die("Connection failed: ".mysqli_connect_error());}
-
           if ($_POST["mode"]=="admin"){
-            $SQL = ("UPDATE `users` SET `Userrole` = 'Admin' WHERE `users`.`userNameUsers` = '$targetUser'");
+            $SQL = ("UPDATE `users` SET `Userrole` = 3 WHERE `users`.`userNameUsers` = '$targetUser'");
           }
           if ($_POST["mode"]=="studio"){
-            $SQL = ("UPDATE `users` SET `Userrole` = 'Admin' WHERE `users`.`userNameUsers` = '$targetUser'");
+            $SQL = ("UPDATE `users` SET `Userrole` = 2 WHERE `users`.`userNameUsers` = '$targetUser'");
           }
           if ($_POST["mode"]=="default"){
-            $SQL = ("UPDATE `users` SET `Userrole` = 'Default' WHERE `users`.`userNameUsers` = '$targetUser'");
+            $SQL = ("UPDATE `users` SET `Userrole` = 1 WHERE `users`.`userNameUsers` = '$targetUser'");
           }
-        $WriteResult = $conn->query($SQL);
+        $WriteResult = Database::runQuery($SQL);
+        fclose($myfile);
       }
 ?>
 

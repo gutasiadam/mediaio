@@ -4,3 +4,5 @@ log.txt
 server/secretSetup.php;
 vendor/phpmailer
 vendor/league
+server/batch_jobs/logs
+mailLog.txt

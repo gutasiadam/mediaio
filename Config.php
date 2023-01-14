@@ -12,7 +12,7 @@ class Config
     const SENDER_EMAIL = 'arpadmedia.io@gmail.com';
 
     // you can add one or more emails separated by a comma (,).
-    const RECIPIENT_EMAIL = 'gutasi.guti@gmail.com';
+    const TEST_EMAIL = 'gutasi.guti@gmail.com';
 
     const OAUTH_USER_EMAIL = 'arpadmedia.io@gmail.com';
 

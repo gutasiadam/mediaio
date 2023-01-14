@@ -21,7 +21,7 @@
         $password = $_POST['pwd'];
         Core::loginUser($_POST);
     }
-    else if (isset($_POST['logout-submit'])){
+    else if (isset($_POST['logout-submit']) or isset($_GET['logout-submit'])){
         Core::logoutUser();
     }
 ?>

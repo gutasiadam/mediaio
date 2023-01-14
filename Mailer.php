@@ -7,27 +7,21 @@ use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\OAuth;
 use League\OAuth2\Client\Provider\Google;
-require '../vendor/autoload.php';
+require_once __DIR__ .'./vendor/autoload.php';
+require_once __DIR__ .'./Config.php';
 
-require __DIR__ .'/../vendor/phpmailer/phpmailer/src/Exception.php';
-require __DIR__ .'/../vendor/phpmailer/phpmailer/src/PHPMailer.php';
-require __DIR__ .'/../vendor/phpmailer/phpmailer/src/SMTP.php';
+require_once __DIR__ .'/vendor/phpmailer/phpmailer/src/Exception.php';
+require_once __DIR__ .'/vendor/phpmailer/phpmailer/src/PHPMailer.php';
+require_once __DIR__ .'/vendor/phpmailer/phpmailer/src/SMTP.php';
 
 class MailService
 {
 
-    function sendContactMail()
+    function sendContactMail($name, $to,$subject,$content)
     {
-        $name = "Attru";
-        $email = "foldes.artur@gmail.com";
-        $subject = "kaka";
-        $content = "hemol bemol jdahdsjahsjahsjahjshaxsjhasjhajko 
-        hasznos indó xd";
-
-        require_once __DIR__ . '/../Config.php';
-        $recipientArray = explode(",", Config::RECIPIENT_EMAIL);
-
-        require_once __DIR__ . '/../vendor/autoload.php';
+        $myfile = fopen("mailLog.txt", "w");
+        //require_once __DIR__ . '/../Config.php';
+        $recipientArray = explode(",", $to);
         $mail = new PHPMailer(true);
 
         // Comment the following lines of code till $mail->Port to send
@@ -87,26 +81,22 @@ class MailService
 
         // Recipients
         $mail->setFrom(Config::SENDER_EMAIL, $name);
-        $mail->addReplyTo($email, $name);
+        $mail->addReplyTo('arpad.media@gmail.com', 'Árpád Média');
 
-        $mail->addAddress(Config::RECIPIENT_EMAIL, Config::RECIPIENT_EMAIL);
+        $mail->addAddress($to);
 
         $mail->Subject = $subject;
 
         $mail->CharSet = PHPMailer::CHARSET_UTF8;
         $mail->msgHTML($content);
 
-        //Replace the plain text body with one created manually
-        $mail->AltBody = 'This is a plain-text message body';
-
         if (!$mail->send()) {
-            $output = json_encode(array('type'=>'error', 'text' => '<b>'.$from.'</b> is invalid.'));
-            $output = json_encode(array('type'=>'error', 'text' => 'Server error. Please mail vincy@phppot.com'));
+            fwrite(json_encode(array('type'=>'error', 'text' => '<b>'.$from.'</b> is invalid.')));
+            fclose($myfile);
         } else {
-            $output = json_encode(array('type'=>'message', 'text' => 'Thank you, I will get back to you shortly.'));
+            $output = json_encode(array('type'=>'message', 'text' => 'OK.'));
         }
         return $output;
     }
     
 }
-MailService::sendContactMail();

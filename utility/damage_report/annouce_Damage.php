@@ -1,27 +1,20 @@
+<?php
+namespace Mediaio;
+require_once __DIR__.'/../../Mailer.php';
+require_once __DIR__.'/../../Database.php';
+use Mediaio\MailService;
+use Mediaio\Database;
+error_reporting(E_ALL ^ E_NOTICE);
+session_start();
+$TKI = $_SESSION['UserUserName'];  
+?>
+
 <!--Hibabejelentő űrlap, tartalmazza:
 - A tárgy nevét, amivel gond van
 - A bejelentő nevét
 - Képfeltöltés lehetőségét
 - Hiba leírását
 -->
-<?php
-require_once('F:/Programming/xampp/htdocs/.git/mediaio/PHPMailer/src/PHPMailer.php');
-require '../../PHPMailer/src/SMTP.php';
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
-use PHPMailer\SMTP;
-error_reporting(E_ALL ^ E_NOTICE);
-session_start();
-$serverName="localhost";
-	$userName="root";
-	$password="umvHVAZ%";
-	$dbName="mediaio";
-  $conn = new mysqli($serverName, $userName, $password, $dbName);
-  $TKI = $_SESSION['UserUserName'];    
-  $conn = new mysqli($serverName, $userName, $password, $dbName);
-?>
-
-
 <head>
   <link href='../../main.css' rel='stylesheet' />
   <div class="UI_loading"><img class="loadingAnimation" src="../mediaIO_loading_logo_small.gif"></div>
@@ -78,10 +71,9 @@ $serverName="localhost";
                 <option  selected ">Válassz a nálad levő tárgyak közül</option>
                 <?php 
                 $sql = ("SELECT * FROM `leltar` WHERE `RentBy` = '$TKI'");
-                $result = mysqli_query($conn, $sql);
-                $conn->close();
+                $result = Database::runQuery($sql);
               while($row = $result->fetch_assoc()) { 
-                echo '<option value='.$row['UID'].'>'.$row['Nev'].'</option>';
+                echo '<option value='.$row['UID'].'>'.$row['Nev'].' - ('.$row['UID'].')</option>';
               }
                 ?>
               </select>

@@ -1,4 +1,7 @@
 <?php
+namespace Mediaio;
+use Mediaio\Databse;
+require_once __DIR__.'/../Database.php';
 include "./header.php";
 session_start();
 $serverType = parse_ini_file(realpath('../server/init.ini')); // Server type detect
@@ -66,27 +69,17 @@ if(isset($_SESSION['userId']) && ($_SESSION['role'] > 3)){
     <div class="panel-heading">
     <?php 
         $TKI = $_SESSION['UserUserName'];    
-        $conn = new mysqli($setup['dbserverName'], $setup['dbUserName'], $setup['dbPassword'], $setup['dbDatabase']);
         $sql = ("SELECT * FROM `users` ORDER BY `UserPoints` DESC");
-        $result = $result = mysqli_query($conn, $sql);
-        $conn->close();
+        $result = Database::runQuery($sql);
         $imodal=0;
         $resultArray = [];
         $pointsData =[];
 
           while($row = $result->fetch_assoc()) { 
               array_push($resultArray, $row);
-
-                $conn = new mysqli($serverName, $userName, $password, $dbName);
                 $rowItem = $row["firstName"].$row["lastName"];
-                /*$query = ("SELECT * FROM `users` ORDER BY `users`.`UserPoints` DESC");
-                $result2 = mysqli_query($conn, $query);
-                $conn->close();
-                while($codeRow = $result2->fetch_assoc()) {$dbCode = $codeRow["Code"]; $dbUser = $codeRow["AuthUser"];}*/
                 $tempArray = [$row["firstName"],$row["lastName"],$row["UserPoints"]];
   array_push($pointsData,$tempArray);
-  //echo($pointsData[$imodal][2]);
-  //echo($imodal);
                 echo '
                 <div class="row">
                 <div class="col-4">
@@ -136,7 +129,6 @@ if(isset($_SESSION['userId']) && ($_SESSION['role'] > 3)){
               </div>';$imodal++;}
             }
             
-    $connect = null;
 ?>
     </body>  
 </html>
@@ -165,7 +157,6 @@ function submitData(val) {
     url: "./pointUpdate.php",
     data: {newScore:parseFloat(newScore), userUpdate:userUpdate},
     success: function (response) {
-     //alert(response);
     document.getElementById("mainTitle").innerHTML = "Ponttábla";
     },//window.location.href = './takeout.php?state=Success';;
     error: function(XMLHttpRequest, textStatus, errorThrown) { 

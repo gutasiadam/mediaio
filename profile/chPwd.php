@@ -20,7 +20,7 @@
             <?php if ($_SESSION['role']>=3){ ?>
               <li><a class="nav-link disabled" href="#">Admin jogok</a></li> <?php  }?>
             </ul>
-						<form class="form-inline my-2 my-lg-0" action=../utility/logout.ut.php>
+						<form class="form-inline my-2 my-lg-0" action=../utility/userLogging.php>
                       <button class="btn btn-danger my-2 my-sm-0" type="submit">Kijelentkezés</button>
                       </form>
                       <div class="menuRight"></div>
@@ -33,7 +33,7 @@
     </nav> <?php 
             
             echo '<table class="logintable"><tr><td><p>Jelszócsere <br><h3 class="rainbow">'.$_SESSION['lastName'].' '.$_SESSION['firstName'].'</h3><br>Számára</br>Sikeres jelszócsere esetén az oldal kijelentkeztet, és e-mailt is küld.</p></td></tr>
-            <form action="../utility/chPwd.ut.php" method="post">
+            <form action="../Core.php" method="post">
             <tr><td><input class="form-control mb-2 mr-sm-2" type="password" name="pwd-Old" placeholder="Jelenlegi jelszó"></td></tr> <br>
             <tr><td><input class="form-control mb-2 mr-sm-2" type="password" name="pwd-New" placeholder="Új jelszó" ></td></tr> <br>
             <tr><td><input class="form-control mb-2 mr-sm-2" type="password" name="pwd-New-Check" placeholder="Új jelszó még egyszer"></td></tr> <br>
@@ -57,7 +57,7 @@
                     echo '<tr><td><p class="success">Successfully changed password! Please log out in order to use your brand new, shiny password! </p></td></tr>';
                     session_unset();
                     session_destroy();
-                    header("Location: ../utility/logout.ut.php");}
+                    header("Location: ../utility/userLogging.php?logout-submit=1");}
                 }
             echo "</table>";
         }else{

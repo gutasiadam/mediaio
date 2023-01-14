@@ -47,7 +47,7 @@ function renderWorkTable($selectedUser){
       exit();
       $conn->close();
     }else{
-      echo "Nincs megjeleníthető feladat.\n";}
+      echo "400\n";}
     }else{
       $user=$_POST["user"];
       $result = $conn->query("SELECT * FROM feladatok ORDER BY Datum ");
@@ -63,14 +63,10 @@ function renderWorkTable($selectedUser){
     }
     $conn->close();
     //Összes felhasználó hozzáadása a DRAGnDROPhoz
-  }else{
-    echo "Nincs megjeleníthető feladat.\n";
   }
 $connect=null;}
 
 if(isset($_POST['mode']) & $_POST['mode']=='UserFiltered'){
-  echo "Fasz";
-  echo $setup['dbPassword'];
   renderWorkTable($_SESSION['UserUserName']);
  
 }
