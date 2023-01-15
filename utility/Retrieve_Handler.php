@@ -25,7 +25,7 @@ if ($mode=="handle"){ // A beérkező tárgy(ak) adminisztrálása, visszatevés
   if ($conn->connect_error) {
       die("Connection fail: (Is the DB server maybe down?)" . $conn->connect_error);
   }
-  $sql = "SELECT Status FROM leltar WHERE UID='$d'";
+  $sql = "SELECT Status FROM leltar WHERE Nev='$d'";
   $result = $conn->query($sql);
   while($row = $result->fetch_assoc()){
       if ($row['Status']=='0'){ // A tárgy nincs a raktárban
@@ -38,7 +38,7 @@ if ($mode=="handle"){ // A beérkező tárgy(ak) adminisztrálása, visszatevés
 
   //Prepare retrieve procedure.
   if ($continue){
-    $sql = ("UPDATE `leltar` SET `Status` = '1', `RentBy` = NULL WHERE `leltar`.`UID` = '$d';");
+    $sql = ("UPDATE `leltar` SET `Status` = '1', `RentBy` = NULL WHERE `leltar`.`Nev` = '$d';");
     //$sql.= ("DELETE FROM authcodedb WHERE Item = '$d';");
     $sql.= ("INSERT INTO takelog (`ID`, `takeID`, `Date`, `User`, `Item`, `Event`) VALUES (NULL, '1', '$currDate', '$SESSuserName', '$d', 'IN')");
     if (!$conn->multi_query($sql)) {

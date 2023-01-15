@@ -1,4 +1,7 @@
-<?php 
+<?php
+namespace Mediaio;
+use Mediaio\Database;
+require_once "Database.php";
 include "translation.php";
 include "header.php";
 session_start();
@@ -66,11 +69,8 @@ if(isset($_SESSION['UserUserName'])){
     <?php 
     if(isset($_GET['pfItem'])){
         $TKI = $_GET['pfItem'];
-        $connect = new PDO("mysql:host=localhost;dbname=mediaio", $setup['dbUserName'], $setup['dbPassword']);
         $query = "SELECT * FROM `takelog` WHERE `Item` = '$TKI' ORDER BY `Date` DESC";
-        $statement = $connect->prepare($query);
-        $statement->execute();
-        $result = $statement->fetchAll();
+        $result = Database::runQuery($query);
         echo '<h3 class="panel-title">Tárgy útvonala - '.$TKI.'</h3>
         </div>
         <div class="panel-body">
