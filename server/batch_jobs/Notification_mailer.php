@@ -37,7 +37,7 @@ function BATCH_notify_Unconfirmed_Events($today,$log){
     $batchName="BATCH_notify_Unconfirmed_Events";
 
     echo "\n".$batchName." service starting, see log for further info.\n";
-    fwrite($log, "\n\n//// ".$batchName." //// \n*** Kezdés ***\n\n");
+    fwrite($log, "\n\n//// ".$batchName." //// \n*** Kezdés ***\n\n");s
 
     fwrite($log, "\n".$batchName." csatlakozás az adatbázishoz\n");
     $mysqli = new mysqli($setup['dbserverName'], $setup['dbUserName'], $setup['dbPassword'], $setup['dbDatabase']);

@@ -52,8 +52,8 @@
             if ($_SESSION['role']>=3){
               echo '<li><a class="nav-link disabled" href="#">Admin jogok</a></li>';}
             echo '</ul>
-						<form class="form-inline my-2 my-lg-0" action=../utility/logout.ut.php>
-                      <button class="btn btn-danger my-2 my-sm-0" type="submit">Kijelentkezés</button>
+						<form method="post" class="form-inline my-2 my-lg-0" action=../utility/userLogging.php>
+                      <button class="btn btn-danger my-2 my-sm-0" name="logout-submit" type="submit">Kijelentkezés</button>
                       </form>
                       <div class="menuRight"></div>
 					</div>

@@ -17,9 +17,9 @@ include("header.php");
     <?php if ($_SESSION['role']>=3){ ?>
       <li><a class="nav-link disabled" href="#">Admin jogok</a></li> <?php  }?>
     </ul>
-                <form class="form-inline my-2 my-lg-0" action=../utility/logout.ut.php>
-              <button class="btn btn-danger my-2 my-sm-0" type="submit">Kijelentkezés</button>
-              </form>
+    <form method='post' class="form-inline my-2 my-lg-0" action=../utility/userLogging.php>
+                      <button class="btn btn-danger my-2 my-sm-0" name="logout-submit" type="submit">Kijelentkezés</button>
+                      </form>
               <div class="menuRight"></div>
             </div>
   <script> $( document ).ready(function() {
@@ -29,11 +29,9 @@ include("header.php");
     });</script>
 </nav>
 <?php
-$search = date('Y-m-d');
-$search2 = date('Y-m-d', strtotime($search. ' - 7 days'));
 
 $conn = new mysqli("localhost", "root", "umvHVAZ%", "mediaio");
-$sql = ("SELECT * FROM `events` WHERE add_Date BETWEEN '$search2' AND '$search'");
+$sql = ("SELECT * FROM `events");
 $result = $conn->query($sql) or die($conn->error);
 //echo $search2;
 

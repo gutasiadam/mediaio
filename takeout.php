@@ -36,8 +36,8 @@ error_reporting(E_ALL ^ E_NOTICE);
             <?php if ($_SESSION['role']>=3){
               echo '<li><a class="nav-link disabled" href="#">Admin jogok</a></li>';}?>
 					  </ul>
-						<form class="form-inline my-2 my-lg-0" action=utility/logout.ut.php>
-                      <button class="btn btn-danger my-2 my-sm-0" type="submit"><?php echo $nav_logOut;?></button>
+						<form method='post' class="form-inline my-2 my-lg-0" action=utility/userLogging.php>
+                      <button class="btn btn-danger my-2 my-sm-0"  name='logout-submit' type="submit"><?php echo $nav_logOut;?></button>
                       </form>
             <a class="nav-link my-2 my-sm-0" href="./help.php"><i class="fas fa-question-circle fa-lg"></i></a>
 					</div>
@@ -64,7 +64,7 @@ error_reporting(E_ALL ^ E_NOTICE);
           <ul id="output"></ul>
         </td>
     				<td><div class="col-md-9">
-      Keresés🔎 <input type="text" id="search" placeholder="Kezdd el ide írni, mit vinnél el.." autocomplete="off" /><button class="btn btn-warning" id="clear">Keresés törlése</button> <button class="btn btn-success" id="takeout2BTN">Mehet</button>
+      Keresés <input type="text" id="search" placeholder="Kezdd el ide írni, mit vinnél el.." autocomplete="off" /><button class="btn btn-warning" id="clear">Keresés törlése</button> <button class="btn btn-success" id="takeout2BTN">Mehet</button>
 <div id="jstree">
 </div>
 

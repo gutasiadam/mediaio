@@ -16,4 +16,4 @@ A webapp a következő szolgáltatásokkal rendelkezik
 
 
 **Minden segítségre szükség van!!**
-###### Bármilyen egyéb kérdés esetén vedd fel a kapcsolatot a projekt GitHUb oldalán [the project page](https://github.com/d3rang3/mediaio "the project's page") vagy a GitHubomon. [my GitHub](https://github.com/gutasiadam "my GitHub").
+###### Bármilyen egyéb kérdés esetén vedd fel a kapcsolatot a projekt GitHUb oldalán [the project page](https://github.com/gutasiadam/mediaio "the project's page") vagy a GitHubomon. [my GitHub](https://github.com/gutasiadam "my GitHub").

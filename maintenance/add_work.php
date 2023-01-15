@@ -1,66 +1,27 @@
 <?php
-require_once('../PHPMailer/src/PHPMailer.php');
-require '../PHPMailer/src/SMTP.php';
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
-use PHPMailer\PHPMailer\SMTP;
+    namespace Mediaio;
+    use Mediaio\MailService;
+    use Mediaio\Database;
 
+    require_once "../Database.php";
+    require_once "../Mailer.php";
 //insert.php
 session_start();
-$serverType = parse_ini_file(realpath('../server/init.ini')); // Server type detect
-    if($serverType['type']=='dev'){
-      $setup = parse_ini_file(realpath('../../../mediaio-config/config.ini')); // @ Dev
-    }else{
-      $setup = parse_ini_file(realpath('../../mediaio-config/config.ini')); // @ Production
-    }
 
 if(isset($_POST["date"]) && isset($_POST["user"]) && isset($_POST["task"]))
 {
-    //Először nézzük meg, létezik-e a felhasználó:
-    $conn = new mysqli($setup['dbserverName'], $setup['dbUserName'], $setup['dbPassword'], $setup['dbDatabase']);
-    $user=$_POST["user"];
-    $result = $conn->query("SELECT emailUsers, firstName FROM users WHERE userNameUsers='$user'");
-    $conn->close();
+    $result=Database::runQuery("SELECT emailUsers, firstName FROM users WHERE userNameUsers='".$_POST['user']."'");
+    //$result=Database::runQuery("SELECT emailUsers, firstName FROM users WHERE userNameUsers='gutasiadam'");
  if ($result->num_rows > 0) {
-    while($row = $result->fetch_assoc()) {
+    while($row = mysqli_fetch_array($result)) {
         $to=$row['emailUsers'];
         $nev=$row['firstName'];
-    }
-     
-    $connect = new PDO("mysql:host=localhost;dbname=mediaio", $setup['dbUserName'], $setup['dbPassword']);
- 
- $query = "
- INSERT INTO feladatok 
- (Datum, Szemely, Feladat) 
- VALUES (:date, :user, :task)
- ";
- $statement = $connect->prepare($query);
- $statement->execute(
-  array(
-   ':date'  => $_POST['date'],
-   ':user' => $_POST['user'],
-   ':task' => $_POST['task']
-  )
- );
- //E-mail küldése a felhasznßálónak
- $mail = new PHPMailer();
-$mail->SMTPOptions = array(
-    'ssl' => array(
-    'verify_peer' => false,
-    'verify_peer_name' => false,
-    'allow_self_signed' => true
-    )
-    );
+ $query = "INSERT INTO feladatok (Datum, Szemely, Feladat) VALUES ('".$_POST['date']."', '".$_POST['user']."', '".$_POST['task']."')";
+ //$query = "INSERT INTO feladatok (Datum, Szemely, Feladat) VALUES ('NULL', 'gutasiadam', 'xd')";
+ $result=Database::runQuery($query);
 
 
-$mail->Mailer = "smtp";
-$mail->SMTPAuth   = TRUE;
-$mail->SMTPSecure = "tls";
-$mail->Port       = 587;
-$mail->Host       = "smtp.gmail.com";
-$mail->Username   = $setup['app_email'];
-$mail->Password   = $setup['app_email_pass'];
- $mail->Body = '
+ $content = '
 <html>
 <head>
   <title>Arpad Media IO</title>
@@ -79,28 +40,17 @@ Ha szerinted ez az e-mail nem releváns, vagy hibás, jelezd azt a vezetőségne
 </body>
 </html>
 ';
-
-
-$mail->isHTML(true);
-$mail->setFrom($setup['app_email'], 'mediaIO');
-$mail->FromName = "mediaIO";
-$mail->CharSet = 'UTF-8';
-$mail->Encoding = 'base64';
-$mail->addAddress($to, $nev);
-$mail->Subject = 'mediaIO - Új feladat!';
-//mail($to, '=?utf-8?B?'.base64_encode($subject).'?=', $message, implode("\r\n", $headers));
 try {
-  $mail->send();
   echo "3";
+  $result=MailService::sendContactMail('MediaIO-feladatok',$to,"Új feladatot kaptál!",$content);
+  exit();
 } catch (Exception $e) {
-  echo "Mailer Error: " . $mail->ErrorInfo;
+  echo "Mailer Error: ".$e;
+}
 }
 }else{
-    echo "1";// Nincs ilyen felhasználó
+  echo "1";// Nincs ilyen felhasználó
+  exit();}
 }
-$connect=null;
-}else{
-    echo "2";//Üres cella, vagy formátumhiba.
-}
-
+//}
 ?>

@@ -1,57 +1,33 @@
 <?php
+namespace Mediaio;
+require_once __DIR__.'/../../Mailer.php';
+require_once __DIR__.'/../../Database.php';
+use Mediaio\MailService;
+use Mediaio\Database;
+
 error_reporting(E_ALL ^ E_NOTICE);
 session_start();
 
-require("../../PHPMailer/src/PHPMailer.php");
-require("../../PHPMailer/src/SMTP.php");
-require("../../PHPMailer/src/Exception.php");
-
-//include '../../PHPMailer/src/SMTP.php';
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
-use PHPMailer\SMTP;
+//Tárgy átadása a szerviz felhasznalonak:
+//Update..
+//logolni
 $data = json_decode(stripslashes($_POST['data']),true);
-//echo $data;
-
-$mail = new PHPMailer();
-$mail->SMTPOptions = array(
-    'ssl' => array(
-    'verify_peer' => false,
-    'verify_peer_name' => false,
-    'allow_self_signed' => true
-    )
-    );
-
-
-$mail->Mailer = "smtp";
-$mail->SMTPAuth   = TRUE;
-$mail->SMTPSecure = "tls";
-$mail->Port       = 587;
-$mail->Host       = "smtp.gmail.com";
-$mail->Username   = "arpadmedia.io@gmail.com";
-$mail->Password   = "xlr8VGA%";
-$mail->IsHTML(true);
-/* Set the mail sender. */
-$mail->setFrom('arpadmedia@gmail.com', 'mediaIO damage Report');
-$mail->CharSet = 'UTF-8';
-$mail->Encoding = 'base64';
-/* Add a recipient. */
-$mail->addAddress('gutasi.guti@gmail.com', 'Media Admin');
-
+$currDate = date("Y/m/d H:i:s");
+$sql1="UPDATE `leltar` SET RentBy='service' WHERE UID='".$data['UID']."'";
+Database::runQuery($sql1);
+$sql2 = ("INSERT INTO `takelog` (`ID`, `takeID`, `Date`, `User`, `Item`, `Event`) VALUES (NULL, '".$data['UID']."', '".$currDate."', '".$_SESSION['UserUserName']."', '".$data["Nev"]."', 'SERVICE')");
+Database::runQuery($sql2);
 /* Set the subject. */
-$mail->Subject = 'bejelentett sérülés: '.$data['UID'];
+$subject = 'bejelentett sérülés: '.$data['UID'];
 
 /* Set the mail message body. */
-$mail->Body = $_SESSION['fullName'].' sérülést jelentett be a <strong>'.$data['Nev'].' ('.$data['UID'].')</strong> tárgyon! <br> Leírás: '.$data['err_description'];
+$content = $_SESSION['fullName'].' sérülést jelentett be a <strong>'.$data['Nev'].'</strong> tárgyon! <br> Leírás: '.$data['err_description'];
 
-/* Finally send the mail. */
-if (!$mail->send())
-{
-   /* PHPMailer error. */
-   echo $mail->ErrorInfo;
-}else{
-    echo 200;
-}
+/* Finally send the mail using MailService */
+MailService::sendContactMail('MediaIO-sérülésbejelntő','arpadmedia.io@gmail.com',$subject,$content);
+echo 200;
+
+
 
 
 ?>

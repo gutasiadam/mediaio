@@ -1,27 +1,20 @@
+<?php
+namespace Mediaio;
+require_once __DIR__.'/../../Mailer.php';
+require_once __DIR__.'/../../Database.php';
+use Mediaio\MailService;
+use Mediaio\Database;
+error_reporting(E_ALL ^ E_NOTICE);
+session_start();
+$TKI = $_SESSION['UserUserName'];  
+?>
+
 <!--Hibabejelentő űrlap, tartalmazza:
 - A tárgy nevét, amivel gond van
 - A bejelentő nevét
 - Képfeltöltés lehetőségét
 - Hiba leírását
 -->
-<?php
-require_once('F:/Programming/xampp/htdocs/.git/mediaio/PHPMailer/src/PHPMailer.php');
-require '../../PHPMailer/src/SMTP.php';
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
-use PHPMailer\SMTP;
-error_reporting(E_ALL ^ E_NOTICE);
-session_start();
-$serverName="localhost";
-	$userName="root";
-	$password="umvHVAZ%";
-	$dbName="mediaio";
-  $conn = new mysqli($serverName, $userName, $password, $dbName);
-  $TKI = $_SESSION['UserUserName'];    
-  $conn = new mysqli($serverName, $userName, $password, $dbName);
-?>
-
-
 <head>
   <link href='../../main.css' rel='stylesheet' />
   <div class="UI_loading"><img class="loadingAnimation" src="../mediaIO_loading_logo_small.gif"></div>
@@ -55,7 +48,7 @@ $serverName="localhost";
 					<div class="collapse navbar-collapse" id="navbarSupportedContent">
 					  <ul class="navbar-nav mr-auto navbarUl">
             </ul>
-            <ul class="navbar-nav navbarPhP"><li><a class="nav-link disabled timelock" href="#">⌛ <span id="time"> 10:00 </span></a></li>';
+            <ul class="navbar-nav navbarPhP"><li><a class="nav-link disabled timelock" href="#">⌛ <span id="time"> 10:00 </span></a></li>
             <?php if (($_SESSION['role']=="Admin") || ($_SESSION['role']=="Boss")){ ?>
               <li><a class="nav-link disabled" href="#">Admin jogok</a></li> <?php  }?>
             </ul>
@@ -78,10 +71,9 @@ $serverName="localhost";
                 <option  selected ">Válassz a nálad levő tárgyak közül</option>
                 <?php 
                 $sql = ("SELECT * FROM `leltar` WHERE `RentBy` = '$TKI'");
-                $result = mysqli_query($conn, $sql);
-                $conn->close();
+                $result = Database::runQuery($sql);
               while($row = $result->fetch_assoc()) { 
-                echo '<option value='.$row['UID'].'>'.$row['Nev'].'</option>';
+                echo '<option value='.$row['UID'].'>'.$row['Nev'].'- ('.$row['UID'].')</option>';
               }
                 ?>
               </select>
@@ -126,7 +118,7 @@ $serverName="localhost";
 </div>
 <script>
 function changeFunc() {
-    console.log('CHANGE')
+    console.log('CHANGE');
     var selectBox = document.getElementById("selectItem");
     var selectedValue = selectBox.options[selectBox.selectedIndex].innerHTML;
     var selectedUID = selectBox.options[selectBox.selectedIndex].value;
@@ -181,7 +173,7 @@ function send_report(){
   var nev= document.getElementById("itemName").innerHTML;
   var uid= document.getElementById("itemUID").innerHTML;
   data={
-    Nev: nev,
+    Nev: nev.split('-')[0],
     UID: uid,
     err_description: document.getElementById('error_description').innerHTML
   };
@@ -192,7 +184,7 @@ function send_report(){
     url: './send_damage_report.php',
     data: {data :mailJSON},
     success: function (response){
-      //alert('Válasz:'+response);
+      alert('Válasz:'+response);
       document.getElementById("mailSendState").innerHTML =('Sikeres művelet! Az oldal hamarosan újratölt.');
       setTimeout(function(){location.reload();},5000);
     },

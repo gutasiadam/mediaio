@@ -1,12 +1,8 @@
-<?php 
-    session_start();
-    require_once('../PHPMailer/src/PHPMailer.php');
-require '../PHPMailer/src/SMTP.php';
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
-use PHPMailer\PHPMailer\SMTP;
+<?php
+namespace Mediaio;
+use Mediaio\Core;
+require_once __DIR__.'/../Core.php';
     if (isset($_POST['pwdCh-submit'])){
-        
         //require 'dbHandler.ut.php';
         $serverType = parse_ini_file(realpath('../server/init.ini')); // Server type detect
         if($serverType['type']=='dev'){

@@ -47,8 +47,8 @@ var goStatus = 0;
             <?php if ($_SESSION['role']>=3){
               echo '<li><a class="nav-link disabled" href="#">Admin jogok</a></li>';}?>
 					  </ul>
-						<form class="form-inline my-2 my-lg-0" action=utility/logout.ut.php>
-                      <button class="btn btn-danger my-2 my-sm-0" type="submit"><?php echo $nav_logOut;?></button>
+						<form method='post' class="form-inline my-2 my-lg-0" action=utility/userLogging.php>
+                      <button class="btn btn-danger my-2 my-sm-0" name="logout-submit" type="submit">Kijelentkezés</button>
                       </form>
             <a class="nav-link my-2 my-sm-0" href="./help.php"><i class="fas fa-question-circle fa-lg"></i></a>
 					</div>
@@ -71,10 +71,11 @@ var goStatus = 0;
         while($row = $result->fetch_assoc()) {
           //var_dump($row);
           $n++;
-          echo '<div class="result dynamic-field"><button id="'.$row['UID'].'" class="btn btn-dark" onclick="prepare(this.id);">'.$row['Nev'].' ('.$row['UID'].')'.' <i class="fas fa-angle-double-right"></i></button></div>';
+          echo '<div class="result dynamic-field"><button id="'.$row['UID'].'" class="btn btn-dark" onclick="'."prepare(this.id,'".$row['Nev']."'".');'.'"'.'>'.$row['Nev'].' ('.$row['UID'].')'.' <i class="fas fa-angle-double-right"></i></button></div>';
+          //echo '<div class="result dynamic-field"><button id="'.$row['UID'].'" class="btn btn-dark" onclick="'."prepare(this.id,'".$row['Nev']." ".$row['UID']."'".');'.'"'.'>'.$row['Nev'].' ('.$row['UID'].')'.' <i class="fas fa-angle-double-right"></i></button></div>';
       }
       if($n==0){
-        echo '<div class="result dynamic-field text text-warning bg-dark"> // Jelenleg nincs nálad egy tárgy sem</div>';
+        echo '<div class="result dynamic-field text"> // Jelenleg nincs nálad egy tárgy sem</div>';
       }
 ?>  
       <!--<div class="alert alert-info"><?php echo $Welcomemsg_retrieve?></div>-->
@@ -109,8 +110,8 @@ var goStatus = 0;
 </html>
 <script>
 
-function prepare(id){
-  $('#dynamic_field').append('<tr id="prep-'+id+'"><td><button id="prep-'+id+'" class="btn btn-dark" onclick="unstage(this.id);"><i class="fas fa-angle-double-left"></i> '+id+'</button></td></tr>');
+function prepare(id,txt){
+  $('#dynamic_field').append('<tr id="prep-'+id+'"><td><button id="prep-'+id+'" class="btn btn-dark" onclick="unstage(this.id);"><i class="fas fa-angle-double-left"></i> '+txt+'</button></td></tr>');
   $('#'+id).hide();
 }
 function unstage(id){
@@ -182,9 +183,9 @@ $('table > tbody  > tr > td > button ').each(function(index, tr) {
     success: function (response){
       //alert(response);
       $('#doTitle').animate({'opacity': 0}, 400, function(){
-        $(this).html('<h2 class="text text-info" role="success">Sikeresen visszakerültek a tárgyak 🙂! Az oldal újratölt.</h2>').animate({'opacity': 1}, 400);
-        $(this).html('<h2 class="text text-info" role="success">Sikeresen visszakerültek a tárgyak 🙂! Az oldal újratölt.</h2>').animate({'opacity': 1}, 3000);
-        $(this).html('<h2 class="text text-info" role="success">Sikeresen visszakerültek a tárgyak 🙂! Az oldal újratölt.</h2>').animate({'opacity': 0}, 400);
+        $(this).html('<h2 class="text text-info" role="success">Sikeresen visszakerültek a tárgyak ! Az oldal újratölt.</h2>').animate({'opacity': 1}, 400);
+        $(this).html('<h2 class="text text-info" role="success">Sikeresen visszakerültek a tárgyak ! Az oldal újratölt.</h2>').animate({'opacity': 1}, 3000);
+        $(this).html('<h2 class="text text-info" role="success">Sikeresen visszakerültek a tárgyak ! Az oldal újratölt.</h2>').animate({'opacity': 0}, 400);
         setTimeout(function() { $("#doTitle").text(applicationTitleShort).animate({'opacity': 1}, 400); }, 3800);;   
     });
     setTimeout(function() { location.reload(); }, 2000);

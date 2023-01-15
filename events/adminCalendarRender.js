@@ -23,17 +23,17 @@ document.addEventListener('DOMContentLoaded', function() {
     center: '',
     right:  'timeGridWeek dayGridMonth today prev,next,'
 },
-    events: 'load.php',
+    events: './EventManager.php/?o=load',
     selectable:true,
     selectHelper:true,
   windowResize: function(view) {
     calendar.updateSize();
   },
   select: function(info) {
-    //console.log("WHY ARE YOU RUNNING?");
     var startval = info.startStr;
     var endval = info.endStr;
-    console.log(startval+' '+endval);
+    console.log(startval+' - '+endval);
+    console.log('Select');
     document.getElementById('addEventInterval').innerHTML = startval+ ' - '+endval;
     document.getElementById('addEventStartVal').value = startval;
     document.getElementById('addEventEndVal').value = endval;;
@@ -55,11 +55,12 @@ document.addEventListener('DOMContentLoaded', function() {
      if(title!="")
      {
       $.ajax({
-       url:"insertprep.php",
+       url:"./EventManager.php/",
        type:"POST",
-       data:{title:title, start:start, end:end, color:color, type:type},
+       data:{title:title, start:start, end:end, color:color, type:type,o:'prepare'},
        success:function(sVal)
        {
+        alert(sVal);
          console.log(sVal);
         if(sVal==1){
           $('#exampleModal').modal('hide');      
@@ -69,6 +70,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
        }
       })
+     }else{
+      alert('Esemenynev megadasa kotelezo!');
      }
     })
 
@@ -83,6 +86,7 @@ document.addEventListener('DOMContentLoaded', function() {
      document.getElementById('delEventId').value = id;
      var workSheetURL = "./worksheet.php/?eventId="+id;
      $('#deleteModal').modal('show');
+     $('#optionsLabel').text(title);
      
     $("#worksheetShow").submit(function() {
       window.open(workSheetURL);
@@ -92,9 +96,9 @@ document.addEventListener('DOMContentLoaded', function() {
     $('#deleteModal').modal('hide');
     id = document.getElementById('delEventId').value;
       $.ajax({
-       url:"delete.php",
+       url:"./EventManager.php",
        type:"POST",
-       data:{id:id},
+       data:{id:id,o:'delete'},
        success:function()
        {
         calendar.refetchEvents()
