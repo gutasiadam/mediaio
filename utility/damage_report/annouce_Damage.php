@@ -48,7 +48,7 @@ $TKI = $_SESSION['UserUserName'];
 					<div class="collapse navbar-collapse" id="navbarSupportedContent">
 					  <ul class="navbar-nav mr-auto navbarUl">
             </ul>
-            <ul class="navbar-nav navbarPhP"><li><a class="nav-link disabled timelock" href="#">⌛ <span id="time"> 10:00 </span></a></li>';
+            <ul class="navbar-nav navbarPhP"><li><a class="nav-link disabled timelock" href="#">⌛ <span id="time"> 10:00 </span></a></li>
             <?php if (($_SESSION['role']=="Admin") || ($_SESSION['role']=="Boss")){ ?>
               <li><a class="nav-link disabled" href="#">Admin jogok</a></li> <?php  }?>
             </ul>
@@ -73,7 +73,7 @@ $TKI = $_SESSION['UserUserName'];
                 $sql = ("SELECT * FROM `leltar` WHERE `RentBy` = '$TKI'");
                 $result = Database::runQuery($sql);
               while($row = $result->fetch_assoc()) { 
-                echo '<option value='.$row['UID'].'>'.$row['Nev'].' - ('.$row['UID'].')</option>';
+                echo '<option value='.$row['UID'].'>'.$row['Nev'].'- ('.$row['UID'].')</option>';
               }
                 ?>
               </select>
@@ -118,7 +118,7 @@ $TKI = $_SESSION['UserUserName'];
 </div>
 <script>
 function changeFunc() {
-    console.log('CHANGE')
+    console.log('CHANGE');
     var selectBox = document.getElementById("selectItem");
     var selectedValue = selectBox.options[selectBox.selectedIndex].innerHTML;
     var selectedUID = selectBox.options[selectBox.selectedIndex].value;
@@ -173,7 +173,7 @@ function send_report(){
   var nev= document.getElementById("itemName").innerHTML;
   var uid= document.getElementById("itemUID").innerHTML;
   data={
-    Nev: nev,
+    Nev: nev.split('-')[0],
     UID: uid,
     err_description: document.getElementById('error_description').innerHTML
   };
@@ -184,7 +184,7 @@ function send_report(){
     url: './send_damage_report.php',
     data: {data :mailJSON},
     success: function (response){
-      //alert('Válasz:'+response);
+      alert('Válasz:'+response);
       document.getElementById("mailSendState").innerHTML =('Sikeres művelet! Az oldal hamarosan újratölt.');
       setTimeout(function(){location.reload();},5000);
     },

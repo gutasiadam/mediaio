@@ -6,7 +6,7 @@ if(!isset($_SESSION['userId'])){
 ?><html lang='en'>
   <head>
   <link href='../main.css' rel='stylesheet' />
-  <div class="UI_loading"><img class="loadingAnimation" src="../utility/mediaIO_loading_logo_small.gif"></div>
+  <div class="UI_loading"><img class="loadingAnimation" src="../utility/mediaIO_loading_logo.gif"></div>
     <meta charset='utf-8' />
     <script src="https://kit.fontawesome.com/2c66dc83e7.js" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -28,7 +28,7 @@ if(!isset($_SESSION['userId'])){
   <script src="./moment/main.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 <?php 
-  if(($_SESSION['role']=="Default")){
+  if(($_SESSION['role']==1)){
     echo '<script src="./defaultCalendarRender.js"></script>';
   }else{  echo '<script src="./adminCalendarRender.js"></script>';}
 ?>
@@ -105,7 +105,7 @@ if(!isset($_SESSION['userId'])){
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Mégsem</button>
-        <input type="submit" class="btn btn-primary" value="Hozzáadás" ></button>
+        <input type="submit" class="btn btn-primary">Mehet</button>
         <input type="hidden" id="addEventStartVal"></input>
         <input type="hidden" id="addEventEndVal"></input>
         </form>
@@ -119,7 +119,7 @@ if(!isset($_SESSION['userId'])){
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Opcíók</h5>
+        <h5 class="modal-title" id="optionsLabel">Opcíók</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>

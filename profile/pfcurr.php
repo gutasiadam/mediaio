@@ -1,4 +1,7 @@
 <?php
+namespace Mediaio;
+use Mediaio\Database;
+require_once('../Database.php');
 include "header.php";
 session_start();
 if(isset($_SESSION['userId'])){
@@ -57,10 +60,8 @@ $serverType = parse_ini_file(realpath('../server/init.ini')); // Server type det
     <div class="panel-heading">
     <?php 
         $TKI = $_SESSION['UserUserName'];    
-        $conn = new mysqli($setup['dbserverName'], $setup['dbUserName'], $setup['dbPassword'], $setup['dbDatabase']);
         $sql = ("SELECT * FROM `leltar` WHERE `RentBy` = '$TKI'");
-        $result = mysqli_query($conn, $sql);
-        $conn->close();
+        $result = Database::runQuery($sql);
         echo '<h3 class="panel-title">'.$_SESSION['firstName'].', ezek a tárgyak vannak most nálad:</h3>
         </div>';
         $imodal=0;
@@ -68,23 +69,7 @@ $serverType = parse_ini_file(realpath('../server/init.ini')); // Server type det
         //$rows = mysqli_fetch_all($result);
           while($row = $result->fetch_assoc()) { 
               array_push($resultArray, $row);
-              //$authGen = random_int(100000,999999);
-              //if ($row["AuthState"] != NULL){ // Tehát már van kód generálva
-                //Keressük meg az itemhez tartozó kód értékét és hogy melyik felhasználó használhatja ezt a kódot.
-                $conn = new mysqli($setup['dbserverName'], $setup['dbUserName'], $setup['dbPassword'], $setup['dbDatabase']);
-                $rowItem = $row["Nev"];
-                //$query = ("SELECT * FROM `authcodedb` WHERE Item = '$rowItem'");
-                //$result2 = mysqli_query($conn, $query);
-                $conn->close();
-                //while($codeRow = $result2->fetch_assoc()) {$dbCode = $codeRow["Code"]; $dbUser = $codeRow["AuthUser"];}
-                
-                /*echo '<div class="row">
-              <div class="col-4">
-               <h2>'. $row["Nev"].'</h2>
-               <p>'. $row["Tipus"].'</p> 
-              </div>
-             </div>';*/
-            //}else{
+              $rowItem = $row["Nev"];
               echo '
               <div class="row">
               <div class="col-4">
@@ -111,7 +96,7 @@ $serverType = parse_ini_file(realpath('../server/init.ini')); // Server type det
                 </div>
                 <div class="modal-body">
                   <form action="./pfcurr.php" class="form-group" method=post>
-              <input type="hidden" id="retrieveItem_'.$imodal.'" name="retrieveItem" value="'.$row["UID"].'"/> 
+              <input type="hidden" id="retrieveItem_'.$imodal.'" name="retrieveItem" value="'.$row["Nev"].'"/> 
               <input type="hidden" name="User" value="'.$TKI.'"/>
               <div class="form-check">
               <input class="form-check-input intactItems" type="checkbox" value="" id="intactItems'.$imodal.'">
@@ -128,7 +113,7 @@ $serverType = parse_ini_file(realpath('../server/init.ini')); // Server type det
                   </div>      
               </div>
             </div>
-            ';//}
+            ';
             $imodal++;
             if($row["Event"]=="IN"){
               echo '';
@@ -177,7 +162,7 @@ function retrieve(i){ // i=> item
     url: '../utility/Retrieve_Handler.php',
     data: {data : retrieveJSON, mode: "handle"},
     success: function (response){
-      //alert('Válasz:'+response);
+      alert('Válasz:'+response);
       $('.sysResponse').append('Sikeres művelet! Az oldal hamarosan újratölt.');
       setTimeout(function(){location.reload();},5000);
     },

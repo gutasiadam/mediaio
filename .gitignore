@@ -6,3 +6,4 @@ vendor/phpmailer
 vendor/league
 server/batch_jobs/logs
 mailLog.txt
+Logger.txt

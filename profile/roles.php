@@ -5,6 +5,7 @@ require_once '../Database.php';
 include "header.php";
 
 session_start();
+error_reporting(E_ALL ^ E_NOTICE);
 if(($_SESSION['role']=="Admin") || ($_SESSION['role']=="Boss")){
     error_reporting(E_ALL ^ E_NOTICE);}
     $serverType = parse_ini_file(realpath('../server/init.ini')); // Server type detect
@@ -102,10 +103,9 @@ imodal++;
         
           while($row = $result->fetch_assoc()) { 
               array_push($resultArray, $row);
-                $rangok=["default","stúdiós","sadmin","admin","böss"];
+                $rangok=["default","stúdiós","sadmin","admin","sysadmin"];
+                $rangColors=["disabled","info","success","warning","danger"];
                 $rowItem = $row["firstName"].$row["lastName"];
-                $query = ("SELECT * FROM `users`");
-                $result2 = Database::runQuery($query);
                 echo '
                 <div class="row">
                 <div class="col-4">
@@ -113,47 +113,31 @@ imodal++;
                  <p id=uN'.$imodal.'>'.$row["usernameUsers"].'</p>
                 </div>
                 <div class="col-2">
-                <h2 class="text text-danger">'.$rangok[$row["Userrole"]-1].'</h2></div>';
-                if($_SESSION['role']=="5"){
+                <h2 class="text text-'.$rangColors[$row["Userrole"]-1].'">'.$rangok[$row["Userrole"]-1].'</h2></div>';
+                if($_SESSION['role']>="3"){
                   ?>
-                  <form type='post'>
+    <?php if($rangok[$row["Userrole"]-1]!='sysadmin'){
+      echo '
+                  <form method="POST" action=../Core.php>
                   <div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" name='adminCheckbox'<?php echo $imodal; ?>' value="4">
+  <input class="form-check-input" type="checkbox" name="adminCheckbox" value="4">
   <label class="form-check-label" for="adminCheckBoxLabel">admin</label>
+  <input type="hidden" name="userName" value='.$row["usernameUsers"].'>
+  <input type="hidden" name="pointUpdate" value="1">
 </div>
 <div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" name='studioCheckbox' id='studioCheckBox<?php echo $imodal; ?>' value="2">
+  <input class="form-check-input" type="checkbox" name="studioCheckbox" id="studioCheckBox" value="2">
   <label class="form-check-label" for="studioCheckBoxLabel">stúdiós</label>
 </div>
 
-<button class="btn btn-warning" type="submit">Módosítás</button> <!-- type="submit"-->
-                </form>
-</div>
+  <button class="btn btn-warning" type="submit">Módosítás</button></form>
+  ';
+}?></div>
                   <?php
                   $imodal++;
                 }
 
             }?>
-
-<?php
-      if (isset($_POST["adminCheckbox"]) or isset($_POST["studioCheckbox"])){
-        $myfile = fopen("testfile.txt", "w");
-        fwrite($myfile, $_POST["user"].' chosen!');
-        $targetUser = $_POST["user"];
-          if ($_POST["mode"]=="admin"){
-            $SQL = ("UPDATE `users` SET `Userrole` = 3 WHERE `users`.`userNameUsers` = '$targetUser'");
-          }
-          if ($_POST["mode"]=="studio"){
-            $SQL = ("UPDATE `users` SET `Userrole` = 2 WHERE `users`.`userNameUsers` = '$targetUser'");
-          }
-          if ($_POST["mode"]=="default"){
-            $SQL = ("UPDATE `users` SET `Userrole` = 1 WHERE `users`.`userNameUsers` = '$targetUser'");
-          }
-        $WriteResult = Database::runQuery($SQL);
-        fclose($myfile);
-      }
-?>
-
 <div class="form-group">
    <div class="panel panel-default">
     <div class="panel-heading">        

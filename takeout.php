@@ -64,7 +64,7 @@ error_reporting(E_ALL ^ E_NOTICE);
           <ul id="output"></ul>
         </td>
     				<td><div class="col-md-9">
-      Keresés🔎 <input type="text" id="search" placeholder="Kezdd el ide írni, mit vinnél el.." autocomplete="off" /><button class="btn btn-warning" id="clear">Keresés törlése</button> <button class="btn btn-success" id="takeout2BTN">Mehet</button>
+      Keresés <input type="text" id="search" placeholder="Kezdd el ide írni, mit vinnél el.." autocomplete="off" /><button class="btn btn-warning" id="clear">Keresés törlése</button> <button class="btn btn-success" id="takeout2BTN">Mehet</button>
 <div id="jstree">
 </div>
 

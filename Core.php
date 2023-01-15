@@ -127,6 +127,21 @@ class Core{
                     }     
             }
     }
+    function changeRole($postData){
+        if ($postData["adminChecked"]==true){
+            if ($postData["studioChecked"]==true){
+                $SQL = ("UPDATE `users` SET `Userrole` = 3 WHERE `users`.`userNameUsers` = '".$postData['userName']."'");
+            }else{
+                $SQL = ("UPDATE `users` SET `Userrole` = 4 WHERE `users`.`userNameUsers` = '".$postData['userName']."'");
+            }
+        }else if ($postData["studioChecked"]==true){
+            $SQL = ("UPDATE `users` SET `Userrole` = 2 WHERE `users`.`userNameUsers` = '".$postData['userName']."'");
+          }
+          if ($postData["studioChecked"]==false and $postData["adminChecked"]==false){
+            $SQL = ("UPDATE `users` SET `Userrole` = 1 WHERE `users`.`userNameUsers` = '".$postData['userName']."'");
+          }
+          return Database::runQuery($SQL);
+    }
 }
 
 //Jelszocsere
@@ -134,5 +149,18 @@ if (isset($_POST['pwdCh-submit'])){
     $postData=array('userId'=>$_SESSION['userId'],'username'=>$_SESSION['UserUserName'],'oldpwd'=>$_POST['pwd-Old'], 
     'password'=>$_POST['pwd-New'],'passwordrepeat'=>$_POST['pwd-New-Check']);
     Core::changePassword($postData);
+}
+if (isset($_POST['pointUpdate'])){
+    $postData=array('userName'=>$_POST['userName'],'adminChecked'=>false, 
+    'studioChecked'=>false);
+    if (isset($_POST["adminCheckbox"])){
+        $postData['adminChecked']=true;
+    }
+    if (isset($_POST["studioCheckbox"])){
+        $postData['studioChecked']=true;
+    }
+
+    Core::changeRole($postData);
+    header("Location: ./profile/roles.php?adminChecked=".strval($_POST['adminCheckbox']."a"));
 }
 ?>
