@@ -17,7 +17,7 @@ $TKI = $_SESSION['UserUserName'];
 -->
 <head>
   <link href='../../main.css' rel='stylesheet' />
-  <div class="UI_loading"><img class="loadingAnimation" src="../mediaIO_loading_logo_small.gif"></div>
+  <div class="UI_loading"><img class="loadingAnimation" src="../mediaIO_loading_logo.gif"></div>
     <meta charset='utf-8' />
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
@@ -52,9 +52,9 @@ $TKI = $_SESSION['UserUserName'];
             <?php if (($_SESSION['role']=="Admin") || ($_SESSION['role']=="Boss")){ ?>
               <li><a class="nav-link disabled" href="#">Admin jogok</a></li> <?php  }?>
             </ul>
-						<form class="form-inline my-2 my-lg-0" action=../utility/logout.ut.php>
-                      <button class="btn btn-danger my-2 my-sm-0" type="submit">Kijelentkezés</button>
-                      </form>
+            <form method="post" class="form-inline my-2 my-lg-0" action=../userLogging.php>
+                <button class="btn btn-danger my-2 my-sm-0" name="logout-submit" type="submit">Kijelentkezés</button>
+            </form>
                       <div class="menuRight"></div>
 					</div>
     </nav>

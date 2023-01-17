@@ -53,18 +53,14 @@ error_reporting(E_ALL ^ E_NOTICE);
     
 			<br /><br />
 			<h2 class="rainbow" align="center" id="doTitle">Tárgy kivétel</h2><br />
-      <div class="row">
-      <div class="col-md-3">
-      <div class="alert alert-info">Szia <strong><?php echo $_SESSION['firstName']?></strong>, mit vinnél el?</div>
-      </div></div>
 			<div class="form-group">
         <table id="itemSearch" align="left"><tr>
         <td class="selectedItemsDisplay" rowspan="2" style="text-align:left;vertical-align:top;padding:0;min-width:300px;">
-          <h3><u>Kiválasztva</u></h3>
+          <h3><u>Kiválasztva:</u></h3>
           <ul id="output"></ul>
         </td>
     				<td><div class="col-md-9">
-      Keresés <input type="text" id="search" placeholder="Kezdd el ide írni, mit vinnél el.." autocomplete="off" /><button class="btn btn-warning" id="clear">Keresés törlése</button> <button class="btn btn-success" id="takeout2BTN">Mehet</button>
+      Keresés: <input type="text" id="search"  style='margin-bottom: 10px' placeholder="Kezdd el ide írni, mit vinnél el.." autocomplete="off" /></br><button class="btn btn-warning" id="clear">Keresés törlése</button> <button class="btn btn-success" id="takeout2BTN">Mehet</button>
 <div id="jstree">
 </div>
 

@@ -1,12 +1,11 @@
-
 <html>
     <?php 
     include "header.php";
             ?>
             <table class="logintable"><tr><td><h1>Elfelejtett jelszó pótlása</h1></td></tr>
-            <form action="../utility/lostPwd.ut.php" method="post">
+            <form action="./Core.php" method="post">
             <tr><td><h3><strong>1. lépés</strong>: kérj egy tokent!</strong></h3></td></tr>
-            <tr><td>Ezt megadva tudsz majd új jelszót beállítani.</td></tr>
+            <tr><td>Ennek segítségével tudsz majd új jelszót megadni.</td></tr>
             <tr><td><input class="form-control mb-2 mr-sm-2" type="email" name="emailAddr" placeholder="e-mail" required></td></tr> <br>
             <tr><td><input class="form-control mb-2 mr-sm-2" type="text" name="userName" placeholder="felhasználónév" required></td></tr> <br>
             <tr><td><br><button class="btn btn-dark" id="submitPwdCh"align=center type="submit" name="pwdLost-submit" required>Token küldése</button></td></tr>
@@ -14,9 +13,9 @@
             <span class="sr-only">Folyamatban...</span>
             </div></tr></td>
             </form>
-            <form action="../utility/lostPwd.ut.php" method="post">
+            <form action="./Core.php.php" method="post">
             <tr><td><h3><strong>2. lépés</strong>: új jelszó</strong></h3></td></tr>
-            <tr><td>A Tokened és felhasználóneved megadásával már adhatsz is egy új jelszót!</td></tr>
+            <tr><td>Az 1. lépésben kapott tokened és felhasználóneved megadásával már adhatsz is egy új jelszót!</td></tr>
             <tr><td><input class="form-control mb-2 mr-sm-2" type="text" name="token" placeholder="token" required></td></tr> <br>
             <tr><td><input class="form-control mb-2 mr-sm-2" type="text" name="userName" placeholder="felhasználónév" required></td></tr> <br>
             <tr><td><input class="form-control mb-2 mr-sm-2" type="password" name="chPwd-1" placeholder="új jelszó" required></td></tr> <br>

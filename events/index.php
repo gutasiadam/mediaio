@@ -58,8 +58,8 @@ if(!isset($_SESSION['userId'])){
             <?php if ($_SESSION['role']>=3){
               echo '<li><a class="nav-link disabled" href="#">Admin jogok</a></li>';}?>
 					  </ul>
-						<form class="form-inline my-2 my-lg-0" action=../utility/logout.ut.php>
-                      <button class="btn btn-danger my-2 my-sm-0" type="submit">Kijelentkezés</button>
+	<form method="post" class="form-inline my-2 my-lg-0" action=../utility/userLogging.php>
+                      <button class="btn btn-danger my-2 my-sm-0" name="logout-submit" type="submit">Kijelentkezés</button>
                       </form>
             <a class="nav-link my-2 my-sm-0" href="../help.php"><i class="fas fa-question-circle fa-lg"></i></a>
 					</div>
@@ -105,7 +105,7 @@ if(!isset($_SESSION['userId'])){
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Mégsem</button>
-        <input type="submit" class="btn btn-primary">Mehet</button>
+        <input type="submit" class="btn btn-primary"></button>
         <input type="hidden" id="addEventStartVal"></input>
         <input type="hidden" id="addEventEndVal"></input>
         </form>

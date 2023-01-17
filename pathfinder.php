@@ -69,7 +69,7 @@ if(isset($_SESSION['UserUserName'])){
     <?php 
     if(isset($_GET['pfItem'])){
         $TKI = $_GET['pfItem'];
-        $query = "SELECT * FROM `takelog` WHERE `Item` = '$TKI' ORDER BY `Date` DESC";
+        $query = "SELECT * FROM `takelog`, `leltar` WHERE leltar.Nev=takelog.Item AND `Item` = '$TKI' ORDER BY `Date` DESC";
         $result = Database::runQuery($query);
         echo '<h3 class="panel-title">Tárgy útvonala - '.$TKI.'</h3>
         </div>
@@ -79,6 +79,14 @@ if(isset($_SESSION['UserUserName'])){
            <div class="timeline__items">';
            foreach($result as $row)
            {
+            if($row["Acknowledged"]==0){
+              echo '<div class="timeline__item ">
+              <div class="timeline__content service">
+               <h2>'. $row["Date"]. ' ('. $row["User"] . ')</h2>
+               <h6>Jóváhagyásra vár.</h6>
+              </div>
+             </div>';
+            }else{
             if($row["Event"]=="OUT"){
               echo '<div class="timeline__item ">
               <div class="timeline__content out">
@@ -92,6 +100,16 @@ if(isset($_SESSION['UserUserName'])){
               </div>
              </div>';
             }
+            if($row["Event"]=="SERVICE"){
+              echo '<div class="timeline__item ">
+              <div class="timeline__content service">
+               <h2>'. $row["Date"]. ' ('. $row["User"] . ')</h2>
+               <h6>Szervizelés</h6>
+              </div>
+             </div>';
+            }
+            }
+
             /*if($row["Event"]=="INwA"){
               echo '<div class="timeline__item ">
               <div class="timeline__content inwa">
@@ -352,8 +370,8 @@ function startTimer(duration, display) {
   .out{
     background-color:#F5B8B8;
   }
-  .inwa{
-    background-color:#acfcfc;
+  .service{
+    background-color:#f1ee8e;
   }
 
   .autocomplete-items {

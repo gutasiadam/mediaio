@@ -40,7 +40,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <div id="signupdata" align=center> 
-        <form action="utility/signup.ut.php" method="post">
+        <form action="./Core.php" method="post">
             <h2>Regisztrációs felület</h2>
             <?php 
                 if (isset($_GET['error'])){
@@ -55,9 +55,9 @@
             ?>
             <table class="logintable">
                 <tr><td><div class="form-group">
-                <label for="fullName">Vezetéknév</label> <br> <input class="form-control mb-2 mr-sm-2" width=50% type="text" name="lastName" placeholder="Vezetéknév" required></div></td></tr>
+                <label for="lastName">Vezetéknév</label> <br> <input class="form-control mb-2 mr-sm-2" width=50% type="text" name="lastName" placeholder="Vezetéknév" required></div></td></tr>
                 <tr><td><div class="form-group">
-                <label for="fullName">Keresztnév</label> <br> <input class="form-control mb-2 mr-sm-2" width=50% type="text" name="firstName" placeholder="Keresztnév" required></div></td></tr>
+                <label for="firstName">Keresztnév</label> <br> <input class="form-control mb-2 mr-sm-2" width=50% type="text" name="firstName" placeholder="Keresztnév" required></div></td></tr>
                 <tr><td><div class="form-group">
                 <label for="userid">Felhasználónév</label> <br> <input class="form-control mb-2 mr-sm-2" type="text" name="userid" placeholder="Felhasználónév" required></div></td></tr>
                 <tr><td><div class="form-group">
@@ -67,9 +67,12 @@
                 <tr><td><div class="form-group">
                 <label for="pwd">Jelszó</label> <br> <input class="form-control mb-2 mr-sm-2" type="password" name="pwd" placeholder="Jelszó" required></div></td></tr>
                 <tr><td><div class="form-group"><input class="form-control mb-2 mr-sm-2" type="password" name="pwd-Re" placeholder="Jelszó újra" required></div></td></tr><br>
-                <tr><td><button class="btn btn-dark mb-2 mr-sm-2" id="submitSgnUp" type="submit" name="signup-submit">Mehet</button></td></tr>
+                <tr><td>
+                <input class="form-control mb-2 mr-sm-2" width=50% type="hidden" name="register" value=1>  
+                <button class="btn btn-dark mb-2 mr-sm-2" id="submitSgnUp" type="submit" name="signup-submit">Mehet</button></td></tr>
                 <tr><td><a href="./index.php" class="btn btn-dark mb-2 mr-sm-2">Vissza a bejelentkezéshez</a></td></tr>
                 <tr><td><div class="spinner-border" role="status">
+                
                 <span class="sr-only">Loading...</span>
                 </div></tr></td>
               </table>

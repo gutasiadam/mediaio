@@ -1,5 +1,13 @@
-<link href='https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css' rel='stylesheet' />
-<?php 
+<?php
+    namespace Mediaio;
+    use Mediaio\Database;
+    use Mediaio\MailService;
+    require_once('../Database.php');
+    require_once('../Mailer.php');
+
+    echo '<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" />';
+
+
     //*ISTENÍTETT KÓD*
     if (isset($_POST['signup-submit'])){
         $serverName = "localhost";
@@ -47,6 +55,7 @@ if (!$conn){
             //Check if this user already exists or not
 
             $sql = "SELECT usernameUsers FROM users WHERE usernameUsers=? /*AND pwdUsers=?*/";
+            
             $stmt = mysqli_stmt_init($conn);
             if (!mysqli_stmt_prepare($stmt, $sql)){
                 header("Location: ../signup.php?error=SQLError");
