@@ -189,7 +189,7 @@ function send_report(){
     url: './send_damage_report.php',
     data: {data :mailJSON},
     success: function (response){
-      //alert('Válasz:'+response);
+      alert('Válasz:'+response);
       document.getElementById("mailSendState").innerHTML =('Sikeres művelet! Az oldal hamarosan újratölt.');
       setTimeout(function(){location.reload();},2000);
     },
