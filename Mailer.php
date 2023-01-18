@@ -17,7 +17,7 @@ require_once __DIR__ .'/vendor/phpmailer/phpmailer/src/SMTP.php';
 class MailService
 {
 
-    function sendContactMail($name, $to,$subject,$content)
+    static function sendContactMail($name, $to,$subject,$content)
     {
         $myfile = fopen("mailLog.txt", "w");
         //require_once __DIR__ . '/../Config.php';

@@ -38,7 +38,7 @@ if ($mode=="handle"){ // A beérkező tárgy(ak) adminisztrálása, visszatevés
 
   //Prepare retrieve procedure.
   if ($continue){
-    $sql = ("UPDATE `leltar` SET `Status` = '1', `RentBy` = NULL WHERE `leltar`.`Nev` = '$d';");
+    $sql = ("UPDATE `leltar` SET `Status` = '2', `RentBy` = NULL WHERE `leltar`.`Nev` = '$d';");
     //$sql.= ("DELETE FROM authcodedb WHERE Item = '$d';");
     $sql.= ("INSERT INTO takelog (`ID`, `takeID`, `Date`, `User`, `Item`, `Event`) VALUES (NULL, '1', '$currDate', '$SESSuserName', '$d', 'IN')");
     if (!$conn->multi_query($sql)) {

@@ -39,7 +39,7 @@ if( isset($_POST['takeoutData'])){
       $conn->close();
       if ($result === TRUE) {
         $conn = new mysqli($setup['dbserverName'], $setup['dbUserName'], $setup['dbPassword'], $setup['dbDatabase']);
-        $sql2 = ("UPDATE leltar SET Status = 0, RentBy = '$SESSuserName' WHERE `Nev`='$nev'");
+        $sql2 = ("UPDATE leltar SET Status = 2, RentBy = '$SESSuserName' WHERE `Nev`='$nev'");
         $result2 = $conn->query($sql2);
         $conn->close();
         if ($result2 != TRUE){

@@ -109,7 +109,8 @@ use PHPMailer\SMTP;
         $row = mysqli_fetch_array($result);
         $emailAddr=$row['emailUsers'];
         $hashedpwd = password_hash($newPwd_text, PASSWORD_BCRYPT);
-        $sql = "UPDATE users SET pwdUsers='$hashedpwd', TOKEN=NULL WHERE usernameUsers='$username' ;";}
+        $sql = "UPDATE users SET pwdUsers='$hashedpwd', TOKEN=NULL WHERE usernameUsers='$username' ;";
+    }
         if (!mysqli_query($conn,$sql))
         {
         echo("Error description: " . mysqli_error($conn));

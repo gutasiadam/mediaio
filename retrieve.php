@@ -1,10 +1,11 @@
 <?php
-include "translation.php";
+namespace Mediaio;
+use Mediaio\Database;
+require_once('./Database.php');
+session_start();
 include "header.php";
-include('./utility/refetchdata.php');
 
-if(!isset($_SESSION['userId'])){
-  header("Location: index.php?error=AccessViolation");}
+if(!isset($_SESSION['userId'])){header("Location: index.php?error=AccessViolation");}
 
 $SESSuserName = $_SESSION['UserUserName'];
 error_reporting(E_ALL ^ E_NOTICE);
@@ -28,32 +29,36 @@ var goStatus = 0;
 </script>
 
 <html >
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-					<a class="navbar-brand" href="index.php"><img src="./utility/logo2.png" height="50"></a>
-					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-					  <span class="navbar-toggler-icon"></span>
-					</button>
-				  
-					<div class="collapse navbar-collapse" id="navbarSupportedContent">
-					  <ul class="navbar-nav mr-auto navbarUl">
-						<script>
-            $( document ).ready(function() {
-              menuItems = importItem("./utility/menuitems.json");
-              drawMenuItemsLeft('retrieve',menuItems);
-            });
-            </script>
-            </ul>
-            <ul class="navbar-nav navbarPhP"><li><a class="nav-link disabled timelock" href="#">⌛ <span id="time"> 10:00 </span></a></li>
-            <?php if ($_SESSION['role']>=3){
-              echo '<li><a class="nav-link disabled" href="#">Admin jogok</a></li>';}?>
-					  </ul>
-						<form method='post' class="form-inline my-2 my-lg-0" action=utility/userLogging.php>
-                      <button class="btn btn-danger my-2 my-sm-0" name="logout-submit" type="submit">Kijelentkezés</button>
-                      </form>
-            <a class="nav-link my-2 my-sm-0" href="./help.php"><i class="fas fa-question-circle fa-lg"></i></a>
-					</div>
-		</nav>
-
+<?php if (isset($_SESSION["userId"])) { ?> <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <a class="navbar-brand" href="index.php">
+    <img src="./utility/logo2.png" height="50">
+  </a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto navbarUl">
+      <script>
+        $(document).ready(function() {
+          menuItems = importItem("./utility/menuitems.json");
+          drawMenuItemsLeft('retrieve', menuItems);
+        });
+      </script>
+    </ul>
+    <ul class="navbar-nav navbarPhP">
+      <li>
+        <a class="nav-link disabled timelock" href="#">⌛ <span id="time"> 10:00 </span><?php if ($_SESSION['role']>=3){echo' Admin jogok';}?>
+        </a>
+      </li>
+    </ul>
+    <form method='post' class="form-inline my-2 my-lg-0" action=utility/userLogging.php>
+      <button class="btn btn-danger my-2 my-sm-0" name='logout-submit' type="submit">Kijelentkezés</button>
+    </form>
+    <a class="nav-link my-2 my-sm-0" href="./help.php">
+      <i class="fas fa-question-circle fa-lg"></i>
+    </a>
+  </div>
+</nav> <?php  } ?>
 
 	<body >
 		<div class="container">
@@ -63,7 +68,7 @@ var goStatus = 0;
       <div class="col-md-4">
       <?php
       $TKI = $_SESSION['UserUserName'];    
-        $conn = new mysqli($setup['dbserverName'], $setup['dbUserName'], $setup['dbPassword'], $setup['dbDatabase']);
+        $conn = Database::runQuery_mysqli();
         $sql = ("SELECT * FROM `leltar` WHERE `RentBy` = '$TKI'");
         $result = mysqli_query($conn, $sql);
         $conn->close(); 
@@ -170,7 +175,7 @@ $(document).on('click', '.result', function(){
   //kivétel indítása.
   $(document).on('click', '.send', function(){
     if($("#intactItems").prop("checked")){ // ha a felhasználó elfogadta, hogy a tárgyak rendben vannak.
-      var uids=[];
+      var uids=[]; //UID`s that will be taken out.
 $('table > tbody  > tr > td > button ').each(function(index, tr) { 
    console.log(this.innerText);
    uids.push(this.innerText.trim());
@@ -178,8 +183,8 @@ $('table > tbody  > tr > td > button ').each(function(index, tr) {
       retrieveJSON = JSON.stringify(uids);
       $.ajax({
     method: 'POST',
-    url: './utility/Retrieve_Handler.php',
-    data: {data : retrieveJSON, mode: "handle"},
+    url: './ItemManager.php',
+    data: {data : retrieveJSON, mode: "retrieveStaging"},
     success: function (response){
       //alert(response);
       $('#doTitle').animate({'opacity': 0}, 400, function(){
