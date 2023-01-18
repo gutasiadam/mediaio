@@ -8,19 +8,19 @@
             <tr><td>Ennek segítségével tudsz majd új jelszót megadni.</td></tr>
             <tr><td><input class="form-control mb-2 mr-sm-2" type="email" name="emailAddr" placeholder="e-mail" required></td></tr> <br>
             <tr><td><input class="form-control mb-2 mr-sm-2" type="text" name="userName" placeholder="felhasználónév" required></td></tr> <br>
-            <tr><td><br><button class="btn btn-dark" id="submitPwdCh"align=center type="submit" name="pwdLost-submit" required>Token küldése</button></td></tr>
+            <tr><td><br><button class="btn btn-dark" id="submitPwdCh1"align=center type="submit" name="pwdLost-submit" required>Token küldése</button></td></tr>
             <tr><td><div class="spinner-border" role="status">
             <span class="sr-only">Folyamatban...</span>
             </div></tr></td>
             </form>
-            <form action="./Core.php.php" method="post">
+            <form action="./Core.php" method="post">
             <tr><td><h3><strong>2. lépés</strong>: új jelszó</strong></h3></td></tr>
             <tr><td>Az 1. lépésben kapott tokened és felhasználóneved megadásával már adhatsz is egy új jelszót!</td></tr>
             <tr><td><input class="form-control mb-2 mr-sm-2" type="text" name="token" placeholder="token" required></td></tr> <br>
             <tr><td><input class="form-control mb-2 mr-sm-2" type="text" name="userName" placeholder="felhasználónév" required></td></tr> <br>
             <tr><td><input class="form-control mb-2 mr-sm-2" type="password" name="chPwd-1" placeholder="új jelszó" required></td></tr> <br>
             <tr><td><input class="form-control mb-2 mr-sm-2" type="password" name="chPwd-2" placeholder="új jelszó még egyszer" required></td></tr> <br>
-            <tr><td><br><button class="btn btn-dark" id="submitPwdCh"align=center type="submit" name="pwdLost-change-submit">Csere</button></td></tr>
+            <tr><td><br><button class="btn btn-dark" id="submitPwdCh2"align=center type="submit" name="pwdLost-change-submit">Csere</button></td></tr>
             <tr><td><div class="spinner-border" role="status">
             <span class="sr-only">Folyamatban...</span>
             </div></tr></td>
@@ -57,35 +57,7 @@ $("#submitPwdCh").click(function(){
 $( document ).ready(function() {
   $(".spinner-border").hide();
 });
-(function(){
-  setInterval(updateTime, 1000);
-});
 
-function startTimer(duration, display) {
-    var timer = duration, minutes, seconds;
-    setInterval(function () {
-        minutes = parseInt(timer / 60, 10)
-        seconds = parseInt(timer % 60, 10);
-
-        minutes = minutes < 10 ? "0" + minutes : minutes;
-        seconds = seconds < 10 ? "0" + seconds : seconds;
-
-        display.textContent = minutes + ":" + seconds;
-
-        if (--timer < 0) {
-            timer = duration;
-            window.location.href = "../utility/logout.ut.php"
-        }
-    }, 1000);
-}
-
-window.onload = function () {
-    var fiveMinutes = 3 * 60 - 1,
-        display = document.querySelector('#time');
-    startTimer(fiveMinutes, display);
-    setInterval(updateTime, 1000);
-    updateTime();
-};
 </script>
 <style>
 .logintable{

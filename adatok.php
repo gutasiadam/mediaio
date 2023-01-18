@@ -22,7 +22,7 @@ require "./itemManager.php";
       <script>
         $(document).ready(function() {
           menuItems = importItem("./utility/menuitems.json");
-          drawMenuItemsLeft('index', menuItems);
+          drawMenuItemsLeft('adatok', menuItems);
         });
       </script>
     </ul>
@@ -90,6 +90,14 @@ if ($result!=NULL && $result->num_rows > 0) {
 echo "</table>";
 ?>
 <script>
+
+window.onload = function () {
+    var fiveMinutes = 60 * 10 - 1,
+    display = document.querySelector('#time');
+    startTimer(fiveMinutes, display);
+    setInterval(updateTime, 1000);
+    updateTime();
+};;
 
 function startTimer(duration, display) {
     var timer = duration, minutes, seconds;

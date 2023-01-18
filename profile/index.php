@@ -20,22 +20,6 @@
               drawMenuItemsRight('profile',menuItems,2);
             });</script>
     <?php
-    $servername = "localhost";
-    $username = "root";
-    $password = $application_DATABASE_PASS;
-    $dbname = "mediaio";
-    $conn = new mysqli($setup['dbserverName'], $setup['dbUserName'], $setup['dbPassword'], $setup['dbDatabase']);
-    $uName = $_SESSION['UserUserName'];
-    $sql = "SELECT idUsers FROM users WHERE usernameUsers = '$uName' AND GAUTH_SECRET IS NOT NULL";
-    $result = $conn->query($sql);
-    if ($result->num_rows > 0) {
-      // output data of each row
-      while($row = $result->fetch_assoc()) {
-        $userGAUTHSTATE = 1;
-      }
-  } else {
-    $userGAUTHSTATE = 0;}
-
         session_start();
  if (isset($_SESSION["userId"])) { ?> <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
   <a class="navbar-brand" href="index.php">
