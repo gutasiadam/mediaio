@@ -74,17 +74,18 @@ $serverType = parse_ini_file(realpath('../server/init.ini')); // Server type det
               <div class="row">
               <div class="col-4">
                <h2>'. $row["Nev"].'</h2>
-               <p>'. $row["UID"].'</p>
-              </div>';
-              //$query = "SELECT * FROM `leltar` WHERE RentBy = '$TKI'";
-              echo '
+               <p>'. $row["UID"];
+               if($row['Status']=='2'){
+                echo ' <span class="text-warning">Jóváhagyásra vár.</span>';
+               }
+              echo'</p></div>';
+
+            if($row['Status']!='2'){
+                            echo '
              <div class="col-2"><button class="btn btn-success " id="bringback'.$imodal.'" data-toggle="modal" data-target="#b'.$imodal.'">Visszahoztam</button></div>
              </div>
-             '
-             
-             ;
-            
-            echo '
+             ';
+                          echo '
             <div class="modal fade" id="b'.$imodal.'" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
               <div class="modal-content">
@@ -95,7 +96,6 @@ $serverType = parse_ini_file(realpath('../server/init.ini')); // Server type det
                   </button>
                 </div>
                 <div class="modal-body">
-                  <form action="./pfcurr.php" class="form-group" method=post>
               <input type="hidden" id="retrieveItem_'.$imodal.'" name="retrieveItem" value="'.$row["Nev"].'"/> 
               <input type="hidden" name="User" value="'.$TKI.'"/>
               <div class="form-check">
@@ -106,7 +106,6 @@ $serverType = parse_ini_file(realpath('../server/init.ini')); // Server type det
               <button type="button" class="btn btn-secondary" data-dismiss="modal">❌</button>
                   <button type="submit" id="'.$imodal.'" onClick="reply_click(this.id)" class="btn go_btn btn-success disabled">☑</button>
                   <a href="../utility/damage_report/annouce_Damage.php" class="btn go_btn btn-warning">Problémát jelentek be</a>
-                  </form>
                   
                   <p class="sysResponse"> </p>
             </div>
@@ -115,9 +114,8 @@ $serverType = parse_ini_file(realpath('../server/init.ini')); // Server type det
             </div>
             ';
             $imodal++;
-            if($row["Event"]=="IN"){
-              echo '';
             }
+
             
            }
            if($imodal==0){
@@ -159,16 +157,17 @@ function retrieve(i){ // i=> item
   console.log(retrieveJSON);
       $.ajax({
     method: 'POST',
-    url: '../utility/Retrieve_Handler.php',
-    data: {data : retrieveJSON, mode: "handle"},
+    url: '../ItemManager.php',
+    data: {data : retrieveJSON, mode: "retrieveStaging"},
     success: function (response){
-      alert('Válasz:'+response);
-      $('.sysResponse').append('Sikeres művelet! Az oldal hamarosan újratölt.');
-      setTimeout(function(){location.reload();},5000);
+      if(response==200){
+        $('.sysResponse').append('Sikeres művelet! Az oldal hamarosan újratölt.');
+      }
+    setTimeout(function(){location.reload();},1500);
+      
     },
     error: function(XMLHttpRequest, textStatus, errorThrown) { 
         console.log("Status: " + textStatus); console.log("Hiba: " + errorThrown); 
-        setTimeout(function(){location.reload();},5000);
     }
     
 });

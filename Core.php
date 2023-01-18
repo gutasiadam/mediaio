@@ -210,7 +210,6 @@ class Core{
                           <h3>Kedves '.$postData['firstname'].'!</h3><p>
                          Köszönjük, hogy regisztráltál az <strong>Arpad Media IO</strong> rendszerünkben!</p>
                          Az adataid a következők:
-                         '.$sql.'
                          <table>
                             <tr>
                               <th>Teljes Név</th><th>Felhasználónév</th><th>E-mail cím</th><th>Telefonszám</th>

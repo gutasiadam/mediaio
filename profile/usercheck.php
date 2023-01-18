@@ -79,51 +79,42 @@ ORDER BY
   DATE DESC,
   USER,
   EVENT";
-  //$sql= "SELECT Date,User,Event FROM `takelog` WHERE Acknowledged='false' AND Event!='SERVICE' GROUP BY DATE ORDER BY DATE DESC,USER,EVENT";
   $result=Database::runQuery($sql);
   echo "<table width='50' align=center class="."table"."><th>Dátum</th><th>felhasználónév</th><th>Eszköz</th><th>Esemény</th>";
-  while($row = $result->fetch_assoc()) {
-    $outItems="";
+  $recCount=0;
+  while($query1Row = $result->fetch_assoc()) {
+    $recCount+=1;
+    //echo var_dump($query1Row); //Only for debug reasons.
+    $itemString=NULL;
     //2. lépés: minden rekordra végrehajtjuk a keresést, ezzel megkapjuk az összetartozó eseményeket.
-    $sql="SELECT Item FROM `takelog` WHERE Acknowledged='false' AND Event!='SERVICE' AND Date='".$row['Date']."' AND User='".$row['User']."' AND
-    Event='".$row['Event']."' ORDER BY Item";
+    $sql="SELECT Item FROM `takelog` WHERE Acknowledged='false' AND Event!='SERVICE' AND Date='".$query1Row['Date']."' AND User='".$query1Row['User']."' AND
+    Event='".$query1Row['Event']."' ORDER BY Item";
     $items=Database::runQuery($sql);
     while($itemsRow = $items->fetch_assoc()) {
-      $outItems.=$itemsRow['Item']." (".$row['UID'].")"."   -  ";
+      //echo var_dump($itemsRow); //Only for debug reasons.
+      $itemString.=$itemsRow['Item']." (".$query1Row['UID'].")"."   -  ";
     }
-    if($row['Event']='OUT'){
-          echo "<tr><td>".$row["Date"]."</td><td>".$row["User"]. "</td><td style='line-height: 200%; font-size: 18px;'>".$outItems."</td><td>".$row["Event"]."</td>
-    <td><button class='btn btn-success'><i class='fas fa-check success'></i></button></br>
-    <button class='btn btn-danger' style='padding: 7px 15px; margin-top:4px'><i class='fas fa-times danger'></i></button></td>
-    </tr>";
+    //$itemString=substr_replace($itemString, "", -1);
+    echo "<tr id=event".$recCount."><td>".$query1Row["Date"]."</td><td>".$query1Row["User"]. "</td><td style='line-height: 200%; font-size: 18px;'>".$itemString."</td><td>".$query1Row["Event"]."</td>
+    <td><button class='btn btn-success' onclick='acceptEvent(".$recCount.")'><i class='fas fa-check success'></i></button></br>";
+    if($query1Row['Event']=='OUT'){
+          echo "<button class='btn btn-danger' style='padding: 7px 15px; margin-top:4px' onclick='declineEvent(".$recCount.")'><i class='fas fa-times danger'></i></button></td>";
     }
-    if($row['Event']='IN'){
-    echo "<tr><td>".$row["Date"]."</td><td>".$row["User"]. "</td><td style='line-height: 200%; font-size: 18px;'>".$outItems."</td><td>".$row["Event"]."</td>
-    <td><button class='btn btn-success'><i class='fas fa-check success'></i></button></br>
-    <button class='btn btn-warning' style='padding: 7px 14.5px; margin-top:4px'><i class='fas fa-file-alt'></i></button></td>
-    </tr>";
-    }
+    else if($query1Row['Event']=='IN'){
+    echo "<button class='btn btn-warning' style='padding: 7px 14.5px; margin-top:4px' onclick='openEventDocument(".$recCount.")'><i class='fas fa-file-alt'></i></button></td>";
 
+    echo "</tr>";
+    }
     //echo $outItems;
   }
-  
-	//$sql = "SELECT Date,User,Item,Event FROM `takelog` WHERE Acknowledged='false' AND Event!='SERVICE' ORDER BY DATE,USER,EVENT ";
-	//$result = $conn->query($sql);
-  //3. lépés: elfogadásnál az össes egybetartozó eseményt el kell fogadtatni.
 
-if ($result->num_rows > 0) {
-	
-     //output data of each row
-    //Displays amount of records found in leltar_master DB
-    while($row = $result->fetch_assoc()) {
-;
-       
-		$countOfRec += 1;
-	}
-} else {
-    echo "0 results";
-}
-echo "</table>";?>
+  //3. lépés: elfogadásnál az össes egybetartozó eseményt el kell fogadtatni.
+  if($recCount==0){
+    echo '// Jelenleg semmi sem vár elfogadásra.';
+  }
+echo "</table>";
+
+?>
 <script>
 (function(){
   setInterval(updateTime, 1000);
@@ -154,5 +145,90 @@ window.onload = function () {
     setInterval(updateTime, 1000);
     updateTime();
 };
+
+
+
+function acceptEvent(n){
+  //alert('elfogadas');
+  var items=$('#event'+n)[0].cells[2].innerHTML.split('   -  ');
+  var i=0;
+  items.forEach(element => {
+    console.log(element);
+    items[i]=element.split('(')[0].trim();
+    console.log(items[i]);
+    i++;
+  });
+  items.pop() //removes last '' element.
+  var itemsJSON=JSON.stringify(items);
+  var eventType=$('#event'+n)[0].cells[3].innerHTML;
+  var date=$('#event'+n)[0].cells[0].innerHTML;
+  var mode;
+  if(eventType=='IN'){
+    mode='retrieveApproval';
+  }else{
+    mode='takeOutApproval';
+  }
+
+  console.log(items);
+  $.ajax({
+    method: 'POST',
+    url: '../ItemManager.php',
+    data: {data : itemsJSON, mode: mode, value: true, date: date}, //value true means event is approved.
+    success: function (response){
+      alert(response);
+      if(response==200){
+        //Remove event from the table.
+        $('#event'+n).fadeOut();
+      }else{
+        console.log("Backend error.");
+      }
+    },
+    error: function(XMLHttpRequest, textStatus, errorThrown) { 
+        alert("Status: " + textStatus); alert("Error: " + errorThrown); 
+    }
+});
+}
+
+function declineEvent(n){
+  //alert('elutasitas');
+  var items=$('#event'+n)[0].cells[2].innerHTML.split('   - ');
+  items.forEach(element => {
+    console.log(element);
+    element=element.split('(');
+  });
+  items.pop() //removes last '' element.
+  var itemsJSON=JSON.stringify(items);
+  var eventType=$('#event'+n)[0].cells[3].innerHTML;
+  var date=$('#event'+n)[0].cells[0].innerHTML;
+  var mode;
+  if(eventType=='IN'){
+    mode='retrieveApproval';
+  }else{
+    mode='takeOutApproval';
+  }
+
+  console.log(items);
+  $.ajax({
+    method: 'POST',
+    url: '../ItemManager.php',
+    data: {data : itemsJSON, mode: mode,  value: false, date: date}, //event declined.
+    success: function (response){
+      //alert(response);
+      if(response==200){
+        //Remove event from the table.
+        $('#event'+n).fadeOut();
+      }else{
+        console.log("Backend error.");
+      }
+    },
+    error: function(XMLHttpRequest, textStatus, errorThrown) { 
+        alert("Status: " + textStatus); alert("Error: " + errorThrown); 
+    }
+});
+}
+
+function openEventDocument(n){
+  alert('dokumentum');
+}
 </script>
 
