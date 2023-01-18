@@ -10,42 +10,42 @@ if(isset($_SESSION['UserUserName'])){
 
 <html>  
     <head>
-        <script src="utility/timeline.min.js"></script>
+        
         <link rel="stylesheet" href="utility/pathfinder.css" />
-        <!--<link rel="stylesheet" href="utility/timeline.min.css" />-->
         <script src="utility/jquery.js"></script>
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js">  </script>
-  <script src="https://kit.fontawesome.com/2c66dc83e7.js" croswsorigin="anonymous"></script>
   <title>PathFinder</title>
   
     </head>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-          <a class="navbar-brand" href="index.php"><img src="./utility/logo2.png" height="50"></a>
-					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-					  <span class="navbar-toggler-icon"></span>
-					</button>
-				  
-					<div class="collapse navbar-collapse" id="navbarSupportedContent">
-					  <ul class="navbar-nav mr-auto navbarUl">
-						<script>
-            $( document ).ready(function() {
-              menuItems = importItem("./utility/menuitems.json");
-              drawMenuItemsLeft('pathfinder',menuItems);
-            });
-            </script>
-            </ul>
-            <ul class="navbar-nav navbarPhP"><li><a class="nav-link disabled timelock" href="#">⌛ <span id="time"> 10:00 </span></a></li>
-            <?php if ($_SESSION['role']>=3){
-              echo '<li><a class="nav-link disabled" href="#">Admin jogok</a></li>';}?>
-					  </ul>
-						<form method='post' class="form-inline my-2 my-lg-0" action=utility/userLogging.php>
-                      <button class="btn btn-danger my-2 my-sm-0" name="logout-submit" type="submit">Kijelentkezés</button>
-                      </form>
-					  <a class="nav-link my-2 my-sm-0" href="./help.php"><i class="fas fa-question-circle fa-lg"></i></a>
-					</div>
-</nav>
+<?php if (isset($_SESSION["userId"])) { ?> <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <a class="navbar-brand" href="index.php">
+    <img src="./utility/logo2.png" height="50">
+  </a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto navbarUl">
+      <script>
+        $(document).ready(function() {
+          menuItems = importItem("./utility/menuitems.json");
+          drawMenuItemsLeft('pathfinder', menuItems);
+        });
+      </script>
+    </ul>
+    <ul class="navbar-nav navbarPhP">
+      <li>
+        <a class="nav-link disabled timelock" href="#">⌛ <span id="time"> 10:00 </span><?php if ($_SESSION['role']>=3){echo' Admin jogok';}?>
+        </a>
+      </li>
+    </ul>
+    <form method='post' class="form-inline my-2 my-lg-0" action=utility/userLogging.php>
+      <button class="btn btn-danger my-2 my-sm-0" name='logout-submit' type="submit">Kijelentkezés</button>
+    </form>
+    <a class="nav-link my-2 my-sm-0" href="./help.php">
+      <i class="fas fa-question-circle fa-lg"></i>
+    </a>
+  </div>
+</nav> <?php  } ?>
     <body>  
         <div class="container">
    <br />

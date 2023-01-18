@@ -1,4 +1,4 @@
-<?php header("Cache-Control: max-age=2592000"); ?>
+<?php //header("Cache-Control: max-age=2592000"); ?>
 <head>
   <link href='./main.css' rel='stylesheet' />
   <div class="UI_loading"><img class="loadingAnimation" src="./utility/mediaIO_loading_logo.gif"></div>

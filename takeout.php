@@ -1,14 +1,24 @@
 <?php
+namespace Mediaio;
+require_once __DIR__.'/./ItemManager.php';
+use Mediaio\itemDataManager;
+setcookie("user_roleLevel",$_SESSION['role'],0,);
+/* takeOut szabályok
 
-include "translation.php";
+Status!=1 Nem vehető ki!
+TakeRestrict='' bárki kiveheti
+TakeRestrict='s' stúdiós és afeletti veheti ki.
+TakeRestrict='*' sysadmin veheti ki.
+*/
 include "header.php";
 
 
-include('./utility/refetchdata.php');
+
 if(!isset($_SESSION['userId'])){
   header("Location: index.php?error=AccessViolation");}
+itemDataManager::generateTakeoutJSON();
 $SESSuserName = $_SESSION['UserUserName'];
-setcookie("user_roleLevel",$_SESSION['role'],0,);
+
 error_reporting(E_ALL ^ E_NOTICE);
 ?>
 
@@ -17,31 +27,36 @@ error_reporting(E_ALL ^ E_NOTICE);
   <link href="utility/themes/default/style.min.css" rel="stylesheet"/>
 <html >
       <title>MediaIo - takeout</title>
-      <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-					<a class="navbar-brand" href="index.php"><img src="./utility/logo2.png" height="50"></a>
-					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-					  <span class="navbar-toggler-icon"></span>
-					</button>
-				  
-					<div class="collapse navbar-collapse" id="navbarSupportedContent">
-					  <ul class="navbar-nav mr-auto navbarUl">
-						<script>
-            $( document ).ready(function() {
-              menuItems = importItem("./utility/menuitems.json");
-              drawMenuItemsLeft('takeout',menuItems);
-            });
-            </script>
-            </ul>
-            <ul class="navbar-nav navbarPhP"><li><a class="nav-link disabled timelock" href="#">⌛ <span id="time"> 10:00 </span></a></li>
-            <?php if ($_SESSION['role']>=3){
-              echo '<li><a class="nav-link disabled" href="#">Admin jogok</a></li>';}?>
-					  </ul>
-						<form method='post' class="form-inline my-2 my-lg-0" action=utility/userLogging.php>
-                      <button class="btn btn-danger my-2 my-sm-0"  name='logout-submit' type="submit"><?php echo $nav_logOut;?></button>
-                      </form>
-            <a class="nav-link my-2 my-sm-0" href="./help.php"><i class="fas fa-question-circle fa-lg"></i></a>
-					</div>
-		</nav>
+<?php if (isset($_SESSION["userId"])) { ?> <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <a class="navbar-brand" href="index.php">
+    <img src="./utility/logo2.png" height="50">
+  </a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto navbarUl">
+      <script>
+        $(document).ready(function() {
+          menuItems = importItem("./utility/menuitems.json");
+          drawMenuItemsLeft('takeout', menuItems);
+        });
+      </script>
+    </ul>
+    <ul class="navbar-nav navbarPhP">
+      <li>
+        <a class="nav-link disabled timelock" href="#">⌛ <span id="time"> 10:00 </span><?php if ($_SESSION['role']>=3){echo' Admin jogok';}?>
+        </a>
+      </li>
+    </ul>
+    <form method='post' class="form-inline my-2 my-lg-0" action=utility/userLogging.php>
+      <button class="btn btn-danger my-2 my-sm-0" name='logout-submit' type="submit">Kijelentkezés</button>
+    </form>
+    <a class="nav-link my-2 my-sm-0" href="./help.php">
+      <i class="fas fa-question-circle fa-lg"></i>
+    </a>
+  </div>
+</nav> <?php  } ?>
 
 
   <body ><!--style="background-color:#DCDCDC"-->
@@ -100,7 +115,7 @@ function loadJSON(callback) {
 console.log("[loadJSON] - called.")
 var xobj = new XMLHttpRequest();
     xobj.overrideMimeType("application/json");
-xobj.open('GET', './takeOutItems.json', false); // Replace 'my_data' with the path to your file
+xobj.open('GET', './data/takeOutItems.json', false); // Replace 'my_data' with the path to your file
 xobj.onreadystatechange = function () {
       if (xobj.readyState == 4 && xobj.status == "200") {
         // Required use of an anonymous callback as .open will NOT return a value but simply returns undefined in asynchronous mode
@@ -144,7 +159,7 @@ var roleNum=getCookie("user_roleLevel");
   if(d[i].TakeRestrict=='s' && roleNum<2){// nem stúdiós, vagy afölötti
     d[i].state.disabled=true;
   }
-  else if(d[i].TakeRestrict=='*' && roleNum<=2){// nem stúdiós, vagy afölötti
+  else if(d[i].TakeRestrict=='*' && roleNum<5){// nem sysadmin
     d[i].state.disabled=true;
   }
   d[i].originalName=d[i].text;
@@ -327,6 +342,7 @@ return arr.filter(function(ele){
 });
 
 }
+
 // autologout
 
   (function(){

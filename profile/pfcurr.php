@@ -24,32 +24,36 @@ $serverType = parse_ini_file(realpath('../server/init.ini')); // Server type det
   <script src="https://kit.fontawesome.com/2c66dc83e7.js" crossorigin="anonymous"></script>
   
     </head>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-      
-            <a class="navbar-brand" href="../index.php"><img src="../utility/logo2.png" height="50"></a>
-					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-					  <span class="navbar-toggler-icon"></span>
-					</button>
-          
-					<div class="collapse navbar-collapse" id="navbarSupportedContent">
-					  <ul class="navbar-nav mr-auto navbarUl">
-            </ul>
-            <ul class="navbar-nav navbarPhP"><li><a class="nav-link disabled timelock" href="#">⌛ <span id="time"> 10:00 </span></a></li>
-            <?php if ($_SESSION['role']>=3){
-               ?>
-              <li><a class="nav-link disabled" href="#">Admin jogok</a></li> <?php  }?>
-            </ul>
-						<form method='post' class="form-inline my-2 my-lg-0" action=../utility/userLogging.php>
-                      <button class="btn btn-danger my-2 my-sm-0" name="logout-submit" type="submit">Kijelentkezés</button>
-                      </form>
-                      <div class="menuRight"></div>
-					</div>
-          <script> $( document ).ready(function() {
-              menuItems = importItem("../utility/menuitems.json");
-              drawMenuItemsLeft("profile",menuItems,2);
-              drawMenuItemsRight('profile',menuItems,2);
-            });</script>
-    </nav>
+<?php if (isset($_SESSION["userId"])) { ?> <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <a class="navbar-brand" href="index.php">
+    <img src="../utility/logo2.png" height="50">
+  </a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto navbarUl">
+      <script>
+        $(document).ready(function() {
+          menuItems = importItem("../utility/menuitems.json");
+          drawMenuItemsLeft('profile', menuItems,2);
+        });
+      </script>
+    </ul>
+    <ul class="navbar-nav navbarPhP">
+      <li>
+        <a class="nav-link disabled timelock" href="#">⌛ <span id="time"> 10:00 </span><?php if ($_SESSION['role']>=3){echo' Admin jogok';}?>
+        </a>
+      </li>
+    </ul>
+    <form method='post' class="form-inline my-2 my-lg-0" action=../utility/userLogging.php>
+      <button class="btn btn-danger my-2 my-sm-0" name='logout-submit' type="submit">Kijelentkezés</button>
+    </form>
+    <a class="nav-link my-2 my-sm-0" href="./help.php">
+      <i class="fas fa-question-circle fa-lg"></i>
+    </a>
+  </div>
+</nav> <?php  } ?>
     <body>  
         <div class="container">
    <br />
@@ -60,13 +64,13 @@ $serverType = parse_ini_file(realpath('../server/init.ini')); // Server type det
     <div class="panel-heading">
     <?php 
         $TKI = $_SESSION['UserUserName'];    
-        $sql = ("SELECT * FROM `leltar` WHERE `RentBy` = '$TKI'");
+        $sql = "SELECT * FROM `leltar` WHERE `RentBy` = '".$TKI."'";
+        
         $result = Database::runQuery($sql);
-        echo '<h3 class="panel-title">'.$_SESSION['firstName'].', ezek a tárgyak vannak most nálad:</h3>
+        echo '<h3 class="panel-title">'.$_SESSION['firstName'].', '.$result->num_rows.' tárgy van most nálad:</h3>
         </div>';
-        $imodal=0;
+        $imodal=-1;
         $resultArray = [];
-        //$rows = mysqli_fetch_all($result);
           while($row = $result->fetch_assoc()) { 
               array_push($resultArray, $row);
               $rowItem = $row["Nev"];
@@ -83,7 +87,7 @@ $serverType = parse_ini_file(realpath('../server/init.ini')); // Server type det
             if($row['Status']!='2'){
                             echo '
              <div class="col-2"><button class="btn btn-success " id="bringback'.$imodal.'" data-toggle="modal" data-target="#b'.$imodal.'">Visszahoztam</button></div>
-             </div>
+             
              ';
                           echo '
             <div class="modal fade" id="b'.$imodal.'" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -109,27 +113,26 @@ $serverType = parse_ini_file(realpath('../server/init.ini')); // Server type det
                   
                   <p class="sysResponse"> </p>
             </div>
-                  </div>      
-              </div>
-            </div>
+                  </div>
+                  </div>
+                  </div>   
             ';
-            $imodal++;
-            }
-
             
+            }
+            $imodal++;
+            echo '</div>';
            }
-           if($imodal==0){
+           if($imodal==-1){
              echo '// Jelenleg nincs nálad egy tárgy sem ';
            }
            echo '
+           </div>
            </div>
           </div>
          </div>
         </div>';
     $connect = null;
     ?>
-
-    <!-- Modal -->
 
 
     </body>  

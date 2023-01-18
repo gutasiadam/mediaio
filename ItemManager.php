@@ -1,6 +1,9 @@
 <?php 
 namespace Mediaio;
-require "./Mediaio_autoload.php"; // Loads Database, Core and Mailer.
+require_once __DIR__.'/Database.php';
+require_once __DIR__.'/Core.php';
+use Mediaio\Core;
+use Mediaio\Database;
 
 
 class takeOutManager{
@@ -31,7 +34,7 @@ class takeOutManager{
       //Restore Items allowing others to take it out.
       $sql="START TRANSACTION; UPDATE leltar SET leltar.Status=0 AND RentBy='".$userName."' WHERE leltar.Nev IN (".$dataString.");";
       //Acknowledge events in log.
-      $sql.="UPDATE takelog SET Acknowledged=1 WHERE User='".$userName."' AND Date='".$_POST['date']."' AND EVENT='OUT' AND Item IN (".$dataString."); COMMIT;";
+      $sql.="UPDATE takelog SET Acknowledged=1 WHERE User='".$_POST['user']."' AND Date='".$_POST['date']."' AND EVENT='OUT' AND Item IN (".$dataString."); COMMIT;";
 
       $connection=Database::runQuery_mysqli();
       if(!$connection->multi_query($sql)){
@@ -114,11 +117,11 @@ class retrieveManager{
       //Restore Items allowing others to take it out.
       $sql="START TRANSACTION; UPDATE leltar SET leltar.Status=1 WHERE leltar.Nev IN (".$dataString.");";
       //Acknowledge events in log.
-      $sql.="UPDATE takelog SET Acknowledged=1 WHERE User='".$userName."' AND Date='".$_POST['date']."' AND EVENT='IN' AND Item IN (".$dataString."); COMMIT;";
+      $sql.="UPDATE takelog SET Acknowledged=1 WHERE User='".$_POST['user']."' AND Date='".$_POST['date']."' AND EVENT='IN' AND Item IN (".$dataString."); COMMIT;";
 
       $connection=Database::runQuery_mysqli();
       if(!$connection->multi_query($sql)){
-        printf("Error message: %s\n", $connection->error);
+        echo "Error message: %s\n".$connection->error;
       }else{
         //All good, return OK message
         //echo $sql;
@@ -168,6 +171,29 @@ class itemDataManager{
         }
         $sql= $sql." ORDER BY Nev ASC";
         return Database::runQuery($sql);
+    }
+    static function generateTakeoutJSON(){
+      $mysqli = Database::runQuery_mysqli();
+      $rows = array();
+      $mysqli->set_charset("utf8");
+      $query = "SELECT Nev, ID, UID, Category, TakeRestrict, Status FROM leltar"; //AND Status=1 
+      if ($result = $mysqli->query($query)) {
+          while ($row = $result->fetch_assoc()) {
+              if($row['Status']!="1"){
+                  $row['state']=['disabled' => true];
+              }else{
+                  $row['state']=['disabled' => false];
+              }
+              $rows[] = $row;
+
+      }
+      $a=json_encode($rows);
+          //var_dump($a);
+          $itemsJSONFile = fopen('./data/takeOutItems.json', 'w');
+          fwrite($itemsJSONFile, $a);
+          fclose($itemsJSONFile);
+      }
+      return;
     }
 
 }

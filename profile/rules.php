@@ -13,31 +13,36 @@ if(!isset($_SESSION['userId'])){
 </head>
 <title>mediaIO - Dokumentumok</title>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-      
-            <a class="navbar-brand" href="../index.php"><img src="../utility/logo2.png" height="50"></a>
-					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-					  <span class="navbar-toggler-icon"></span>
-					</button>
-          
-					<div class="collapse navbar-collapse" id="navbarSupportedContent">
-					  <ul class="navbar-nav mr-auto navbarUl">
-            </ul>
-            <ul class="navbar-nav navbarPhP"><li><a class="nav-link disabled timelock" href="#">⌛ <span id="time"> 10:00 </span></a></li>
-            <?php if ($_SESSION['role']>=3){ ?>
-              <li><a class="nav-link disabled" href="#">Admin jogok</a></li> <?php  }?>
-            </ul>
-	            <form method="post" class="form-inline my-2 my-lg-0" action=../utility/userLogging.php>
-                <button class="btn btn-danger my-2 my-sm-0" name="logout-submit" type="submit">Kijelentkezés</button>
-              </form>
-                      <div class="menuRight"></div>
-					</div>
-          <script> $( document ).ready(function() {
-              menuItems = importItem("../utility/menuitems.json");
-              drawMenuItemsLeft("profile",menuItems,2);
-              drawMenuItemsRight('profile',menuItems,2);
-            });</script>
-    </nav>
+<?php if (isset($_SESSION["userId"])) { ?> <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <a class="navbar-brand" href="index.php">
+    <img src="../utility/logo2.png" height="50">
+  </a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto navbarUl">
+      <script>
+        $(document).ready(function() {
+          menuItems = importItem("../utility/menuitems.json");
+          drawMenuItemsLeft('profile', menuItems,2);
+        });
+      </script>
+    </ul>
+    <ul class="navbar-nav navbarPhP">
+      <li>
+        <a class="nav-link disabled timelock" href="#">⌛ <span id="time"> 10:00 </span><?php if ($_SESSION['role']>=3){echo' Admin jogok';}?>
+        </a>
+      </li>
+    </ul>
+    <form method='post' class="form-inline my-2 my-lg-0" action=../utility/userLogging.php>
+      <button class="btn btn-danger my-2 my-sm-0" name='logout-submit' type="submit">Kijelentkezés</button>
+    </form>
+    <a class="nav-link my-2 my-sm-0" href="./help.php">
+      <i class="fas fa-question-circle fa-lg"></i>
+    </a>
+  </div>
+</nav> <?php  } ?>
     <h2 class="rainbow" align="center" style="margin-top:50px;" id="doTitle">Dokumentumok</h2><br />
     <table class="logintable">
     <?php

@@ -25,31 +25,36 @@ if(!isset($_SESSION['userId'])){
 </head>
 <title>Elérhetőségek</title>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-      
-            <a class="navbar-brand" href="../index.php"><img src="../utility/logo2.png" height="50"></a>
-					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-					  <span class="navbar-toggler-icon"></span>
-					</button>
-          
-					<div class="collapse navbar-collapse" id="navbarSupportedContent">
-					  <ul class="navbar-nav mr-auto navbarUl">
-            </ul>
-            <ul class="navbar-nav navbarPhP"><li><a class="nav-link disabled timelock" href="#">⌛ <span id="time"> 10:00 </span></a></li>
-            <?php if ($_SESSION['role']>=3){ ?>
-              <li><a class="nav-link disabled" href="#">Admin jogok</a></li> <?php  }?>
-            </ul>
-						<form method='post' class="form-inline my-2 my-lg-0" action=../utility/userLogging.php>
-                      <button class="btn btn-danger my-2 my-sm-0" name="logout-submit" type="submit">Kijelentkezés</button>
-                      </form>
-                      <div class="menuRight"></div>
-					</div>
-          <script> $( document ).ready(function() {
-              menuItems = importItem("../utility/menuitems.json");
-              drawMenuItemsLeft("profile",menuItems,2);
-              drawMenuItemsRight('profile',menuItems,2);
-            });</script>
-    </nav>
+<?php if (isset($_SESSION["userId"])) { ?> <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <a class="navbar-brand" href="index.php">
+    <img src="../utility/logo2.png" height="50">
+  </a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto navbarUl">
+      <script>
+        $(document).ready(function() {
+          menuItems = importItem("../utility/menuitems.json");
+          drawMenuItemsLeft('profile', menuItems,2);
+        });
+      </script>
+    </ul>
+    <ul class="navbar-nav navbarPhP">
+      <li>
+        <a class="nav-link disabled timelock" href="#">⌛ <span id="time"> 10:00 </span><?php if ($_SESSION['role']>=3){echo' Admin jogok';}?>
+        </a>
+      </li>
+    </ul>
+    <form method='post' class="form-inline my-2 my-lg-0" action=../utility/userLogging.php>
+      <button class="btn btn-danger my-2 my-sm-0" name='logout-submit' type="submit">Kijelentkezés</button>
+    </form>
+    <a class="nav-link my-2 my-sm-0" href="./help.php">
+      <i class="fas fa-question-circle fa-lg"></i>
+    </a>
+  </div>
+</nav> <?php  } ?>
 
 
 <?php 
@@ -87,12 +92,12 @@ ORDER BY
     //echo var_dump($query1Row); //Only for debug reasons.
     $itemString=NULL;
     //2. lépés: minden rekordra végrehajtjuk a keresést, ezzel megkapjuk az összetartozó eseményeket.
-    $sql="SELECT Item FROM `takelog` WHERE Acknowledged='false' AND Event!='SERVICE' AND Date='".$query1Row['Date']."' AND User='".$query1Row['User']."' AND
-    Event='".$query1Row['Event']."' ORDER BY Item";
+    $sql="SELECT takelog.Item, leltar.UID FROM `takelog`, leltar WHERE takelog.Acknowledged='false' AND takelog.Event!='SERVICE' AND takelog.Date='".$query1Row['Date']."' AND takelog.User='".$query1Row['User']."' AND
+    takelog.Event='".$query1Row['Event']."' AND leltar.Nev=takelog.Item ORDER BY Item";
     $items=Database::runQuery($sql);
     while($itemsRow = $items->fetch_assoc()) {
-      //echo var_dump($itemsRow); //Only for debug reasons.
-      $itemString.=$itemsRow['Item']." (".$query1Row['UID'].")"."   -  ";
+      //echo var_dump($query1Row); //Only for debug reasons.
+      $itemString.=$itemsRow['Item']." (".$itemsRow['UID'].")"."   -  ";
     }
     //$itemString=substr_replace($itemString, "", -1);
     echo "<tr id=event".$recCount."><td>".$query1Row["Date"]."</td><td>".$query1Row["User"]. "</td><td style='line-height: 200%; font-size: 18px;'>".$itemString."</td><td>".$query1Row["Event"]."</td>
@@ -162,6 +167,7 @@ function acceptEvent(n){
   var itemsJSON=JSON.stringify(items);
   var eventType=$('#event'+n)[0].cells[3].innerHTML;
   var date=$('#event'+n)[0].cells[0].innerHTML;
+  var user=$('#event'+n)[0].cells[1].innerHTML;
   var mode;
   if(eventType=='IN'){
     mode='retrieveApproval';
@@ -173,7 +179,7 @@ function acceptEvent(n){
   $.ajax({
     method: 'POST',
     url: '../ItemManager.php',
-    data: {data : itemsJSON, mode: mode, value: true, date: date}, //value true means event is approved.
+    data: {data : itemsJSON, mode: mode, value: true, date: date, user:user}, //value true means event is approved.
     success: function (response){
       alert(response);
       if(response==200){
@@ -201,6 +207,7 @@ function declineEvent(n){
   var eventType=$('#event'+n)[0].cells[3].innerHTML;
   var date=$('#event'+n)[0].cells[0].innerHTML;
   var mode;
+  var user=$('#event'+n)[0].cells[1].innerHTML;
   if(eventType=='IN'){
     mode='retrieveApproval';
   }else{
@@ -211,7 +218,7 @@ function declineEvent(n){
   $.ajax({
     method: 'POST',
     url: '../ItemManager.php',
-    data: {data : itemsJSON, mode: mode,  value: false, date: date}, //event declined.
+    data: {data : itemsJSON, mode: mode,  value: false, date: date, user:user}, //event declined.
     success: function (response){
       //alert(response);
       if(response==200){

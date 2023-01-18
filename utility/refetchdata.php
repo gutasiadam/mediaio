@@ -1,12 +1,13 @@
 <?php 
-$serverType = parse_ini_file(realpath('./server/init.ini')); // Server type detect
-if($serverType['type']=='dev'){
-  $setup = parse_ini_file(realpath('../../mediaio-config/config.ini')); // @ Dev
-}else{
-  $setup = parse_ini_file(realpath('../mediaio-config/config.ini')); // @ Production
-}
+namespace Mediaio;
+require_once __DIR__.'/../Core.php';
+require_once __DIR__.'/../ItemManager.php';
+require_once __DIR__.'/../Database.php';
+use Mediaio\MailService;
+use Mediaio\ItemManager;
+use Mediaio\Database;
 
-$mysqli = new mysqli($setup['dbserverName'], $setup['dbUserName'], $setup['dbPassword'], $setup['dbDatabase']);
+$mysqli = Database::runQuery_mysqli();
 $DB_Elements = fopen("./DB_Elements.txt", "w");
 $mysqli->set_charset("utf8");
 /* check connection */
@@ -41,24 +42,10 @@ if ($result = $mysqli->query($query)) {
     /* free result set */
     $result->free();
 }
-
-//NEW, JSON METHOD
-$rows = array();
-$query = "SELECT Nev, ID, UID, Category, TakeRestrict, Status FROM leltar"; //AND Status=1 
-if ($result = $mysqli->query($query)) {
-    while ($row = $result->fetch_assoc()) {
-        if($row['Status']==="0"){
-            $row['state']=['disabled' => true];
-        }else{
-            $row['state']=['disabled' => false];
-        }
-        $rows[] = $row;
+function refetchData(){
+    //NEW, JSON METHOD
 
 }
-$a=json_encode($rows);
-//echo $rows;    
-    $itemsJSONFile = fopen('../takeOutItems.json', 'w');
-    fwrite($itemsJSONFile, $a);
-    fclose($itemsJSONFile);
-}
+
+
 ?>
