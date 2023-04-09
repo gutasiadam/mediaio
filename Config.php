@@ -7,7 +7,7 @@ namespace Mediaio;
 class Config
 {
 
-    const SENDER_NAME = 'Vincy';
+    const SENDER_NAME = 'Árpád Média';
 
     const SENDER_EMAIL = 'arpadmedia.io@gmail.com';
 
@@ -20,7 +20,7 @@ class Config
 
     const OAUTH_SECRET_KEY = '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';
 
-    const REFRESH_TOKEN = '1//09hyVl0f2fU-TCgYIARAAGAkSNwF-L9IrpVjA8nrvd_qNDfB3DhTe6ZqDjrwEaJpV6QZr8nwfRGk6y8qYNmOFcUPEFahVf0d3CIA';
+    const REFRESH_TOKEN = '1//09D5yivQe9g99CgYIARAAGAkSNwF-L9Ir1UbUfiE6qgC0ahRtofDzWOZBH1kcti0YI0q4aSiwZOCwi3R-fTeoFwtirC-IdFOnXc0';
 
     const SMTP_HOST = 'smtp.gmail.com';
 

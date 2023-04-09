@@ -3,7 +3,7 @@
     include "header.php";
             ?>
             <table class="logintable"><tr><td><h1>Elfelejtett jelszó pótlása</h1></td></tr>
-            <form action="./Core.php" method="post">
+            <form action="../Core.php" method="post">
             <tr><td><h3><strong>1. lépés</strong>: kérj egy tokent!</strong></h3></td></tr>
             <tr><td>Ennek segítségével tudsz majd új jelszót megadni.</td></tr>
             <tr><td><input class="form-control mb-2 mr-sm-2" type="email" name="emailAddr" placeholder="e-mail" required></td></tr> <br>
@@ -13,11 +13,12 @@
             <span class="sr-only">Folyamatban...</span>
             </div></tr></td>
             </form>
-            <form action="./Core.php" method="post">
+            <form action="../Core.php" method="post">
             <tr><td><h3><strong>2. lépés</strong>: új jelszó</strong></h3></td></tr>
             <tr><td>Az 1. lépésben kapott tokened és felhasználóneved megadásával már adhatsz is egy új jelszót!</td></tr>
-            <tr><td><input class="form-control mb-2 mr-sm-2" type="text" name="token" placeholder="token" required></td></tr> <br>
+            <tr><td><input class="form-control mb-2 mr-sm-2" type="text" name="token" placeholder="123456" required></td></tr> <br>
             <tr><td><input class="form-control mb-2 mr-sm-2" type="text" name="userName" placeholder="felhasználónév" required></td></tr> <br>
+                        <tr><td><input class="form-control mb-2 mr-sm-2" type="email" name="emailAddr" placeholder="e-mail" required></td></tr> <br>
             <tr><td><input class="form-control mb-2 mr-sm-2" type="password" name="chPwd-1" placeholder="új jelszó" required></td></tr> <br>
             <tr><td><input class="form-control mb-2 mr-sm-2" type="password" name="chPwd-2" placeholder="új jelszó még egyszer" required></td></tr> <br>
             <tr><td><br><button class="btn btn-dark" id="submitPwdCh2"align=center type="submit" name="pwdLost-change-submit">Csere</button></td></tr>
@@ -35,6 +36,8 @@
                         echo '<tr><td><h5 class="registererror text-danger">Az új jelszónak legalább 8 karakter hosszúnak kell lennie!</h5></td></tr>';
                     }else if ($_GET['error'] == 'OldPwdError'){
                         echo '<tr><td><h5 class="registererror text-danger">Hibásan adtad meg a jelenlegi jelszavadat!</h5></td></tr>';
+                    }else if ($_GET['error'] == 'userData'){
+                      echo '<tr><td><p class="warning">A megadott adatokkal nem létezik felhasználó a rendszerben!</p></td></tr>';
                     }else if ($_GET['error'] == 'none'){
                     echo '<tr><td><p class="success">A tokenedet elküldtük az e-mail címedre! Ezt tudod használni a második lépésben.</p></td></tr>';
                     }else if ($_GET['error'] == 'none'){

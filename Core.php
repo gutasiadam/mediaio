@@ -167,8 +167,8 @@ class Core{
             //Check if this user already exists
             $sql = "SELECT usernameUsers FROM users WHERE usernameUsers='".$postData['username']."'" /*AND pwdUsers=?*/;
             $connection=Database::runQuery_mysqli($sql); 
-            
-            $resultCheck = mysqli_stmt_num_rows($stmt);
+            $result=mysqli_query($connectionObject,$sql);
+            $resultCheck = mysqli_num_rows($result);
             if ($resultCheck > 0){
                 //Username already exists.
                 header("Location: ../signup.php?error=UserTaken&email=".$postData['email']);
@@ -185,7 +185,7 @@ class Core{
                     exit();
                 }else{
                     //Hash the password.
-                    $hashedpwd = password_hash($password, PASSWORD_BCRYPT);
+                    $hashedpwd = password_hash($postData['password'], PASSWORD_BCRYPT);
 
                     $sql = "INSERT INTO users
                     (usernameUsers, firstName, lastName, teleNum, emailUsers, pwdUsers, Userrole, UserPoints) VALUES
@@ -229,7 +229,7 @@ class Core{
     }
 
     /* Generates random strings */
-    function generateRendomString($length = 6) {
+    function generateRandomString($length = 6) {
         return substr(str_shuffle(str_repeat($x='0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil($length/strlen($x)) )),1,$length);
     }
 
@@ -244,8 +244,9 @@ class Core{
         }else{
             //Check if password is correct.
             $sql = "UPDATE users SET TOKEN='$TOKEN' WHERE usernameUsers='$username' AND emailUsers='$emailAddr'";
-            $connectionObject=Databse::runQuery_mysqli();
+            $connectionObject=Database::runQuery_mysqli();
             $result=mysqli_query($connectionObject,$sql);
+            return $TOKEN;
             //if(mysqli_affected_rows($result)!)
         }
     }   
@@ -284,7 +285,88 @@ if(isset($_POST['register'])){
     Core::registerUser($postData);
 }
  if (isset($_POST['pwdLost-submit'])){
-    createLostPassWordToken();
+    //createLostPassWordToken();
+    //Token that will be used to create the new password.
+        $TOKEN = substr(str_shuffle(str_repeat($x='0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil(6/strlen($x)) )),1,6);
+        $username = $_POST['userName'];
+        $emailAddr = $_POST['emailAddr'];
+        if(empty($username) || empty($emailAddr)){
+            header("Location: ./profile/lostPwd.php?error=emptyField");
+            exit();
+        }else{
+            //Check if password is correct.
+            $sql = "UPDATE users SET token='$TOKEN' WHERE usernameUsers='$username' AND emailUsers='$emailAddr'";
+            $connectionObject=Database::runQuery_mysqli();
+            $result=mysqli_query($connectionObject,$sql);
+            $affectedRows = mysqli_affected_rows($connectionObject);
+                    if ($affectedRows!=1){
+                        header("Location: ./profile/lostPwd..php?error=userData");
+                        exit();
+                    }
+            //if(mysqli_affected_rows($result)!)
+               //Ready to send e-mail to user.
+                    $subject = 'MediaIO - Elfelejtett jelszó';
+                    $message ='
+                        <html>
+                        <head>
+                          <title>Arpad Media IO</title>
+                        </head>
+                        <body>
+                          <h3>Kedves '.$username.'!</h3><p>
+                        Jelszó visszaállítást kértél az <strong>Arpad Media IO</strong> fiókodhoz.</p>
+                        A következő, egyszer használatos tokened segítségével visszaállíthatod azt:
+                         <strong>'.$TOKEN.'</strong>
+                          <h6>Ha ezt a tokent nem te kérted, kérlek lépj kapcsolatba egy vezetőségi taggal. Üdvözlettel: <br> Arpad Media Admin</h6>
+                        </body>
+                        </html>';
+                    MailService::sendContactMail('MediaIO',$emailAddr,'Jelszó helyreállítási token',$message);
+                    header("Location: ./profile/lostPwd.php?error=none");
+        }
+ }
+
+
+ //Jelszo helyrallitas, csere
+ if(isset($_POST['pwdLost-change-submit'])){
+    //Check if token is correct.
+    $sql = "SELECT * from users WHERE usernameUsers='".$_POST['userName']."' AND emailUsers='".$_POST['emailAddr']."' AND token='".$_POST['token']."'";
+    mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+    $connectionObject=Database::runQuery_mysqli();
+    $result=mysqli_query($connectionObject,$sql);
+    $numRows = mysqli_num_rows($result);
+    if ($numRows!=1){
+        echo $numRows;
+        //header("Location: ./signup.php?error=SQLError");
+        //    exit();
+    }else{
+        while($row = $result->fetch_assoc()) {
+            $hashedpwd = password_hash($postData['chPwd-1'], PASSWORD_BCRYPT); 
+            $sql = "UPDATE users SET pwdUsers='$hashedpwd' WHERE usernameUsers='".$postData['username']."';";
+                        $result=Database::runQuery($sql);
+                                //E-mail küldése a felhasznßálónak
+                                $content = '
+                                <html>
+                                <head>
+                                <title>Arpad Media IO</title>
+                                </head>
+                                <body>
+                                <h3>Kedves '.$_POST['userName'].'!</h3>
+                                <p>Ezúton tájékoztatunk, hogy jelszavadat sikeresen megváltoztattad!</p>
+
+                                Ha nem te változtattad meg a jelszavadat, azonnal jelezd azt a vezetőségnek!
+                                <h5>Üdvözlettel: <br> Arpad Media Admin👋</h5>
+                                </body>
+                                </html>
+                                ';
+                                try {
+                                    MailService::sendContactMail('MediaIO - jelszócsere',$_POST['emailAddr'],'Sikeres jelszócsere!',$content);
+                                    header("Location: ./profile/lostPwd.php?error=none");
+                                } catch (Exception $e) {
+                                    echo "Mailer Error: " . $mail->ErrorInfo;
+                                }
+        }
+    }
+
+        
  }
 
 ?>
