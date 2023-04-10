@@ -17,37 +17,71 @@ class takeOutManager{
 
   //Usercheck approved takeout process. Acknowledges the takeout process and sets the item status to 1 (taken out)
   static function approveTakeout($value){
-    /*  If not approved (value=false) - RETRIEVE CANNOT BE declined!  */
-    /*  If approved (value=true) - RETRIEVE CANNOT BE declined!  */
-    $userName = $_SESSION['UserUserName'];
-    if(empty($userName)){
-      return 400; // Session data is empty (e.g User is not loggged in.)
+    if($value=='true'){/*  If approved (value=true)  */
+        $userName = $_SESSION['UserUserName'];
+        if(empty($userName)){
+          return 400; // Session data is empty (e.g User is not loggged in.)
+        }else{
+          $data = json_decode(stripslashes($_POST['data']));
+          $dataArray=array();
+          foreach($data as $d){
+            //() rész kivágása a dból
+            $substrings = explode(" (", $d);
+            $d = $substrings[0];
+          array_push($dataArray,ltrim($d));
+        }
+          //For Use in the SQL query.
+          $dataString = "'" . implode ( "','", $dataArray ) . "'";
+          //Restore Items allowing others to take it out.
+          $sql="START TRANSACTION; UPDATE leltar SET leltar.Status=0 AND RentBy='".$userName."' WHERE leltar.Nev IN (".$dataString.");";
+          //Acknowledge events in log.
+          $sql.="UPDATE takelog SET Acknowledged=1 WHERE User='".$_POST['user']."' AND Date='".$_POST['date']."' AND EVENT='OUT' AND Item IN (".$dataString."); COMMIT;";
+      
+          $connection=Database::runQuery_mysqli();
+          if(!$connection->multi_query($sql)){
+            printf("Error message: %s\n", $connection->error);
+          }else{
+            //All good, return OK message
+            echo 200;
+            return;
+          }
+        }
     }else{
-      $data = json_decode(stripslashes($_POST['data']));
-      $dataArray=array();
-      foreach($data as $d){
-      array_push($dataArray,$d);
+      /*  If not approved (value=false) - Decline takeout  */
+        $userName = $_SESSION['UserUserName'];
+        if(empty($userName)){
+          return 400; // Session data is empty (e.g User is not loggged in.)
+        }else{
+          $data = json_decode(stripslashes($_POST['data']));
+          $dataArray=array();
+          foreach($data as $d){
+            //() rész kivágása a dból
+            $substrings = explode(" (", $d);
+            $d = $substrings[0];
+          array_push($dataArray,ltrim($d));
+          
+        }
+          //echo "DataArray:".$dataArray;
+          //For Use in the SQL query.
+          $dataString = "'" . implode ( "','", $dataArray ) . "'";
+      
+          //Restore Items allowing others to take it out.
+          $sql="START TRANSACTION; UPDATE leltar SET Status=1, RentBy='NULL' WHERE Nev IN (".$dataString.");";
+          //Remove takeOut form  log.
+          $sql.="DELETE FROM takelog WHERE Acknowledged=0 AND User='".$_POST['user']."'AND Event='OUT' AND Item IN (".$dataString."); COMMIT;";
+      
+          $connection=Database::runQuery_mysqli();
+          if(!$connection->multi_query($sql)){
+            printf("Error message: %s\n", $connection->error);
+          }else{
+            //All good, return OK message
+            echo 200;
+            return;
+          }
+        }     
     }
-      //For Use in the SQL query.
-      $dataString = "'" . implode ( "', '", $data ) . "'";
 
-      //Restore Items allowing others to take it out.
-      $sql="START TRANSACTION; UPDATE leltar SET leltar.Status=0 AND RentBy='".$userName."' WHERE leltar.Nev IN (".$dataString.");";
-      //Acknowledge events in log.
-      $sql.="UPDATE takelog SET Acknowledged=1 WHERE User='".$_POST['user']."' AND Date='".$_POST['date']."' AND EVENT='OUT' AND Item IN (".$dataString."); COMMIT;";
-
-      $connection=Database::runQuery_mysqli();
-      if(!$connection->multi_query($sql)){
-        printf("Error message: %s\n", $connection->error);
-      }else{
-        //All good, return OK message
-        //echo $sql;
-        echo 200;
-        return;
-      }
-    }
-
-    /*  If approved (value=true)  */
+    
   }
 
 }
@@ -72,14 +106,36 @@ class retrieveManager{
     //New query - reduced to single query containing all items using the implode function;
     $countOfRec+=1;
     foreach($data as $d){
-      array_push($dataArray,$d);
+            //() rész kivágása a dból
+            $substrings = explode(" (", $d);
+            $d = $substrings[0];
+          array_push($dataArray,ltrim($d));
     }
     //For Use in SQL query.
-    $dataString = "'" . implode ( "', '", $data ) . "'";
-    // Database init  - create a mysqli obejct
+    $dataString = "'" . implode ( "','", $dataArray ) . "'";
+    // Database init  - create a mysqli object
       
       $connection=Database::runQuery_mysqli();
-      $sql=" 
+      if($_SESSION['role']>3){//Auto accept retrieve
+        echo "Auto accept";
+              $sql=" 
+      START TRANSACTION; UPDATE leltar SET leltar.Status=1, leltar.RentBy=NULL WHERE leltar.Nev IN (".$dataString.");";
+      $sql.="INSERT INTO takelog VALUES";
+    foreach($data as $d){
+      $sql.="(NULL, '$currDate', '$currDate', '$userName', '$d', 'IN',1),";
+    }
+      //Removes last comma from sql command.
+      $sql=substr_replace($sql, "", -1);
+      $sql.="; COMMIT;";
+        if(!$connection->multi_query($sql)){
+          printf("Error message: %s\n", $connection->error);
+        }else{
+          //All good, return OK message
+          echo 200;
+          return;
+        }
+      }else{
+              $sql=" 
       START TRANSACTION; UPDATE leltar SET leltar.Status=2, leltar.RentBy=NULL WHERE leltar.Nev IN (".$dataString.");";
       $sql.="INSERT INTO takelog VALUES";
     foreach($data as $d){
@@ -95,6 +151,8 @@ class retrieveManager{
         echo 200;
         return;
       }
+      }
+
 
   }
 
@@ -112,7 +170,7 @@ class retrieveManager{
       array_push($dataArray,$d);
     }
       //For Use in the SQL query.
-      $dataString = "'" . implode ( "', '", $data ) . "'";
+      $dataString = "'" . implode ( "','", $dataArray ) . "'";
 
       //Restore Items allowing others to take it out.
       $sql="START TRANSACTION; UPDATE leltar SET leltar.Status=1 WHERE leltar.Nev IN (".$dataString.");";
@@ -210,16 +268,19 @@ if(isset($_POST['mode'])){
   }
   if($_POST['mode']=='takeOutApproval'){
     echo takeOutManager::approveTakeout($_POST['value']);
+    //echo $_POST['value'] ;
     //Header set.
     exit();
   }
   if($_POST['mode']=='retrieveStaging'){
     echo retrieveManager::stageRetrieve();
+    //echo $_POST['value'] ;
     //Header set.
     exit();
   }
   if($_POST['mode']=='retrieveApproval'){
     echo retrieveManager::approveRetrieve($_POST['value']);
+    //echo $_POST['value'] ;
     //Header set.
     exit();
   }

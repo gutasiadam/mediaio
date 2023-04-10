@@ -103,6 +103,7 @@ ORDER BY
     echo "<tr id=event".$recCount."><td>".$query1Row["Date"]."</td><td>".$query1Row["User"]. "</td><td style='line-height: 200%; font-size: 18px;'>".$itemString."</td><td>".$query1Row["Event"]."</td>
     <td><button class='btn btn-success' onclick='acceptEvent(".$recCount.")'><i class='fas fa-check success'></i></button></br>";
     if($query1Row['Event']=='OUT'){
+          //declineEvent
           echo "<button class='btn btn-danger' style='padding: 7px 15px; margin-top:4px' onclick='declineEvent(".$recCount.")'><i class='fas fa-times danger'></i></button></td>";
     }
     else if($query1Row['Event']=='IN'){
@@ -181,7 +182,6 @@ function acceptEvent(n){
     url: '../ItemManager.php',
     data: {data : itemsJSON, mode: mode, value: true, date: date, user:user}, //value true means event is approved.
     success: function (response){
-      alert(response);
       if(response==200){
         //Remove event from the table.
         $('#event'+n).fadeOut();
@@ -196,7 +196,6 @@ function acceptEvent(n){
 }
 
 function declineEvent(n){
-  //alert('elutasitas');
   var items=$('#event'+n)[0].cells[2].innerHTML.split('   - ');
   items.forEach(element => {
     console.log(element);
@@ -213,14 +212,12 @@ function declineEvent(n){
   }else{
     mode='takeOutApproval';
   }
-
   console.log(items);
   $.ajax({
     method: 'POST',
     url: '../ItemManager.php',
     data: {data : itemsJSON, mode: mode,  value: false, date: date, user:user}, //event declined.
     success: function (response){
-      //alert(response);
       if(response==200){
         //Remove event from the table.
         $('#event'+n).fadeOut();

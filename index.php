@@ -232,7 +232,7 @@ if ($serverType["type"] == "dev") {
       <div class="fixed-bottom" align="center">
         <p>
           </strong>
-          <br /> dev: <a href="https://github.com/d3rang3">Gutási Ádám</a>
+          <br /> dev: <a href="https://github.com/gutasiadam">Gutási Ádám</a>
         </p>
       </div>
     </footer>'; <script type="text/javascript">

@@ -50,14 +50,20 @@ if(isset($_SESSION['UserUserName'])){
         <div class="container">
    <br />
    <h1 align="center" class="rainbow">Tárgy kölcsönzési története</h1>
-   <table id="itemSearch" align="left"><tr>
+   <table id="itemSearch" align="left">
+    <tr>
             <form action="./pathfinder.php" method="GET" autocomplete="off">
             
             <td><input id="id_itemNameAdd" type="text" name="pfItem" class="form-control mb-2 mr-sm-2" placeholder='<?php echo $applicationSearchField;?>'></div></td>
             <td><button type="submit" name="add" id="add" class="btn btn-info2 mb-2 mr-sm-2" ><?php echo $button_Find;?></button><span id='sendQueryButtonLoc'></span></td>
-  			</tr></table>
-        <form  action="/index.php">
-			  </form>
+  	</tr>
+    </form>
+        <tr>
+
+            <td><input id="id_itemUIDAdd" type="text" name="pfItem" class="form-control mb-2 mr-sm-2" placeholder='Kezdd el írni a tárgy UID-jét...'></div></td>
+            <td><button name="add" id="add" class="btn btn-info2 mb-2 mr-sm-2" onclick="searchByUID()" ><?php echo $button_Find;?></button><span id='sendQueryButtonLoc'></span></td>
+  	</tr>
+    </table>  
 					<div class="table-responsive">
 						<table class="table table-bordered" id="dynamic_field"></div></div>
       </div>
@@ -165,7 +171,8 @@ window.onload = function () {
   //Remove this comment for see Timeline in Horizontal Format otherwise it will display in Vertical Direction Timeline
  });
 });*/
-var dbItems=[];
+var dbItems=[]; //For search by Name
+var dbUidItems=[];//For search by UID
 var d = {};
 function loadJSON(callback) {   
 console.log("[loadJSON] - called.")
@@ -174,9 +181,11 @@ var jqxhr = $.getJSON( "takeOutItems.json", function() {
 })
   .done(function(data) {
     console.log('load complete');
+    d=jqxhr.responseJSON;
     $.each( data, function( i, item ) {
       //console.log(i+item);
       dbItems.push(item['Nev']);
+      dbUidItems.push(item['UID']);
     })
   })
   .fail(function() {
@@ -186,6 +195,7 @@ var jqxhr = $.getJSON( "takeOutItems.json", function() {
     console.log( "Adatok betöltése kész" );
   });
  
+
 // Perform other work here ...
 
 // Set another completion function for the request above
@@ -194,7 +204,6 @@ var jqxhr = $.getJSON( "takeOutItems.json", function() {
 });*/
 }
 loadJSON();
-console.log('d:'+d);
 
 //Process takeout
 
@@ -305,8 +314,19 @@ function autocomplete(inp, arr) {
   }
 
   autocomplete(document.getElementById("id_itemNameAdd"), dbItems);
+  autocomplete(document.getElementById("id_itemUIDAdd"), dbUidItems);
 
-// autologout
+//Search bz inputted UID value
+function searchByUID(){
+ var uidName=document.getElementById('id_itemUIDAdd').value;
+ d.forEach(element => {
+    if(element['UID']==uidName){
+      console.log("pfItem="+element['Nev']);
+       window.location.href += "?pfItem="+element['Nev'].replace(/ /g,'+');
+    }
+ });
+}
+  // autologout
 
 function startTimer(duration, display) {
     var timer = duration, minutes, seconds;

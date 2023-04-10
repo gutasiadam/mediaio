@@ -69,7 +69,7 @@ var goStatus = 0;
       <?php
       $TKI = $_SESSION['UserUserName'];    
         $conn = Database::runQuery_mysqli();
-        $sql = ("SELECT * FROM `leltar` WHERE `RentBy` = '$TKI'");
+        $sql = ("SELECT * FROM `leltar` WHERE `RentBy` = '$TKI' AND Status=0");
         $result = mysqli_query($conn, $sql);
         $conn->close(); 
         $n=0;

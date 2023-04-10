@@ -20,7 +20,7 @@
         {"name": "takeout","icon": "fas fa-upload fa-3x", "href": "takeout.php", "displayName": "Kivétel"},
         {"name": "retrieve","icon": "fas fa-download fa-3x", "href": "retrieve.php", "displayName": "Visszahozás"},
         {"name": "adatok","icon": "fas fa-database fa-3x", "href": "./adatok.php", "displayName": "Adatok"},
-        {"name": "pathfinder","icon": "fas fa-project-diagram fa-3x", "href": ".pathfinder.php", "displayName": "PathFinder"},
+        {"name": "pathfinder","icon": "fas fa-project-diagram fa-3x", "href": "./pathfinder.php", "displayName": "PathFinder"},
         {"name": "events","icon": "fas fa-calendar-alt fa-3x", "href": "events/", "displayName": "Naptár"},
         {"name": "broom", "icon": "fas fa-broom fa-3x", "href": "./maintenance/", "displayName": "Takarítás"},
         {"name": "fileServer", "icon": "fas fa-server fa-3x", "displayName": "Fájlszerver"},

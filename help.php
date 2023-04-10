@@ -16,14 +16,20 @@
   <script src="https://kit.fontawesome.com/2c66dc83e7.js" crossorigin="anonymous"></script>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title><?php echo $applicationTitleShort." ".$index_Help; ?></title>
+    <title>MediaIO-Help</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+          <script>
+        $(document).ready(function() {
+          menuItems = importItem("./utility/menuitems.json");
+          drawMenuItemsLeft('', menuItems);
+        });
+      </script>
 </head>
 <body>
     <header>
 <?php if (isset($_SESSION["userId"])) { ?> <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
   <a class="navbar-brand" href="index.php">
-    <img src="../utility/logo2.png" height="50">
+    <img src="./utility/logo2.png" height="50">
   </a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
