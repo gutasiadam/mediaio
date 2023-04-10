@@ -6,6 +6,7 @@
             <form action="../Core.php" method="post">
             <tr><td><h3><strong>1. lépés</strong>: kérj egy tokent!</strong></h3></td></tr>
             <tr><td>Ennek segítségével tudsz majd új jelszót megadni.</td></tr>
+            <tr><td>Ennek segítségével tudsz majd új jelszót megadni.</td></tr>
             <tr><td><input class="form-control mb-2 mr-sm-2" type="email" name="emailAddr" placeholder="e-mail" required></td></tr> <br>
             <tr><td><input class="form-control mb-2 mr-sm-2" type="text" name="userName" placeholder="felhasználónév" required></td></tr> <br>
             <tr><td><br><button class="btn btn-dark" id="submitPwdCh1"align=center type="submit" name="pwdLost-submit" required>Token küldése</button></td></tr>
