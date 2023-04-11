@@ -123,6 +123,27 @@
   </div>
 </div>
 
+<!--Temporary development modal-->
+<div class="modal fade" id="WIPModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Fejlesztés alatt</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <h5><p>Kedves felhasználó!</p></h5>
+        <p>Az oldal feljesztése folyamatban van, kérlek ne használd ezt a funkciót.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Bezárás</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
 //Ha nincs feladat, ne is jelenjen meg a táblázat:
 function deleteTableIfNoTask(){
@@ -135,6 +156,7 @@ function deleteTableIfNoTask(){
 deleteTableIfNoTask();
 
 window.onload = function () {
+  $('#WIPModal').modal();
   $('#processing').hide();
     var fiveMinutes = 10 * 60 - 1,
         display = document.querySelector('#time');

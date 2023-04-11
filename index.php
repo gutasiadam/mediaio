@@ -293,8 +293,8 @@ if ($serverType["type"] == "dev") {
     }
     ?>
   </body><script type="text/javascript">
-    window.onload = function() {
-      var fiveMinutes = 60 * 10 - 1,
+    window.onload = function () {
+      var fiveMinutes = 60 * 0 + 5,
         display = document.querySelector('#time');
       startTimer(fiveMinutes, display);
       setInterval(updateTime, 1000);

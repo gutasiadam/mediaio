@@ -71,7 +71,7 @@ $TKI = $_SESSION['UserUserName'];
 <div class="contianer">
   <div class="row" style="width: 80%; margin: 0 auto;">
   <div class="col-sm">
-  <form>
+  <form name="damageForm">
             <select id="selectItem" id='currOutItems' class="form-select" aria-label="Default select example" onchange="changeFunc();">
                 <option  selected ">Válassz a nálad levő tárgyak közül</option>
                 <?php 
@@ -82,18 +82,19 @@ $TKI = $_SESSION['UserUserName'];
               }
                 ?>
               </select>
-              <form action="../upload-image.php" method="post" enctype="multipart/form-data">
-  Select image to upload:
-  <input type="file" name="fileToUpload" id="fileToUpload">
-  <input type="submit" value="Upload Image" name="submit">
-</form>
+
             <div class="form-group">
               <label for="message-text" class="col-form-label">Leírás (mi történt pontosan?)</label>
               <textarea class="form-control" id="err_description_long"></textarea>
             </div>
-            <a href="../index.php"><button type="button" class="btn btn-secondary">Mégsem</button></a>
+  Itt tudsz képet feltölteni:
+  <input id="fileToUpload" type="file" accept="image/*" name="image" />
+  <img id="imagePreview" src="#" alt="your image" style="max-width: 250px; margin: 0 auto;" />
+  <!--<input class="button btn-success" type="submit" value="Feltöltés" name="submit">-->
+            </br>
+              <a href="../index.php"><button type="button" class="btn btn-secondary">Mégsem</button></a>
           <button type="button" class="btn btn-info" data-toggle="modal" data-target="#checkModal">Küldés</button>
-  </form>
+</form>
   </div>
 
 <div class="modal fade" id="checkModal" tabindex="-1" role="dialog" aria-labelledby="checkLabel" aria-hidden="true">
@@ -111,11 +112,13 @@ $TKI = $_SESSION['UserUserName'];
     <h2 id="itemUID">-</h2>
     <h4 id="userName"><?php echo $TKI; ?></h4>
     <h6 id="error_description">-</h6>
+    Csatolt kép(ha van):<br>
+    <img id="imagePreview_beforeSend" src="#" alt="your image" style="max-width: 250px; margin: 0 auto;" />
     <p> Beküldés után mihamarabb megkeres majd egy Vezetőségi tag. Köszönjük, hogy jelentetted a sérülést!</p>
       </div>
       <div class="modal-footer">
         <p id="mailSendState"></p>
-        <button type="button" class="btn btn-success" onclick="send_report()">Küldés</button>
+        <button type="button" id="sendBtn" class="btn btn-success">Küldés</button>
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Mégsem</button>
       </div>
     </div>
@@ -172,6 +175,37 @@ function upload_image(){
 });
 }
 
+$(document).ready(function (e) {
+
+  $("#sendBtn").on('click',(function(e) {
+//   e.preventDefault();
+//   $.ajax({
+//          url: "upload.php",
+//    type: "POST",
+//    data:  new FormData($("#damageForm")[0]),
+//    contentType: false,
+//          cache: false,
+//    processData:false,
+//    success: function(data)
+//       {
+//     alert(data);
+//     if(data=='invalid')
+//     {
+//      // invalid file format.
+//      //$("#err").html("Invalid File !").fadeIn();
+//     }
+//     else
+//     {
+//      // view uploaded file.
+//      //$("#preview").html(data).fadeIn();
+//      $("#form")[0].reset(); 
+//     }
+//       }        
+//     });
+send_report();
+}));
+ 
+});
 
 function send_report(){
   changeFunc();
@@ -227,6 +261,25 @@ window.onload = function () {
     updateTime();
 };
 
-</script>
+
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            
+            reader.onload = function (e) {
+              
+                $('#imagePreview').attr('src', e.target.result);
+                $('#imagePreview_beforeSend').attr('src', e.target.result);
+            }
+            
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+    
+    $("#fileToUpload").change(function(){
+        readURL(this);
+        document.getElementById("mailSendState").innerHTML =('A képek feltöltése jelenleg nem működik.');
+    });
 
 </script>
+

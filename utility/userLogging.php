@@ -16,7 +16,7 @@
     }
 
     //*ISTENÍTETT KÓD*
-    if (isset($_POST['login-submit'])){
+    if (isset($_POST['login-submit']) ){
         $userName = $_POST['useremail'];
         $password = $_POST['pwd'];
         Core::loginUser($_POST);

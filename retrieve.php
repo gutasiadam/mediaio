@@ -6,7 +6,6 @@ session_start();
 namespace Mediaio;
 use Mediaio\Database;
 require_once('./Database.php');
-session_start();
 include "header.php";
 
 if(!isset($_SESSION['userId'])){header("Location: index.php?error=AccessViolation");}
