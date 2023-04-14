@@ -300,7 +300,7 @@ if(isset($_POST['register'])){
             $result=mysqli_query($connectionObject,$sql);
             $affectedRows = mysqli_affected_rows($connectionObject);
                     if ($affectedRows!=1){
-                        header("Location: ./profile/lostPwd..php?error=userData");
+                        header("Location: ./profile/lostPwd.php?error=userData");
                         exit();
                     }
             //if(mysqli_affected_rows($result)!)
@@ -334,13 +334,13 @@ if(isset($_POST['register'])){
     $result=mysqli_query($connectionObject,$sql);
     $numRows = mysqli_num_rows($result);
     if ($numRows!=1){
-        echo $numRows;
-        //header("Location: ./signup.php?error=SQLError");
-        //    exit();
+        //echo $numRows;
+        header("Location: ./signup.php?error=SQLError");
+        exit();
     }else{
         while($row = $result->fetch_assoc()) {
-            $hashedpwd = password_hash($postData['chPwd-1'], PASSWORD_BCRYPT); 
-            $sql = "UPDATE users SET pwdUsers='$hashedpwd' WHERE usernameUsers='".$postData['username']."';";
+            $hashedpwd = password_hash($_POST['chPwd-1'], PASSWORD_BCRYPT); 
+            $sql = "UPDATE users SET pwdUsers='".$hashedpwd."' WHERE usernameUsers='".$_POST['userName']."';";
                         $result=Database::runQuery($sql);
                                 //E-mail küldése a felhasznßálónak
                                 $content = '
@@ -351,7 +351,6 @@ if(isset($_POST['register'])){
                                 <body>
                                 <h3>Kedves '.$_POST['userName'].'!</h3>
                                 <p>Ezúton tájékoztatunk, hogy jelszavadat sikeresen megváltoztattad!</p>
-
                                 Ha nem te változtattad meg a jelszavadat, azonnal jelezd azt a vezetőségnek!
                                 <h5>Üdvözlettel: <br> Arpad Media Admin👋</h5>
                                 </body>

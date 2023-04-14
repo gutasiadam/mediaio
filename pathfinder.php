@@ -34,7 +34,7 @@ if(isset($_SESSION['UserUserName'])){
     </ul>
     <ul class="navbar-nav navbarPhP">
       <li>
-        <a class="nav-link disabled timelock" href="#">⌛ <span id="time"> 10:00 </span><?php if ($_SESSION['role']>=3){echo' Admin jogok';}?>
+        <a class="nav-link disabled timelock" href="#"><span id="time"> 10:00 </span><?php echo ' '.$_SESSION['UserUserName'];?>
         </a>
       </li>
     </ul>
@@ -74,9 +74,11 @@ if(isset($_SESSION['UserUserName'])){
 
     <?php 
     if(isset($_GET['pfItem'])){
+        $connectionObject=Database::runQuery_mysqli();
         $TKI = $_GET['pfItem'];
         $query = "SELECT * FROM `takelog`, `leltar` WHERE leltar.Nev=takelog.Item AND `Item` = '$TKI' ORDER BY `Date` DESC";
-        $result = Database::runQuery($query);
+       // echo $query;
+        $result=mysqli_query($connectionObject,$query);
         echo '<h3 class="panel-title">Tárgy útvonala - '.$TKI.'</h3>
         </div>
         <div class="panel-body">
@@ -176,7 +178,7 @@ var dbUidItems=[];//For search by UID
 var d = {};
 function loadJSON(callback) {   
 console.log("[loadJSON] - called.")
-var jqxhr = $.getJSON( "takeOutItems.json", function() {
+var jqxhr = $.getJSON( "./data/takeOutItems.json", function() {
   console.log( "[loadJSON] - OK" );
 })
   .done(function(data) {

@@ -5,6 +5,8 @@ if(!isset($_SESSION['userId'])){
 #echo $_SESSION['color'];
 ?><html lang='en'>
   <head>
+    <title>MediaIO</title>
+    <link rel="icon" type="image/x-icon" href="../logo.ico">
   <link href='../main.css' rel='stylesheet' />
   <div class="UI_loading"><img class="loadingAnimation" src="../utility/mediaIO_loading_logo.gif"></div>
     <meta charset='utf-8' />
@@ -57,7 +59,7 @@ if(!isset($_SESSION['userId'])){
     </ul>
     <ul class="navbar-nav navbarPhP">
       <li>
-        <a class="nav-link disabled timelock" href="#">⌛ <span id="time"> 10:00 </span><?php if ($_SESSION['role']>=3){echo' Admin jogok';}?>
+        <a class="nav-link disabled timelock" href="#"><span id="time"> 10:00 </span><?php echo ' '.$_SESSION['UserUserName'];?>
         </a>
       </li>
     </ul>

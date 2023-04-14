@@ -43,7 +43,7 @@ if(!isset($_SESSION['userId'])){
     </ul>
     <ul class="navbar-nav navbarPhP">
       <li>
-        <a class="nav-link disabled timelock" href="#">⌛ <span id="time"> 10:00 </span><?php if ($_SESSION['role']>=3){echo' Admin jogok';}?>
+        <a class="nav-link disabled timelock" href="#"><span id="time"> 10:00 </span><?php echo ' '.$_SESSION['UserUserName'];?>
         </a>
       </li>
     </ul>
@@ -75,7 +75,7 @@ FROM
   `takelog`,
   `leltar`
 WHERE
-  takelog.Acknowledged = 'false'
+  takelog.Acknowledged = 0
   AND takelog.Event != 'SERVICE'
   AND takelog.Item = leltar.Nev
 GROUP BY
@@ -232,7 +232,7 @@ function declineEvent(n){
 }
 
 function openEventDocument(n){
-  alert('dokumentum');
+  window.location.replace("../utility/damage_report/announce_Damage.php");
 }
 </script>
 

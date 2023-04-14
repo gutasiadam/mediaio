@@ -28,7 +28,7 @@ if ($serverType["type"] == "dev") {
     </ul>
     <ul class="navbar-nav navbarPhP">
       <li>
-        <a class="nav-link disabled timelock" href="#">⌛ <span id="time"> 10:00 </span><?php if ($_SESSION['role']>=3){echo' Admin jogok';}?>
+        <a class="nav-link disabled timelock" href="#"><span id="time"> 10:00 </span><?php echo ' '.$_SESSION['UserUserName'];?>
         </a>
       </li>
     </ul>
@@ -227,15 +227,7 @@ if ($serverType["type"] == "dev") {
       "firstName"
   ]; ?>!</strong> Az oldal <u>folyamatos fejlesztés</u> alatt áll. Ha hibát szeretnél bejelenteni/észrevételed van, írj az arpadmedia.io@gmail.com címre, vagy <a href="mailto:arpadmedia.io@gmail.com?Subject=MediaIO%20Hibabejelent%C3%A9s" target="_top">írj most egy e-mailt!</a></div><h1 align=center class="rainbow">Árpád Média IO</h1><div class="row justify-content-center mainRow1" style="text-align: center; width:100%; max-width: 1000px; margin: 0 auto;"></div><br><div class="row justify-content-center mainRow2" style="text-align: center; width:100%; max-width: 1000px; margin: 0 auto;"></div><br><div class="row justify-content-center mainRow3" style="text-align: center; width:100%; max-width: 1000px; margin: 0 auto;"></div><br>
     <div class="row justify-content-center mainRow4" style="text-align: center; width:100%; max-width: 1000px; margin: 0 auto;"></div>
-    <br>
-    <footer class="page-footer font-small blue">
-      <div class="fixed-bottom" align="center">
-        <p>
-          </strong>
-          <br /> dev: <a href="https://github.com/gutasiadam">Gutási Ádám</a>
-        </p>
-      </div>
-    </footer>'; <script type="text/javascript">
+    <br><script type="text/javascript">
       $(document).ready(function() {
         drawMenuItemsRight('index', menuItems);
         drawIndexTable(menuItems, 0);
@@ -294,7 +286,7 @@ if ($serverType["type"] == "dev") {
     ?>
   </body><script type="text/javascript">
     window.onload = function () {
-      var fiveMinutes = 60 * 0 + 5,
+      var fiveMinutes = 60 * 10 - 1,
         display = document.querySelector('#time');
       startTimer(fiveMinutes, display);
       setInterval(updateTime, 1000);

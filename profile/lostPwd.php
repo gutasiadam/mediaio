@@ -2,10 +2,29 @@
     <?php 
     include "header.php";
             ?>
+
             <table class="logintable"><tr><td><h1>Elfelejtett jelszó pótlása</h1></td></tr>
+                                    <?php
+                if (isset($_GET['error'])){
+                    if( $_GET['error'] == 'emptyField'){
+                        echo '<tr><td><h5 class="registererror text text-danger">Kérlek MINDEN mezőt tölts ki!</h5></td></tr>';
+                    }else if ($_GET['error'] == 'PasswordCheck'){
+                        echo '<tr><td><h5 class="registererror text text-danger">A megadott jelszavak nem egyeznek, vagy túl rövid jelszót adtál meg!</h5></td></tr>';
+                    }else if ($_GET['error'] == 'PasswordLenght'){
+                        echo '<tr><td><h5 class="registererror text text-danger">Az új jelszónak legalább 8 karakter hosszúnak kell lennie!</h5></td></tr>';
+                    }else if ($_GET['error'] == 'OldPwdError'){
+                        echo '<tr><td><h5 class="registererror text text-danger">Hibásan adtad meg a jelenlegi jelszavadat!</h5></td></tr>';
+                    }else if ($_GET['error'] == 'userData'){
+                      echo '<tr><td><h5 class="registererror text text-danger">A megadott adatokkal nem létezik felhasználó a rendszerben!</h5></td></tr>';
+                    }else if ($_GET['error'] == 'none'){
+                    echo '<tr><td><p class="success">A tokenedet elküldtük az e-mail címedre! Ezt tudod használni a második lépésben.</p></td></tr>';
+                    }else if ($_GET['error'] == 'none'){
+                    echo '<tr><td><p class="success"><strong>Sikeres jelszócsere.</strong> Mostmár beléphetsz az új jelszavaddal.</p></td></tr>';
+                }
+                }
+                ?>
             <form action="../Core.php" method="post">
             <tr><td><h3><strong>1. lépés</strong>: kérj egy tokent!</strong></h3></td></tr>
-            <tr><td>Ennek segítségével tudsz majd új jelszót megadni.</td></tr>
             <tr><td>Ennek segítségével tudsz majd új jelszót megadni.</td></tr>
             <tr><td><input class="form-control mb-2 mr-sm-2" type="email" name="emailAddr" placeholder="e-mail" required></td></tr> <br>
             <tr><td><input class="form-control mb-2 mr-sm-2" type="text" name="userName" placeholder="felhasználónév" required></td></tr> <br>
@@ -27,25 +46,7 @@
             <span class="sr-only">Folyamatban...</span>
             </div></tr></td>
             </form>
-            <?php
-                if (isset($_GET['error'])){
-                    if( $_GET['error'] == 'emptyField'){
-                        echo '<tr><td><h5 class="registererror text-danger">Kérlek MINDEN mezőt tölts ki!</h5></td></tr>';
-                    }else if ($_GET['error'] == 'PasswordCheck'){
-                        echo '<tr><td><h5 class="registererror text-danger">A megadott jelszavak nem egyeznek, vagy túl rövid jelszót adtál meg!</h5></td></tr>';
-                    }else if ($_GET['error'] == 'PasswordLenght'){
-                        echo '<tr><td><h5 class="registererror text-danger">Az új jelszónak legalább 8 karakter hosszúnak kell lennie!</h5></td></tr>';
-                    }else if ($_GET['error'] == 'OldPwdError'){
-                        echo '<tr><td><h5 class="registererror text-danger">Hibásan adtad meg a jelenlegi jelszavadat!</h5></td></tr>';
-                    }else if ($_GET['error'] == 'userData'){
-                      echo '<tr><td><p class="warning">A megadott adatokkal nem létezik felhasználó a rendszerben!</p></td></tr>';
-                    }else if ($_GET['error'] == 'none'){
-                    echo '<tr><td><p class="success">A tokenedet elküldtük az e-mail címedre! Ezt tudod használni a második lépésben.</p></td></tr>';
-                    }else if ($_GET['error'] == 'none'){
-                    echo '<tr><td><p class="success"><strong>Sikeres jelszócsere.</strong> Mostmár beléphetsz az új jelszavaddal.</p></td></tr>';
-                }
-                }
-                ?>
+
                 <tr><td>Sikeres jelszóváltoztatásról e-mailben értesítünk. Eztuán lépj vissza a belépéshez.</td></tr>
                 <tr><td><a href="../index.php"><button class="btn btn-dark">Vissza a belépéshez</button></a></td></tr>
                 <?php

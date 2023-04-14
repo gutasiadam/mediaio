@@ -39,7 +39,7 @@ $TKI = $_SESSION['UserUserName'];
   </script>
 </head>
 <?php if (isset($_SESSION["userId"])) { ?> <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-  <a class="navbar-brand" href="index.php">
+  <a class="navbar-brand" href="../../index.php">
     <img src="../../utility/logo2.png" height="50">
   </a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -56,14 +56,14 @@ $TKI = $_SESSION['UserUserName'];
     </ul>
     <ul class="navbar-nav navbarPhP">
       <li>
-        <a class="nav-link disabled timelock" href="#">⌛ <span id="time"> 10:00 </span><?php if ($_SESSION['role']>=3){echo' Admin jogok';}?>
+        <a class="nav-link disabled timelock" href="#"><span id="time"> 10:00 </span><?php echo ' '.$_SESSION['UserUserName'];?>
         </a>
       </li>
     </ul>
     <form method='post' class="form-inline my-2 my-lg-0" action=../../utility/userLogging.php>
       <button class="btn btn-danger my-2 my-sm-0" name='logout-submit' type="submit">Kijelentkezés</button>
     </form>
-    <a class="nav-link my-2 my-sm-0" href="./help.php">
+    <a class="nav-link my-2 my-sm-0" href="../../help.php">
       <i class="fas fa-question-circle fa-lg"></i>
     </a>
   </div>
@@ -73,9 +73,16 @@ $TKI = $_SESSION['UserUserName'];
   <div class="col-sm">
   <form name="damageForm">
             <select id="selectItem" id='currOutItems' class="form-select" aria-label="Default select example" onchange="changeFunc();">
-                <option  selected ">Válassz a nálad levő tárgyak közül</option>
+                
                 <?php 
-                $sql = ("SELECT * FROM `leltar` WHERE `RentBy` = '$TKI'");
+                if ($_SESSION["role"] >= 3) {
+                  echo "<option  selected>Válassz a nálad levő, kivitt vagy megerősítésre váró tárgyak közül</option>";
+                  $sql = ("SELECT * FROM `leltar` WHERE `Status` != 1");
+                }else{
+                  $sql = ("SELECT * FROM `leltar` WHERE `RentBy` = '$TKI'");
+                  echo "<option  selected>Válassz a nálad levő tárgyak közül</option>";
+                }
+                
                 $result = Database::runQuery($sql);
               while($row = $result->fetch_assoc()) { 
                 echo '<option value='.$row['UID'].'>'.$row['Nev'].'- ('.$row['UID'].')</option>';

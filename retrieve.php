@@ -3,9 +3,6 @@ namespace Mediaio;
 use Mediaio\Database;
 require_once('./Database.php');
 session_start();
-namespace Mediaio;
-use Mediaio\Database;
-require_once('./Database.php');
 include "header.php";
 
 if(!isset($_SESSION['userId'])){header("Location: index.php?error=AccessViolation");}
@@ -50,7 +47,7 @@ var goStatus = 0;
     </ul>
     <ul class="navbar-nav navbarPhP">
       <li>
-        <a class="nav-link disabled timelock" href="#">⌛ <span id="time"> 10:00 </span><?php if ($_SESSION['role']>=3){echo' Admin jogok';}?>
+        <a class="nav-link disabled timelock" href="#"><span id="time"> 10:00 </span><?php echo ' '.$_SESSION['UserUserName'];?>
         </a>
       </li>
     </ul>

@@ -1,8 +1,7 @@
 <?php
-
-
+session_start();
+error_reporting(E_ALL | E_WARNING | E_NOTICE);
     require_once("./header.php");
-    require_once("../translation.php");
    ?>
    <html>
     <script src="../utility/_initMenu.js" crossorigin="anonymous"></script>
@@ -23,7 +22,7 @@
     </ul>
     <ul class="navbar-nav navbarPhP">
       <li>
-        <a class="nav-link disabled timelock" href="#">⌛ <span id="time"> 10:00 </span><?php if ($_SESSION['role']>=3){echo' Admin jogok';}?>
+        <a class="nav-link disabled timelock" href="#"><span id="time"> 10:00 </span><?php echo ' '.$_SESSION['UserUserName'];?>
         </a>
       </li>
     </ul>
@@ -35,39 +34,37 @@
     </a>
   </div>
 </nav> <?php  } ?>
-    
-<h1 align=center class="rainbow">Takarítási rend, feladatok </h1>
+<br>
+<h1 align=center class="rainbow">Takarítási rend, feladatok: </h1>
 
 <div class="tableParent">
 <div class="form-check">
-  <input class="form-check-input noprint" type="checkbox" value="" id="showOnlyMyTasks_checkBox" data-toggle="toggle">
-  <label class="form-check-label noprint" for="defaultCheck1">
-    Csak a saját feladataimat mutasd
-  </label>
+  <!--<input class="form-check-input noprint" type="checkbox" value="" id="showOnlyMyTasks_checkBox" data-toggle="toggle">
+  <label class="form-check-label noprint" for="defaultCheck1"> Csak a saját feladataimat mutasd</label>-->
   </div>
 <?php
             if ($_SESSION['role']>=3){
               echo '<table>
-              <tr><td><button type="button" class="btn btn-warning table-Control edit_Table_Button noprint" data-toggle="modal" data-target="#add_Work_Modal">Módosítás</button></td>
-              <td><button type="button" class="btn btn-danger table-Control delete_Table_Button noprint">Törlés</button></td></tr>
+              <tr><td><button type="button" class="btn btn-info table-Control edit_Table_Button noprint" data-toggle="modal" data-target="#add_Work_Modal">Új feladat</button></td>
+              </tr>
               </table>';
               
             }?>
 
-<table class="takaritasirend" id="takaritasirend">
-<tr>
-    <th>Dátum</th>
-    <th>Személyek</th>
-    <th>Elvégzendő feladat(ok)</th>
-  </tr>
-  <?php  include("./render_work_Data.php");
-  renderWorkTable("*");
-  ?>
+      <ul style="margin-left:5%; padding-right: 5px;">
+      <li>Szemét kiürítése</li>
+      <li>Felsöprés</li>
+      <li>Elmosogatás</li>
+      <li>Porszívózás a stúdióban</li>
+      <li>Felmosás (a tárgyalóban minimális vízzel)</li>
+      <li>Rendrakás</li>
+          </ul>
 
-</table></br>
-<i id="statusMessage" class="noprint">// A rendszer csak a mai, vagy újabb feladatokat mutatja.
-  Ha a mai napnál régebbi feladatott állítottál be, akkor az automatikusan törölve lett :( //</i>
-</div>
+<table class="takaritasirend" id="takaritasirend">
+
+
+
+</table>
 </html>
 
 
@@ -85,78 +82,26 @@
   <div class="form-group">
     <label for="work_Date">Dátum</label>
     <input type="date" class="form-control" id="work_Date" aria-describedby="emailHelp" placeholder="Dátum. ÉV/HÓ/NAP formátumban">
+
   </div>
-  <div class="form-group">
-    <label for="work_User">Személy</label>
-    <!--<input type="text" class="form-control" id="work_User" placeholder="Egyszerre csak egy felhasználónevet adj meg!">-->
-    <div class="wrapper">
-      <table><tr>
-      <td> <p>Felhasználók</p>
-      <div class="box 1" ondrop="drop(event)" ondragover="allowDrop(event)"">
-   
-    <?php 
-    renderUsersDraggable();
-    
-    ?>
-  </div></td>
-  <td>
-  <p>Kijelölt</p>
-    <div class="box 2 selectedUsers" ondrop="drop(event)" ondragover="allowDrop(event)">
-  </div>
-  </td></tr></table>
-</div>
-  </div>
-  <div class="form-group">
-    <label for="work_Task">Feladat</label>
-    <input type="text" class="form-control" id="work_Task" placeholder="Ide írd a feladatokat..">
-  </div>
-  
 </form>
       </div>
       <div class="modal-footer">
         <!--<button type="button" class="btn btn-success">Mentés</button>-->
         <div id="processing">Feldolgozás..</div>
-        <button type="button" class="btn btn-success send_Work_update">Mentés</button> 
+        <button type="button" class="btn btn-success send_Work_update" onclick=addWork()>Mentés</button> 
         <button type="button" class="btn btn-danger clear_Update" data-dismiss="modal">Mégsem</button>
       </div>
     </div>
   </div>
 </div>
 
-<!--Temporary development modal-->
-<div class="modal fade" id="WIPModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Fejlesztés alatt</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <h5><p>Kedves felhasználó!</p></h5>
-        <p>Az oldal feljesztése folyamatban van, kérlek ne használd ezt a funkciót.</p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Bezárás</button>
-      </div>
-    </div>
-  </div>
-</div>
 
 <script>
 //Ha nincs feladat, ne is jelenjen meg a táblázat:
-function deleteTableIfNoTask(){
-  if($('#takaritasirend tr').length==1){
-    $('#takaritasirend').fadeOut(600);
-    $('#takaritasirend').remove();
-  }
-}
-
-deleteTableIfNoTask();
 
 window.onload = function () {
-  $('#WIPModal').modal();
+  renderWork();
   $('#processing').hide();
     var fiveMinutes = 10 * 60 - 1,
         display = document.querySelector('#time');
@@ -167,143 +112,179 @@ window.onload = function () {
     updateTime();
 };
 
-$( ".send_Work_update" ).click(function( event ) {
-  $('#processing').html("Feldolgozás..");
-  $('#processing').fadeIn();
-  //event.preventDefault();
-  datum=$('#work_Date').val();
-  //nDatum=datum.match('/\W/g')
-  //szemely=$('#work_User').val();
-  Szemelyek=$( $('.selectedUsers')).children()
-  
-  //nszemely=szemely.match('/" "/g')
-  feladat=$('#work_Task').val();
-  //Beírt adatok ellenőrzése regEXel
-  for (let index = 0; index < Szemelyek.length; index++) {
-    szemely=Szemelyek[index].innerHTML;
-  if(/*nDatum.length==2 && nszemely.length==0 ha működne a REGEX*/ datum!="" & szemely!="" & feladat!=""){
-  $.ajax({
-       url:"add_work.php",
+function applyToWork(ID){
+        $.ajax({
+       url:"maintenanceManager.php",
        type:"POST",
        async: true,
-       data:{date:datum, user:szemely, task:feladat},
+       data:{method:"apply",workID:ID},
        success:function(result)
        {
-        //alert(result);
-        if(result==1){
-          $('#processing').html("Nincs ilyen felhasználó!")
-        }
-        else if(result==2){
-          $('#processing').html("Üres cella/formátumhiba!")
-        }
-        else if(result==3){
-          $('#processing').html("Siker! A felhasználót e-mailben értesítettem. Újratöltés...")
-          setTimeout(function(){ location.reload(); }, 1000);
-        }
-        else{
-          $('#processing').html(result);
-        }
-       }
-      })
-    }else{
-      $('#processing').html("Ismeretlen hiba ");
-    }
-  }
-});
-
-$( ".clear_Update" ).click(function( event ) {
-  $('#work_Date').val("");
-  $('#work_User').val("");
-  $('#work_Task').val("");
-});
-
-$( ".delete_Table_Button" ).click(function( event ) {
-  if(!$('.delete_Table_Button').hasClass('disabled')){
-  $('.delete_Table_Button').addClass('disabled');
-  $('#takaritasirend tr:first ').append("<td class='deleteRowTitle'></td>");
-  $('#takaritasirend tr:not(:first)').each(function(i){
-    console.log(i);
-    $(this).append('<td class="deleteRow"><button type="button" class="btn btn-danger delRowBtn" onclick="deleteWork('+i+')" id="del_'+i+'"><span aria-hidden="true">&times;</span></button></td>');
- });   
- }
-});
-
-function deleteWork(index){
-  //$(('#takaritasirend tr').eq(i))
-  //Dátum, felhasználónév, és Elvégzendő feladat lekérése
-  toBeDeleted_Date= $('#takaritasirend tr').find('td:nth-child(1)').eq(index).text();
-  toBeDeleted_userName= $('#takaritasirend tr').find('td:nth-child(2)').eq(index).text();
-  toBeDeleted_workDescription= $('#takaritasirend tr').find('td:nth-child(3)').eq(index).text();
-  //console.log(toBeDeleted_Date+toBeDeleted_userName+toBeDeleted_workDescription)
-  
-  $.ajax({
-       url:"delete_work.php",
-       type:"POST",
-       async: true,
-       data:{date:toBeDeleted_Date, user:toBeDeleted_userName, task:toBeDeleted_workDescription},
-       success:function(result)
-       {
-        if(result=200){
-          //Sikeres a törlés
-          $('#takaritasirend tr').eq(index+1).fadeOut(600);
-          $('#takaritasirend tr').eq(index+1).remove();
-          setInterval(function(){ deleteTableIfNoTask(); }, 600);
-          
-        }else{
-          console.log(result);
-          console.log("A törlés nem futott le sikeresen.")
-        }
-       }
-      })
-};
-//Csak a saját feladatok mutatása
-
-$('#showOnlyMyTasks_checkBox').change(function() {
-        if(this.checked) {
-            console.log("Check!");
-            $('table#takaritasirend > tbody > tr').not(':first').remove();//Címsor után minden törlése
-            $.ajax({
-       url:"./render_work_Data.php",
-       type:"POST",
-       async: true,
-       // a PHP szkript utasítást kap, hogy csak egy felhasználóra vagyunk kíváncsiak.
-       data:{mode:'UserFiltered'}, 
-       success:function(result)
-       {
-        //alert(result);
-        if(result!=400){
-        sentBack_result=JSON.parse(result);
-        console.log(sentBack_result);
-
-        if(sentBack_result.message=="success"){
-          for (let index = 0; index < sentBack_result.data.length; index++) {
-            $('#takaritasirend tr:last').after('<tr><td>'+sentBack_result.data[index].datum+'</td><td>'+sentBack_result.data[index].szemely+'</td><td>'+sentBack_result.data[index].feladat+'</td></tr>');
-          }
-        }
-       }else{
-        $('#statusMessage').text("Nincs megjeleníthető adat.");
-       }
-      }
-      })
-            
-        }else{
+        if(result==200){
           location.reload();
-        }   
-    });
-//DRAG
-
-function allowDrop(ev) {
-  ev.preventDefault();
+        }
+        if(result==201){
+          $('#tr'+ID).css('color', 'red');
+          $('#tr'+ID).find("td:eq(0)").html("Már jelentkeztél!");
+        }
+        if(result==202){
+          $('#tr'+ID).css('color', 'red');
+          $('#tr'+ID).find("td:eq(0)").html("Nincs szabad hely!");
+        }
+       }
+});
 }
 
-function drag(ev) {
-  ev.dataTransfer.setData("text", ev.target.id);
+function addWork(){
+  var Date=$('#work_Date').val();
+        $.ajax({
+       url:"maintenanceManager.php",
+       type:"POST",
+       async: true,
+       data:{method:"add",Date:Date},
+       success:function(result)
+       {
+        if(result==200){
+          location.reload();
+        }
+       }
+});
 }
 
-function drop(ev) {
-  ev.preventDefault();
-  var data = ev.dataTransfer.getData("text");
-  ev.target.appendChild(document.getElementById(data));
+function deleteWork(ID){
+  var Date=$('#work_Date').val();
+        $.ajax({
+       url:"maintenanceManager.php",
+       type:"POST",
+       async: true,
+       data:{method:"delete",workID:ID},
+       success:function(result)
+       {
+        if(result==200){
+          location.reload();
+        }
+       }
+});
 }
+
+function deleteUserFromWork(ID,userN){
+  console.log(ID+userN);
+  var Date=$('#work_Date').val();
+        $.ajax({
+       url:"maintenanceManager.php",
+       type:"POST",
+       async: true,
+       data:{method:"deleteUser",workID:ID,user:userN},
+       success:function(result)
+       {
+        if(result==200){
+          location.reload();
+        }else{
+          console.log(result)
+        }
+       }
+});
+}
+
+
+
+function modifyStatus(ID){
+      var s1=$('#tr'+ID).find("td:eq(2)").find(":selected").val();
+      var s2=$('#tr'+ID).find("td:eq(4)").find(":selected").val();
+        $.ajax({
+       url:"maintenanceManager.php",
+       type:"POST",
+       async: true,
+       data:{method:"modify",workID:ID,status1:s1,status2:s2},
+       success:function(result)
+       {
+        if(result==200){
+          location.reload();
+        }else{
+          console.log(result)
+        }
+       }
+});
+}
+
+function renderWork(){
+      $.ajax({
+       url:"maintenanceManager.php",
+       type:"POST",
+       async: true,
+       data:{method:"get"},
+       success:function(result)
+       {
+        result=JSON.parse(result);
+        if(result[0]=="Admin"){
+          $('.takaritasirend').append('<tr><th>Dátum</th><th>1. Személy</th><th>Státusz</th><th>2. Személy</th><th>Státusz</th><th></th></tr>');
+                  result[1].forEach(element => {
+          //console.log(element);
+          
+          switch (element['szemely1_Status']) {
+            case 'Y':
+              SZ1Status='<select name="szemelyStatus"><option value="Y" selected>OK</option><option value="N">Nem végezte el</option><option value="B">Beteg</option><option value="E">Egyéb</option></select>'
+              break;
+            case 'N':
+              SZ1Status='<select name="szemelyStatus"><option value="Y">OK</option><option value="N" selected>Nem végezte el</option><option value="B">Beteg</option><option value="E">Egyéb</option></select>'
+              break;
+            case 'B':
+              SZ1Status='<select name="szemelyStatus"><option value="Y">OK</option><option value="N">Nem végezte el</option><option value="B" selected>Beteg</option><option value="E">Egyéb</option></select>'
+              break;
+            case 'E':
+              SZ1Status='<select name="szemelyStatus"><option value="Y">OK</option><option value="N">Nem végezte el</option><option value="B">Beteg</option><option value="E" selected>Egyéb</option></select>'
+              break;
+            default:
+              SZ1Status='❓';
+              break;
+          }
+          switch (element['szemely2_Status']) {
+            case 'Y':
+              SZ2Status='<select name="szemelyStatus"><option value="Y" selected>OK</option><option value="N">Nem végezte el</option><option value="B">Beteg</option><option value="E">Egyéb</option></select>'
+              break;
+            case 'N':
+              SZ2Status='<select name="szemelyStatus"><option value="Y">OK</option><option value="N" selected>Nem végezte el</option><option value="B">Beteg</option><option value="E">Egyéb</option></select>'
+              break;
+            case 'B':
+              SZ2Status='<select name="szemelyStatus"><option value="Y">OK</option><option value="N">Nem végezte el</option><option value="B" selected>Beteg</option><option value="E">Egyéb</option></select>'
+              break;
+            case 'E':
+              SZ2Status='<select name="szemelyStatus"><option value="Y">OK</option><option value="N">Nem végezte el</option><option value="B">Beteg</option><option value="E" selected>Egyéb</option></select>'
+              break;
+            default:
+              SZ2Status='❓';
+              break;
+          }
+
+          
+        $('.takaritasirend').append('<tr id=tr'+element['id']+'><td>'+element['datum']+'</td><td>'+element['szemely1']+'</td><td>'+
+        SZ1Status+'</td><td>'+element['szemely2']+'</td><td>'+SZ2Status+'</td><td><button class="btn btn-warning" onclick=modifyStatus('+element['id']+')>Módosít</button> <button class="btn btn-success" onclick=applyToWork('+element['id']+')>Jelentkezem</button> <button class="btn btn-danger" onclick=deleteWork('+element['id']+')>Törlés</button></td></tr>');
+        if(element['szemely1']!=null){$('#tr'+element['id']).find("td:eq(1)").append(' <button class="btn btn-danger" style="float: right; margin-left: 10px; margin-right: 5px;" onclick=deleteUserFromWork('+element['id']+',1)>X</button>')}
+        if(element['szemely2']!=null){$('#tr'+element['id']).find("td:eq(3)").append(' <button class="btn btn-danger" style="float: right; margin-left: 10px; margin-right: 5px;" onclick=deleteUserFromWork('+element['id']+',2)>X</button>')}
+        });
+        }else{
+           $('.takaritasirend').append('<tr><th>Dátum</th><th>1. Személy</th><th>2. Személy</th></tr>');
+
+        result[0].forEach(element => {
+          console.log(element);
+
+        if(element['szemely1']==null){
+          element['szemely1']="<button style='display: block; margin: auto;' class='btn btn-success' onclick=applyToWork("+element['id']+")>Jelentkezés</button>"
+        }else{
+        
+        }
+        if(element['szemely2']==null){
+          element['szemely2']="<button style='display: block; margin: auto;' class='btn btn-success' onclick=applyToWork("+element['id']+")>Jelentkezés</button>"
+        }else{
+        
+        }
+
+        $('.takaritasirend').append('<tr id=tr'+element['id']+'><td>'+element['datum']+'</td><td>'+element['szemely1']+'</td><td>'+element['szemely2']+'</td></tr>');
+        });
+        }
+       }
+});
+}
+
 
 </script>

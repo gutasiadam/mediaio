@@ -42,7 +42,7 @@ $serverType = parse_ini_file(realpath('../server/init.ini')); // Server type det
     </ul>
     <ul class="navbar-nav navbarPhP">
       <li>
-        <a class="nav-link disabled timelock" href="#">⌛ <span id="time"> 10:00 </span><?php if ($_SESSION['role']>=3){echo' Admin jogok';}?>
+        <a class="nav-link disabled timelock" href="#"><span id="time"> 10:00 </span><?php echo ' '.$_SESSION['UserUserName'];?>
         </a>
       </li>
     </ul>
@@ -109,7 +109,7 @@ $serverType = parse_ini_file(realpath('../server/init.ini')); // Server type det
               <h6 id="emailHelp" class="form-text text-muted">A kipipálással igazolom, hogy amit visszahoztam sérülésmentes, és kifogástalanul működik. Sérülés esetén azonnal jelezd azt a vezetőségnek.</h6>
               <button type="button" class="btn btn-secondary" data-dismiss="modal">❌</button>
                   <button type="submit" id="'.$imodal.'" onClick="reply_click(this.id)" class="btn go_btn btn-success disabled">☑</button>
-                  <a href="../utility/damage_report/annouce_Damage.php" class="btn go_btn btn-warning">Problémát jelentek be</a>
+                  <a href="../utility/damage_report/announce_Damage.php" class="btn go_btn btn-warning">Problémát jelentek be</a>
                   
                   <p class="sysResponse"> </p>
             </div>
