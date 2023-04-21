@@ -1,4 +1,6 @@
 <?php
+use Mediaio\Database;
+require_once "../Database.php";
 session_start();
 include("header.php");
  if ($_SESSION['role']>=3){ ?>
@@ -77,7 +79,38 @@ $conn->close();
 <table>
 <tr><td><h2><?php echo $row_cnt3 ?>/<span class="text text-success"><?php echo $row_cnt4 ?></span> tárgy van benn.</h2><h6>(<?php echo number_format((float)(($row_cnt4/$row_cnt3)*100),2,'.', ''); ?>%)</h6></td></tr>
 <tr><td>Az elmúlt 7 napban <span class="text text-success"><?php echo $row_cnt ?></span>db eseményt hoztak létre. <span class="text text-danger"><?php echo $prep_cnt ?></span> megerősítésre vár. (összesen <?php echo $row_cnt2 ?> esemény a naptárban.)  </td></tr>
-<tr><td><?php echo $row_cnt5 ?> felhasználó regisztrálva.</td></tr></table>
+<tr><td><?php echo $row_cnt5 ?> felhasználó regisztrálva.</td></tr>
+</table>
+      </br>
+<h3 align=left >Legutóbbi hét eseményei</h1>
+<table class="table table-bordered">
+  <?php
+  // $conn = new mysqli("localhost", "root", "umvHVAZ%", "mediaio");
+  // $sql = ("SELECT * FROM takelog ORDER BY Date DESC LIMIT 10");
+  // $result = $conn->query($sql) or die($conn->error);
+
+  $connectionObject=Database::runQuery_mysqli();
+        $query = "SELECT * FROM takelog WHERE Date >= DATE_SUB(CURRENT_DATE(), INTERVAL 7 DAY);";
+       // echo $query;
+        $result=mysqli_query($connectionObject,$query);
+        echo '<tr><th>Dátum</th><th>Felhasználó</th><th>Tárgy</th><th>Esemény</th><th>✔?</th><th>Usercheckelte:</th></tr>';
+        foreach($result as $row)
+           {
+            $ackcol="?";
+            if($row['Acknowledged']=="1"){
+              $ackcol="✔";
+            }else{
+              $ackcol="❌";
+            }
+
+            $event="?";
+            if($row['Event']=="SERVICE"){
+              $event="🔧";
+            }else{$event=$row['Event'];} 
+            echo '<tr><td>'.$row['Date'].'</td><td>'.$row['User'].'</td><td>'.$row['Item'].'</td><td>'.$event.'</td><td>'.$ackcol.'</td><td>'.$row['ACKBY'].'</td></tr>';
+           }
+  ?>
+</table>
 </body>
 
  <?php }else{echo "<h2 class='text text-danger'>Nincs jogosultságod az oldal megtekintéséhez.</h2>";}?>

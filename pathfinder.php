@@ -98,31 +98,26 @@ if(isset($_SESSION['UserUserName'])){
               echo '<div class="timeline__item ">
               <div class="timeline__content service">
                <h2>'. $row["Date"]. ' ('. $row["User"] . ')</h2>
-               <h6>Jóváhagyásra vár.</h6>
-              </div>
-             </div>';
+               <h6>Jóváhagyásra vár.</h6></div></div>';
             }else{
             if($row["Event"]=="OUT"){
               echo '<div class="timeline__item ">
               <div class="timeline__content out">
-               <h2>'. $row["Date"]. ' ('. $row["User"] .')</h2>
-              </div>
-             </div>';} 
+               <h2>'. $row["Date"]. ' ('. $row["User"] .')</h2>';} 
             if($row["Event"]=="IN"){
               echo '<div class="timeline__item ">
               <div class="timeline__content in">
-               <h2>'. $row["Date"]. ' ('. $row["User"] . ')</h2>
-              </div>
-             </div>';
+               <h2>'. $row["Date"]. ' ('. $row["User"] . ')</h2>';
             }
             if($row["Event"]=="SERVICE"){
               echo '<div class="timeline__item ">
               <div class="timeline__content service">
                <h2>'. $row["Date"]. ' ('. $row["User"] . ')</h2>
-               <h6>Szervizelés</h6>
-              </div>
-             </div>';
+               <h6>Szervizelés</h6>';
             }
+            if($row["ACKBY"]!=NULL)
+            echo '<h6 style="color: grey;">✔: '. $row["ACKBY"]. '</h6>';
+            echo '</div></div>';
             }
 
             /*if($row["Event"]=="INwA"){

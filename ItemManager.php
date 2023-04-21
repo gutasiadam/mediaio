@@ -26,22 +26,23 @@ class takeOutManager{
           $dataArray=array();
           foreach($data as $d){
             //() rész kivágása a dból
-            $substrings = explode(" (", $d);
+            $substrings = explode(" [", $d);
             $d = $substrings[0];
           array_push($dataArray,ltrim($d));
         }
           //For Use in the SQL query.
           $dataString = "'" . implode ( "','", $dataArray ) . "'";
           //Restore Items allowing others to take it out.
-          $sql="START TRANSACTION; UPDATE leltar SET leltar.Status=0 AND RentBy='".$userName."' WHERE leltar.Nev IN (".$dataString.");";
+          $sql="START TRANSACTION; UPDATE leltar SET leltar.Status=0 AND RentBy='".$_POST['user']."' WHERE leltar.Nev IN (".$dataString.");";
           //Acknowledge events in log.
-          $sql.="UPDATE takelog SET Acknowledged=1 WHERE User='".$_POST['user']."' AND Date='".$_POST['date']."' AND EVENT='OUT' AND Item IN (".$dataString."); COMMIT;";
+          $sql.="UPDATE takelog SET Acknowledged=1, ACKBY='".$userName."' WHERE User='".$_POST['user']."' AND Date='".$_POST['date']."' AND EVENT='OUT' AND Item IN (".$dataString."); COMMIT;";
       
           $connection=Database::runQuery_mysqli();
           if(!$connection->multi_query($sql)){
             printf("Error message: %s\n", $connection->error);
           }else{
             //All good, return OK message
+            //////echo $sql;
             echo 200;
             return;
           }
@@ -56,7 +57,7 @@ class takeOutManager{
           $dataArray=array();
           foreach($data as $d){
             //() rész kivágása a dból
-            $substrings = explode(" (", $d);
+            $substrings = explode(" [", $d);
             $d = $substrings[0];
           array_push($dataArray,ltrim($d));
           
@@ -107,7 +108,7 @@ class retrieveManager{
     $countOfRec+=1;
     foreach($data as $d){
             //() rész kivágása a dból
-            $substrings = explode(" (", $d);
+            $substrings = explode(" [", $d);
             $d = $substrings[0];
           array_push($dataArray,ltrim($d));
     }
@@ -122,11 +123,13 @@ class retrieveManager{
       START TRANSACTION; UPDATE leltar SET leltar.Status=1, leltar.RentBy=NULL WHERE leltar.Nev IN (".$dataString.");";
       $sql.="INSERT INTO takelog VALUES";
     foreach($data as $d){
-      $sql.="(NULL, '$currDate', '$currDate', '$userName', '$d', 'IN',1),";
+      $sql.="(NULL, '$currDate', '$currDate', '$userName', '$d', 'IN',1,'$userName'),";
     }
+    
       //Removes last comma from sql command.
       $sql=substr_replace($sql, "", -1);
       $sql.="; COMMIT;";
+      //////echo $sql;
         if(!$connection->multi_query($sql)){
           printf("Error message: %s\n", $connection->error);
         }else{
@@ -139,7 +142,7 @@ class retrieveManager{
       START TRANSACTION; UPDATE leltar SET leltar.Status=2, leltar.RentBy=NULL WHERE leltar.Nev IN (".$dataString.");";
       $sql.="INSERT INTO takelog VALUES";
     foreach($data as $d){
-      $sql.="(NULL, '1', '$currDate', '$userName', '$d', 'IN',0),";
+      $sql.="(NULL, '1', '$currDate', '$userName', '$d', 'IN',0,NULL),";
     }
       //Removes last comma from sql command.
       $sql=substr_replace($sql, "", -1);
@@ -175,14 +178,14 @@ class retrieveManager{
       //Restore Items allowing others to take it out.
       $sql="START TRANSACTION; UPDATE leltar SET leltar.Status=1 WHERE leltar.Nev IN (".$dataString.");";
       //Acknowledge events in log.
-      $sql.="UPDATE takelog SET Acknowledged=1 WHERE User='".$_POST['user']."' AND Date='".$_POST['date']."' AND EVENT='IN' AND Item IN (".$dataString."); COMMIT;";
+      $sql.="UPDATE takelog SET Acknowledged=1, ACKBY='".$userName."' WHERE User='".$_POST['user']."' AND Date='".$_POST['date']."' AND EVENT='IN' AND Item IN (".$dataString."); COMMIT;";
 
       $connection=Database::runQuery_mysqli();
       if(!$connection->multi_query($sql)){
         echo "Error message: %s\n".$connection->error;
       }else{
         //All good, return OK message
-        //echo $sql;
+        //////echo $sql;
         echo 200;
         return;
       }

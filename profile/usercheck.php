@@ -98,7 +98,7 @@ ORDER BY
     $items=Database::runQuery($sql);
     while($itemsRow = $items->fetch_assoc()) {
       //echo var_dump($query1Row); //Only for debug reasons.
-      $itemString.=$itemsRow['Item']." (".$itemsRow['UID'].")"."   -  ";
+      $itemString.=$itemsRow['Item']." [".$itemsRow['UID']."]"."   -  ";
     }
     //$itemString=substr_replace($itemString, "", -1);
     echo "<tr id=event".$recCount."><td>".$query1Row["Date"]."</td><td>".$query1Row["User"]. "</td><td style='line-height: 200%; font-size: 18px;'>".$itemString."</td><td>".$query1Row["Event"]."</td>
@@ -130,7 +130,7 @@ function acceptEvent(n){
   var i=0;
   items.forEach(element => {
     console.log(element);
-    items[i]=element.split('(')[0].trim();
+    items[i]=element.split('[')[0].trim();
     console.log(items[i]);
     i++;
   });
@@ -157,6 +157,7 @@ function acceptEvent(n){
         $('#event'+n).fadeOut();
       }else{
         console.log("Backend error.");
+        alert(response);
       }
     },
     error: function(XMLHttpRequest, textStatus, errorThrown) { 
@@ -193,6 +194,7 @@ function declineEvent(n){
         $('#event'+n).fadeOut();
       }else{
         console.log("Backend error.");
+        alert(response);
       }
     },
     error: function(XMLHttpRequest, textStatus, errorThrown) { 

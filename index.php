@@ -41,9 +41,11 @@ include "header.php";
     </a>
   </div>
 </nav> <?php  } ?><body><?php
-    if (!isset($_SESSION["userId"])) { ?><form class="login" action="utility/userLogging.php" method="post" autocomplete="off">
+    if (!isset($_SESSION["userId"])) { ?>
+    
+    <form class="login" action="utility/userLogging.php" method="post" autocomplete="off">
       <fieldset>
-        <legend id="zsoka" class="legend"> MediaIO </legend>
+        <legend id="zsoka" class="legend text"> MediaIO </legend>
         <div class="input">
           <input type="text" name="useremail" placeholder="Felhasználónév/E-mail" required />
           <span>
@@ -63,16 +65,18 @@ include "header.php";
       <div class="feedback"> átirányítás.. <br />
       </div>
       <div>
-        <h3 id="errorbox"></h3>
+        
       </div>
+      
     </form><h6 align=center id="SystemMsg" class="successtable2" style="display:none;"></h6><footer class="page-footer font-small blue">
       <div class="fixed-bottom" align="center">
+        <h3 id="errorbox"></h3>
         <a href="./profile/lostPwd.php">
           <h6>Elfelejtett jelszó?</h6>
         </a>
-        <p>
-          </strong>
-          <br /> Code by <a href="https://github.com/gutasiadam">Adam Gutasi</a>
+        <p class="Footer">
+          <h6 class="text success text-success">🔧 Az e-mailek küldése ismét üzemel. </h6>
+          Code by <a href="https://github.com/gutasiadam">Adam Gutasi</a>
         </p>
       </div>
     </footer></div><script>
@@ -104,6 +108,19 @@ include "header.php";
         $(".login").submit();
       });
     </script><style>
+
+    @media (min-height: 500px) {
+  footer {
+    display: block;
+  }
+      }
+
+      @media (max-height: 499px) {
+        footer {
+          display: none;
+        }
+      }
+
       #errorbox {
         position: relative;
         text-align: center;
@@ -127,7 +144,7 @@ include "header.php";
         background: #1d2660;
         padding: 15px;
         color: #fff;
-        font-size: 20px;
+        font-size: 25px;
 
         &:after {
           content: "";
@@ -223,7 +240,9 @@ include "header.php";
           border-width: 10px;
           margin-left: -10px;
         }
+
       }
+
     </style><?php } else { ?><div class="alert alert-warning alert-dismissible fade show" id="note" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><strong>Kedves <?php echo $_SESSION[
       "firstName"
   ]; ?>!</strong> Az oldal <u>folyamatos fejlesztés</u> alatt áll. Ha hibát szeretnél bejelenteni/észrevételed van, írj az arpadmedia.io@gmail.com címre, vagy <a href="mailto:arpadmedia.io@gmail.com?Subject=MediaIO%20Hibabejelent%C3%A9s" target="_top">írj most egy e-mailt!</a></div><h1 align=center class="rainbow">Árpád Média IO</h1><div class="row justify-content-center mainRow1" style="text-align: center; width:100%; max-width: 1000px; margin: 0 auto;"></div><br><div class="row justify-content-center mainRow2" style="text-align: center; width:100%; max-width: 1000px; margin: 0 auto;"></div><br><div class="row justify-content-center mainRow3" style="text-align: center; width:100%; max-width: 1000px; margin: 0 auto;"></div><br>
