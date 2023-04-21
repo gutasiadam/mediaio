@@ -16,11 +16,11 @@ class Config
 
     const OAUTH_USER_EMAIL = 'arpadmedia.io@gmail.com';
 
-    const OAUTH_CLIENT_ID = '335212318485-2k869eim01dra9eaurogo5lqjall05ug.apps.googleusercontent.com';
+    const OAUTH_CLIENT_ID = '335212318485-38buk9a080tub4o6evjgdqap8vd9t0rp.apps.googleusercontent.com';
 
-    const OAUTH_SECRET_KEY = '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';
+    const OAUTH_SECRET_KEY = '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';
 
-    const REFRESH_TOKEN = '1//09D5yivQe9g99CgYIARAAGAkSNwF-L9Ir1UbUfiE6qgC0ahRtofDzWOZBH1kcti0YI0q4aSiwZOCwi3R-fTeoFwtirC-IdFOnXc0';
+    const REFRESH_TOKEN = '1//096dHfSMj84jQCgYIARAAGAkSNwF-L9IrOERj0Idt-ZMV5Y4_B4o982k1rPad6cOTexH6sIBj80UIgaTq_CZrrPpiMqTCCVjd-EI';
 
     const SMTP_HOST = 'smtp.gmail.com';
 

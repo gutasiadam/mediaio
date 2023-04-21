@@ -1,12 +1,6 @@
 <?php
 error_reporting(E_ERROR | E_WARNING | E_PARSE );
 session_start();
-$serverType = parse_ini_file(realpath('../server/init.ini')); // Server type detect
-    if($serverType['type']=='dev'){
-      $setup = parse_ini_file(realpath('../../../mediaio-config/config.ini')); // @ Dev
-    }else{
-      $setup = parse_ini_file(realpath('../../mediaio-config/config.ini')); // @ Production
-    }
 $SESSuserName = $_SESSION['UserUserName'];
 
 if( isset($_POST['takeoutData'])){
@@ -28,7 +22,7 @@ if( isset($_POST['takeoutData'])){
         $id=number_format($i["id"]);
         if ($id<1000){
         $currDate = date("Y/m/d H:i:s");
-        $conn = new mysqli($setup['dbserverName'], $setup['dbUserName'], $setup['dbPassword'], $setup['dbDatabase']);
+        $conn = new mysqli('localhost', 'root', 'umvHVAZ%', 'mediaio');
         //$conn = new mysqli($serverName, $dbUserName, $dbPassword, $dbDatabase);
     if ($conn->connect_error) {
       die("Connection fail: (Is the DB server maybe down?)" . $conn->connect_error);
@@ -38,7 +32,7 @@ if( isset($_POST['takeoutData'])){
       $result = $conn->query($sql);
       $conn->close();
       if ($result === TRUE) {
-        $conn = new mysqli($setup['dbserverName'], $setup['dbUserName'], $setup['dbPassword'], $setup['dbDatabase']);
+        $conn = new mysqli('localhost', 'root', 'umvHVAZ%', 'mediaio');
         $sql2 = ("UPDATE leltar SET Status = 2, RentBy = '$SESSuserName' WHERE `Nev`='$nev'");
         $result2 = $conn->query($sql2);
         $conn->close();

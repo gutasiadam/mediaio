@@ -40,6 +40,13 @@ if(isset($_SESSION['UserUserName'])){
     </ul>
     <form method='post' class="form-inline my-2 my-lg-0" action=utility/userLogging.php>
       <button class="btn btn-danger my-2 my-sm-0" name='logout-submit' type="submit">Kijelentkezés</button>
+      <script type="text/javascript">
+        window.onload = function () {
+          display = document.querySelector('#time');
+          var timeUpLoc="utility/userLogging.php?logout-submit=y"
+          startTimer(display, timeUpLoc);
+        };
+      </script>
     </form>
     <a class="nav-link my-2 my-sm-0" href="./help.php">
       <i class="fas fa-question-circle fa-lg"></i>
@@ -140,32 +147,6 @@ if(isset($_SESSION['UserUserName'])){
 </html>
 
 <script>
-
-function startTimer(duration, display) {
-    var timer = duration, minutes, seconds;
-    setInterval(function () {
-        minutes = parseInt(timer / 60, 10)
-        seconds = parseInt(timer % 60, 10);
-
-        minutes = minutes < 10 ? "0" + minutes : minutes;
-        seconds = seconds < 10 ? "0" + seconds : seconds;
-
-        display.textContent = minutes + ":" + seconds;
-
-        if (--timer < 0) {
-            timer = duration;
-            window.location.href = "./utility/logout.ut.php"
-        }
-    }, 1000);
-}
-
-window.onload = function () {
-    var fiveMinutes = 60 * 10 - 1,
-        display = document.querySelector('#time');
-    startTimer(fiveMinutes, display);
-    setInterval(updateTime, 1000);
-    updateTime();
-};
 /*$(document).ready(function(){
  jQuery('.timeline').timeline({
   mode: 'horizontal',
@@ -324,28 +305,9 @@ function searchByUID(){
  d.forEach(element => {
     if(element['UID']==uidName){
       console.log("pfItem="+element['Nev']);
-       window.location.href += "?pfItem="+element['Nev'].replace(/ /g,'+');
+       window.location.href = window.location.href.split("?")[0]+"?pfItem="+element['Nev'].replace(/ /g,'+');
     }
  });
-}
-  // autologout
-
-function startTimer(duration, display) {
-    var timer = duration, minutes, seconds;
-    setInterval(function () {
-        minutes = parseInt(timer / 60, 10)
-        seconds = parseInt(timer % 60, 10);
-
-        minutes = minutes < 10 ? "0" + minutes : minutes;
-        seconds = seconds < 10 ? "0" + seconds : seconds;
-
-        display.textContent = minutes + ":" + seconds;
-
-        if (--timer < 0) {
-            timer = duration;
-            window.location.href = "./utility/logout.ut.php"
-        }
-    }, 1000);
 }
 
 </script>

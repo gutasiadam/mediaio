@@ -2,14 +2,8 @@
 
     include ("../profile/header.php");
         session_start();
-        $serverType = parse_ini_file(realpath('../server/init.ini')); // Server type detect
-    if($serverType['type']=='dev'){
-      $setup = parse_ini_file(realpath('../../../mediaio-config/config.ini')); // @ Dev
-    }else{
-      $setup = parse_ini_file(realpath('../../mediaio-config/config.ini')); // @ Production
-    }
         if ($_SESSION['role']>=3){
-            $connect = new PDO("mysql:host=localhost;dbname=mediaio",$setup['dbUserName'], $setup['dbPassword']);?>
+            $connect = new PDO("mysql:host=localhost;dbname=mediaio","root", "umvHVAZ%");?>
 <?php if (isset($_SESSION["userId"])) { ?> <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
   <a class="navbar-brand" href="index.php">
     <img src="../utility/logo2.png" height="50">
@@ -150,6 +144,28 @@
   height: 100vh;
 }
 </style>
+
+<!--Temporary development modal-->
+<div class="modal fade" id="WIPModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Fejlesztés alatt</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <h5><p>Kedves felhasználó!</p></h5>
+        <p>Az oldal feljesztése folyamatban van, kérlek ne használd ezt a funkciót.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Bezárás</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="modal fade" id="budgetModal" tabindex="-1" role="dialog" aria-labelledby="budgetModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -234,6 +250,7 @@ function startTimer(duration, display) {
 }
 
 window.onload = function () {
+   $('#WIPModal').modal();
     var fiveMinutes = 10 * 60 - 1,
         display = document.querySelector('#time');
     startTimer(fiveMinutes, display);

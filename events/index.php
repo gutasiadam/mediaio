@@ -5,7 +5,7 @@ if(!isset($_SESSION['userId'])){
 #echo $_SESSION['color'];
 ?><html lang='en'>
   <head>
-    <title>MediaIO</title>
+    <title>Arpad Media IO</title>
     <link rel="icon" type="image/x-icon" href="../logo.ico">
   <link href='../main.css' rel='stylesheet' />
   <div class="UI_loading"><img class="loadingAnimation" src="../utility/mediaIO_loading_logo.gif"></div>
@@ -254,47 +254,11 @@ function closeNav() {
   document.getElementById("sideHelp1").style.width = "0";
 }
 
-(function(){
-  setInterval(updateTime, 1000);
-});
-
-function startTimer(duration, display) {
-    var timer = duration, minutes, seconds;
-    setInterval(function () {
-      minutes = parseInt(timer / 60, 10)
-        seconds = parseInt(timer % 60, 10);
-
-        minutes = minutes < 10 ? "0" + minutes : minutes;
-        seconds = seconds < 10 ? "0" + seconds : seconds;
-
-        display.textContent = minutes + ":" + seconds;
-
-        if (timer > 60){
-          $('#time').animate({'opacity': 0.9}, 0, function(){
-          $(this).html(display.textContent).animate({'opacity': 1}, 500);
-          setTimeout(function() { $("#time").text(display.textContent).animate({'opacity': 1}, 250); }, 700);;});
-        }
-
-        if (timer < 60){
-          $('#time').animate({'opacity': 0.9}, 0, function(){
-          $(this).html("<font color='red'>"+display.textContent+"</font").animate({'opacity': 1}, 500);
-          setTimeout(function() { $("#time").html("<font color='red'>"+display.textContent+"</font").animate({'opacity': 1}, 250); }, 700);;});
-        }
-
-        if (--timer < 0) {
-            timer = duration;
-            window.location.href = "../utility/logout.ut.php"
-        }
-    }, 1000);
-}
-
 window.onload = function () {
   $('#WIPModal').modal()
-    var fiveMinutes = 60 * 10 - 1,
-        display = document.querySelector('#time');
-    startTimer(fiveMinutes, display);
-    setInterval(updateTime, 1000);
-    updateTime();
+  display = document.querySelector('#time');
+  var timeUpLoc="../utility/userLogging.php?logout-submit=y"
+  startTimer(display, timeUpLoc);
 };
 
 $( document ).ready(function() {

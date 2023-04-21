@@ -101,7 +101,7 @@ class Core{
                         $hashedpwd = password_hash($postData['password'], PASSWORD_BCRYPT); 
                         $sql = "UPDATE users SET pwdUsers='$hashedpwd' WHERE usernameUsers='".$postData['username']."';";
                         $result=Database::runQuery($sql);
-                                //E-mail küldése a felhasznßálónak
+                                //E-mail küldése a felhasználónak
                                 $content = '
                                 <html>
                                 <head>
@@ -335,12 +335,12 @@ if(isset($_POST['register'])){
     $numRows = mysqli_num_rows($result);
     if ($numRows!=1){
         //echo $numRows;
-        header("Location: ./signup.php?error=SQLError");
+        header("Location: ./profile/lostPwd.php?error=tokenError");
         exit();
     }else{
         while($row = $result->fetch_assoc()) {
             $hashedpwd = password_hash($_POST['chPwd-1'], PASSWORD_BCRYPT); 
-            $sql = "UPDATE users SET pwdUsers='".$hashedpwd."' WHERE usernameUsers='".$_POST['userName']."';";
+            $sql = "UPDATE users SET pwdUsers='".$hashedpwd."', token=NULL WHERE usernameUsers='".$_POST['userName']."';";
                         $result=Database::runQuery($sql);
                                 //E-mail küldése a felhasznßálónak
                                 $content = '
