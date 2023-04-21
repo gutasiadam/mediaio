@@ -63,7 +63,7 @@
                     
                     
                     echo '<tr><td><form action="stats.php"><button class="btn btn-dark">Áttekintés <i class="fas fa-chart-pie"></i></i></button></form></td></tr>';
-                    if($_SESSION['role']==5){
+                    if($_SESSION['role']==99){ //SYSADMIN
                       echo '
                       <tr><td><form action="roles.php"><button class="btn btn-danger">Engedélyek módosítása <i class="fas fa-radiation"></i></i></button></form></td></tr>
                       <tr><td><form action="../utility/refetchData.php"><button class="btn btn-success disabled">Adattáblák frissítése - Frissíts a kivétel oldal betöltésével! <i class="fas fa-sync"></i></i></button></form></td></tr>';

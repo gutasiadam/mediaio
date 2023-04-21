@@ -127,10 +127,11 @@ imodal++;
                 <h2 class="text text-' .
            $rangColors[$row["Userrole"] - 1] .
            '">' .
-           $rangok[$row["Userrole"] - 1] .
-           "</h2></div>";
+           $rangok[$row["Userrole"] - 1];
+           if($row["Userrole"] == 99) echo "sysadmin";
+           echo "</h2></div>";
        if ($_SESSION["role"] >= 3) { ?>
-    <?php if ($row["usernameUsers"] != $TKI && $_SESSION["role"] == 5) {
+    <?php if ($row["usernameUsers"] != $TKI && $_SESSION["role"] == 99) {
         echo '
                   <form method="POST" action=../Core.php>
                   <div class="form-check form-check-inline">
@@ -145,7 +146,7 @@ imodal++;
   <input class="form-check-input" type="checkbox" name="studioCheckbox" id="studioCheckBox" value="2">
   <label class="form-check-label" for="studioCheckBoxLabel">stúdiós</label>
 </div>';
-        if ($row["usernameUsers"] != $TKI && $_SESSION["role"] == 5) {
+        if ($row["usernameUsers"] != $TKI && $_SESSION["role"] == 99) {
             echo '<button class="btn btn-warning" type="submit">Módosítás</button>';
         }
         echo "</form>";

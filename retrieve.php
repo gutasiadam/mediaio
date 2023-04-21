@@ -83,7 +83,7 @@ var goStatus = 0;
         while($row = $result->fetch_assoc()) {
           //var_dump($row);
           $n++;
-          echo '<div class="result dynamic-field"><button id="'.$row['UID'].'" class="btn btn-dark" onclick="'."prepare(this.id,'".$row['Nev']."'".');'.'"'.'>'.$row['Nev'].' ('.$row['UID'].')'.' <i class="fas fa-angle-double-right"></i></button></div>';
+          echo '<div class="result dynamic-field"><button id="'.$row['UID'].'" class="btn btn-dark" onclick="'."prepare(this.id,'".$row['Nev']."'".');'.'"'.'>'.$row['Nev'].' ['.$row['UID'].']'.' <i class="fas fa-angle-double-right"></i></button></div>';
           //echo '<div class="result dynamic-field"><button id="'.$row['UID'].'" class="btn btn-dark" onclick="'."prepare(this.id,'".$row['Nev']." ".$row['UID']."'".');'.'"'.'>'.$row['Nev'].' ('.$row['UID'].')'.' <i class="fas fa-angle-double-right"></i></button></div>';
       }
       if($n==0){
@@ -186,7 +186,6 @@ $('table > tbody  > tr > td > button ').each(function(index, tr) {
     url: './ItemManager.php',
     data: {data : retrieveJSON, mode: "retrieveStaging"},
     success: function (response){
-      //alert(response);
       $('#doTitle').animate({'opacity': 0}, 400, function(){
         $(this).html('<h2 class="text text-info" role="success">Sikeresen visszakerültek a tárgyak ! Az oldal újratölt.</h2>').animate({'opacity': 1}, 400);
         $(this).html('<h2 class="text text-info" role="success">Sikeresen visszakerültek a tárgyak ! Az oldal újratölt.</h2>').animate({'opacity': 1}, 3000);
