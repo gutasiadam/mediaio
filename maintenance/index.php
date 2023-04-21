@@ -99,17 +99,12 @@ error_reporting(E_ALL | E_WARNING | E_NOTICE);
 
 <script>
 //Ha nincs feladat, ne is jelenjen meg a táblázat:
-
 window.onload = function () {
+            display = document.querySelector('#time');
+          var timeUpLoc="./userLogging.php?logout-submit=y"
+          startTimer(display, timeUpLoc);
   renderWork();
   $('#processing').hide();
-    var fiveMinutes = 10 * 60 - 1,
-        display = document.querySelector('#time');
-    startTimer(fiveMinutes, display);
-    (function(){
-  setInterval(updateTime, 1000);
-});
-    updateTime();
 };
 
 function applyToWork(ID){

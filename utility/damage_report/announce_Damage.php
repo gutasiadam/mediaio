@@ -104,6 +104,27 @@ $TKI = $_SESSION['UserUserName'];
 </form>
   </div>
 
+<!--Temporary development modal-->
+<div class="modal fade" id="WIPModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Fejlesztés alatt</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <h5><p>Kedves felhasználó!</p></h5>
+        <p>Az oldal feljesztése folyamatban van, kérlek ne használd ezt a funkciót.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Bezárás</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="modal fade" id="checkModal" tabindex="-1" role="dialog" aria-labelledby="checkLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -242,30 +263,14 @@ function send_report(){
 });
 }
 
-function startTimer(duration, display) {
-    var timer = duration, minutes, seconds;
-    setInterval(function () {
-        minutes = parseInt(timer / 60, 10);
-        seconds = parseInt(timer % 60, 10);
-
-        minutes = minutes < 10 ? "0" + minutes : minutes;
-        seconds = seconds < 10 ? "0" + seconds : seconds;
-
-        display.textContent = minutes + ":" + seconds;
-
-        if (--timer < 0) {
-            timer = duration;
-            window.location.href = "../utility/logout.ut.php";
-        }
-    }, 1000);
-}
 
 window.onload = function () {
-    var fiveMinutes = 60 * 10 - 1,
-        display = document.querySelector('#time');
-    startTimer(fiveMinutes, display);
-    setInterval(updateTime, 1000);
-    updateTime();
+  $('#WIPModal').modal();
+  display = document.querySelector('#time');
+  var timeUpLoc="../userLogging.php?logout-submit=y"
+  startTimer(display, timeUpLoc);
+
+    
 };
 
 

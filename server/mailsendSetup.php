@@ -57,7 +57,7 @@ if (!isset($_GET['code']) && !isset($_GET['provider'])) {
     exit;
 }
 
-require '../vendor/autoload.php';
+require 'vendor/autoload.php';
 
 session_start();
 
@@ -75,17 +75,17 @@ if (!in_array($providerName, ['Google', 'Microsoft', 'Yahoo'])) {
 
 //These details are obtained by setting up an app in the Google developer console,
 //or whichever provider you're using.
-$clientSecret = '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';
-$clientId = '335212318485-2k869eim01dra9eaurogo5lqjall05ug.apps.googleusercontent.com';
+$clientId = 'RANDOMCHARS-----duv1n2.apps.googleusercontent.com';
+$clientSecret = 'RANDOMCHARS-----lGyjPcRtvP';
 
 //If this automatic URL doesn't work, set it yourself manually to the URL of this script
 $redirectUri = (isset($_SERVER['HTTPS']) ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'];
 //$redirectUri = 'http://localhost/PHPMailer/redirect';
 
 $params = [
-    'clientId' => $clientId,
-    'clientSecret' => $clientSecret,
-    'redirectUri' => $redirectUri,
+    'clientId' => '335212318485-38buk9a080tub4o6evjgdqap8vd9t0rp.apps.googleusercontent.com',
+    'clientSecret' => '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',
+    'redirectUri' => 'https://localhost/.git/mediaio/mailsendSetup.php',
     'accessType' => 'offline'
 ];
 

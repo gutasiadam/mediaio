@@ -2,12 +2,6 @@
 <html>
     <?php
     header('Pragma: public'); 
-    $serverType = parse_ini_file(realpath('../server/init.ini')); // Server type detect
-    if($serverType['type']=='dev'){
-      $setup = parse_ini_file(realpath('../../../mediaio-config/config.ini')); // @ Dev
-    }else{
-      $setup = parse_ini_file(realpath('../../mediaio-config/config.ini')); // @ Production
-    }
     require("header.php");
     require("../translation.php");?>
     <script src="../utility/_initMenu.js" crossorigin="anonymous"></script>
@@ -37,6 +31,13 @@
     </ul>
     <form method='post' class="form-inline my-2 my-lg-0" action=../utility/userLogging.php>
       <button class="btn btn-danger my-2 my-sm-0" name='logout-submit' type="submit">Kijelentkezés</button>
+      <script type="text/javascript">
+        window.onload = function () {
+          display = document.querySelector('#time');
+          var timeUpLoc="../utility/userLogging.php?logout-submit=y"
+          startTimer(display, timeUpLoc);
+        };
+      </script>
     </form>
     <a class="nav-link my-2 my-sm-0" href="./help.php">
       <i class="fas fa-question-circle fa-lg"></i>
@@ -89,14 +90,3 @@
   color: red;
 }
 </style>
-<script>
-window.onload = function () {
-    var fiveMinutes = 10 * 60 - 1,
-        display = document.querySelector('#time');
-    startTimer(fiveMinutes, display);
-    (function(){
-  setInterval(updateTime, 1000);
-});
-    updateTime();
-};
-</script>

@@ -16,9 +16,10 @@ console.log("_initMenu file called, loading...");
         return varName;
       };
       
-      function startTimer(duration, display) {
+function startTimer(display, timeUpLoc) {
+    var duration = 60*10-1;
     var timer = duration, minutes, seconds;
-        console.log("Timer start with" + duration);
+    //console.log("Timer start with" + duration);
     setInterval(function () {
         
         minutes = parseInt(timer / 60, 10)
@@ -44,7 +45,7 @@ console.log("_initMenu file called, loading...");
         if (--timer < 0) {
             timer = duration;
             //window.location.href = hrefLoc; // Minden oldalon meg kell adni, hova ugorjon az oldal, ha lejárt a timer.
-            window.location.href = "utility/userLogging.php?logout-submit=y"
+          window.location.href = timeUpLoc;
         }
     }, 1000);
 };

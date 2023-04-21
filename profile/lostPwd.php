@@ -16,6 +16,8 @@
                         echo '<tr><td><h5 class="registererror text text-danger">Hibásan adtad meg a jelenlegi jelszavadat!</h5></td></tr>';
                     }else if ($_GET['error'] == 'userData'){
                       echo '<tr><td><h5 class="registererror text text-danger">A megadott adatokkal nem létezik felhasználó a rendszerben!</h5></td></tr>';
+                    }else if ($_GET['error'] == 'tokenError'){
+                    echo '<tr><td><p class="success">A token, vagy az email cím/felhasználónév párod hibás.</p></td></tr>';
                     }else if ($_GET['error'] == 'none'){
                     echo '<tr><td><p class="success">A tokenedet elküldtük az e-mail címedre! Ezt tudod használni a második lépésben.</p></td></tr>';
                     }else if ($_GET['error'] == 'none'){
