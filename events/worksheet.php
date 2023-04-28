@@ -9,7 +9,14 @@
 </html>
 
 <?php 
-session_start();
+use Mediaio\Core;
+use Mediaio\Database;
+use Mediaio\MailService;
+require __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__.'/../Core.php';
+require_once __DIR__.'/../Database.php';
+require_once __DIR__.'/../Mailer.php';
+
 
 $connect = new PDO("mysql:host=localhost;dbname=mediaio", "root", "umvHVAZ%");
 
@@ -76,7 +83,26 @@ if(isset($_POST["deleteId"])){
 if(isset( $_SESSION['UserUserName'])){
 
 if(isset($_GET['eventId'])){
-    $eventId = $_GET['eventId'];
+  //Get Event Data
+  // Retrieve the event using the events->get() method of the Google Calendar API
+ 
+      putenv('GOOGLE_APPLICATION_CREDENTIALS=./../utility/credentials.json'); // beállítjuk az elérési útvonalat a credentials.json fájlhoz
+    $client = new Google_Client();
+    $client->useApplicationDefaultCredentials();
+    $client->setScopes(['https://www.googleapis.com/auth/calendar']); // beállítjuk a szükséges jogosultságokat
+    $client->setAccessType('offline');
+    // Létrehozunk egy Google_Service_Calendar objektumot a Google Calendar API-hoz való hozzáféréshez
+    $service = new Google_Service_Calendar($client);
+    $calendarId = 'jjpdv8bd3u2s2hj9ehnbh19src@group.calendar.google.com';
+    $eventId= ($_GET['eventId']);
+    // Retrieve the event using the events->get() method of the Google Calendar API
+    $event = $service->events->get($calendarId, $eventId);
+
+    // Display the event details
+    // echo "Event summary: " . $event->getSummary() . "<br>";
+    // echo "Event start time: " . $event->getStart()->getDateTime() . "<br>";
+    // echo "Event end time: " . $event->getEnd()->getDateTime() . "<br>"; 
+    
     //MŰKÖDŐ ÁG
     $connect = new PDO("mysql:host=localhost;dbname=mediaio", "root", "umvHVAZ%");
     //Esemény címénak, egyéb adatainak megtalálása és eltárolása
@@ -93,10 +119,10 @@ if(isset($_GET['eventId'])){
 echo'
 
 
-<title>Munkalap - '.$eventName.'</title>
+<title>Munkalap - '.$event->getSummary().'</title>
 
 <body>
-<h2 class="mb-2 mr-sm-2">Munkalap - <strong>'.$eventName.'</strong>  <button class="btn btn-success noprint mb-2 mr-sm-2" data-toggle="modal" data-target="#addWorkSheetData"><i style="font-size: 30px;" class="fas fa-plus fa-2x"></i></button></h2><h6>Kezdés: '.$eventStart." | Befejezés: ".$eventEnd.'</h6>
+<h2 class="mb-2 mr-sm-2">Munkalap - <strong>'.$event->getSummary().'</strong>  <button class="btn btn-success noprint mb-2 mr-sm-2" data-toggle="modal" data-target="#addWorkSheetData"><i style="font-size: 30px;" class="fas fa-plus fa-2x"></i></button></h2><h6>Kezdés: '.$event->getStart()->getDateTime()." | Befejezés: ".$event->getEnd()->getDateTime().'</h6>
 <table id="worksheetData" class="table">
 <tr><th>Név</th><th>Cselekvés</th><th>Hely</th><th>Megjegyzés</th><th class="noprint">Műveletek</th><tr>';
  

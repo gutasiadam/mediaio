@@ -90,7 +90,7 @@ $conn->close();
   // $result = $conn->query($sql) or die($conn->error);
 
   $connectionObject=Database::runQuery_mysqli();
-        $query = "SELECT * FROM takelog WHERE Date >= DATE_SUB(CURRENT_DATE(), INTERVAL 7 DAY);";
+        $query = "SELECT * FROM takelog WHERE Date >= DATE_SUB(CURRENT_DATE(), INTERVAL 7 DAY) ORDER BY Date DESC;";
        // echo $query;
         $result=mysqli_query($connectionObject,$query);
         echo '<tr><th>Dátum</th><th>Felhasználó</th><th>Tárgy</th><th>Esemény</th><th>✔?</th><th>Usercheckelte:</th></tr>';

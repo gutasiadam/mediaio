@@ -19,7 +19,7 @@
                     }else if ($_GET['error'] == 'tokenError'){
                     echo '<tr><td><p class="success">A token, vagy az email cím/felhasználónév párod hibás.</p></td></tr>';
                     }else if ($_GET['error'] == 'none'){
-                    echo '<tr><td><p class="success">A tokenedet elküldtük az e-mail címedre! Ezt tudod használni a második lépésben.</p></td></tr>';
+                    echo '<tr><td><p class="success">A tokenedet elküldtük az e-mail címedre! Ezt tudod használni a második lépésben. </br> Nézd meg a spam mappát is, lehet, hogy oda érkezett az e-mail.</p></td></tr>';
                     }else if ($_GET['error'] == 'none'){
                     echo '<tr><td><p class="success"><strong>Sikeres jelszócsere.</strong> Mostmár beléphetsz az új jelszavaddal.</p></td></tr>';
                 }

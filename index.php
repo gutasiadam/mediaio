@@ -75,7 +75,7 @@ include "header.php";
           <h6>Elfelejtett jelszó?</h6>
         </a>
         <p class="Footer">
-          <h6 class="text success text-success">🔧 Az e-mailek küldése ismét üzemel. </h6>
+          <!-- <h6 class="text success text-success">🔧 Az e-mailek küldése ismét üzemel. </h6> -->
           Code by <a href="https://github.com/gutasiadam">Adam Gutasi</a>
         </p>
       </div>
