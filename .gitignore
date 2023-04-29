@@ -2,8 +2,10 @@ DB_Elements.txt
 DB_UID.txt
 log.txt
 server/secretSetup.php;
-vendor/phpmailer
-vendor/league
+vendor/
+data/takeOutItems.json
+utility/credentials.json
+utility/mailCredentials.json
 server/batch_jobs/logs
 mailLog.txt
 Logger.txt

@@ -1,31 +1,77 @@
 <?php 
-namespace Mediaio;
+//namespace Mediaio;
 use Mediaio\Core;
 use Mediaio\Database;
 use Mediaio\MailService;
+require __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__.'/../Core.php';
 require_once __DIR__.'/../Database.php';
 require_once __DIR__.'/../Mailer.php';
-
+putenv('GOOGLE_APPLICATION_CREDENTIALS=../utility/credentials.json');
 
 class EventManager{
     const ip_address='192.168.0.24';
     static function loadEvents(){
+    putenv('GOOGLE_APPLICATION_CREDENTIALS=./../utility/credentials.json'); // beállítjuk az elérési útvonalat a credentials.json fájlhoz
+    $client = new Google_Client();
+    $client->useApplicationDefaultCredentials();
+    $client->setScopes(['https://www.googleapis.com/auth/calendar']); // beállítjuk a szükséges jogosultságokat
+    $client->setAccessType('offline');
+    // Létrehozunk egy Google_Service_Calendar objektumot a Google Calendar API-hoz való hozzáféréshez
+    $service = new Google_Service_Calendar($client);
 
+    // Frissítjük a Google_Client objektumot az új naptárral
+    //$client->setAccessToken($client->getAccessToken());
+    // Lekérdezzük az összes elérhető naptárat
+    $today = new DateTime();
+    $oneYearAgo = $today->sub(new DateInterval('P1Y'));
+    $calendarId = 'jjpdv8bd3u2s2hj9ehnbh19src@group.calendar.google.com';
+    $optParams = array(
+      'maxResults' => 200,
+      'orderBy' => 'startTime',
+        'singleEvents' => true,
+        'timeMin' => $oneYearAgo->format(DateTime::RFC3339)
+    );
+    $results = $service->events->listEvents($calendarId, $optParams);
+    $events = $results->getItems();
     $data = array();
-    $query = "SELECT * FROM events ORDER BY id";
-    $result = Database::runQuery($query);
-    foreach($result as $row){
-         $data[] = array(
-          'id'   => $row["id"],
-          'title'   => $row["title"],
-          'start'   => $row["start_event"],
-          'end'   => $row["end_event"],
-          'backgroundColor' => $row["borderColor"],
-          'borderColor' => $row["borderColor"]
+    if (empty($events)) {
+      //print "Nincs találat.\n";
+      return null;
+    } else {
+      //print "Események:\n";
+      foreach ($events as $event) {
+        $data[] = array(
+          'id'   => $event->id,
+          'title'   => $event->getSummary(),
+          'start'   => $event->start->dateTime,
+          'end'   => $event->end->dateTime,
+          'backgroundColor' => "#9dadf2",
+          'borderColor' => "#ffffff"
         );
+        $start = $event->start->dateTime;
+        if (empty($start)) {
+          $start = $event->start->date;
+        }
+        //echo $event->getSummary()." ".$event->start->date." ".$event->description."\n";
+        //printf("%s (%s) - %s\n\n", $event->getSummary(), $start ,$event->getDescription());
+      }
     }
 
+
+    
+    // $query = "SELECT * FROM events ORDER BY id";
+    // $result = Database::runQuery($query);
+    // foreach($result as $row){
+    //      $data[] = array(
+    //       'id'   => $row["id"],
+    //       'title'   => $row["title"],
+    //       'start'   => $row["start_event"],
+    //       'end'   => $row["end_event"],
+    //       'backgroundColor' => $row["borderColor"],
+    //       'borderColor' => $row["borderColor"]
+    //     );
+    // }
     return json_encode($data);
     }
 

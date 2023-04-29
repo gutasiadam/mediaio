@@ -45,21 +45,6 @@ include("header.php");
 <?php
 
 $conn = new mysqli("localhost", "root", "umvHVAZ%", "mediaio");
-$sql = ("SELECT * FROM `events");
-$result = $conn->query($sql) or die($conn->error);
-//echo $search2;
-
-$row_cnt = $result->num_rows;//esemény lett létrehozva az elmúlt 7 napban.
-
-$sql = ("SELECT * FROM `eventprep`");
-$result = $conn->query($sql) or die($conn->error);
-$prep_cnt = $result->num_rows;//esemény lett létrehozva az elmúlt 7 napban.
-
-$sql = ("SELECT * FROM `events`");
-$result = $conn->query($sql) or die($conn->error);
-$row_cnt2 = $result->num_rows;//db esemény található a naptárban.
-
-$conn = new mysqli("localhost", "root", "umvHVAZ%", "mediaio");
 $sql = ("SELECT * FROM `leltar`");
 $result = $conn->query($sql) or die($conn->error);
 $row_cnt3 = $result->num_rows;//Max_tárgy a raktárban
@@ -78,7 +63,6 @@ $conn->close();
 <h1 align=center >Statisztika</h1>
 <table>
 <tr><td><h2><?php echo $row_cnt3 ?>/<span class="text text-success"><?php echo $row_cnt4 ?></span> tárgy van benn.</h2><h6>(<?php echo number_format((float)(($row_cnt4/$row_cnt3)*100),2,'.', ''); ?>%)</h6></td></tr>
-<tr><td>Az elmúlt 7 napban <span class="text text-success"><?php echo $row_cnt ?></span>db eseményt hoztak létre. <span class="text text-danger"><?php echo $prep_cnt ?></span> megerősítésre vár. (összesen <?php echo $row_cnt2 ?> esemény a naptárban.)  </td></tr>
 <tr><td><?php echo $row_cnt5 ?> felhasználó regisztrálva.</td></tr>
 </table>
       </br>
@@ -90,7 +74,7 @@ $conn->close();
   // $result = $conn->query($sql) or die($conn->error);
 
   $connectionObject=Database::runQuery_mysqli();
-        $query = "SELECT * FROM takelog WHERE Date >= DATE_SUB(CURRENT_DATE(), INTERVAL 7 DAY);";
+        $query = "SELECT * FROM takelog WHERE Date >= DATE_SUB(CURRENT_DATE(), INTERVAL 7 DAY) ORDER BY Date DESC;";
        // echo $query;
         $result=mysqli_query($connectionObject,$query);
         echo '<tr><th>Dátum</th><th>Felhasználó</th><th>Tárgy</th><th>Esemény</th><th>✔?</th><th>Usercheckelte:</th></tr>';

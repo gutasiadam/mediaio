@@ -1,8 +1,8 @@
 
 console.log("Admin display")
 document.addEventListener('DOMContentLoaded', function() {
+        console.log("Fill calendar")
         var calendarEl = document.getElementById('calendar');
-
         var calendar = new FullCalendar.Calendar(calendarEl, {
           plugins: [ 'dayGrid', 'timeGrid', 'interaction', 'moment', 'bootstrap' ],
           locale: 'hu',
@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function() {
     center: '',
     right:  'timeGridWeek dayGridMonth today prev,next,'
 },
-    events: './EventManager.php/?o=load',
+    events: 'EventManager.php?o=load',
     selectable:true,
     selectHelper:true,
   windowResize: function(view) {
@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', function() {
      if(title!="")
      {
       $.ajax({
-       url:"./EventManager.php/",
+       url:"./EventManager.php",
        type:"POST",
        data:{title:title, start:start, end:end, color:color, type:type,o:'prepare'},
        success:function(sVal)
@@ -84,7 +84,7 @@ document.addEventListener('DOMContentLoaded', function() {
      document.getElementById('delEventTitle').value = title;
      document.getElementById('deleteEventName').innerHTML = title;
      document.getElementById('delEventId').value = id;
-     var workSheetURL = "./worksheet.php/?eventId="+id;
+     var workSheetURL = "./worksheet.php?eventId="+id;
      $('#deleteModal').modal('show');
      $('#optionsLabel').text(title);
      

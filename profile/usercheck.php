@@ -98,7 +98,7 @@ ORDER BY
     $items=Database::runQuery($sql);
     while($itemsRow = $items->fetch_assoc()) {
       //echo var_dump($query1Row); //Only for debug reasons.
-      $itemString.=$itemsRow['Item']." [".$itemsRow['UID']."]"."   -  ";
+      $itemString.=$itemsRow['Item']." [".$itemsRow['UID']."]"."   ;  ";
     }
     //$itemString=substr_replace($itemString, "", -1);
     echo "<tr id=event".$recCount."><td>".$query1Row["Date"]."</td><td>".$query1Row["User"]. "</td><td style='line-height: 200%; font-size: 18px;'>".$itemString."</td><td>".$query1Row["Event"]."</td>
@@ -126,7 +126,7 @@ echo "</table>";
 
 function acceptEvent(n){
   //alert('elfogadas');
-  var items=$('#event'+n)[0].cells[2].innerHTML.split('   -  ');
+  var items=$('#event'+n)[0].cells[2].innerHTML.split('   ;  ');
   var i=0;
   items.forEach(element => {
     console.log(element);
@@ -167,7 +167,7 @@ function acceptEvent(n){
 }
 
 function declineEvent(n){
-  var items=$('#event'+n)[0].cells[2].innerHTML.split('   - ');
+  var items=$('#event'+n)[0].cells[2].innerHTML.split('   ;  ');
   items.forEach(element => {
     console.log(element);
     element=element.split('(');
@@ -189,6 +189,7 @@ function declineEvent(n){
     url: '../ItemManager.php',
     data: {data : itemsJSON, mode: mode,  value: false, date: date, user:user}, //event declined.
     success: function (response){
+      //alert(response)
       if(response==200){
         //Remove event from the table.
         $('#event'+n).fadeOut();

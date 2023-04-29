@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function () {
       center: '',
       right: 'timeGridWeek dayGridMonth today prev,next,'
     },
-    events: './EventManager.php/?o=load',
+    events: 'EventManager.php?o=load',
     selectable: true,
     selectHelper: true,
     windowResize: function (view) {
@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', function () {
       document.getElementById('delEventTitle').value = title;
       document.getElementById('deleteEventName').innerHTML = title;
       document.getElementById('delEventId').value = id;
-      var workSheetURL = "./worksheet.php/?eventId=" + id;
+      var workSheetURL = "./worksheet.php?eventId=" + id;
       $('#deleteModal').modal('show');
       $('#optionsLabel').text(title);
 

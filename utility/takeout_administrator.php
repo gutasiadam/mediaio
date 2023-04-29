@@ -21,7 +21,8 @@ if( isset($_POST['takeoutData'])){
         $nev= $i["name"];
         $id=number_format($i["id"]);
         if ($id<1000){
-        $currDate = date("Y/m/d H:i:s");
+        date_default_timezone_set('Europe/Budapest');
+        $currDate= date("Y/m/d H:i:s");
         $conn = new mysqli('localhost', 'root', 'umvHVAZ%', 'mediaio');
         //$conn = new mysqli($serverName, $dbUserName, $dbPassword, $dbDatabase);
     if ($conn->connect_error) {

@@ -156,7 +156,7 @@ if(!isset($_SESSION['userId'])){
 
 <table class="table table-bordered" height=90%><tr>
     <td width=100%><div id='calendar'></td></div>
-    <td>
+    <!-- <td>
   <h3 class="text-dark">Eseménynaptár - segítség</h3>
   <span class="badge badge-success">Hozzáadás</span><h6 class="text-dark">Jelöld ki a naptárban az időszakot, majd töltsd ki a felugró ablakot</h6>
   <span class="badge badge-danger">Törlés</span><h6 class="text-dark">Kattints rá az adott eseményre, majd válaszd ki a törlés opciót</h6>
@@ -166,7 +166,7 @@ if(!isset($_SESSION['userId'])){
   <tr><td class="text-dark" style="background-color:#ff6363;"> Délelőtti iskolai esemény </td>  <td class="text-dark" style="background-color: #81c773; "> Gyűlés </td>  <td class="text-dark" style="background-color: #59ffba;"> Workshop </td></tr>
   <tr><td class="text-dark" style="background-color: #ffb145;"> Külsős esemény </td>  <td class="text-dark" style="background-color: #db4040;">  Délutáni iskolai esemény </td>     <td class="text-dark" style="background-color: #917fe3;"> Otthoni munka </td></tr>
   <tr><td class="text-dark" style="background-color: #fffd6b;"> Szünet </td>   <td class="text-dark" style="background-color: #787878;"> Egyéb </td>    <td class="text-dark" style="background-color: #bd7966;"> Hétvégi iskolai esemény </td></tr>
-  </table></p></td>
+  </table></p></td> -->
 </table>
 
 <!--Temporary development modal-->
@@ -255,7 +255,7 @@ function closeNav() {
 }
 
 window.onload = function () {
-  $('#WIPModal').modal()
+  //$('#WIPModal').modal()
   display = document.querySelector('#time');
   var timeUpLoc="../utility/userLogging.php?logout-submit=y"
   startTimer(display, timeUpLoc);

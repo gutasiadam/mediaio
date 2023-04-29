@@ -42,7 +42,7 @@ class takeOutManager{
             printf("Error message: %s\n", $connection->error);
           }else{
             //All good, return OK message
-            //////echo $sql;
+            //echo $sql;
             echo 200;
             return;
           }
@@ -99,7 +99,7 @@ class retrieveManager{
     if(empty($userName)){
       return 400; // Session data is empty (e.g User is not loggged in.)
     }
-
+    date_default_timezone_set('Europe/Budapest');
     $currDate= date("Y/m/d H:i:s");
     $data = json_decode(stripslashes($_POST['data']));
     $dataArray=array();
@@ -118,18 +118,18 @@ class retrieveManager{
       
       $connection=Database::runQuery_mysqli();
       if($_SESSION['role']>3){//Auto accept retrieve
-        echo "Auto accept";
+        //echo "Auto accept";
               $sql=" 
       START TRANSACTION; UPDATE leltar SET leltar.Status=1, leltar.RentBy=NULL WHERE leltar.Nev IN (".$dataString.");";
       $sql.="INSERT INTO takelog VALUES";
     foreach($data as $d){
-      $sql.="(NULL, '$currDate', '$currDate', '$userName', '$d', 'IN',1,'$userName'),";
+      $sql.="(NULL, 0, '$currDate', '$userName', '$d', 'IN',1,'$userName'),";
     }
     
       //Removes last comma from sql command.
       $sql=substr_replace($sql, "", -1);
       $sql.="; COMMIT;";
-      //////echo $sql;
+      //echo $sql;
         if(!$connection->multi_query($sql)){
           printf("Error message: %s\n", $connection->error);
         }else{
@@ -264,6 +264,10 @@ class itemHistoryManager{
 }
 
 if(isset($_POST['mode'])){
+
+  //Set timezone to the computer's timezone.
+  date_default_timezone_set('Europe/Budapest');
+
   if($_POST['mode']=='takeOutStaging'){
     echo takeOutManager::stageTakeout();
     //Header set.
