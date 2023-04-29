@@ -12,8 +12,12 @@ $sampleValue=1;
 //Render workData
 if(isset($_POST['method'])){
     if($_POST['method']=='get'){
-
-        $sql="SELECT * FROM feladatok WHERE Datum>=CURDATE() ORDER BY Datum;";
+        if(($_POST['getOldTasks']=='true')){
+          $sql="SELECT * FROM feladatok WHERE Datum>=DATE_SUB(CURDATE(), INTERVAL 6 MONTH) ORDER BY Datum;";
+        }else{
+          $sql="SELECT * FROM feladatok WHERE Datum>=DATE_SUB(CURDATE(), INTERVAL 1 DAY) ORDER BY Datum;";
+        }
+        
         $connection=Database::runQuery_mysqli();
         if ($result = $connection->query($sql)) {
           $sendBack_Result=array();

@@ -10,6 +10,7 @@ use Mediaio\itemDataManager;
 require "./itemManager.php";
 
 ?>
+<!DOCTYPE html>
 <?php if (isset($_SESSION["userId"])) { ?> <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
   <a class="navbar-brand" href="index.php">
     <img src="./utility/logo2.png" height="50">
@@ -49,31 +50,47 @@ require "./itemManager.php";
 </nav> <?php  } ?>
 <br>
 <form>
-Ezeket a tárgyakat mutasd:
+Mutasd a
 <div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" name="toDisplay1" id="inlinea" value="1">
-  <label class="form-check-label" for="inlinea">Kölcsönözhető</label>
+  <input class="form-check-input" type="checkbox" name="rentable" id="inlinea" value="1" <?php if(isset($_GET['rentable']) && $_GET['rentable'] == '1') echo 'checked';?>>
+  <label class="form-check-label" for="inlinea">Kölcsönözhető,</label>
 </div>
 <div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" name="toDisplay2" id="inlineb" value="2">
-  <label class="form-check-label" for="inlineb">Stúdiós</label>
+  <input class="form-check-input" type="checkbox" name="studio" id="inlineb" value="2" <?php if(isset($_GET['studio']) && $_GET['studio'] == '2') echo 'checked';?>>
+  <label class="form-check-label" for="inlineb">Stúdiós,</label>
 </div>
 <div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" name="toDisplay3" id="inlinec" value="3">
-  <label class="form-check-label" for="inlinec">Nem Kölcsönözhető</label>
+  <input class="form-check-input" type="checkbox" name="nonRentable" id="inlinec" value="3" <?php if(isset($_GET['nonRentable']) && $_GET['nonRentable'] == '3') echo 'checked';?>>
+  <label class="form-check-label" for="inlinec">Nem Kölcsönözhető,</label>
 </div>
+<div class="form-check form-check-inline">
+  <input class="form-check-input" type="checkbox" name="Out" id="inlined" value="4" <?php if(isset($_GET['Out']) && $_GET['Out'] == '4') echo 'checked';?>>
+  <label class="form-check-label" for="inlined">Kinnlevő</label>
+</div>
+
+tárgyakat,
+<select id="orderByField" name="orderByField">
+  <option value="UID" <?php if(isset($_GET['orderByField']) && $_GET['orderByField'] == 'UID') echo 'selected';?>>UID</option>
+  <option value="Nev" <?php if(isset($_GET['orderByField']) && $_GET['orderByField'] == 'Nev') echo 'selected';?>>Név</option>
+  <option value="Tipus" <?php if(isset($_GET['orderByField']) && $_GET['orderByField'] == 'Tipus') echo 'selected';?>>Típus</option>
+  <option value="RentBy" <?php if(isset($_GET['orderByField']) && $_GET['orderByField'] == 'RentBy') echo 'selected';?>>Kivette</option>
+</select>
+<label for="orderByField">szerint rendezve,</label>
+<select id="order" name="order">
+  <option value="ASC" <?php if(isset($_GET['order']) && $_GET['order'] == 'ASC') echo 'selected';?>>növekvő</option>
+  <option value="DESC" <?php if(isset($_GET['order']) && $_GET['order'] == 'DESC') echo 'selected';?>>csökkenő</option>
+</select>
+
+<label for="order">sorrendben.</label>
 <button class="btn btn-success my-2 my-sm-0" type="submit">Mehet</button>
 </form>
 
-  			<td><h4 id="doTitle">Rendezés név szerint növekvő sorrendben</h4></td></tr></table>
 <?php 
 	$countOfRec=0;
-
-
-  $displayData= array("toDisplay1"=>$_GET['toDisplay1'],"toDisplay2"=>$_GET['toDisplay2'],"toDisplay3"=>$_GET['toDisplay3']);
+  $displayData= array("rentable"=>$_GET['rentable'],"studio"=>$_GET['studio'],"nonRentable"=>$_GET['nonRentable'],"Out"=>$_GET['Out'],"orderByField"=>$_GET['orderByField'],"order"=>$_GET['order']);
   $result=itemDataManager::getItemData($displayData);
 if ($result!=NULL && $result->num_rows > 0) {
-	echo "<table width='50' id="."dataTable"." align=center class="."table"."><th onclick=sort(0)>UID</th><th onclick=sort(1)>Név</th><th onclick=sort(2)>Típus</th><th onclick=sort(3)>Kivette</th>";
+	echo "<table id="."dataTable"." align=center class="."table"."><th onclick=sort(0)>UID</th><th onclick=sort(1)>Név</th><th onclick=sort(2)>Típus</th><th onclick=sort(3)>Kivette</th>";
      //output data of each row
     //Displays amount of records found in leltar_master DB
     while($row = $result->fetch_assoc()) {
@@ -97,93 +114,6 @@ if ($result!=NULL && $result->num_rows > 0) {
 }
 echo "</table>";
 ?>
-<script>
-
-function sort(n){
-  console.log('Working..')
-  sortTable(n);
-}
-//UID, Név, Típus, Kivette 
-function sortTable(n) {
-  switch (n) {
-    case 1:
-      sMode="tárgynév";
-      break;
-    case 2:
-      sMode="típus";
-      break;
-    case 3:
-      sMode='"Kivette"';
-      break;
-    default:
-      sMode="UID";
-      break;
-  }
-  //s=sMode;
-  var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
-  table = document.getElementById("dataTable");
-  switching = true;
-  //Set the sorting direction to ascending:
-  dir = "asc"; 
-  /*Make a loop that will continue until
-  no switching has been done:*/
-  while (switching) {
-    //start by saying: no switching is done:
-    switching = false;
-    rows = table.rows;
-    /*Loop through all table rows (except the
-    first, which contains table headers):*/
-    for (i = 1; i < (rows.length - 1); i++) {
-      //start by saying there should be no switching:
-      shouldSwitch = false;
-      /*Get the two elements you want to compare,
-      one from current row and one from the next:*/
-      x = rows[i].getElementsByTagName("td")[n];
-      y = rows[i + 1].getElementsByTagName("td")[n];
-      
-      /*check if the two rows should switch place,
-      based on the direction, asc or desc:*/
-      if (dir == "asc") {
-        dMode="növekvő";
-        if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
-          //if so, mark as a switch and break the loop:
-          shouldSwitch= true;
-          break;
-        }
-      } else if (dir == "desc") {
-        dMode="csökkenő";
-        if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
-          //if so, mark as a switch and break the loop:
-          shouldSwitch = true;
-          break;
-        }
-      }
-    }
-  
-    if (shouldSwitch) {
-      /*If a switch has been marked, make the switch
-      and mark that a switch has been done:*/
-      rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-      switching = true;
-      //Each time a switch is done, increase this count by 1:
-      switchcount ++;      
-    } else {
-      /*If no switching has been done AND the direction is "asc",
-      set the direction to "desc" and run the while loop again.*/
-      if (switchcount == 0 && dir == "asc") {
-        dir = "desc";
-        switching = true;
-      }
-    }
-  }
-  $('#doTitle').animate({'opacity': 0}, 400, function(){
-        $(this).html('<h4 class="text text-info" role="alert">Rendezés '+sMode+' szerint '+dMode+' sorrendben.</h4>').animate({'opacity': 1}, 400);
-        $(this).html('<h4 class="text text-info" role="alert">Rendezés '+sMode+' szerint '+dMode+' sorrendben.').animate({'opacity': 1}, 100);
-        $(this).html('<h4 class="text text-info" role="alert">Rendezés '+sMode+' szerint '+dMode+' sorrendben.').animate({'opacity': 0}, 400);
-    setTimeout(function() { $("#doTitle").text("Rendezés "+sMode+" szerint "+dMode+" sorrendben.").animate({'opacity': 1}, 400); }, 900);;});
-}
-</script>
-
 <style>
   .btn-info2{color:white;background-color:#000658;border-color:#000658;border-width:2px}.btn-info2:hover{color:black;background-color:#ffffff;border-color:#000658;border-width:2px}
   .autocomplete {

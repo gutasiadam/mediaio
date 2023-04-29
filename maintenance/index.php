@@ -45,8 +45,8 @@ error_reporting(E_ALL | E_WARNING | E_NOTICE);
 <?php
             if ($_SESSION['role']>=3){
               echo '<table>
-              <tr><td><button type="button" class="btn btn-info table-Control edit_Table_Button noprint" data-toggle="modal" data-target="#add_Work_Modal">Új feladat</button></td>
-              </tr>
+              <tr><td><button type="button" class="btn btn-info table-Control edit_Table_Button noprint" data-toggle="modal" data-target="#add_Work_Modal">Új feladat</button> 
+              <input type="checkbox" id="showOldTasks" name="showOldTasks" value="true"><label for="vehicle1">Régebbi feladatok</label></td>
               </table>';
               
             }?>
@@ -180,7 +180,10 @@ function deleteUserFromWork(ID,userN){
        }
 });
 }
-
+//if showOldTasks is changed, rerender the table
+$('#showOldTasks').change(function() {
+      renderWork();
+});
 
 
 function modifyStatus(ID){
@@ -203,13 +206,20 @@ function modifyStatus(ID){
 }
 
 function renderWork(){
+  var getOldTasks=false;
+  //if showOldTasks is checked, set getOldTasks to true
+  if($('#showOldTasks').is(":checked")){
+    getOldTasks=true;
+  }
       $.ajax({
        url:"maintenanceManager.php",
        type:"POST",
        async: true,
-       data:{method:"get"},
+       data:{method:"get",getOldTasks:getOldTasks},
        success:function(result)
        {
+        //clear .takaritasirend table
+        $('.takaritasirend').empty();
         result=JSON.parse(result);
         if(result[0]=="Admin"){
           $('.takaritasirend').append('<tr><th>Dátum</th><th>1. Személy</th><th>Státusz</th><th>2. Személy</th><th>Státusz</th><th></th></tr>');

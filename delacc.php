@@ -18,7 +18,4 @@
     ?>
 </main>
     
-<?php 
-    require "version.php"
-?>
 

@@ -6,7 +6,7 @@ $SESSuserName = $_SESSION['UserUserName'];
 if( isset($_POST['takeoutData'])){
   $logDump=fopen("log.txt", "w");
   $takeoutData= ($_POST['takeoutData']['items']);
-    //var_dump($data['items']);
+    //var_dump($takeoutData);
     
     foreach ($takeoutData as $entry){
       //echo($entry['name']);
@@ -35,6 +35,7 @@ if( isset($_POST['takeoutData'])){
       if ($result === TRUE) {
         $conn = new mysqli('localhost', 'root', 'umvHVAZ%', 'mediaio');
         $sql2 = ("UPDATE leltar SET Status = 2, RentBy = '$SESSuserName' WHERE `Nev`='$nev'");
+        //echo($sql2);
         $result2 = $conn->query($sql2);
         $conn->close();
         if ($result2 != TRUE){
