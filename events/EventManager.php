@@ -23,12 +23,14 @@ class EventManager{
     // Frissítjük a Google_Client objektumot az új naptárral
     //$client->setAccessToken($client->getAccessToken());
     // Lekérdezzük az összes elérhető naptárat
+    $today = new DateTime();
+    $oneYearAgo = $today->sub(new DateInterval('P1Y'));
     $calendarId = 'jjpdv8bd3u2s2hj9ehnbh19src@group.calendar.google.com';
     $optParams = array(
-      'maxResults' => 100,
+      'maxResults' => 200,
       'orderBy' => 'startTime',
-      'singleEvents' => true,
-      'timeMin' => date('c'),
+        'singleEvents' => true,
+        'timeMin' => $oneYearAgo->format(DateTime::RFC3339)
     );
     $results = $service->events->listEvents($calendarId, $optParams);
     $events = $results->getItems();

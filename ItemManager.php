@@ -123,13 +123,13 @@ class retrieveManager{
       START TRANSACTION; UPDATE leltar SET leltar.Status=1, leltar.RentBy=NULL WHERE leltar.Nev IN (".$dataString.");";
       $sql.="INSERT INTO takelog VALUES";
     foreach($data as $d){
-      $sql.="(NULL, '$currDate', '$currDate', '$userName', '$d', 'IN',1,'$userName'),";
+      $sql.="(NULL, 0, '$currDate', '$userName', '$d', 'IN',1,'$userName'),";
     }
     
       //Removes last comma from sql command.
       $sql=substr_replace($sql, "", -1);
       $sql.="; COMMIT;";
-      //////echo $sql;
+      //echo $sql;
         if(!$connection->multi_query($sql)){
           printf("Error message: %s\n", $connection->error);
         }else{
