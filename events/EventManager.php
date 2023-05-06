@@ -86,6 +86,20 @@ class EventManager{
     }
     }
 
+
+    
+    // $query = "SELECT * FROM events ORDER BY id";
+    // $result = Database::runQuery($query);
+    // foreach($result as $row){
+    //      $data[] = array(
+    //       'id'   => $row["id"],
+    //       'title'   => $row["title"],
+    //       'start'   => $row["start_event"],
+    //       'end'   => $row["end_event"],
+    //       'backgroundColor' => $row["borderColor"],
+    //       'borderColor' => $row["borderColor"]
+    //     );
+    // }
     return json_encode($data);
     }
 
