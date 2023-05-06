@@ -56,6 +56,9 @@ class Core{
                                 $_SESSION['fullName'] = ($row['lastName']." ".$row['firstName']);
                                 $_SESSION['role'] = $row['Userrole'];
                                 $_SESSION['color'] = "#FFFF66";
+                                $_SESSION['AdditionalData']=$row['AdditionalData'];
+                                $additionalData = json_decode($_SESSION['AdditionalData'], true);
+                                $_SESSION['groups'] = $additionalData['groups'];
 
                                 header("Location: ../index.php?login=success");
         
@@ -128,19 +131,56 @@ class Core{
             }
     }
     function changeRole($postData){
-        if ($postData["adminChecked"]==true){
-            if ($postData["studioChecked"]==true){
-                $SQL = ("UPDATE `users` SET `Userrole` = 3 WHERE `users`.`userNameUsers` = '".$postData['userName']."'");
-            }else{
-                $SQL = ("UPDATE `users` SET `Userrole` = 4 WHERE `users`.`userNameUsers` = '".$postData['userName']."'");
+        $sql="SELECT AdditionalData FROM users WHERE userNameUsers='".$postData['userName']."';";
+        $connection = Database::runQuery_mysqli();
+        if ($result = $connection->query($sql)) {
+            while ($row = $result->fetch_assoc()) {
+                $additionalData = $row['AdditionalData'];
             }
-        }else if ($postData["studioChecked"]==true){
-            $SQL = ("UPDATE `users` SET `Userrole` = 2 WHERE `users`.`userNameUsers` = '".$postData['userName']."'");
-          }
-          if ($postData["studioChecked"]==false and $postData["adminChecked"]==false){
-            $SQL = ("UPDATE `users` SET `Userrole` = 1 WHERE `users`.`userNameUsers` = '".$postData['userName']."'");
-          }
-          return Database::runQuery($SQL);
+        }
+        $additionalData = json_decode($additionalData, true);
+        //var_dump($additionalData);
+        $groups=$additionalData['groups'];
+
+        
+        // if ($postData["adminChecked"]==true){
+        // //is "admin" element not in additionalData, add it
+        // if (!array_key_exists('admin', $groups)) {
+        //     //add item "admin" to array
+        //     $groups['admin'] = array();
+        // }
+        // }if ($postData["studioChecked"]==true){
+        //     if (!array_key_exists('studio', $groups)) {
+        //     $groups['studio'] = array();
+        // }
+        //if postdata adminchecked is true, add admin to groups, else remove it, if it exists  
+        if ($postData["adminChecked"]==true){
+            if (!array_key_exists('admin', $groups)) {
+                array_push($groups, "admin");
+            }
+        }else{
+                foreach ($groups as $key => $val){
+                    if ($val == 'admin'){
+                       unset($groups[$key]);}
+                }
+        }
+        //if postdata studiochecked is true, add studio to groups, else remove it, if it exists
+        if ($postData["studioChecked"]==true){
+            if (!array_key_exists('studio', $groups)) {
+                array_push($groups, "studio");
+            }
+        }else{
+                foreach ($groups as $key => $val){
+                    if ($val == 'studio'){
+                       unset($groups[$key]);}
+                }
+
+        }
+        //update additionalData groups field with the new groups array
+        $additionalData['groups']=$groups;
+        $additionalData=json_encode($additionalData);
+        $sql = "UPDATE users SET AdditionalData='$additionalData' WHERE userNameUsers='".$postData['userName']."';";
+        return Database::runQuery($sql);
     }
     function registerUser($postData){
          //Hibakezelés
@@ -267,8 +307,8 @@ if (isset($_POST['pointUpdate'])){
     if (isset($_POST["studioCheckbox"])){
         $postData['studioChecked']=true;
     }
-
-    Core::changeRole($postData);
+    $c = new Core();
+    $c->changeRole($postData);
     header("Location: ./profile/roles.php?adminChecked=".strval($_POST['adminCheckbox']."a"));
 }
 if(isset($_POST['register'])){

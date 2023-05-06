@@ -29,7 +29,7 @@ if(isset($_POST['method'])){
             $Szemely2_Status=$row['Szemely2_Status'];
             $resultItems[] = array('id'=> $row['ID'],'datum'=> $Datum, 'szemely1'=> $Szemely1, 'szemely2'=>$Szemely2,'szemely2_Status'=>$Szemely2_Status,'szemely1_Status'=>$Szemely1_Status);
           }
-          if($_SESSION['role']>=3){
+          if(in_array("admin", $_SESSION["groups"])){
             array_push($sendBack_Result,"Admin");
           }
           

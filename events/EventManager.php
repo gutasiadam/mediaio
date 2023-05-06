@@ -58,7 +58,7 @@ class EventManager{
         //printf("%s (%s) - %s\n\n", $event->getSummary(), $start ,$event->getDescription());
       }
     //Vezetőségi naptár
-    if($_SESSION["role"]>3){
+    if((in_array("admin", $_SESSION["groups"]))){
         $calendarId = 'hq37buvra0ju1sci457sk66pfk@group.calendar.google.com'; // Vez naptár
         $optParams = array(
         'maxResults' => 200,

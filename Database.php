@@ -2,17 +2,28 @@
 namespace Mediaio;
 
 class Database{
-    private const username = 'root';
-    private const password = 'umvHVAZ%';
-    private const schema = 'mediaio';
+
 
     static function runQuery($query){
-        
+        // Specify the path to the JSON file
+            $file_path = __DIR__.'/server/dbCredentials.json';
+
+            // Read the contents of the file
+            $json_data = file_get_contents($file_path);
+
+            // Decode the JSON data into an associative array
+            $credentials = json_decode($json_data, true);
+
+            // Extract the username, password, and schema fields
+            $username = $credentials['username'];
+            $password = $credentials['password'];
+            $schema = $credentials['schema'];
+
         /* Runs an SQL query on the databse, and returns it's result. 
             - Doesn't check the query, it blindly runs it !
             - Doesn't close the databse connection either.
         */
-        $connection = mysqli_connect('localhost', self::username, self::password, self::schema);
+        $connection = mysqli_connect('localhost', $username, $password, $schema);
         if (!$connection){
             die("Connection failed: ".mysqli_connect_error());
         }
@@ -34,7 +45,21 @@ class Database{
 
     //Caller object SHOULD close the connection!
     static function runQuery_mysqli(){
-        $connection = mysqli_connect('localhost', self::username, self::password, self::schema);
+
+                    $file_path = __DIR__.'/server/dbCredentials.json';
+
+            // Read the contents of the file
+            $json_data = file_get_contents($file_path);
+
+            // Decode the JSON data into an associative array
+            $credentials = json_decode($json_data, true);
+
+            // Extract the username, password, and schema fields
+            $username = $credentials['username'];
+            $password = $credentials['password'];
+            $schema = $credentials['schema'];
+            
+        $connection = mysqli_connect('localhost', $username, $password, $schema);
         if (!$connection){
             die("Connection failed: ".mysqli_connect_error());
         }

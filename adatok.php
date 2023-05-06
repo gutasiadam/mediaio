@@ -2,6 +2,8 @@
 namespace Mediao;
 include "translation.php";
 include "header.php";
+//Suppresses error messages
+error_reporting(E_ERROR | E_PARSE);
 
 namespace Mediaio;
 //require "./Mediaio_autoload.php";

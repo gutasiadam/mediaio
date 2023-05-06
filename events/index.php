@@ -29,10 +29,11 @@ if(!isset($_SESSION['userId'])){
   <link href='https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css' rel='stylesheet' />
   <script src="./moment/main.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="./defaultCalendarRender.js"></script>
 <?php 
-  if(($_SESSION['role']==1)){
-    echo '<script src="./defaultCalendarRender.js"></script>';
-  }else{  echo '<script src="./adminCalendarRender.js"></script>';}
+  // if(($_SESSION['role']==1)){
+  //   echo '<script src="./defaultCalendarRender.js"></script>';
+  // }else{  echo '<script src="./adminCalendarRender.js"></script>';}
 ?>
   <!-- HOZZÁADÁS MODAL -->
   </head>
@@ -94,7 +95,7 @@ if(!isset($_SESSION['userId'])){
         <form id="sendAddEvent" class="form-group">
         <select class="form-control" id="eventTypeSelect" required>
       <option value="" selected disabled hidden>Típus</option>
-      <?php if ($_SESSION['role']>=3){
+      <?php if (in_array("admin", $_SESSION["groups"])){
         echo '<option value="#ff6363">Délelőtti iskolai esemény</option>
         <option value="#db4040">Délutáni iskolai esemény</option>
         <option value="#bd7966">Hétvégi iskolai esemény</option>

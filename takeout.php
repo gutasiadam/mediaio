@@ -305,7 +305,7 @@ window.onload = function () {
 			data:{takeoutData: takeOutPrepJSON},
 			success:function(response)
 			{
-        alert(response);
+        //alert(response);
         displayMessageInTitle("#doTitle","Sikeres kivétel! \nAz oldal hamarosan újratölt");
         $('#jstree').jstree(true).settings.core.data = d;
         //Fa újratöltése

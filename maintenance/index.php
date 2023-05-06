@@ -43,7 +43,7 @@ error_reporting(E_ALL | E_WARNING | E_NOTICE);
   <label class="form-check-label noprint" for="defaultCheck1"> Csak a saját feladataimat mutasd</label>-->
   </div>
 <?php
-            if ($_SESSION['role']>=3){
+            if ((in_array("admin", $_SESSION["groups"]))){
               echo '<table>
               <tr><td><button type="button" class="btn btn-info table-Control edit_Table_Button noprint" data-toggle="modal" data-target="#add_Work_Modal">Új feladat</button> 
               <input type="checkbox" id="showOldTasks" name="showOldTasks" value="true"><label for="vehicle1">Régebbi feladatok</label></td>

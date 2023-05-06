@@ -1,27 +1,19 @@
 <?php
-
+require_once __DIR__.'/../Database.php';
+use Mediaio\Database;
 session_start();
-$connect = new PDO("mysql:host=localhost;dbname=mediaio", "root", "umvHVAZ%");
+
+// $connect = new PDO("mysql:host=localhost;dbname=mediaio", "root", "umvHVAZ%");
+$connect = Database::runQuery_mysqli();
 $Dates = preg_split("#/#", $_POST['bDate']); 
 if(isset($_POST["bVal"]))
 {
  $query="INSERT INTO `main_budget` (`Author`, `Type`, `Description`, `Amount`, `Year`, `Month`, `Day`, `budget_type`, `addedBy`)
-  VALUES (:author, :typee, :descriptionn, :amount, :yearr, :moth, :dayy, :budType, :author)";
- $statement = $connect->prepare($query);
- $statement->execute(
-  array(
-   ':author' => $_POST['bUser'],
-   ':budType' => $_POST['bKassza'],
-   ':typee'  => $_POST['bType'],
-   ':descriptionn' => $_POST['bName'],
-   ':amount' => $_POST['bVal'],
-   ':yearr' => $Dates[0],
-   ':moth' => $Dates[1],
-   'dayy' => $Dates[2]
-   
-  )
- );
- $connect=null;
+  VALUES ('".$_POST['bUser']."', '".$_POST['bType']."', '".$_POST['bName']."', '".$_POST['bVal']."', ".$Dates[0].", ".$Dates[1].", ".$Dates[2].", '".$_POST['bKassza']."', 
+  '".$_POST['bUser']."')";
+
+    $connect->query($query);
+ $connect->close();
  echo "1";
 }
 ?>

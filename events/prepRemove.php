@@ -1,7 +1,11 @@
-<?php if(isset($_GET['secureId'])){
+<?php 
+namespace Mediaio;
+use Mediaio\Database;
+require_once "..\Database.php";
+if(isset($_GET['secureId'])){
     $secureId = $_GET['secureId'];
 
-    $connect = new PDO("mysql:host=localhost;dbname=mediaio", "root", "umvHVAZ%");
+    $connect=Database::runQuery_mysqli();
     $query = "SELECT title, start_event, end_event, borderColor FROM `eventprep` WHERE secureId = '$secureId'";
 
     $statement = $connect->prepare($query);
