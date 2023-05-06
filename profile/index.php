@@ -53,7 +53,7 @@
                     <tr><td><form action="userlist.php"><button class="btn btn-dark">Elérhetőségek megtekintése <i class="fas fa-address-book"></i></i></button></form></td></tr>
                     <tr><td><form action="rules.php"><button class="btn btn-secondary">Dokumentumok <i class="fas fa-folder-open"></i></i></button></form></td></tr>
           <?php
-                    if ($_SESSION['role']>=3){
+                    if (in_array("admin", $_SESSION["groups"])){
             echo '
                     <tr><td><form action="usercheck.php"><button class="btn btn-success">UserCheck <i class="fas fa-user-check"></i></button></form></td></tr>
                     <tr><td><form action="../utility/damage_report/announce_Damage.php"><button class="btn btn-warning">Sérülés bejelentése <i class="fas fa-file-alt"></i></button></form></td></tr>
@@ -63,7 +63,7 @@
                     
                     
                     echo '<tr><td><form action="stats.php"><button class="btn btn-dark">Áttekintés <i class="fas fa-chart-pie"></i></i></button></form></td></tr>';
-                    if($_SESSION['role']==99){ //SYSADMIN
+                    if(in_array("system", $_SESSION["groups"])){ //SYSADMIN
                       echo '
                       <tr><td><form action="roles.php"><button class="btn btn-danger">Engedélyek módosítása <i class="fas fa-radiation"></i></i></button></form></td></tr>
                       <tr><td><form action="../utility/refetchData.php"><button class="btn btn-success disabled">Adattáblák frissítése - Frissíts a kivétel oldal betöltésével! <i class="fas fa-sync"></i></i></button></form></td></tr>';

@@ -1,9 +1,11 @@
-
 <?php
-
 //update.php
-
-$connect = new PDO("mysql:host=localhost;dbname=mediaio", "root", "umvHVAZ%");
+//insert.php
+namespace Mediaio;
+session_start();
+use Mediaio\Database;
+require_once "..\Database.php";
+$connect=Database::runQuery_mysqli();
 
 if(isset($_POST["id"]))
 {

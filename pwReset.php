@@ -1,4 +1,7 @@
 <?php 
+namespace Mediaio;
+use Mediaio\Database;
+require_once "Database.php";
 require("header.php");
 ?>
 <table class="logintable">
@@ -36,7 +39,7 @@ require("header.php");
 </table>
 <?php
 	if(!empty($_POST["forgot-password"])){
-		$conn = mysqli_connect("localhost", "root", "umvHVAZ%", "mediaio");
+		$conn=Database::runQuery_mysqli();
 		
 		$condition = "";
 		if(!empty($_POST["user-login-name"])) 

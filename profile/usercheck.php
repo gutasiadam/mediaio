@@ -4,7 +4,7 @@ use Mediaio\Database;
 require_once("../Database.php");
 include "header.php";
 session_start();
-if($_SESSION['role']<3){
+if(!(in_array("admin", $_SESSION["groups"]))){
     exit();
 }
 if(!isset($_SESSION['userId'])){
@@ -59,12 +59,6 @@ if(!isset($_SESSION['userId'])){
 
 
 <?php 
-$serverName="localhost";
-	$userName="root";
-	$password="umvHVAZ%";
-	$dbName="mediaio";
-	$countOfRec=0;
-
   /*Csoportosított rendezés*/
   //1. lépés: dátum, felhasználó és event szerinti csoportosítások: megadja, melyik sorokat kell majd megkeresnünk.
   $sql ="SELECT

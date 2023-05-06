@@ -200,18 +200,18 @@ class itemDataManager{
     static function getNumberOfTakenItems(){}
     static function getItemData($itemTypes){
         $displayed="";
-        if ($itemTypes['toDisplay1']!=1 & $itemTypes['toDisplay2']!=2 & $itemTypes['toDisplay3']!=3 ){
+        if ($itemTypes['rentable']!=1 & $itemTypes['studio']!=2 & $itemTypes['nonRentable']!=3 & $itemTypes['Out']!=4 ){
             return NULL;
         }
         $sql= 'SELECT * FROM leltar WHERE';
         //Kölcsönözhető
-        if ($itemTypes['toDisplay1']==1){
+        if ($itemTypes['rentable']==1){
           $sql = $sql.' TakeRestrict=""';
           $displayed=$displayed." Kölcsönözhető";
         }
         //Stúdiós
-        if ($itemTypes['toDisplay2']==2){
-          if (isset($_GET['toDisplay1'])){
+        if ($itemTypes['studio']==2){
+          if (isset($_GET['rentable'])){
             $sql = $sql.' OR TakeRestrict="s"';
             $displayed=$displayed.", Stúdiós";
           }else{
@@ -221,16 +221,28 @@ class itemDataManager{
           
         }
         //Nem kölcsönözhető
-        if ($itemTypes['toDisplay3']==3){
-          if (isset($_GET['toDisplay1']) || isset($_GET['toDisplay2'])){
-            $sql = $sql.' OR TakeRestrict="*"';
+        if ($itemTypes['nonRentable']==3){
+          if (isset($_GET['rentable']) || isset($_GET['studio'])){
+            $sql = $sql.' AND TakeRestrict="*"';
             $displayed=$displayed.", Nem kölcsönözhető";
           }else{
             $sql = $sql.' TakeRestrict="*"';
             $displayed=$displayed."Nem kölcsönözhető";
           }
         }
-        $sql= $sql." ORDER BY Nev ASC";
+
+        //Kinnlevő
+        if ($itemTypes['Out']==4){
+          if (isset($_GET['rentable']) || isset($_GET['studio']) || isset($_GET['nonRentable'])){
+            $sql = $sql.' AND RentBy IS NOT NULL';
+            $displayed=$displayed.", Kinnlevő";
+          }else{
+            $sql = $sql.' RentBy IS NOT NULL';
+            $displayed=$displayed."Kinnlevő";
+          }
+        }
+        $sql= $sql." ORDER BY ".$_GET['orderByField']." ".$_GET['order'];
+        // echo $sql;
         return Database::runQuery($sql);
     }
     static function generateTakeoutJSON(){

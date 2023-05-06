@@ -296,7 +296,9 @@ $('table > tbody  > tr > td > button ').each(function(index, tr) {
 </style>
 
 <?php //Message handler
+if(isset($_GET['state'])){
 if($_GET['state'] == "Success"){
   echo '<table align=center width=200px class=successtable><tr><td><div class="alert alert-success"><strong>Retrieve - </strong>Sikeresen bekerültek a tárgyak a raktárba.</div></tr></td></table>';
+}
 }
 ?>

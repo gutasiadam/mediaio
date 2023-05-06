@@ -1,6 +1,12 @@
 <?php 
 include "header.php";
-session_start();
+use Mediaio\Core;
+use Mediaio\Database;
+use Mediaio\MailService;
+require __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__.'/../Core.php';
+require_once __DIR__.'/../Database.php';
+require_once __DIR__.'/../Mailer.php';
 if(!isset($_SESSION['userId'])){
   header("Location: index.php?error=AccessViolation");}?>
 
@@ -53,25 +59,27 @@ if(!isset($_SESSION['userId'])){
 
 
 <?php 
-$serverName="localhost";
-	$userName="root";
-	$password="umvHVAZ%";
-	$dbName="mediaio";
-	$countOfRec=0;
 
-$conn = new mysqli("localhost","root", "umvHVAZ%", "mediaio");
-	if ($conn->connect_error) {
-		die("Connection fail: (Is the DB server maybe down?)" . $conn->connect_error);
-	}
-	$sql = "SELECT usernameUsers, emailUsers, lastName, firstName, teleNum FROM users ORDER BY usernameUsers ASC";
+	$countOfRec=0;
+	$sql = "SELECT usernameUsers, emailUsers, lastName, firstName, teleNum, AdditionalData FROM users ORDER BY usernameUsers ASC";
+  $conn=Database::runQuery_mysqli();
 	$result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
-	echo "<table width='50' align=center class="."table"."><th>Vezetéknév</th><th>Keresztnév</th><th>Felhasználónév</th><th>e-mail cím</th><th>Telefonszám</th>";
+	echo "<table width='50' align=center class="."table"."><th>Vezetéknév</th><th>Keresztnév</th><th>Felhasználónév</th><th>e-mail cím</th><th>Telefonszám</th><th>Csoportok</th>";
      //output data of each row
     //Displays amount of records found in leltar_master DB
     while($row = $result->fetch_assoc()) {
-		echo "<tr><td>".$row["lastName"]."</td><td>".$row["firstName"]."</td><td>".$row["usernameUsers"]. "</td><td><a href=mailto:".$row["emailUsers"]." target=_top>".$row["emailUsers"]."</a></td><td>".$row["teleNum"]."</td><td></tr>";
+      if(!empty($row["AdditionalData"])){
+      $groupData=json_decode($row["AdditionalData"],true);
+
+      //store every array value of groupData["groups"] in a string
+      $userGroups=implode(", ",$groupData["groups"]);
+      }else{
+        $userGroups="Nincs csoport";
+      }
+
+		echo "<tr><td>".$row["lastName"]."</td><td>".$row["firstName"]."</td><td>".$row["usernameUsers"]. "</td><td><a href=mailto:".$row["emailUsers"]." target=_top>".$row["emailUsers"]."</a></td><td>".$row["teleNum"]."</td><td>".$userGroups."</td><td></tr>";
        
 		$countOfRec += 1;
 	}

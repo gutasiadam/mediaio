@@ -6,6 +6,7 @@ include "header.php";
 
 session_start();
 error_reporting(E_ALL ^ E_NOTICE);
+
 if ($_SESSION["role"] <3) {
     exit();
 }
@@ -51,7 +52,6 @@ if($('input#adminCheckBox'+imodal+'.form-check-input')[0].checked==false && $('i
 }
 imodal++;
 </script>
-  <title>Felhasználói jogok</title>
     </head>
 <?php if (
     isset($_SESSION["userId"])
@@ -95,20 +95,41 @@ imodal++;
     <body>  
   <div class="container">
    <br />
-   <h1 align="center">Felhasználói jogok</h1><br>
+   <h1 align="center">Felhasználói jogkörök</h1><br>
 
    <?php
    $TKI = $_SESSION["UserUserName"];
    $sql = "SELECT * FROM `users`";
    $result = Database::runQuery($sql);
    $imodal = 0;
-   $resultArray = [];
-
+    $resultArray = array();
    while ($row = $result->fetch_assoc()) {
        array_push($resultArray, $row);
        $rangok = ["médiás", "stúdiós", "sadmin", "admin", "sysadmin"];
        $rangColors = ["disabled", "info", "success", "warning", "danger"];
        $rowItem = $row["firstName"] . $row["lastName"];
+       //convert AdiitionalData row to JSON, then get the value of presets, userColor
+       
+        if($row["AdditionalData"] != null){
+          
+          //implode groups array to string
+          $groupData=json_decode($row["AdditionalData"],true);
+          //if usernameColor is not set, set it to black
+          if(!isset($groupData["presets"]["usernameColor"])){
+             $usernameColor = "#000000";
+          }else{
+            $usernameColor = $groupData["presets"]["usernameColor"];
+          }
+          
+          //store every array value of groupData["groups"] in a string
+          $groups=implode(", ",$groupData["groups"]);
+        }
+        else{
+       $rowItem = json_decode($row["AdditionalData"], true);
+        $usernameColor = "#000000";
+        $groups="?";
+        }
+
        echo '
                 <div class="row">
                 <div class="col-4">
@@ -124,14 +145,12 @@ imodal++;
            '</p>
                 </div>
                 <div class="col-2">
-                <h2 class="text text-' .
-           $rangColors[$row["Userrole"] - 1] .
-           '">' .
-           $rangok[$row["Userrole"] - 1];
-           if($row["Userrole"] == 99) echo "sysadmin";
+                <h2 class="text text-disabled' .
+           '" style="color:'.$usernameColor.'">' .
+           $groups;
            echo "</h2></div>";
-       if ($_SESSION["role"] >= 3) { ?>
-    <?php if ($row["usernameUsers"] != $TKI && $_SESSION["role"] == 99) {
+       if (in_array("admin", $_SESSION["groups"])) { ?>
+    <?php if ($row["usernameUsers"] != $TKI && in_array("system", $_SESSION["groups"])) {
         echo '
                   <form method="POST" action=../Core.php>
                   <div class="form-check form-check-inline">
@@ -146,7 +165,7 @@ imodal++;
   <input class="form-check-input" type="checkbox" name="studioCheckbox" id="studioCheckBox" value="2">
   <label class="form-check-label" for="studioCheckBoxLabel">stúdiós</label>
 </div>';
-        if ($row["usernameUsers"] != $TKI && $_SESSION["role"] == 99) {
+        if ($row["usernameUsers"] != $TKI && in_array("system", $_SESSION["groups"])) {
             echo '<button class="btn btn-warning" type="submit">Módosítás</button>';
         }
         echo "</form>";

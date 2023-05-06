@@ -12,8 +12,12 @@ $sampleValue=1;
 //Render workData
 if(isset($_POST['method'])){
     if($_POST['method']=='get'){
-
-        $sql="SELECT * FROM feladatok WHERE Datum>=CURDATE() ORDER BY Datum;";
+        if(($_POST['getOldTasks']=='true')){
+          $sql="SELECT * FROM feladatok WHERE Datum>=DATE_SUB(CURDATE(), INTERVAL 6 MONTH) ORDER BY Datum;";
+        }else{
+          $sql="SELECT * FROM feladatok WHERE Datum>=DATE_SUB(CURDATE(), INTERVAL 1 DAY) ORDER BY Datum;";
+        }
+        
         $connection=Database::runQuery_mysqli();
         if ($result = $connection->query($sql)) {
           $sendBack_Result=array();
@@ -25,7 +29,7 @@ if(isset($_POST['method'])){
             $Szemely2_Status=$row['Szemely2_Status'];
             $resultItems[] = array('id'=> $row['ID'],'datum'=> $Datum, 'szemely1'=> $Szemely1, 'szemely2'=>$Szemely2,'szemely2_Status'=>$Szemely2_Status,'szemely1_Status'=>$Szemely1_Status);
           }
-          if($_SESSION['role']>=3){
+          if(in_array("admin", $_SESSION["groups"])){
             array_push($sendBack_Result,"Admin");
           }
           

@@ -8,7 +8,7 @@
 </head>
 </html>
 
-<?php 
+<?php
 use Mediaio\Core;
 use Mediaio\Database;
 use Mediaio\MailService;
@@ -18,26 +18,26 @@ require_once __DIR__.'/../Database.php';
 require_once __DIR__.'/../Mailer.php';
 
 
-$connect = new PDO("mysql:host=localhost;dbname=mediaio", "root", "umvHVAZ%");
-
 if(isset($_POST["wEvent"]) && isset($_SESSION['UserUserName']))
 {
- if(!isset($_POST['wComment'])){$wComment="";}else{$wComment=$_POST['wComment'];}
+ if(!isset($_POST['wComment'])){$wComment="";}
+ else{$wComment=$_POST['wComment'];}
+ $connect=Database::runQuery_mysqli();
+
+//change the query above to make it bindable
  $query = "
  INSERT INTO worksheet 
  (FullName, EventID, Worktype, Location, Comment, RecordDate) 
- VALUES (:fullname, :eventid, :worktype, :location, :comment, Now())
+ VALUES (?, ?, ?, ?, ?, Now())
  ";
- $statement = $connect->prepare($query);
- $result = $statement->execute(
-  array(
-   ':fullname' => $_SESSION['lastName']." ".$_SESSION['firstName'],
-   ':eventid'  => $_POST['wEvent'],
-   ':worktype' => $_POST['wType'],
-   ':location' => $_POST['wLoc'],
-   ':comment' => $wComment
-  )
- );
+
+
+//execute query with paramter binding
+  $stmt = $connect->prepare($query);
+  $fullName=$_SESSION['lastName']." ".$_SESSION['firstName'];
+  $stmt->bind_param("sssss", $fullName, $_POST['wEvent'], $_POST['wType'], $_POST['wLoc'], $wComment);
+  $result = $stmt->execute();
+
 
  if($result){
      echo "1";
@@ -51,16 +51,18 @@ if(isset($_POST["wEvent"]) && isset($_SESSION['UserUserName']))
 if(isset($_POST["uId"]) && isset($_SESSION['UserUserName']))
 {
  if(!isset($_POST['uComment'])){$uComment="";}else{$uComment=$_POST['uComment'];}
- $query = "UPDATE worksheet SET Comment=:comment, Location=:location, Worktype=:worktype WHERE ID=:WId";
- $statement = $connect->prepare($query);
- $result = $statement->execute(
-  array(
-   ':WId'  => $_POST['uId'],
-   ':worktype' => $_POST['uType'],
-   ':location' => $_POST['uLoc'],
-   ':comment' => $uComment
-  )
- );
+  $connect=Database::runQuery_mysqli();
+ 
+  $query = "
+  UPDATE worksheet
+  SET Comment=?, Location=?, Worktype=?
+  WHERE ID=?";
+
+  //bind params to query
+  $stmt = $connect->prepare($query);
+  $stmt->bind_param("ssss", $uComment, $_POST['uLoc'], $_POST['uType'], $_POST['uId']);
+  $result = $stmt->execute();
+
 
  if($result){
      echo "1";
@@ -73,11 +75,11 @@ if(isset($_POST["uId"]) && isset($_SESSION['UserUserName']))
 
 if(isset($_POST["deleteId"])){
   $WorkId=$_POST["deleteId"];
-  $connect = new PDO("mysql:host=localhost;dbname=mediaio", "root", "umvHVAZ%");
   $query = "DELETE from worksheet WHERE ID='$WorkId'";
-  $statement = $connect->prepare($query);
-  $statement->execute();
-  $result = $statement->fetchAll();
+  $connect=Database::runQuery($query);
+  // $statement = $connect->prepare($query);
+  // $statement->execute();
+  // $result = $statement->fetchAll();
 }
 
 if(isset( $_SESSION['UserUserName'])){
@@ -104,17 +106,27 @@ if(isset($_GET['eventId'])){
     // echo "Event end time: " . $event->getEnd()->getDateTime() . "<br>"; 
     
     //MŰKÖDŐ ÁG
-    $connect = new PDO("mysql:host=localhost;dbname=mediaio", "root", "umvHVAZ%");
+    $connect=Database::runQuery_mysqli();
     //Esemény címénak, egyéb adatainak megtalálása és eltárolása
     $query = "SELECT * from events WHERE id = '$eventId'";
-    $statement = $connect->prepare($query);
-    $statement->execute();
-    $result = $statement->fetchAll();
+    // //
 
+    // $statement = $connect->prepare($query);
+    // $statement->execute();
+    // $result = $statement->fetchAll();
+
+    // foreach($result as $row){
+    //     $eventName=$row[1];
+    //     $eventStart=$row[2];
+    //     $eventEnd=$row[3];
+
+    //execute query and return the result in a for loop
+    $result = $connect->query($query);
     foreach($result as $row){
         $eventName=$row[1];
         $eventStart=$row[2];
         $eventEnd=$row[3];
+
     }    
 echo'
 
@@ -127,18 +139,16 @@ echo'
 <tr><th>Név</th><th>Cselekvés</th><th>Hely</th><th>Megjegyzés</th><th class="noprint">Műveletek</th><tr>';
  
 $query = "SELECT * from worksheet WHERE EventId = '$eventId' ORDER BY RecordDate ASC";
-$statement = $connect->prepare($query);
-    $statement->execute();
-    $result = $statement->fetchAll();
+$result = $connect->query($query);
     setcookie("Cookie_eventId", $eventId, 0, "/"); // 86400 = 1 day
 
     foreach($result as $row){
-        $workID=$row[0];
-        $userName=$row[2];
-        $workType=$row[3];
-        $Location=$row[4];
-        $userComment=$row[5];
-        $recordDate=$row[6];
+        $workID=$row["ID"];
+        $userName=$row["FullName"];
+        $workType=$row["Worktype"];
+        $Location=$row["Location"];
+        $userComment=$row["Comment"];
+        $recordDate=$row["RecordDate"];
 
         if ($userName==$_SESSION['fullName']){
           echo '<tr><td>'.$userName.'</td><td>'.$workType.'</td><td>'.$Location.'</td><td>'.$userComment.'</td><td class="noprint"> ';
@@ -235,6 +245,7 @@ $.ajax({
        type:"POST",
        data:{wType:wType, wLoc:wLoc, wComment:wComment, wEvent:wEvent},
        success:function(successNum){
+            alert(successNum);
             window.location.href = "./worksheet.php?eventId="+wEvent;
             console.log("LOG-3");
        },
@@ -263,7 +274,9 @@ function deleteSheet(id){
        type:"POST",
        data:{deleteId:id},
        success:function(successNum){
+            alert(successNum);
             window.location.href = "./worksheet.php?eventId="+wEvent;
+            
        },
        error: function(jqXHR, textStatus, errorThrown){
         window.location.href = "./worksheet.php?eventId="+wEvent;
@@ -284,6 +297,7 @@ $.ajax({
        type:"POST",
        data:{uType:uType, uLoc:uLoc, uComment:uComment, uId:uId},
        success:function(successNum){
+            alert(successNum);
             window.location.href = "./worksheet.php?eventId="+wEvent;
        },
        error: function(jqXHR, textStatus, errorThrown){
