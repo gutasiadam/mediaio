@@ -2,7 +2,7 @@
 
     include ("../profile/header.php");
         session_start();
-        if ($_SESSION['role']>=3){
+        if (in_array("teacher", $_SESSION["groups"]) or in_array("system", $_SESSION["groups"])){
             $connect = new PDO("mysql:host=localhost;dbname=mediaio","root", "umvHVAZ%");?>
 <?php if (isset($_SESSION["userId"])) { ?> <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
   <a class="navbar-brand" href="index.php">

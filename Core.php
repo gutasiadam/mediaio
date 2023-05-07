@@ -139,26 +139,22 @@ class Core{
             }
         }
         $additionalData = json_decode($additionalData, true);
-        //var_dump($additionalData);
+        // var_dump($additionalData);
         $groups=$additionalData['groups'];
 
-        
-        // if ($postData["adminChecked"]==true){
-        // //is "admin" element not in additionalData, add it
-        // if (!array_key_exists('admin', $groups)) {
-        //     //add item "admin" to array
-        //     $groups['admin'] = array();
-        // }
-        // }if ($postData["studioChecked"]==true){
-        //     if (!array_key_exists('studio', $groups)) {
-        //     $groups['studio'] = array();
-        // }
         //if postdata adminchecked is true, add admin to groups, else remove it, if it exists  
         if ($postData["adminChecked"]==true){
-            if (!array_key_exists('admin', $groups)) {
+            $valueExists=false;
+            foreach ($groups as $key => $val){
+                    if ($val == 'admin'){
+                       $valueExists=true;
+                    }
+                }
+            if ($valueExists==false){
                 array_push($groups, "admin");
             }
         }else{
+            //Admin checked is false, remove admin from groups
                 foreach ($groups as $key => $val){
                     if ($val == 'admin'){
                        unset($groups[$key]);}
@@ -166,15 +162,40 @@ class Core{
         }
         //if postdata studiochecked is true, add studio to groups, else remove it, if it exists
         if ($postData["studioChecked"]==true){
-            if (!array_key_exists('studio', $groups)) {
+            $valueExists=false;
+            foreach ($groups as $key => $val){
+                    if ($val == 'studio'){
+                       $valueExists=true;
+                    }
+                }
+            if ($valueExists==false){
                 array_push($groups, "studio");
             }
         }else{
+            //Admin checked is false, remove studio from groups
                 foreach ($groups as $key => $val){
                     if ($val == 'studio'){
                        unset($groups[$key]);}
                 }
+        }
 
+        //if postdata teacherChecked is true, add studio to groups, else remove it, if it exists
+        if ($postData["teacherChecked"]==true){
+            $valueExists=false;
+            foreach ($groups as $key => $val){
+                    if ($val == 'teacher'){
+                       $valueExists=true;
+                    }
+                }
+            if ($valueExists==false){
+                array_push($groups, "teacher");
+            }
+        }else{
+            //Teacher checked is false, remove Teacher from groups
+                foreach ($groups as $key => $val){
+                    if ($val == 'teacher'){
+                       unset($groups[$key]);}
+                }
         }
         //update additionalData groups field with the new groups array
         $additionalData['groups']=$groups;
@@ -300,13 +321,10 @@ if (isset($_POST['pwdCh-submit'])){
 }
 if (isset($_POST['pointUpdate'])){
     $postData=array('userName'=>$_POST['userName'],'adminChecked'=>false, 
-    'studioChecked'=>false);
-    if (isset($_POST["adminCheckbox"])){
-        $postData['adminChecked']=true;
-    }
-    if (isset($_POST["studioCheckbox"])){
-        $postData['studioChecked']=true;
-    }
+    'studioChecked'=>false,'teacherChecked'=>false);
+    if (isset($_POST["adminCheckbox"])){$postData['adminChecked']=true;}
+    if (isset($_POST["studioCheckbox"])){$postData['studioChecked']=true;}
+    if (isset($_POST["teacherCheckbox"])){$postData['teacherChecked']=true;}
     $c = new Core();
     $c->changeRole($postData);
     header("Location: ./profile/roles.php?adminChecked=".strval($_POST['adminCheckbox']."a"));

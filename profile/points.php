@@ -4,10 +4,8 @@ use Mediaio\Databse;
 require_once __DIR__.'/../Database.php';
 include "./header.php";
 session_start();
-if($_SESSION['role']=="Default") {
-    header("Location: ../index.php?notboss");
-}
-if(isset($_SESSION['userId']) && ($_SESSION['role'] > 3)){
+if(in_array("system", $_SESSION["groups"]) || in_array("teacher", $_SESSION["groups"])) {
+
     error_reporting(E_ALL ^ E_NOTICE);
 
 
@@ -145,6 +143,8 @@ if(isset($_SESSION['userId']) && ($_SESSION['role'] > 3)){
                     </div>      
                 </div>
               </div>';$imodal++;}
+            }else{
+              echo '<h1 class="text text-danger">Nincs jogosultságod az oldal megtekintéséhez!</h1>';
             }
             
 ?>

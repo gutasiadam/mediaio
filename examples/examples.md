@@ -6,3 +6,6 @@
 
  - Tartalmazza az e-mailek küldéséhez szükséges API kulcsot
 
+ > database_Structure.pdf
+ - Az adatbázis tábláit, és ayok struktúráját mutatja be.
+

@@ -3,7 +3,7 @@ use Mediaio\Database;
 require_once "../Database.php";
 session_start();
 include("header.php");
- if ($_SESSION['role']>=3){ ?>
+ if (in_array("admin", $_SESSION["groups"]) or in_array("teacher", $_SESSION["groups"])){ ?>
 
 <?php if (isset($_SESSION["userId"])) { ?> <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
   <a class="navbar-brand" href="index.php">

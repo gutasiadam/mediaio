@@ -2,3 +2,7 @@ ErrorDocument 404 /.git/mediaio/404.html
 <FilesMatch "\.(gif|jpg|jpeg|png)$">
      Header set Cache-Control "max-age=172800"
 </FilesMatch>
+AuthName "Identify Yourself First."
+AuthType Basic
+AuthUserFile F:\Programming\newXampp\apache\bin\.htpasswd
+require valid-user

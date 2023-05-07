@@ -7,7 +7,9 @@ include "header.php";
 session_start();
 error_reporting(E_ALL ^ E_NOTICE);
 
-if ($_SESSION["role"] <3) {
+// Prevent unauthorized access
+if(!in_array("system", $_SESSION["groups"])) {
+    echo "Nincs jogosultságod az oldal megtekintéséhez!";
     exit();
 }
 ?>
@@ -156,15 +158,18 @@ imodal++;
                   <div class="form-check form-check-inline">
   <input class="form-check-input" type="checkbox" name="adminCheckbox" value="4">
   <label class="form-check-label" for="adminCheckBoxLabel">admin</label>
-  <input type="hidden" name="userName" value=' .
-            $row["usernameUsers"] .
-            '>
+  <input type="hidden" name="userName" value=' .$row["usernameUsers"] .'>
   <input type="hidden" name="pointUpdate" value="1">
 </div>
 <div class="form-check form-check-inline">
   <input class="form-check-input" type="checkbox" name="studioCheckbox" id="studioCheckBox" value="2">
   <label class="form-check-label" for="studioCheckBoxLabel">stúdiós</label>
-</div>';
+</div>
+<div class="form-check form-check-inline">
+  <input class="form-check-input" type="checkbox" name="teacherCheckbox" id="teacherCheckBox" value="2">
+  <label class="form-check-label" for="teacherCheckBoxLabel">tanár</label>
+</div>
+';
         if ($row["usernameUsers"] != $TKI && in_array("system", $_SESSION["groups"])) {
             echo '<button class="btn btn-warning" type="submit">Módosítás</button>';
         }

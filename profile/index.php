@@ -57,19 +57,20 @@
             echo '
                     <tr><td><form action="usercheck.php"><button class="btn btn-success">UserCheck <i class="fas fa-user-check"></i></button></form></td></tr>
                     <tr><td><form action="../utility/damage_report/announce_Damage.php"><button class="btn btn-warning">Sérülés bejelentése <i class="fas fa-file-alt"></i></button></form></td></tr>
+                    <tr><td><form action="stats.php"><button class="btn btn-dark">Áttekintés <i class="fas fa-chart-pie"></i></i></button></form></td></tr>';
+                  }
+                    if(in_array("system", $_SESSION["groups"]) or in_array("teacher", $_SESSION["groups"])){ //SYSADMIN OR TEACHER
+                    echo '
                     <tr><td><form action="../budget/"><button class="btn btn-info">Költségvetés <i class="fas fa-coins"></i></button></form></td></tr>
-					<tr><td><form action="points.php"><button class="btn btn-success">Pontszámok <i class="fas fa-calculator"></i></button>
-                    </form> </td></tr>';
-                    
-                    
-                    echo '<tr><td><form action="stats.php"><button class="btn btn-dark">Áttekintés <i class="fas fa-chart-pie"></i></i></button></form></td></tr>';
-                    if(in_array("system", $_SESSION["groups"])){ //SYSADMIN
+					          <tr><td><form action="points.php"><button class="btn btn-success">Pontszámok <i class="fas fa-calculator"></i></button></form> </td></tr>';
+                    }
+                    if(in_array("system", $_SESSION["groups"])){
                       echo '
                       <tr><td><form action="roles.php"><button class="btn btn-danger">Engedélyek módosítása <i class="fas fa-radiation"></i></i></button></form></td></tr>
                       <tr><td><form action="../utility/refetchData.php"><button class="btn btn-success disabled">Adattáblák frissítése - Frissíts a kivétel oldal betöltésével! <i class="fas fa-sync"></i></i></button></form></td></tr>';
                     } ?>
                     </table><?php
-          }
+          
         }else{
             header("Location: ../index.php?error=AccessViolation");
             exit();

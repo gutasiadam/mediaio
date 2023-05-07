@@ -203,41 +203,42 @@ class itemDataManager{
         if ($itemTypes['rentable']!=1 & $itemTypes['studio']!=2 & $itemTypes['nonRentable']!=3 & $itemTypes['Out']!=4 ){
             return NULL;
         }
-        $sql= 'SELECT * FROM leltar WHERE';
+        $sql='';
         //Kölcsönözhető
         if ($itemTypes['rentable']==1){
-          $sql = $sql.' TakeRestrict=""';
+          $sql .= 'SELECT * FROM leltar WHERE TakeRestrict=""';
           $displayed=$displayed." Kölcsönözhető";
         }
         //Stúdiós
         if ($itemTypes['studio']==2){
           if (isset($_GET['rentable'])){
-            $sql = $sql.' OR TakeRestrict="s"';
+            $sql .= 'UNION SELECT * FROM leltar WHERE TakeRestrict="s"';
             $displayed=$displayed.", Stúdiós";
           }else{
-            $sql = $sql.' TakeRestrict="s"';
+            $sql = 'SELECT * FROM leltar WHERE TakeRestrict="s"';
             $displayed=$displayed." Stúdiós";
           }
           
         }
         //Nem kölcsönözhető
         if ($itemTypes['nonRentable']==3){
-          if (isset($_GET['rentable']) || isset($_GET['studio'])){
-            $sql = $sql.' AND TakeRestrict="*"';
-            $displayed=$displayed.", Nem kölcsönözhető";
-          }else{
-            $sql = $sql.' TakeRestrict="*"';
-            $displayed=$displayed."Nem kölcsönözhető";
-          }
-        }
+          //Speciális eset, ha csak a nem kölcsönözhető, stúdiós elemeket akarjuk kilistázni
+              if (isset($_GET['rentable']) || isset($_GET['studio'])){
+                $sql .= 'UNION SELECT * FROM leltar WHERE TakeRestrict="*"';
+                $displayed=$displayed.", Nem kölcsönözhető";
+              }else{
+                $sql =' SELECT * FROM leltar WHERE TakeRestrict="*"';
+                $displayed=$displayed."Nem kölcsönözhető";
+              }
 
+        }
         //Kinnlevő
         if ($itemTypes['Out']==4){
           if (isset($_GET['rentable']) || isset($_GET['studio']) || isset($_GET['nonRentable'])){
-            $sql = $sql.' AND RentBy IS NOT NULL';
+            $sql .= 'UNION SELECT * FROM leltar WHERE RentBy IS NOT NULL';
             $displayed=$displayed.", Kinnlevő";
           }else{
-            $sql = $sql.' RentBy IS NOT NULL';
+            $sql = 'SELECT * FROM leltar WHERE RentBy IS NOT NULL';
             $displayed=$displayed."Kinnlevő";
           }
         }
