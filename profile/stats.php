@@ -91,7 +91,7 @@ $conn->close();
             if($row['Event']=="SERVICE"){
               $event="🔧";
             }else{$event=$row['Event'];} 
-            echo '<tr><td>'.$row['Date'].'</td><td>'.$row['User'].'</td><td>'.$row['Item'].'</td><td>'.$event.'</td><td>'.$ackcol.'</td><td>'.$row['ACKBY'].'</td></tr>';
+            echo '<tr><td>'.$row['Date'].'</td><td>'.$row['User'].'</td><td>'.$row['Items'].'</td><td>'.$event.'</td><td>'.$ackcol.'</td><td>'.$row['ACKBY'].'</td></tr>';
            }
   ?>
 </table>

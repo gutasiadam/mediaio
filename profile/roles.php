@@ -22,21 +22,21 @@ if(!in_array("system", $_SESSION["groups"])) {
   <script src="https://kit.fontawesome.com/2c66dc83e7.js" crossorigin="anonymous"></script>
   <script>
   var imodal=0;
-  function rangTipus(i){
-    switch(i){
-      case(2):
-        return "studio";
-      case(4):
-        return "admin";
-      case(6):
-        return "sadmin";
-      default:
-        return "médiás";
-    }
-  }
+  // function rangTipus(i){
+  //   switch(i){
+  //     case(2):
+  //       return "studio";
+  //     case(4):
+  //       return "admin";
+  //     case(6):
+  //       return "sadmin";
+  //     default:
+  //       return "médiás";
+  //   }
+  // }
 //$('input#adminCheckBox.form-check-input')[0].checked
 </script>
-<script>
+<!-- <script>
 function ertek(imodal){
 var ertek;
 if($('input#adminCheckBox'+imodal+'.form-check-input')[0].checked==false && $('input#studioCheckBox'+imodal+'.form-check-input')[0].checked==true){
@@ -53,7 +53,7 @@ if($('input#adminCheckBox'+imodal+'.form-check-input')[0].checked==false && $('i
   return ertek;
 }
 imodal++;
-</script>
+</script> -->
     </head>
 <?php if (
     isset($_SESSION["userId"])
@@ -162,12 +162,16 @@ imodal++;
   <input type="hidden" name="pointUpdate" value="1">
 </div>
 <div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" name="studioCheckbox" id="studioCheckBox" value="2">
+  <input class="form-check-input" type="checkbox" name="studioCheckbox" id="studioCheckBox">
   <label class="form-check-label" for="studioCheckBoxLabel">stúdiós</label>
 </div>
 <div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" name="teacherCheckbox" id="teacherCheckBox" value="2">
+  <input class="form-check-input" type="checkbox" name="teacherCheckbox" id="teacherCheckBox">
   <label class="form-check-label" for="teacherCheckBoxLabel">tanár</label>
+</div>
+<div class="form-check form-check-inline">
+  <input class="form-check-input" type="checkbox" name="eventCheckbox" id="eventCheckBox">
+  <label class="form-check-label" for="eventCheckBoxLabel">event</label>
 </div>
 ';
         if ($row["usernameUsers"] != $TKI && in_array("system", $_SESSION["groups"])) {

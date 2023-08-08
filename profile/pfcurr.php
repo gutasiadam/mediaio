@@ -1,9 +1,10 @@
 <?php
 namespace Mediaio;
 use Mediaio\Database;
+session_start();
 require_once('../Database.php');
 include "header.php";
-session_start();
+
 if(isset($_SESSION['userId'])){
     error_reporting(E_ALL ^ E_NOTICE);
 //index.php

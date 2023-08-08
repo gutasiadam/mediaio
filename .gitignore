@@ -10,4 +10,5 @@ utility/mailCredentials.json
 server/batch_jobs/logs
 mailLog.txt
 Logger.txt
+uploads/
 .htaccess

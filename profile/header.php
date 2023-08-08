@@ -1,5 +1,3 @@
-
-<?php header("Cache-Control: privatem, max-age=2592000"); ?>
 <head>
   <link href="../main.css" rel='stylesheet' />
   <link rel="icon" type="image/x-icon" href="../logo.ico">

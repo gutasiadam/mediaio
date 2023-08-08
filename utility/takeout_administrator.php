@@ -1,6 +1,11 @@
 <?php
-error_reporting(E_ERROR | E_WARNING | E_PARSE );
+namespace Mediaio;
 session_start();
+require_once __DIR__.'/../Database.php';
+require_once __DIR__.'/../Core.php';
+use Mediaio\Core;
+use Mediaio\Database;
+error_reporting(E_ERROR | E_WARNING | E_PARSE );
 $SESSuserName = $_SESSION['UserUserName'];
 
 if( isset($_POST['takeoutData'])){
@@ -14,42 +19,46 @@ if( isset($_POST['takeoutData'])){
       //echo($entry['id']);
       fwrite($logDump, $entry['id']."\n");
     }
-    //file_put_contents("dump.txt", ob_get_flush());
-    
-    foreach ($takeoutData as $i){
-        fwrite($logDump, "RUN"."\n");
-        $nev= $i["name"];
-        $id=number_format($i["id"]);
-        if ($id<1000){
-        date_default_timezone_set('Europe/Budapest');
-        $currDate= date("Y/m/d H:i:s");
-        $conn = new mysqli('localhost', 'root', 'umvHVAZ%', 'mediaio');
-        //$conn = new mysqli($serverName, $dbUserName, $dbPassword, $dbDatabase);
-    if ($conn->connect_error) {
-      die("Connection fail: (Is the DB server maybe down?)" . $conn->connect_error);
+    $currDate= date("Y/m/d H:i:s");
+    $mysqli = Database::runQuery_mysqli();
+    if(in_array("admin",$_SESSION['groups'])){//Auto accept 
+      echo "Auto accept available";
+      $sql = ("INSERT INTO takelog (`ID`, `Date`, `User`, `Items`, `Event`,`Acknowledged`,`ACKBY`) VALUES (NULL, '$currDate', '$SESSuserName', '".json_encode($takeoutData)."', 'OUT',1,'$SESSuserName')");
+    }else{
+      $sql = ("INSERT INTO takelog takelog (`ID`, `Date`, `User`, `Items`, `Event`,`Acknowledged`,`ACKBY`) VALUES (NULL, '$currDate', '$SESSuserName', '".json_encode($takeoutData)."', 'OUT',0,NULL)");
     }
-    else{  
-      $sql = ("INSERT INTO takelog (`ID`, `takeID`, `Date`, `User`, `Item`, `Event`) VALUES (NULL, '$id', '$currDate', '$SESSuserName', '$nev', 'OUT')");
-      $result = $conn->query($sql);
-      $conn->close();
-      if ($result === TRUE) {
-        $conn = new mysqli('localhost', 'root', 'umvHVAZ%', 'mediaio');
-        $sql2 = ("UPDATE leltar SET Status = 2, RentBy = '$SESSuserName' WHERE `Nev`='$nev'");
-        //echo($sql2);
-        $result2 = $conn->query($sql2);
-        $conn->close();
-        if ($result2 != TRUE){
-          fwrite($logDump, "ERROR"."\n");
+    echo "sql: ".$sql."\n";
+     $result=mysqli_query($mysqli,$sql);
+      if($result == TRUE){
+        //Change every item as taken in the database
+        echo "Change every item as taken in the database";
+        foreach ($takeoutData as $i){
+          $name= $i["name"];
+          if(in_array("admin",$_SESSION['groups'])){//Auto accept complete, automatically update databse
+            //0 : unavailable
+            $sql = ("UPDATE leltar SET Status = 0, RentBy = '$SESSuserName' WHERE `Nev`='$name'");
+             echo "Auto accept OK, sql: ".$sql."\n";
+          }else{ //Manual accept, update database with status 2
+            $sql = ("UPDATE leltar SET Status = 2, RentBy = '$SESSuserName' WHERE `Nev`='$name'");
+          }
+          $result=mysqli_query($mysqli,$sql);
+          if($result != TRUE){
+            echo "Error: " . $sql . "<br>" . $conn->error;
+          }
         }
-    } else {
-        echo "Error: " . $sql . "<br>" . $conn->error;
-    }
+        $mysqli->close();
+      }else{
+        return 400;
+        $mysqli->close();
+        exit();
       }
-    }
     
-  }
+  // }
   //Reloads items
   include('./refetchdata.php');
   exit;
+}else{
+  return 500;
+  exit();
 }
 ?>

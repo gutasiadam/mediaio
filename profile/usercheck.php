@@ -2,8 +2,8 @@
 namespace Mediaio;
 use Mediaio\Database;
 require_once("../Database.php");
-include "header.php";
 session_start();
+include "header.php";
 if(!(in_array("admin", $_SESSION["groups"]))){
     exit();
 }
@@ -60,57 +60,37 @@ if(!isset($_SESSION['userId'])){
 
 <?php 
   /*Csoportosított rendezés*/
-  //1. lépés: dátum, felhasználó és event szerinti csoportosítások: megadja, melyik sorokat kell majd megkeresnünk.
-  $sql ="SELECT
-  takelog.Date,
-  takelog.User,
-  takelog.Event,
-  leltar.UID
-FROM
-  `takelog`,
-  `leltar`
-WHERE
-  takelog.Acknowledged = 0
-  AND takelog.Event != 'SERVICE'
-  AND takelog.Item = leltar.Nev
-GROUP BY
-  DATE
-ORDER BY
-  DATE DESC,
-  USER,
-  EVENT";
-  $result=Database::runQuery($sql);
-  echo "<table width='50' align=center class="."table"."><th>Dátum</th><th>felhasználónév</th><th>Eszköz</th><th>Esemény</th>";
-  $recCount=0;
-  while($query1Row = $result->fetch_assoc()) {
-    $recCount+=1;
-    //echo var_dump($query1Row); //Only for debug reasons.
-    $itemString=NULL;
-    //2. lépés: minden rekordra végrehajtjuk a keresést, ezzel megkapjuk az összetartozó eseményeket.
-    $sql="SELECT takelog.Item, leltar.UID FROM `takelog`, leltar WHERE takelog.Acknowledged='false' AND takelog.Event!='SERVICE' AND takelog.Date='".$query1Row['Date']."' AND takelog.User='".$query1Row['User']."' AND
-    takelog.Event='".$query1Row['Event']."' AND leltar.Nev=takelog.Item ORDER BY Item";
-    $items=Database::runQuery($sql);
-    while($itemsRow = $items->fetch_assoc()) {
-      //echo var_dump($query1Row); //Only for debug reasons.
-      $itemString.=$itemsRow['Item']." [".$itemsRow['UID']."]"."   ;  ";
+  $sql ="SELECT takelog.Date, takelog.User, takelog.Event, takelog.Items FROM `takelog` WHERE takelog.Acknowledged = 0 AND 
+  takelog.Event != 'SERVICE' ORDER BY DATE DESC, USER, EVENT";
+  $connection=Database::runQuery_mysqli();
+  $result = $connection->query($sql);
+  if ($result->num_rows > 0) {
+    echo "<table width='50' align=center class="."table"."><th>Dátum</th><th>felhasználónév</th><th>Eszköz</th><th>Esemény</th><th>JSON</th>";
+    $recCount=0;
+    $itemsString='';
+    while($row = $result->fetch_assoc()) {
+      $recCount+=1;
+      //store row[Items] json obejct as php array.
+      $items=json_decode($row['Items'], true);
+
+      //for each items in the array, print the name field
+      foreach ($items as $item){
+        $itemsString.=$item['name'].";  ";
+      }
+
+      echo "<tr id=event".$recCount."><td>".$row["Date"]."</td><td>".$row["User"]. "</td><td style='line-height: 200%; font-size: 18px;'>".$itemsString."</td><td>".$row["Event"]."</td><td style='line-height: 200%; font-size: 18px;'>".$row["Items"]."</td>
+        <td><button class='btn btn-success' onclick='acceptEvent(".$recCount.")'><i class='fas fa-check success'></i></button></br>";
+      if($row['Event']=='OUT'){
+        //declineEvent
+        echo "<button class='btn btn-danger' style='padding: 7px 15px; margin-top:4px' onclick='declineEvent(".$recCount.")'><i class='fas fa-times danger'></i></button></td>";
     }
-    //$itemString=substr_replace($itemString, "", -1);
-    echo "<tr id=event".$recCount."><td>".$query1Row["Date"]."</td><td>".$query1Row["User"]. "</td><td style='line-height: 200%; font-size: 18px;'>".$itemString."</td><td>".$query1Row["Event"]."</td>
-    <td><button class='btn btn-success' onclick='acceptEvent(".$recCount.")'><i class='fas fa-check success'></i></button></br>";
-    if($query1Row['Event']=='OUT'){
-          //declineEvent
-          echo "<button class='btn btn-danger' style='padding: 7px 15px; margin-top:4px' onclick='declineEvent(".$recCount.")'><i class='fas fa-times danger'></i></button></td>";
-    }
-    else if($query1Row['Event']=='IN'){
+    else if($row['Event']=='IN'){
     echo "<button class='btn btn-warning' style='padding: 7px 14.5px; margin-top:4px' onclick='openEventDocument(".$recCount.")'><i class='fas fa-file-alt'></i></button></td>";
 
     echo "</tr>";
     }
-    //echo $outItems;
   }
-
-  //3. lépés: elfogadásnál az össes egybetartozó eseményt el kell fogadtatni.
-  if($recCount==0){
+  }else{
     echo '// Jelenleg semmi sem vár elfogadásra.';
   }
 echo "</table>";
@@ -120,15 +100,7 @@ echo "</table>";
 
 function acceptEvent(n){
   //alert('elfogadas');
-  var items=$('#event'+n)[0].cells[2].innerHTML.split('   ;  ');
-  var i=0;
-  items.forEach(element => {
-    console.log(element);
-    items[i]=element.split('[')[0].trim();
-    console.log(items[i]);
-    i++;
-  });
-  items.pop() //removes last '' element.
+  var items=JSON.parse($('#event'+n)[0].cells[4].innerHTML);
   var itemsJSON=JSON.stringify(items);
   var eventType=$('#event'+n)[0].cells[3].innerHTML;
   var date=$('#event'+n)[0].cells[0].innerHTML;
@@ -161,12 +133,11 @@ function acceptEvent(n){
 }
 
 function declineEvent(n){
-  var items=$('#event'+n)[0].cells[2].innerHTML.split('   ;  ');
-  items.forEach(element => {
-    console.log(element);
-    element=element.split('(');
-  });
-  items.pop() //removes last '' element.
+  var items=JSON.parse($('#event'+n)[0].cells[4].innerHTML);
+  // items.forEach(element => {
+  //   console.log(element);
+  //   element=element.split('(');
+  // });
   var itemsJSON=JSON.stringify(items);
   var eventType=$('#event'+n)[0].cells[3].innerHTML;
   var date=$('#event'+n)[0].cells[0].innerHTML;

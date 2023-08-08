@@ -21,7 +21,7 @@ $TKI = $_SESSION['UserUserName'];
     <meta charset='utf-8' />
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
-  <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+  <script type="text/javascript" src="https://code.jquery.com/jquery-latest.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js">  </script>
   <script src="https://kit.fontawesome.com/2c66dc83e7.js" crossorigin="anonymous"></script>
   <script src="../../utility/_initMenu.js" crossorigin="anonymous"></script>
@@ -71,227 +71,96 @@ $TKI = $_SESSION['UserUserName'];
 <div class="contianer">
   <div class="row" style="width: 80%; margin: 0 auto;">
   <div class="col-sm">
-  <form name="damageForm">
-            <select id="selectItem" id='currOutItems' class="form-select" aria-label="Default select example" onchange="changeFunc();">
-                
-                <?php 
-                if ($_SESSION["role"] >= 3) {
-                  echo "<option  selected>Válassz a nálad levő, kivitt vagy megerősítésre váró tárgyak közül</option>";
-                  $sql = ("SELECT * FROM `leltar` WHERE `Status` != 1");
-                }else{
-                  $sql = ("SELECT * FROM `leltar` WHERE `RentBy` = '$TKI'");
-                  echo "<option  selected>Válassz a nálad levő tárgyak közül</option>";
-                }
-                
-                $result = Database::runQuery($sql);
-              while($row = $result->fetch_assoc()) { 
-                echo '<option value='.$row['UID'].'>'.$row['Nev'].'- ('.$row['UID'].')</option>';
-              }
-                ?>
-              </select>
+  <?php
+  echo "<form>";
+    if (in_array("admin", $_SESSION["groups"])){
+      $sql = "SELECT usernameUsers FROM `users`";
+      $result = Database::runQuery($sql);
+      //Create a HTML dropdown selector
 
-            <div class="form-group">
-              <label for="message-text" class="col-form-label">Leírás (mi történt pontosan?)</label>
-              <textarea class="form-control" id="err_description_long"></textarea>
-            </div>
-  Itt tudsz képet feltölteni:
-  <input id="fileToUpload" type="file" accept="image/*" name="image" />
-  <img id="imagePreview" src="#" alt="your image" style="max-width: 250px; margin: 0 auto;" />
-  <!--<input class="button btn-success" type="submit" value="Feltöltés" name="submit">-->
-            </br>
-              <a href="../index.php"><button type="button" class="btn btn-secondary">Mégsem</button></a>
-          <button type="button" class="btn btn-info" data-toggle="modal" data-target="#checkModal">Küldés</button>
-</form>
+      echo "<select id='userNameSelector' name='user'>";
+      echo "<option value='NULL'>Válassz felhasználót.</option>";
+      while ($row = mysqli_fetch_array($result)) {
+        echo "<option value='" . $row['usernameUsers'] . "'>" . $row['usernameUsers'] . "</option>";
+      }
+      echo "</select>";
+
+      echo "<select id='userItemSelector' name='userItems'></select>";
+      
+
+    }else{
+      echo "<select id='userNameSelector' name='user'>";
+       echo "<option value='".$_SESSION['UserUserName']."'>".$_SESSION['UserUserName']."</option>";
+      echo "</select>";
+
+      echo "<select id='userItemSelector' name='userItems'></select>";
+
+    }
+    echo "</div>";
+    echo "<div class='col-sm'>";
+    //Create a HTML form long text input area
+    echo "<textarea name='description' placeholder='Hiba leírása' rows='4' cols='50'></textarea>";
+    //Create a FORM input that allows multiple images
+    echo "<input type='file' name='file[]' multiple='multiple' accept='image/*'>";
+    echo "<input type='submit' name='submit' value='Bejelentés'>";
+echo "</form>";
+  ?>
   </div>
-
-<!--Temporary development modal-->
-<div class="modal fade" id="WIPModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Fejlesztés alatt</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <h5><p>Kedves felhasználó!</p></h5>
-        <p>Az oldal feljesztése folyamatban van, kérlek ne használd ezt a funkciót.</p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Bezárás</button>
-      </div>
-    </div>
   </div>
 </div>
 
-<div class="modal fade" id="checkModal" tabindex="-1" role="dialog" aria-labelledby="checkLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Ellenőrizd az adatokat beküldés előtt!</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Mégsem">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body" style="text-align: center;">
-      <h1 id="itemName">-</h1>
-    </hr>
-    <h2 id="itemUID">-</h2>
-    <h4 id="userName"><?php echo $TKI; ?></h4>
-    <h6 id="error_description">-</h6>
-    Csatolt kép(ha van):<br>
-    <img id="imagePreview_beforeSend" src="#" alt="your image" style="max-width: 250px; margin: 0 auto;" />
-    <p> Beküldés után mihamarabb megkeres majd egy Vezetőségi tag. Köszönjük, hogy jelentetted a sérülést!</p>
-      </div>
-      <div class="modal-footer">
-        <p id="mailSendState"></p>
-        <button type="button" id="sendBtn" class="btn btn-success">Küldés</button>
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Mégsem</button>
-      </div>
-    </div>
-  </div>
-</div>
 <script>
-function changeFunc() {
-    console.log('CHANGE');
-    var selectBox = document.getElementById("selectItem");
-    var selectedValue = selectBox.options[selectBox.selectedIndex].innerHTML;
-    var selectedUID = selectBox.options[selectBox.selectedIndex].value;
-    document.getElementById("itemName").innerHTML = selectedValue;
-    document.getElementById("itemUID").innerHTML = selectedUID;
-   }
+  //When the dropdown selector changes, send a request to the server to get the user's data
+  $(document).ready(function() {
 
-
-var typingTimer;                //timer identifier
-var doneTypingInterval = 50;  //time in ms, 5 second for example
-var input = $('#err_description_long');
-
-//on keyup, start the countdown
-input.on('keyup', function () {
-  clearTimeout(typingTimer);
-  typingTimer = setTimeout(doneTyping, doneTypingInterval);
-});
-
-//on keydown, clear the countdown 
-input.on('keydown', function () {
-  clearTimeout(typingTimer);
-});
-
-//user is "finished typing," do something
-function doneTyping () {
-  //do something
-  document.getElementById("error_description").innerHTML = document.getElementById("err_description_long").value;
-}
-
-function upload_image(){
-  document.getElementById("mailSendState").innerHTML="E-mail küldése...";
-  $.ajax({
-    method: 'POST',
-    url: './send_damage_report.php',
-    data: {data :mailJSON},
-    success: function (response){
-      //alert('Válasz:'+response);
-      document.getElementById("mailSendState").innerHTML =('Sikeres művelet! Az oldal hamarosan újratölt.');
-      setTimeout(function(){location.reload();},5000);
-    },
-    error: function(XMLHttpRequest, textStatus, errorThrown) { 
-      document.getElementById("mailSendState").innerHTML =("Hiba: " + errorThrown); 
-        setTimeout(function(){location.reload();},5000);
-    }
-    
-});
-}
-
-$(document).ready(function (e) {
-
-  $("#sendBtn").on('click',(function(e) {
-//   e.preventDefault();
-//   $.ajax({
-//          url: "upload.php",
-//    type: "POST",
-//    data:  new FormData($("#damageForm")[0]),
-//    contentType: false,
-//          cache: false,
-//    processData:false,
-//    success: function(data)
-//       {
-//     alert(data);
-//     if(data=='invalid')
-//     {
-//      // invalid file format.
-//      //$("#err").html("Invalid File !").fadeIn();
-//     }
-//     else
-//     {
-//      // view uploaded file.
-//      //$("#preview").html(data).fadeIn();
-//      $("#form")[0].reset(); 
-//     }
-//       }        
-//     });
-send_report();
-}));
- 
-});
-
-function send_report(){
-  changeFunc();
-  var nev= document.getElementById("itemName").innerHTML;
-  var uid= document.getElementById("itemUID").innerHTML;
-  data={
-    Nev: nev.split('-')[0],
-    UID: uid,
-    err_description: document.getElementById('error_description').innerHTML
-  };
-  mailJSON = JSON.stringify(data);
-  document.getElementById("mailSendState").innerHTML="E-mail küldése...";
-  $.ajax({
-    method: 'POST',
-    url: './send_damage_report.php',
-    data: {data :mailJSON},
-    success: function (response){
-      alert('Válasz:'+response);
-      document.getElementById("mailSendState").innerHTML =('Sikeres művelet! Az oldal hamarosan újratölt.');
-      setTimeout(function(){location.reload();},2000);
-    },
-    error: function(XMLHttpRequest, textStatus, errorThrown) { 
-      document.getElementById("mailSendState").innerHTML =("Hiba: " + errorThrown); 
-        setTimeout(function(){location.reload();},2000);
-    }
-    
-});
-}
-
-
-window.onload = function () {
-  $('#WIPModal').modal();
-  display = document.querySelector('#time');
-  var timeUpLoc="../userLogging.php?logout-submit=y"
-  startTimer(display, timeUpLoc);
-
-    
-};
-
-
-    function readURL(input) {
-        if (input.files && input.files[0]) {
-            var reader = new FileReader();
-            
-            reader.onload = function (e) {
-              
-                $('#imagePreview').attr('src', e.target.result);
-                $('#imagePreview_beforeSend').attr('src', e.target.result);
-            }
-            
-            reader.readAsDataURL(input.files[0]);
-        }
-    }
-    
-    $("#fileToUpload").change(function(){
-        readURL(this);
-        document.getElementById("mailSendState").innerHTML =('A képek feltöltése jelenleg nem működik.');
+    $("#userNameSelector").change(function() {
+      getItemForSelectedUser();
     });
 
+    function getItemForSelectedUser(){
+      var userName = $("#userNameSelector").val();
+      $.ajax({
+        type: "POST",
+        url: "damage-backend.php",
+        data: {
+          userName: userName,
+          method: "get_user_items"
+        },
+        success: function(data) {
+          console.log(data);
+          //For each item in the returned JSON, create an option in the dropdown selector
+          var userItems = JSON.parse(data);
+          $("#userItemSelector").empty();
+          for (var i = 0; i < userItems.length; i++) {
+            $("#userItemSelector").append(
+              "<option value='" +userItems[i].UID +"'>" + userItems[i].UID+" - "+userItems[i].Nev +"</option>"
+            );
+          }
+        },
+      });
+    }
+  });
+  //When the submit button is clicked, send the form data and the uploaded images to the server
+  $("form").submit(function(e) {
+    e.preventDefault();
+    var formData = new FormData(this);
+    formData.append("method", "announceDamage");
+    console.log(formData);
+    $.ajax({
+      url: "damage-backend.php",
+      type: "POST",
+      data: formData,
+      success: function(data) {
+        console.log(data);
+        if (data == 200) {
+          alert("Sikeres bejelentés!");
+        } else {
+          alert("Hiba történt a bejelentés során!");
+        }
+      },
+      cache: false,
+      contentType: false,
+      processData: false
+    });
+  });
 </script>
-

@@ -24,6 +24,8 @@ class Database{
             - Doesn't close the databse connection either.
         */
         $connection = mysqli_connect('localhost', $username, $password, $schema);
+        //Fixes encofing errors
+        mysqli_set_charset($connection,"utf8mb4");
         if (!$connection){
             die("Connection failed: ".mysqli_connect_error());
         }

@@ -5,6 +5,7 @@ require_once('./Database.php');
 session_start();
 include "header.php";
 
+
 if(!isset($_SESSION['userId'])){header("Location: index.php?error=AccessViolation");}
 
 $SESSuserName = $_SESSION['UserUserName'];
@@ -172,7 +173,7 @@ $(document).on('click', '.result', function(){
   $(document).on('click', '#intactItems', function(){
     allowGO();
   });
-  //kivétel indítása.
+  //Initiate Takeout process
   $(document).on('click', '.send', function(){
     if($("#intactItems").prop("checked")){ // ha a felhasználó elfogadta, hogy a tárgyak rendben vannak.
       var uids=[]; //UID`s that will be taken out.
@@ -186,6 +187,7 @@ $('table > tbody  > tr > td > button ').each(function(index, tr) {
     url: './ItemManager.php',
     data: {data : retrieveJSON, mode: "retrieveStaging"},
     success: function (response){
+      alert(response);
       $('#doTitle').animate({'opacity': 0}, 400, function(){
         $(this).html('<h2 class="text text-info" role="success">Sikeresen visszakerültek a tárgyak ! Az oldal újratölt.</h2>').animate({'opacity': 1}, 400);
         $(this).html('<h2 class="text text-info" role="success">Sikeresen visszakerültek a tárgyak ! Az oldal újratölt.</h2>').animate({'opacity': 1}, 3000);

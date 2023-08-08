@@ -16,7 +16,10 @@ include "header.php";
 
 if(!isset($_SESSION['userId'])){
   header("Location: index.php?error=AccessViolation");}
+
+//Update takeoutItems.json
 itemDataManager::generateTakeoutJSON();
+
 $SESSuserName = $_SESSION['UserUserName'];
 
 error_reporting(E_ALL ^ E_NOTICE);
@@ -305,7 +308,7 @@ window.onload = function () {
 			data:{takeoutData: takeOutPrepJSON},
 			success:function(response)
 			{
-        //alert(response);
+        alert(response);
         displayMessageInTitle("#doTitle","Sikeres kivétel! \nAz oldal hamarosan újratölt");
         $('#jstree').jstree(true).settings.core.data = d;
         //Fa újratöltése

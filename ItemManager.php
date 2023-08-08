@@ -22,21 +22,19 @@ class takeOutManager{
         if(empty($userName)){
           return 400; // Session data is empty (e.g User is not loggged in.)
         }else{
-          $data = json_decode(stripslashes($_POST['data']));
+          $data = json_decode(stripslashes($_POST['data']),true);
           $dataArray=array();
           foreach($data as $d){
-            //() rész kivágása a dból
-            $substrings = explode(" [", $d);
-            $d = $substrings[0];
-          array_push($dataArray,ltrim($d));
-        }
+            array_push($dataArray,$d["name"]);
+          }
           //For Use in the SQL query.
           $dataString = "'" . implode ( "','", $dataArray ) . "'";
           //Restore Items allowing others to take it out.
           $sql="START TRANSACTION; UPDATE leltar SET leltar.Status=0 AND RentBy='".$_POST['user']."' WHERE leltar.Nev IN (".$dataString.");";
           //Acknowledge events in log.
-          $sql.="UPDATE takelog SET Acknowledged=1, ACKBY='".$userName."' WHERE User='".$_POST['user']."' AND Date='".$_POST['date']."' AND EVENT='OUT' AND Item IN (".$dataString."); COMMIT;";
+          $sql.="UPDATE takelog SET Acknowledged=1, ACKBY='".$userName."' WHERE User='".$_POST['user']."' AND Date='".$_POST['date']."' AND EVENT='OUT' AND Items = '".$_POST['data']."'; COMMIT;";
       
+          echo $sql;
           $connection=Database::runQuery_mysqli();
           if(!$connection->multi_query($sql)){
             printf("Error message: %s\n", $connection->error);
@@ -53,24 +51,20 @@ class takeOutManager{
         if(empty($userName)){
           return 400; // Session data is empty (e.g User is not loggged in.)
         }else{
-          $data = json_decode(stripslashes($_POST['data']));
+          $data = json_decode(stripslashes($_POST['data']),true);
           $dataArray=array();
           foreach($data as $d){
-            //() rész kivágása a dból
-            $substrings = explode(" [", $d);
-            $d = $substrings[0];
-          array_push($dataArray,ltrim($d));
-          
-        }
-          //echo "DataArray:".$dataArray;
-          //For Use in the SQL query.
+            array_push($dataArray,$d["name"]);
+          }
+          // var_dump($dataArray);
+          //Preparing items for dataset in sql command.
           $dataString = "'" . implode ( "','", $dataArray ) . "'";
       
           //Restore Items allowing others to take it out.
           $sql="START TRANSACTION; UPDATE leltar SET Status=1, RentBy='NULL' WHERE Nev IN (".$dataString.");";
-          //Remove takeOut form  log.
-          $sql.="DELETE FROM takelog WHERE Acknowledged=0 AND User='".$_POST['user']."'AND Event='OUT' AND Item IN (".$dataString."); COMMIT;";
-      
+          //Remove takeOut event form log.
+          $sql.="DELETE FROM takelog WHERE Acknowledged=0 AND User='".$_POST['user']."'AND Event='OUT' AND Items='".$_POST['data']."' AND Date='".$_POST['date']."'; COMMIT;";
+          
           $connection=Database::runQuery_mysqli();
           if(!$connection->multi_query($sql)){
             printf("Error message: %s\n", $connection->error);
@@ -112,40 +106,30 @@ class retrieveManager{
             $d = $substrings[0];
           array_push($dataArray,ltrim($d));
     }
+    var_dump($dataArray);
     //For Use in SQL query.
     $dataString = "'" . implode ( "','", $dataArray ) . "'";
     // Database init  - create a mysqli object
       
       $connection=Database::runQuery_mysqli();
-      if($_SESSION['role']>3){//Auto accept retrieve
-        //echo "Auto accept";
-              $sql=" 
-      START TRANSACTION; UPDATE leltar SET leltar.Status=1, leltar.RentBy=NULL WHERE leltar.Nev IN (".$dataString.");";
-      $sql.="INSERT INTO takelog VALUES";
-    foreach($data as $d){
-      $sql.="(NULL, 0, '$currDate', '$userName', '$d', 'IN',1,'$userName'),";
-    }
-    
-      //Removes last comma from sql command.
-      $sql=substr_replace($sql, "", -1);
-      $sql.="; COMMIT;";
-      //echo $sql;
-        if(!$connection->multi_query($sql)){
-          printf("Error message: %s\n", $connection->error);
-        }else{
-          //All good, return OK message
-          echo 200;
-          return;
-        }
-      }else{
+      if(in_array("admin",$_SESSION['groups'])){//Auto accept 
+        $sql=" START TRANSACTION; UPDATE leltar SET leltar.Status=1, leltar.RentBy=NULL WHERE leltar.Nev IN (".$dataString.");";
+        $sql.="INSERT INTO takelog VALUES";
+        $sql.="(NULL, '$currDate', '$userName', '".$_POST['data']."', 'IN',1,'$userName')";
+        $sql.="; COMMIT;";
+        echo $sql;
+          if(!$connection->multi_query($sql)){
+            printf("Error message: %s\n", $connection->error);
+          }else{
+            //All good, return OK message
+            echo 200;
+            return;
+          }
+      }else{ // Manual accept in usercheck
               $sql=" 
       START TRANSACTION; UPDATE leltar SET leltar.Status=2, leltar.RentBy=NULL WHERE leltar.Nev IN (".$dataString.");";
       $sql.="INSERT INTO takelog VALUES";
-    foreach($data as $d){
-      $sql.="(NULL, '1', '$currDate', '$userName', '$d', 'IN',0,NULL),";
-    }
-      //Removes last comma from sql command.
-      $sql=substr_replace($sql, "", -1);
+      $sql.="(NULL, '$currDate', '$userName', '".$_POST['data']."', 'IN',0,NULL)";
       $sql.="; COMMIT;";
       if(!$connection->multi_query($sql)){
         printf("Error message: %s\n", $connection->error);
@@ -246,6 +230,7 @@ class itemDataManager{
         // echo $sql;
         return Database::runQuery($sql);
     }
+    /** Generates JSON data for takeout page, showing available and unavailable items. */
     static function generateTakeoutJSON(){
       $mysqli = Database::runQuery_mysqli();
       $rows = array();

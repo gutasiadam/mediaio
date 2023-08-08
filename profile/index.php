@@ -1,18 +1,16 @@
-
-<html>
-    <?php
-    header('Pragma: public'); 
-    require("header.php");
-    require("../translation.php");?>
+<?php
+    include("header.php");
+    include("../translation.php");?>
     <script src="../utility/_initMenu.js" crossorigin="anonymous"></script>
 
+    <html>
 <script> $( document ).ready(function() {
               menuItems = importItem("../utility/menuitems.json");
               drawMenuItemsLeft("profile",menuItems,2);
               drawMenuItemsRight('profile',menuItems,2);
             });</script>
     <?php
-        session_start();
+        
  if (isset($_SESSION["userId"])) { ?> <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
   <a class="navbar-brand" href="index.php">
     <img src="../utility/logo2.png" height="50">

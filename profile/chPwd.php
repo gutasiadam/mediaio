@@ -1,11 +1,9 @@
-
-<html>
-    <?php 
+    <?php
+    session_start();
     include "header.php";
-        session_start();
         $username = $_SESSION['userId'];
         if(isset($_SESSION['userId'])){ ?>
-            
+<html>            
 <?php if (isset($_SESSION["userId"])) { ?> <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
   <a class="navbar-brand" href="index.php">
     <img src="../utility/logo2.png" height="50">

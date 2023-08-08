@@ -161,7 +161,7 @@ class Core{
                 }
         }
         //if postdata studiochecked is true, add studio to groups, else remove it, if it exists
-        if ($postData["studioChecked"]==true){
+        if (isset($_POST['studioCheckbox'])){
             $valueExists=false;
             foreach ($groups as $key => $val){
                     if ($val == 'studio'){
@@ -180,7 +180,7 @@ class Core{
         }
 
         //if postdata teacherChecked is true, add studio to groups, else remove it, if it exists
-        if ($postData["teacherChecked"]==true){
+        if (isset($_POST['teacherCheckbox'])){
             $valueExists=false;
             foreach ($groups as $key => $val){
                     if ($val == 'teacher'){
@@ -194,6 +194,25 @@ class Core{
             //Teacher checked is false, remove Teacher from groups
                 foreach ($groups as $key => $val){
                     if ($val == 'teacher'){
+                       unset($groups[$key]);}
+                }
+        }
+
+        //if postdata eventChecked is true, add studio to groups, else remove it, if it exists
+        if (isset($_POST['eventCheckbox'])){
+            $valueExists=false;
+            foreach ($groups as $key => $val){
+                    if ($val == 'event'){
+                       $valueExists=true;
+                    }
+                }
+            if ($valueExists==false){
+                array_push($groups, "event");
+            }
+        }else{
+            //Event checked is false, remove Event from groups
+                foreach ($groups as $key => $val){
+                    if ($val == 'event'){
                        unset($groups[$key]);}
                 }
         }
@@ -361,8 +380,6 @@ if(isset($_POST['register'])){
                         header("Location: ./profile/lostPwd.php?error=userData");
                         exit();
                     }
-            //if(mysqli_affected_rows($result)!)
-               //Ready to send e-mail to user.
                     $subject = 'MediaIO - Elfelejtett jelszó';
                     $message ='
                         <html>
@@ -378,7 +395,7 @@ if(isset($_POST['register'])){
                         </body>
                         </html>';
                     MailService::sendContactMail('MediaIO',$emailAddr,'Jelszó helyreállítási token',$message);
-                    header("Location: ./profile/lostPwd.php?error=none");
+                    header("Location: ./profile/lostPwd.php?error=tokenSent");
         }
  }
 

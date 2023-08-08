@@ -20,7 +20,7 @@ class MailService
     {
         echo $to;
         // Read the JSON file into a string
-        $jsonString = file_get_contents('utility/mailCredentials.json');
+        $jsonString = file_get_contents(__DIR__.'/utility/mailCredentials.json');
 
         // Decode the JSON string into a PHP object
         $data = json_decode($jsonString);
@@ -46,5 +46,10 @@ class MailService
         }
         return $output;
     }
+
+    static function sendContactMailWithAttachment(){
+
+    }
+
     
 }
