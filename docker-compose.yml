@@ -1,0 +1,67 @@
+services:
+     nginx:    
+      build: ./nginx/  
+      container_name: nginx
+      ports:  
+       - 80:80
+       - 443:443
+      links:  
+       - php  
+      volumes_from:  
+       - app-data
+      volumes:
+       - "./nginx/nginx.conf:/etc/nginx/nginx.conf"
+
+     php:    
+      build: ./php/  
+      container_name: php
+      expose:  
+       - 9000  
+      links:  
+       - mysql  
+      volumes_from:  
+       - app-data  
+      environment:
+        UPLOAD_LIMIT: 30M
+      volumes:
+       - "./php/uploads/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini"
+
+     app-data:    
+      image: php:7.3-fpm  
+      container_name: app-data
+      volumes:  
+       - ./www/:/var/www/
+      command: "true"  
+
+     mysql:
+        image: mysql:5.7.8
+        container_name: mysql
+        restart: always
+        env_file: data.env
+        environment:
+            - MYSQL_DATABASE=arpadmedia
+            - MYSQL_ROOT_PASSWORD=${MYSQL_PASSWORD}
+            - MYSQL_USER=wordpress_user
+            - MYSQL_PASSWORD=${MYSQL_WORDPRESS_PASSWORD}
+            - MYSQL_AUTHENTICATION_PLUGIN=mysql_native_password
+        ports:
+            - "8989:3306"
+        volumes:
+            - "./data/db/mysql:/var/lib/mysql"
+      
+     phpmyadmin:
+        image: phpmyadmin/phpmyadmin
+        container_name: phpmyadmin-container
+        restart: always
+        #links:
+        #    - mysql
+        ports:
+            - "8080:80"  # Expose port 8080 for phpMyAdmin
+        environment:
+            PMA_HOST: mysql
+        depends_on:
+            - mysql
+      #Installation of Wordpress is done manually on the production server, installing it into www/html folder 
+volumes:
+  mysql-data:
+    driver: local
