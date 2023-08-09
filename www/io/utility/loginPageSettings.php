@@ -1,0 +1,55 @@
+<?php 
+/**
+ * Write a custom message to the index page.
+ */
+session_start();
+if(!in_array("system", $_SESSION["groups"])){
+    echo "Ehhez a tartalomhoz nem tudsz hozzáférni!";
+    exit();
+}
+//If a motd currently exists, print it here.
+if(file_exists("../data/loginPageSettings.json")){
+    $file = fopen("../data/loginPageSettings.json", "r");
+    $message = fread($file, filesize("../data/loginPageSettings.json"));
+    $message = json_decode($message, true);
+    echo "Motd: <p style='color:".$message["color"]."'>".$message["message"]."</p>";
+    fclose($file);
+}else{
+    echo "<p style='color:red'>Nincs MOTD beállítva.</p>";
+}
+
+
+    echo "System admin";
+    //create an input field
+    //make it a form
+    echo "<form action='loginPageSettings.php' method='post'>";
+    echo "<input type='text' name='message' placeholder='MOTD üzenet'>";
+        //A dropdown menu to select the color of the text
+    echo "<select name='color'>";
+    echo "<option value='red' style='color:red'>Piros</option>";
+    echo "<option value='green' style='color:green'>Zöld</option>";
+    echo "<option value='orange' style='color:orange'>Sárga</option>";
+    echo "</select>";
+    echo "<button type='submit' name='submit'>Mentés</button>";
+    echo "</form>";
+
+//If the user has submitted the form, and the message is not empty, then write it to the file.
+if(isset($_POST["submit"])){
+    $message = $_POST["message"];
+    $color = $_POST["color"];
+    //creat a combined JSON from the message and the color
+    $message = json_encode(array("message" => $message, "color" => $color));
+    //write the JSON to the file
+    $file = fopen("../data/loginPageSettings.json", "w");
+    fwrite($file, $message);
+    fclose($file);
+    if(empty($_POST["message"])){
+        //delete the file
+        unlink("../data/loginPageSettings.json");
+
+    }
+    //reload the page
+    //header("Refresh:0");
+    exit();
+}
+?>

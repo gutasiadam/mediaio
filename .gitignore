@@ -1,12 +1,4 @@
-DB_Elements.txt
-DB_UID.txt
-log.txt
-server/dbCredentials.json
-server/init.ini
-vendor/
-data/takeOutItems.json
-utility/credentials.json
-utility/mailCredentials.json
-server/batch_jobs/logs
-mailLog.txt
-Logger.txt
+*.env
+data/
+nginx/arpadmedia.hu.crt
+nginx/arpadmedia.hu.key

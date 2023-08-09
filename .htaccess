@@ -1,4 +1,0 @@
-ErrorDocument 404 /.git/mediaio/404.html
-<FilesMatch "\.(gif|jpg|jpeg|png)$">
-     Header set Cache-Control "max-age=172800"
-</FilesMatch>
