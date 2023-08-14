@@ -15,4 +15,4 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build the Docker image
-      run: docker compose --project-name mediaio build
+      run: docker compose --env-file example.env --project-name mediaio build
