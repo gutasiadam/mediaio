@@ -61,7 +61,7 @@ services:
             PMA_HOST: mysql
         depends_on:
             - mysql
-      #Installation of Wordpress is done manually on the production server, installing it into www/html folder 
+            
 volumes:
   mysql-data:
     driver: local

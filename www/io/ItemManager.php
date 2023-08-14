@@ -148,8 +148,6 @@ class retrieveManager{
         return;
       }
       }
-
-
   }
 
   //Usercheck approved retrieve process. Acknowledges the takeout process and sets the item status to 1 (taken out)
@@ -179,12 +177,10 @@ class retrieveManager{
         echo "Error message: %s\n".$connection->error;
       }else{
         //All good, return OK message
-        //echo $sql;
         echo 200;
         return;
       }
     }
-
     /*  If approved (value=true)  */
   }
 }
@@ -194,14 +190,14 @@ class itemDataManager{
     static function getNumberOfTakenItems(){}
     static function getItemData($itemTypes){
         $displayed="";
-        if ($itemTypes['rentable']!=1 & $itemTypes['studio']!=2 & $itemTypes['nonRentable']!=3 & $itemTypes['Out']!=4 ){
+        if ($itemTypes['rentable']!=1 & $itemTypes['studio']!=2 & $itemTypes['nonRentable']!=3 & $itemTypes['Out']!=4 & $itemTypes['Event']!=5){
             return NULL;
         }
         $sql='';
         //Kölcsönözhető
         if ($itemTypes['rentable']==1){
           $sql .= 'SELECT * FROM leltar WHERE TakeRestrict=""';
-          $displayed=$displayed." Kölcsönözhető";
+          $displayed=$displayed." Médiás";
         }
         //Stúdiós
         if ($itemTypes['studio']==2){
@@ -212,12 +208,22 @@ class itemDataManager{
             $sql = 'SELECT * FROM leltar WHERE TakeRestrict="s"';
             $displayed=$displayed." Stúdiós";
           }
-          
         }
+
+        //Eventes
+        if ($itemTypes['Event']==5){
+          if (isset($_GET['rentable']) || isset($_GET['studio']) ){
+            $sql .= 'UNION SELECT * FROM leltar WHERE TakeRestrict="e"';
+            $displayed=$displayed.", Eventes";
+          }else{
+            $sql =' SELECT * FROM leltar WHERE TakeRestrict="e"';
+            $displayed=$displayed."eventes";
+          }
+        }  
         //Nem kölcsönözhető
         if ($itemTypes['nonRentable']==3){
           //Speciális eset, ha csak a nem kölcsönözhető, stúdiós elemeket akarjuk kilistázni
-              if (isset($_GET['rentable']) || isset($_GET['studio'])){
+              if (isset($_GET['rentable']) || isset($_GET['studio']) || isset($_GET['Event'])){
                 $sql .= 'UNION SELECT * FROM leltar WHERE TakeRestrict="*"';
                 $displayed=$displayed.", Nem kölcsönözhető";
               }else{
@@ -228,7 +234,7 @@ class itemDataManager{
         }
         //Kinnlevő
         if ($itemTypes['Out']==4){
-          if (isset($_GET['rentable']) || isset($_GET['studio']) || isset($_GET['nonRentable'])){
+          if (isset($_GET['rentable']) || isset($_GET['studio']) || isset($_GET['nonRentable']) || isset($_GET['Event'])){
             $sql .= 'UNION SELECT * FROM leltar WHERE RentBy IS NOT NULL';
             $displayed=$displayed.", Kinnlevő";
           }else{
@@ -236,8 +242,10 @@ class itemDataManager{
             $displayed=$displayed."Kinnlevő";
           }
         }
+
+
         $sql= $sql." ORDER BY ".$_GET['orderByField']." ".$_GET['order'];
-        // echo $sql;
+        //echo $sql;
         return Database::runQuery($sql);
     }
     /** Generates JSON data for takeout page, showing available and unavailable items. */
@@ -245,7 +253,7 @@ class itemDataManager{
       $mysqli = Database::runQuery_mysqli();
       $rows = array();
       $mysqli->set_charset("utf8");
-      $query = "SELECT Nev, ID, UID, Category, TakeRestrict, Status FROM leltar"; //AND Status=1 
+      $query = "SELECT Nev, ID, UID, Category, TakeRestrict, ConnectsToItems, Status FROM leltar"; //AND Status=1 
       if ($result = $mysqli->query($query)) {
           while ($row = $result->fetch_assoc()) {
               if($row['Status']!="1"){

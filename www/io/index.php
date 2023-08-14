@@ -263,6 +263,8 @@ error_reporting(E_ERROR | E_PARSE);
         drawMenuItemsRight('index', menuItems);
         drawIndexTable(menuItems, 0);
       });
+
+
     </script> <?php }
     //GET változók kezelése
 
@@ -312,6 +314,15 @@ error_reporting(E_ERROR | E_PARSE);
               document.getElementById("errorbox").className = "alert alert-danger successtable";
               $("#zsoka").fadeIn();
               setTimeout(function(){ $("#errorbox").fadeOut(); }, 6000);
+              </script>';
+    }
+    if ($_GET["error"] == "loginLimit") {
+        echo '
+<script>document.getElementById("errorbox").innerHTML="A belépések átmenetileg korlátozva vannak. Próbáld újra később.";
+              document.getElementById("errorbox").className = "alert alert-danger successtable";
+              $("#zsoka").fadeIn();
+              setTimeout(function(){ $("#errorbox").fadeOut();
+              window.location.href = "index.php"; }, 6000);
               </script>';
     }
     ?>

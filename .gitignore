@@ -1,4 +1,4 @@
-*.env
+data.env
 data/
 nginx/arpadmedia.hu.crt
 nginx/arpadmedia.hu.key

@@ -23,38 +23,8 @@ if(!in_array("system", $_SESSION["groups"])) {
   <script src="https://kit.fontawesome.com/2c66dc83e7.js" crossorigin="anonymous"></script>
   <script>
   var imodal=0;
-  // function rangTipus(i){
-  //   switch(i){
-  //     case(2):
-  //       return "studio";
-  //     case(4):
-  //       return "admin";
-  //     case(6):
-  //       return "sadmin";
-  //     default:
-  //       return "médiás";
-  //   }
-  // }
-//$('input#adminCheckBox.form-check-input')[0].checked
+  
 </script>
-<!-- <script>
-function ertek(imodal){
-var ertek;
-if($('input#adminCheckBox'+imodal+'.form-check-input')[0].checked==false && $('input#studioCheckBox'+imodal+'.form-check-input')[0].checked==true){
-  ertek=2;
-}else if($('input#adminCheckBox'+imodal+'.form-check-input')[0].checked==true && $('input#studioCheckBox'+imodal+'.form-check-input')[0].checked==false){
-  ertek=4;
-}else if($('input#adminCheckBox'+imodal+'.form-check-input')[0].checked==true && $('input#studioCheckBox'+imodal+'.form-check-input')[0].checked==true){
-  ertek=3;
-}else{
-  ertek=1;
-}
-  var uName=$('p#uN'+imodal)[0].innerText;
-  alert(uName);
-  return ertek;
-}
-imodal++;
-</script> -->
     </head>
 <?php if (
     isset($_SESSION["userId"])
@@ -135,7 +105,7 @@ imodal++;
 
        echo '
                 <div class="row">
-                <div class="col-4">
+                <div class="col-sm">
                  <h2>' .
            $row["lastName"] .
            " " .
@@ -156,25 +126,49 @@ imodal++;
     <?php if ($row["usernameUsers"] != $TKI && in_array("system", $_SESSION["groups"])) {
         echo '
                   <form method="POST" action=../Core.php>
-                  <div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" name="adminCheckbox" value="4">
-  <label class="form-check-label" for="adminCheckBoxLabel">admin</label>
-  <input type="hidden" name="userName" value=' .$row["usernameUsers"] .'>
-  <input type="hidden" name="pointUpdate" value="1">
-</div>
-<div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" name="studioCheckbox" id="studioCheckBox">
-  <label class="form-check-label" for="studioCheckBoxLabel">stúdiós</label>
-</div>
-<div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" name="teacherCheckbox" id="teacherCheckBox">
-  <label class="form-check-label" for="teacherCheckBoxLabel">tanár</label>
-</div>
-<div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" name="eventCheckbox" id="eventCheckBox">
-  <label class="form-check-label" for="eventCheckBoxLabel">event</label>
-</div>
-';
+
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="checkbox" name="mediaCheckbox" id="mediaCheckBox"';
+          if(in_array("média",$groupData["groups"])){
+            echo 'checked';
+          }
+          echo '>
+          <label class="form-check-label" for="eventCheckBoxLabel">média</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="checkbox" name="studioCheckbox" id="studioCheckBox"';
+          if(in_array("studio",$groupData["groups"])){
+            echo 'checked';
+          }
+          echo '>
+          <label class="form-check-label" for="studioCheckBoxLabel">stúdiós</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="checkbox" name="eventCheckbox" id="eventCheckBox"';
+          if(in_array("event",$groupData["groups"])){
+            echo 'checked';
+          }
+          echo '>
+          <label class="form-check-label" for="eventCheckBoxLabel">event</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="checkbox" name="teacherCheckbox" id="teacherCheckBox"';
+          if(in_array("teacher",$groupData["groups"])){
+            echo 'checked';
+          }
+          echo '>
+          <label class="form-check-label" for="teacherCheckBoxLabel">tanár</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="checkbox" name="adminCheckbox" value="4"';
+          if(in_array("admin",$groupData["groups"])){
+            echo 'checked';
+          }
+          echo '>
+          <label class="form-check-label" for="adminCheckBoxLabel">admin</label>
+          <input type="hidden" name="userName" value=' .$row["usernameUsers"] .'>
+          <input type="hidden" name="pointUpdate" value="1">
+        </div>';
         if ($row["usernameUsers"] != $TKI && in_array("system", $_SESSION["groups"])) {
             echo '<button class="btn btn-warning" type="submit">Módosítás</button>';
         }

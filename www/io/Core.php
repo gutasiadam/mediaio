@@ -29,6 +29,14 @@ class Core{
     }
 
     function loginUser($postData){
+        //read the loginPageSettings.json file
+        $file = fopen("../data/loginPageSettings.json", "r");
+        $message = fread($file, filesize("../data/loginPageSettings.json"));
+        $message = json_decode($message, true);
+        //check if the limit is set
+
+        fclose($file);
+
         if (isset($postData['login-submit'])){
             $userName = $postData['useremail'];
             $password = $postData['pwd'];
@@ -48,6 +56,18 @@ class Core{
                                 exit();
                             }else if($pwdcheck == true){
                                 session_start();
+                                //check if session role json contains admin or szsadmin
+                                $role = json_decode($row['AdditionalData'], true);
+                                //var_dump($role);
+                                if($message["limit"] == 'true'){
+                                    if(!in_array("admin", $role['groups']) || !in_array("system", $role['groups'])){
+                                        session_unset();
+                                        session_destroy();
+                                        header("Location: ../index.php?error=loginLimit");
+                                        exit();
+                                    }
+                                }
+
                                 $_SESSION['userId'] = $row['idUsers'];
                                 $_SESSION['UserUserName'] = $row['usernameUsers'];
                                 $_SESSION['firstName'] = $row['firstName'];
@@ -142,11 +162,28 @@ class Core{
         // var_dump($additionalData);
         $groups=$additionalData['groups'];
         //Default group
-        if (!isset($_POST['eventCheckbox']) && !isset($_POST['teacherCheckbox']) && !isset($_POST['studioCheckbox']) && !isset($_POST['adminCheckbox'])){
+        if (!isset($_POST['eventCheckbox']) && !isset($_POST['teacherCheckbox']) && !isset($_POST['studioCheckbox']) && !isset($_POST['adminCheckbox']) && !isset($_POST['mediaCheckbox'])){
             $groups=array();
-            array_push($groups, "médiás");
+            //array_push($groups, "default");
         }else{
                         //if postdata adminchecked is true, add admin to groups, else remove it, if it exists  
+            if (isset($_POST['mediaCheckbox'])){
+                $valueExists=false;
+                foreach ($groups as $key => $val){
+                        if ($val == 'media'){
+                           $valueExists=true;
+                        }
+                    }
+                if ($valueExists==false){
+                    array_push($groups, "média");
+                }
+            }else{
+                //Event checked is false, remove Event from groups
+                    foreach ($groups as $key => $val){
+                        if ($val == 'media'){
+                           unset($groups[$key]);}
+                    }
+            }
             if ($postData["adminChecked"]==true){
                 $valueExists=false;
                 foreach ($groups as $key => $val){
@@ -220,6 +257,7 @@ class Core{
                            unset($groups[$key]);}
                     }
             }
+
         }
 
 

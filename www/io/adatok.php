@@ -55,11 +55,15 @@ require "./itemManager.php";
 Mutasd a
 <div class="form-check form-check-inline">
   <input class="form-check-input" type="checkbox" name="rentable" id="inlinea" value="1" <?php if(isset($_GET['rentable']) && $_GET['rentable'] == '1') echo 'checked';?>>
-  <label class="form-check-label" for="inlinea">Kölcsönözhető,</label>
+  <label class="form-check-label" for="inlinea">Médiás,</label>
 </div>
 <div class="form-check form-check-inline">
   <input class="form-check-input" type="checkbox" name="studio" id="inlineb" value="2" <?php if(isset($_GET['studio']) && $_GET['studio'] == '2') echo 'checked';?>>
   <label class="form-check-label" for="inlineb">Stúdiós,</label>
+</div>
+<div class="form-check form-check-inline">
+  <input class="form-check-input" type="checkbox" name="Event" id="inlined" value="5" <?php if(isset($_GET['Event']) && $_GET['Event'] == '5') echo 'checked';?>>
+  <label class="form-check-label" for="inlined">Event</label>
 </div>
 <div class="form-check form-check-inline">
   <input class="form-check-input" type="checkbox" name="nonRentable" id="inlinec" value="3" <?php if(isset($_GET['nonRentable']) && $_GET['nonRentable'] == '3') echo 'checked';?>>
@@ -67,8 +71,9 @@ Mutasd a
 </div>
 <div class="form-check form-check-inline">
   <input class="form-check-input" type="checkbox" name="Out" id="inlined" value="4" <?php if(isset($_GET['Out']) && $_GET['Out'] == '4') echo 'checked';?>>
-  <label class="form-check-label" for="inlined">Kinnlevő</label>
+  <label class="form-check-label" for="inlined">Kinnlevő,</label>
 </div>
+
 
 tárgyakat,
 <select id="orderByField" name="orderByField">
@@ -89,15 +94,13 @@ tárgyakat,
 
 <?php 
 	$countOfRec=0;
-  $displayData= array("rentable"=>$_GET['rentable'],"studio"=>$_GET['studio'],"nonRentable"=>$_GET['nonRentable'],"Out"=>$_GET['Out'],"orderByField"=>$_GET['orderByField'],"order"=>$_GET['order']);
+  $displayData= array("Event"=>$_GET['Event'],"rentable"=>$_GET['rentable'],"studio"=>$_GET['studio'],"nonRentable"=>$_GET['nonRentable'],"Out"=>$_GET['Out'],"orderByField"=>$_GET['orderByField'],"order"=>$_GET['order']);
   $result=itemDataManager::getItemData($displayData);
 if ($result!=NULL && $result->num_rows > 0) {
 	echo "<table id="."dataTable"." align=center class="."table"."><th onclick=sort(0)>UID</th><th onclick=sort(1)>Név</th><th onclick=sort(2)>Típus</th><th onclick=sort(3)>Kivette</th>";
      //output data of each row
     //Displays amount of records found in leltar_master DB
     while($row = $result->fetch_assoc()) {
-		/*if ($countOfRec == 50){
-		}*/
 		if($row["Status"]==0){
 			echo "<tr style='background-color:#fffeab;' ><td><a id=#".$row["UID"]."></a>".$row["UID"]. "</td><td>" . $row["Nev"]. "</td><td>" . $row["Tipus"]. "</td><td><strong>". $row["RentBy"]."</strong></td></tr>";
 		}
@@ -106,13 +109,16 @@ if ($result!=NULL && $result->num_rows > 0) {
 		}
 		else if($row["TakeRestrict"]=="*"){
 			echo "<tr style='background-color:#F5B8B8;' ><td><a id=#".$row["UID"]."></a>".$row["UID"]. "</td><td>" . $row["Nev"]. "</td><td>" . $row["Tipus"]. "</td><td><strong>". $row["RentBy"]."</strong></td></tr>";
-		}else{
+		}else if($row["TakeRestrict"]=="e"){
+			echo "<tr style='background-color:#4ca864;' ><td><a id=#".$row["UID"]."></a>".$row["UID"]. "</td><td>" . $row["Nev"]. "</td><td>" . $row["Tipus"]. "</td><td><strong>". $row["RentBy"]."</strong></td></tr>";
+		}
+    else{
 			echo "<tr><td><a id=#".$row["UID"]."></a>".$row["UID"]. "</td><td>" . $row["Nev"]. "</td><td>" . $row["Tipus"]. "</td><td>". "</td></tr>";
 		}
 		$countOfRec += 1;
 	}
 } else {
-    echo "// Nem található a keresési feltéleknek megfelelő tárgy a rendszerben. //";
+    echo "// Nem található a keresési feltételeknek megfelelő tárgy a rendszerben. //";
 }
 echo "</table>";
 ?>

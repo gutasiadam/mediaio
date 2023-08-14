@@ -1,13 +1,3 @@
-<html>
-<head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js">  </script>
-  <script src="https://kit.fontawesome.com/2c66dc83e7.js" crossorigin="anonymous"></script>
-</head>
-</html>
-
 <?php
 use Mediaio\Core;
 use Mediaio\Database;
@@ -16,37 +6,45 @@ require __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__.'/../Core.php';
 require_once __DIR__.'/../Database.php';
 require_once __DIR__.'/../Mailer.php';
+setcookie("Cookie_eventId", $_GET['eventId'], time() + (86400 * 30), "/");
+?>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js">  </script>
+  <script src="https://kit.fontawesome.com/2c66dc83e7.js" crossorigin="anonymous"></script>
+</head>
+<?php
+// if(isset($_POST["wEvent"]) && isset($_SESSION['UserUserName']))
+// {
+//  if(!isset($_POST['wComment'])){$wComment="";}
+//  else{$wComment=$_POST['wComment'];}
+//  $connect=Database::runQuery_mysqli();
+ 
+// //change the query above to make it bindable
+//  $query = "
+//  INSERT INTO worksheet 
+//  (FullName, EventID, Worktype, Location, Comment, RecordDate) 
+//  VALUES (?, ?, ?, ?, ?, Now())
+//  ";
 
 
-if(isset($_POST["wEvent"]) && isset($_SESSION['UserUserName']))
-{
- if(!isset($_POST['wComment'])){$wComment="";}
- else{$wComment=$_POST['wComment'];}
- $connect=Database::runQuery_mysqli();
-
-//change the query above to make it bindable
- $query = "
- INSERT INTO worksheet 
- (FullName, EventID, Worktype, Location, Comment, RecordDate) 
- VALUES (?, ?, ?, ?, ?, Now())
- ";
+// //execute query with paramter binding
+//   $stmt = $connect->prepare($query);
+//   $fullName=$_SESSION['lastName']." ".$_SESSION['firstName'];
+//   $stmt->bind_param("sssss", $fullName, $_POST['wEvent'], $_POST['wType'], $_POST['wLoc'], $wComment);
+//   $result = $stmt->execute();
 
 
-//execute query with paramter binding
-  $stmt = $connect->prepare($query);
-  $fullName=$_SESSION['lastName']." ".$_SESSION['firstName'];
-  $stmt->bind_param("sssss", $fullName, $_POST['wEvent'], $_POST['wType'], $_POST['wLoc'], $wComment);
-  $result = $stmt->execute();
-
-
- if($result){
-     echo "1";
- }
- else{
-     echo "2";
- }
- exit();
-}
+//  if($result){
+//      echo "1";
+//  }
+//  else{
+//      echo "2";
+//  }
+//  exit();
+// }
 
 if(isset($_POST["uId"]) && isset($_SESSION['UserUserName']))
 {
@@ -134,13 +132,12 @@ echo'
 <title>Munkalap - '.$event->getSummary().'</title>
 
 <body>
-<h2 class="mb-2 mr-sm-2">Munkalap - <strong>'.$event->getSummary().'</strong>  <button class="btn btn-success noprint mb-2 mr-sm-2" data-toggle="modal" data-target="#addWorkSheetData"><i style="font-size: 30px;" class="fas fa-plus fa-2x"></i></button></h2><h6>Kezdés: '.$event->getStart()->getDateTime()." | Befejezés: ".$event->getEnd()->getDateTime().'</h6>
+<h2 class="mb-2 mr-sm-2" id="titleString">Munkalap - <strong>'.$event->getSummary().'</strong>  <button class="btn btn-success noprint mb-2 mr-sm-2" data-toggle="modal" data-target="#addWorkSheetData"><i style="font-size: 30px;" class="fas fa-plus fa-2x"></i></button></h2><h6>Kezdés: '.$event->getStart()->getDateTime()." | Befejezés: ".$event->getEnd()->getDateTime().'</h6>
 <table id="worksheetData" class="table">
 <tr><th>Név</th><th>Cselekvés</th><th>Hely</th><th>Megjegyzés</th><th class="noprint">Műveletek</th><tr>';
  
 $query = "SELECT * from worksheet WHERE EventId = '$eventId' ORDER BY RecordDate ASC";
 $result = $connect->query($query);
-    setcookie("Cookie_eventId", $eventId, 0, "/"); // 86400 = 1 day
 
     foreach($result as $row){
         $workID=$row["ID"];
@@ -170,13 +167,8 @@ $result = $connect->query($query);
       </div>
       <div class="modal-body">
         <form id="editWorkData">
-        <div class="form-group">
-        <div class="form-group">
-        <select class="form-control" id="Edit_WorkType" required>
-        <option value="" selected disabled hidden>Válassz</option>
-        <option value="Fotózás">Fotózás</option>
-        <option value="Vágás">Vágás</option>
-        <option value="Videózás">Videózás</option></select></div>
+        <div class="form-group"></div>
+        <div class="form-group"><input class="form-control" type="text" autocomplete="off" id="Edit_WorkType" value="helyErtek" placeholder="A fájlok helye a szerveren" required></input></div>
         <div class="form-group"><input class="form-control" type="text" autocomplete="off" id="Edit_fileLocation" value="helyErtek" placeholder="A fájlok helye a szerveren" required></input></div>
         <div class="form-group"><input class="form-control" type="text" autocomplete="off" id="Edit_Comment" value="CommentErtek" placeholder="Egyéb megjegyzés (nem kötelező)"></input></div>
       </div>
@@ -241,11 +233,13 @@ var wLoc = document.getElementById('fileLocation').value;
 var wComment = document.getElementById('userComment').value;
 var wEvent = getCookie("Cookie_eventId");
 console.log("LOG-2");
+document.getElementById("titleString").innerHTML = "Adatpont hozzáadása folyamatban...";
 $.ajax({
        type:"POST",
+       url: 'wHandler.php',
        data:{wType:wType, wLoc:wLoc, wComment:wComment, wEvent:wEvent},
        success:function(successNum){
-            alert(successNum);
+            // alert(wEvent);
             window.location.href = "./worksheet.php?eventId="+wEvent;
             console.log("LOG-3");
        },
@@ -270,11 +264,12 @@ function showDetails(id,type,loc,comment){
 function deleteSheet(id){
   console.log("LOG-7");
   var wEvent = getCookie("Cookie_eventId");
+  document.getElementById("titleString").innerHTML = "Adatpont törlése folyamatban...";
   $.ajax({
        type:"POST",
        data:{deleteId:id},
        success:function(successNum){
-            alert(successNum);
+            // alert(successNum);
             window.location.href = "./worksheet.php?eventId="+wEvent;
             
        },
@@ -293,11 +288,12 @@ var uLoc = document.getElementById('Edit_fileLocation').value;
 var uComment = document.getElementById('Edit_Comment').value;
 var uId = document.getElementById('upDateId').value
 var wEvent = getCookie("Cookie_eventId");
+document.getElementById("titleString").innerHTML = "Adatpont módosítása folyamatban...";
 $.ajax({
        type:"POST",
        data:{uType:uType, uLoc:uLoc, uComment:uComment, uId:uId},
        success:function(successNum){
-            alert(successNum);
+            // alert(successNum);
             window.location.href = "./worksheet.php?eventId="+wEvent;
        },
        error: function(jqXHR, textStatus, errorThrown){

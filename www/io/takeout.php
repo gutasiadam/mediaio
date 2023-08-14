@@ -167,6 +167,7 @@ var roleNum=getCookie("user_roleLevel");
   renameKey(d[i],'Nev','text');
   renameKey(d[i],'ID','id');
   renameKey(d[i],'UID','uid');
+  renameKey(d[i],'ConnectsToItems','relatedItems');
   //alert(d[i].uid);
   if(d[i].TakeRestrict=='s' && roleNum<2){// nem stúdiós, vagy afölötti
     d[i].state.disabled=true;
@@ -175,6 +176,8 @@ var roleNum=getCookie("user_roleLevel");
     d[i].state.disabled=true;
   }
   d[i].originalName=d[i].text;
+  d[i].childFlag=false;
+  d[i].activeRelatedItems=d[i].relatedItems;
   d[i].restrict=d[i].TakeRestrict;
   if(d[i].restrict!=''){
     d[i].text=d[i].text+' - '+d[i].uid+'('+ d[i].restrict+')';
@@ -211,8 +214,10 @@ takeOutPrepJSON = {
 }
  
 function deselect_node(ID){
-  $("#jstree").jstree("deselect_node", ID);
-  //Elem törlése a kijelölt elemek közül.
+  //Get node UID
+  var nodeUid=$('#jstree').jstree().get_node(ID).original.uid;
+  //Deselect the node
+  $('#jstree').jstree().deselect_node(ID);
   var tmp_filtered = $.grep(takeOutPrepJSON['items'], function(e){ 
      return e.id != ID; 
 });
@@ -220,28 +225,32 @@ takeOutPrepJSON['items']=tmp_filtered;
 }
 
 $('#jstree').on("changed.jstree", function (e, data) {
-
-  len=$('#jstree').jstree().get_selected(true).length
-  for (i=0; i < len; i++){
-    itemName=$('#jstree').jstree().get_selected(true)[i].original.originalName;
-    //alert(itemName);
-    itemId=$('#jstree').jstree().get_selected(true)[i].id;
-    //itemUid=$('#jstree').jstree().get_selected(true)[i].uid;
-    //var item = takeOutPrepJSON[i];   
+  if(data.action=="select_node"){
     itemArr={};
-    itemArr.name=itemName;
-    itemArr.id=itemId;
-    //itemArr.uid=itemUid;
-    takeOutPrepJSON.items[i]=itemArr;
-    //takeOutPrepJSON.items[i].name=$('#jstree').jstree().get_selected(true)[i].text
-    //takeOutPrepJSON.items[i].id=$('#jstree').jstree().get_selected(true)[i].id
-    console.log("takeOutPrepJSON:"+takeOutPrepJSON.items);
+    itemArr.id=data.node.id;
+    itemArr.name=data.node.original.originalName;
+    takeOutPrepJSON.items.push(itemArr);
+    selectionArray=[];
+    objects=JSON.parse($('#jstree').jstree().get_node(data.node.id).original.activeRelatedItems);
+      if(objects!=null){
+        for (k=0; k < objects.length; k++){
+          for (j=1; j <= d.length; j++){
+            if($('#jstree').jstree().get_node(j).original.uid==objects[k] & $('#jstree').jstree().get_node(j).state.disabled==false){
+              selectionArray.push(j);
+              //$('#jstree').jstree().get_selected(true)[i].original.childFlag=true;
+            } 
+          }
+        }
+      }
+    //Run selection
+    $('#jstree').jstree().select_node(selectionArray);
+  }else if(data.action=="deselect_node"){
+    //Deselecting node should NOT affects the relatedItems.
+    deselect_node(data.node.id);
+  }else if(data.action=="deselect_all"){
+    //
   }
     }).jstree();
-
-$('#jstree').on("changed.jstree", function (e, data) {
-  console.log(data.instance.get_selected(true).text);
-});
 
 $('#jstree').on('changed.jstree', function (e, data) {
   var objects = data.instance.get_selected(true)
@@ -250,8 +259,7 @@ $('#jstree').on('changed.jstree', function (e, data) {
   list.empty()
   $.each(leaves, function (i, o) {
     iName=o.text;
-    console.log(o);
-    //$('<li/>').appendTo(list);
+    //console.log(o);
     toAdd=o.text+'<button class="btn btn-danger removeSelection" onclick="deselect_node('+o.id+')" id="deselectBtn_'+i+'">X</button>';
     //console.log(toAdd);
     $('<li/>').html(toAdd).appendTo(list);
@@ -261,8 +269,6 @@ $('#jstree').on('changed.jstree', function (e, data) {
 
 
 $('#jstree').jstree().refresh();
-
-
 //Right at load - start autologout.
 
   var selectList = [];

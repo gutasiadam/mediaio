@@ -12,11 +12,3 @@ mailLog.txt
 Logger.txt
 uploads/
 .htaccess
-events/core
-events/daygrid
-events/examples
-events/interaction
-events/moment
-events/packages
-events/timegrid
-utility/themes
