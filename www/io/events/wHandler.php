@@ -15,6 +15,7 @@ if(isset($_POST["wEvent"]))
  VALUES ('".$_SESSION['lastName']." ".$_SESSION['firstName']."', '".$_POST['wEvent']."', '".$_POST['wType']."', '".$_POST['wLoc']."','".$wComment."');";
 
  //Run query
+ //echo $query;
 $result = mysqli_query($connect, $query);
  if($result){
      echo "1";

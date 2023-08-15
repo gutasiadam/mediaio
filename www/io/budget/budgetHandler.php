@@ -3,7 +3,6 @@ require_once __DIR__.'/../Database.php';
 use Mediaio\Database;
 session_start();
 
-// $connect = new PDO("mysql:host=localhost;dbname=mediaio", "root", "umvHVAZ%");
 $connect = Database::runQuery_mysqli();
 $Dates = preg_split("#/#", $_POST['bDate']); 
 if(isset($_POST["bVal"]))

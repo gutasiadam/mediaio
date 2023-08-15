@@ -17,37 +17,42 @@ console.log("_initMenu file called, loading...");
       };
       
 function startTimer(display, timeUpLoc) {
-    var duration = 60*10-1;
+  //Self correcting timer, for auto logout
+  var start = Date.now()/1000;//in seconds
+    var duration = start+(60*10+1); //Auto-logout after 10 minutes
     var timer = duration, minutes, seconds;
-    //console.log("Timer start with" + duration);
-    setInterval(function () {
-        
-        minutes = parseInt(timer / 60, 10)
-        seconds = parseInt(timer % 60, 10);
+    console.log("Timer start with" + duration);
+  setInterval(function () {
+    var secondsLeft=duration-Date.now()/1000;
 
-        minutes = minutes < 10 ? "0" + minutes : minutes;
-        seconds = seconds < 10 ? "0" + seconds : seconds;
+    minutes = parseInt(secondsLeft / 60, 10)
+    seconds = parseInt(secondsLeft % 60, 10);
 
-        display.textContent = minutes + ":" + seconds;
+    minutes = minutes < 10 ? "0" + minutes : minutes;
+    seconds = seconds < 10 ? "0" + seconds : seconds;
 
-        if (timer > 60){
-          $('#time').animate({'opacity': 0.9}, 0, function(){
-          $(this).html(display.textContent).animate({'opacity': 1}, 500);
-          setTimeout(function() { $("#time").text(display.textContent).animate({'opacity': 1}, 250); }, 700);;});
-        }
+    display.textContent = minutes + ":" + seconds;
 
-        if (timer < 60){
-          $('#time').animate({'opacity': 0.9}, 0, function(){
-          $(this).html("<font color='red'>"+display.textContent+"</font").animate({'opacity': 1}, 500);
-          setTimeout(function() { $("#time").html("<font color='red'>"+display.textContent+"</font").animate({'opacity': 1}, 250); }, 700);;});
-        }
+    if (secondsLeft > 60) {
+      $('#time').animate({ 'opacity': 0.75 }, 0, function () {
+        $(this).html(display.textContent).animate({ 'opacity': 1 }, 500);
+        setTimeout(function () { $("#time").text(display.textContent).animate({ 'opacity': 1 }, 250); }, 700);;
+      });
+    }
 
-        if (--timer < 0) {
-            timer = duration;
-            //window.location.href = hrefLoc; // Minden oldalon meg kell adni, hova ugorjon az oldal, ha lejárt a timer.
-          window.location.href = timeUpLoc;
-        }
-    }, 1000);
+    if (secondsLeft < 60) {
+      $('#time').animate({ 'opacity': 0.75 }, 0, function () {
+        $(this).html("<font color='red'>" + display.textContent + "</font").animate({ 'opacity': 1 }, 500);
+        setTimeout(function () { $("#time").html("<font color='red'>" + display.textContent + "</font").animate({ 'opacity': 1 }, 250); }, 700);;
+      });
+    }
+
+    if (--secondsLeft < 0) {
+      secondsLeft = 0;
+      //window.location.href = hrefLoc; // Minden oldalon meg kell adni, hova ugorjon az oldal, ha lejárt a timer.
+      window.location.href = timeUpLoc;
+    }
+  }, 1000);
 };
 
       //Loop trough Menu left side

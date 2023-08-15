@@ -65,11 +65,6 @@ if(isset($_SESSION['UserUserName'])){
             <td><button type="submit" name="add" id="add" class="btn btn-info2 mb-2 mr-sm-2" ><?php echo $button_Find;?></button><span id='sendQueryButtonLoc'></span></td>
   	</tr>
     </form>
-        <tr>
-
-            <td><input id="id_itemUIDAdd" type="text" name="pfItem" class="form-control mb-2 mr-sm-2" placeholder='Kezdd el írni a tárgy UID-jét...'></div></td>
-            <td><button name="add" id="add" class="btn btn-info2 mb-2 mr-sm-2" onclick="searchByUID()" ><?php echo $button_Find;?></button><span id='sendQueryButtonLoc'></span></td>
-  	</tr>
     </table>  
 					<div class="table-responsive">
 						<table class="table table-bordered" id="dynamic_field"></div></div>
@@ -83,8 +78,13 @@ if(isset($_SESSION['UserUserName'])){
     if(isset($_GET['pfItem'])){
         $connectionObject=Database::runQuery_mysqli();
         $TKI = $_GET['pfItem'];
-        $query = "SELECT * FROM `takelog`, `leltar` WHERE leltar.Nev=takelog.Item AND `Item` = '$TKI' ORDER BY `Date` DESC";
-       // echo $query;
+        //find all occurences of '-' and split by the last occurence using regex
+        $TKI = preg_split('/ -/', $TKI);
+
+        //Get the Name of the item
+        $TKI = $TKI[0];
+        $query = "SELECT * FROM `takelog` WHERE JSON_CONTAINS(Items, "."'"."{".'"name" : "'.$TKI.'"}'."'".") ORDER BY `Date` DESC";
+        echo $query;
         $result=mysqli_query($connectionObject,$query);
         echo '<h3 class="panel-title">Tárgy útvonala - '.$TKI.'</h3>
         </div>
@@ -151,6 +151,7 @@ if(isset($_SESSION['UserUserName'])){
 });*/
 var dbItems=[]; //For search by Name
 var dbUidItems=[];//For search by UID
+var ItemNames=[]; //For search by Name
 var d = {};
 function loadJSON(callback) {   
 console.log("[loadJSON] - called.")
@@ -162,8 +163,13 @@ var jqxhr = $.getJSON( "./data/takeOutItems.json", function() {
     d=jqxhr.responseJSON;
     $.each( data, function( i, item ) {
       //console.log(i+item);
-      dbItems.push(item['Nev']);
-      dbUidItems.push(item['UID']);
+      var itemData={};
+      itemData['Nev']=item['Nev'];
+      itemData['UID']=item['UID'];
+      dbItems.push(itemData);
+      ItemNames.push(item['Nev']+" - "+item['UID']);
+      // dbItems.push(item['Nev']);
+      // dbUidItems.push(item['UID']);
     })
   })
   .fail(function() {
@@ -213,14 +219,15 @@ function autocomplete(inp, arr) {
       this.parentNode.appendChild(a);
       /*for each item in the array...*/
       for (i = 0; i < arr.length; i++) {
-        /*check if the item starts with the same letters as the text field value:*/
-        if (arr[i].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
+        /*check if the item contains the searched term:*/
+        if (arr[i].toUpperCase().includes(val.toUpperCase())) {
           /*create a DIV element for each matching element:*/
           b = document.createElement("DIV");
           /*make the matching letters bold:*/
-          b.innerHTML = "<strong>" + arr[i].substr(0, val.length) + "</strong>";
-          b.innerHTML += arr[i].substr(val.length);
-          /*insert a input field that will hold the current array item's value:*/
+          var boldStartIndex=arr[i].toUpperCase().indexOf(val.toUpperCase());
+          b.innerHTML = arr[i].substr(0, boldStartIndex);
+          b.innerHTML += "<strong>" + arr[i].substr(boldStartIndex, val.length) + "</strong>";
+          b.innerHTML += arr[i].substr(boldStartIndex+val.length);
           b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
           /*execute a function when someone clicks on the item value (DIV element):*/
           b.addEventListener("click", function(e) {
@@ -291,8 +298,8 @@ function autocomplete(inp, arr) {
     });
   }
 
-  autocomplete(document.getElementById("id_itemNameAdd"), dbItems);
-  autocomplete(document.getElementById("id_itemUIDAdd"), dbUidItems);
+  autocomplete(document.getElementById("id_itemNameAdd"), ItemNames);
+  // autocomplete(document.getElementById("id_itemUIDAdd"), dbUidItems);
 
 //Search bz inputted UID value
 function searchByUID(){

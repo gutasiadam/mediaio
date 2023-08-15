@@ -2,7 +2,6 @@
 namespace Mediaio;
 require_once __DIR__.'/./ItemManager.php';
 use Mediaio\itemDataManager;
-setcookie("user_roleLevel",$_SESSION['role'],0,);
 /* takeOut szabályok
 
 Status!=1 Nem vehető ki!
@@ -169,12 +168,23 @@ var roleNum=getCookie("user_roleLevel");
   renameKey(d[i],'UID','uid');
   renameKey(d[i],'ConnectsToItems','relatedItems');
   //alert(d[i].uid);
-  if(d[i].TakeRestrict=='s' && roleNum<2){// nem stúdiós, vagy afölötti
-    d[i].state.disabled=true;
+
+  //Sysadmin bypass
+   if(<?php echo in_array('system',$_SESSION['groups'])?'true':'false' ?>){//stúdiós restrict
+    d[i].state.disabled=false;
+  }else{
+    if(d[i].TakeRestrict=='s' && <?php echo (in_array('studio',$_SESSION['groups']) || in_array('admin',$_SESSION['groups']))?'false':'true' ?>){//stúdiós restrict
+      d[i].state.disabled=true;
+    }
+    if(d[i].TakeRestrict=='*'){
+      d[i].state.disabled=true;
+    }
+    if(d[i].TakeRestrict=='e' && <?php echo (in_array('event',$_SESSION['groups']) || in_array('admin',$_SESSION['groups']))?'false':'true' ?>){// event eszköz restrict
+      d[i].state.disabled=true;
+    }
   }
-  else if(d[i].TakeRestrict=='*' && roleNum<5){// nem sysadmin
-    d[i].state.disabled=true;
-  }
+
+
   d[i].originalName=d[i].text;
   d[i].childFlag=false;
   d[i].activeRelatedItems=d[i].relatedItems;
@@ -277,31 +287,31 @@ $('#jstree').jstree().refresh();
   
 //get items from takeOutItems.json
 
-function startTimer(duration, display) {
-    var timer = duration, minutes, seconds;
-    setInterval(function () {
-        minutes = parseInt(timer / 60, 10)
-        seconds = parseInt(timer % 60, 10);
+// function startTimer(duration, display) {
+//     var timer = duration, minutes, seconds;
+//     setInterval(function () {
+//         minutes = parseInt(timer / 60, 10)
+//         seconds = parseInt(timer % 60, 10);
 
-        minutes = minutes < 10 ? "0" + minutes : minutes;
-        seconds = seconds < 10 ? "0" + seconds : seconds;
+//         minutes = minutes < 10 ? "0" + minutes : minutes;
+//         seconds = seconds < 10 ? "0" + seconds : seconds;
 
-        display.textContent = minutes + ":" + seconds;
+//         display.textContent = minutes + ":" + seconds;
 
-        if (--timer < 0) {
-            timer = duration;
-            window.location.href = "./utility/logout.ut.php"
-        }
-    }, 1000);
-}
+//         if (--timer < 0) {
+//             timer = duration;
+//             window.location.href = "./utility/logout.ut.php"
+//         }
+//     }, 1000);
+// }
 
-window.onload = function () {
-    var fiveMinutes = 60 * 10 - 1,
-        display = document.querySelector('#time');
-    startTimer(fiveMinutes, display);
-    setInterval(updateTime, 1000);
-    updateTime();
-};
+// window.onload = function () {
+//     var fiveMinutes = 60 * 10 - 1,
+//         display = document.querySelector('#time');
+//     startTimer(fiveMinutes, display);
+//     setInterval(updateTime, 1000);
+//     updateTime();
+// };
   document.getElementById("takeout2BTN").addEventListener("click", function() {
     if (takeOutPrepJSON.items.length==0){
       displayMessageInTitle("#doTitle","Nem választottál ki semmit!");

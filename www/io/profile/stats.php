@@ -66,12 +66,9 @@ $conn->close();
 <tr><td><?php echo $row_cnt5 ?> felhasználó regisztrálva.</td></tr>
 </table>
       </br>
-<h3 align=left >Legutóbbi hét eseményei</h1>
+<h3 align=left >A hét eseményei</h1>
 <table class="table table-bordered">
   <?php
-  // $conn = new mysqli("localhost", "root", "umvHVAZ%", "mediaio");
-  // $sql = ("SELECT * FROM takelog ORDER BY Date DESC LIMIT 10");
-  // $result = $conn->query($sql) or die($conn->error);
 
   $connectionObject=Database::runQuery_mysqli();
         $query = "SELECT * FROM takelog WHERE Date >= DATE_SUB(CURRENT_DATE(), INTERVAL 7 DAY) ORDER BY Date DESC;";

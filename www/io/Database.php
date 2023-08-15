@@ -7,6 +7,7 @@ class Database{
     static function runQuery($query){
         // Specify the path to the JSON file
             $file_path = $_SERVER["DOCUMENT_ROOT"].'/server/dbCredentials.json';
+
 			//echo $file_path;
             // Read the contents of the file
             $json_data = file_get_contents($file_path);

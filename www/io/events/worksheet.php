@@ -96,7 +96,16 @@ if(isset($_GET['eventId'])){
     $calendarId = 'jjpdv8bd3u2s2hj9ehnbh19src@group.calendar.google.com';
     $eventId= ($_GET['eventId']);
     // Retrieve the event using the events->get() method of the Google Calendar API
-    $event = $service->events->get($calendarId, $eventId);
+    try {
+      $event = $service->events->get($calendarId, $eventId);
+    } catch (Google_Service_Exception $e) {
+      echo '<h2 class="mb-2 mr-sm-2" id="titleString">Nem található esemény ezzel az azonosítóval.</h2>';
+      //Add a button that returns to calendar page
+      echo '<a href="index.php"><button class="btn btn-info noprint mb-2 mr-sm-2" data-toggle="modal" data-target="#addWorkSheetData">Vissza a naptárra</button></a>';
+        exit();
+    }
+    
+    // Catch if event does not exist
 
     // Display the event details
     // echo "Event summary: " . $event->getSummary() . "<br>";
@@ -196,11 +205,7 @@ $result = $connect->query($query);
         <form id="sendAddWorkData">
         <div class="form-group">
         <div class="form-group">
-        <select class="form-control" id="workTypeSelect" required>
-        <option value="" selected disabled hidden>Válassz</option>
-        <option value="Fotózás">Fotózás</option>
-        <option value="Vágás">Vágás</option>
-        <option value="Videózás">Videózás</option></select></div>
+        <div class="form-group"><input class="form-control" type="text" autocomplete="off" id="workTypeSelect" placeholder="Elvégzett feladat" required></input></div>
         <div class="form-group"><input class="form-control" type="text" autocomplete="off" id="fileLocation" placeholder="A fájlok helye a szerveren" required></input></div>
         <div class="form-group"><input class="form-control" type="text" autocomplete="off" id="userComment" placeholder="Egyéb megjegyzés (nem kötelező)"></input></div>
         <input class="form-control" type="hidden" id="upDateId" value="NUL"></input>
@@ -225,44 +230,37 @@ else{
 <script>
 
 $('#sendAddWorkData').on('submit', function (e) {
-console.log("LOG-1");
 e.preventDefault();
 $('#addWorkSheetData').modal('hide');
 var wType = $( "#workTypeSelect").val();
 var wLoc = document.getElementById('fileLocation').value;
 var wComment = document.getElementById('userComment').value;
 var wEvent = getCookie("Cookie_eventId");
-console.log("LOG-2");
 document.getElementById("titleString").innerHTML = "Adatpont hozzáadása folyamatban...";
 $.ajax({
        type:"POST",
        url: 'wHandler.php',
        data:{wType:wType, wLoc:wLoc, wComment:wComment, wEvent:wEvent},
        success:function(successNum){
-            // alert(wEvent);
+            //alert(successNum);
             window.location.href = "./worksheet.php?eventId="+wEvent;
-            console.log("LOG-3");
        },
        error: function(jqXHR, textStatus, errorThrown){
         window.location.href = "./worksheet.php?eventId="+wEvent;
-        console.log("LOG-4");
       } 
       })
 });
 
 function showDetails(id,type,loc,comment){
-  console.log("LOG-5");
   console.log(id,type,loc,comment);
   document.getElementById('upDateId').value = id;
   document.getElementById('Edit_WorkType').value = type;
   document.getElementById('Edit_fileLocation').value = loc;
   document.getElementById('Edit_Comment').value = comment;
   $('#editModal').modal('show');
-  console.log("LOG-6");
 }
 
 function deleteSheet(id){
-  console.log("LOG-7");
   var wEvent = getCookie("Cookie_eventId");
   document.getElementById("titleString").innerHTML = "Adatpont törlése folyamatban...";
   $.ajax({
