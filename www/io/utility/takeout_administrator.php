@@ -19,13 +19,30 @@ if( isset($_POST['takeoutData'])){
       //echo($entry['id']);
       fwrite($logDump, $entry['id']."\n");
     }
+
     $currDate= date("Y/m/d H:i:s");
     $mysqli = Database::runQuery_mysqli();
-    if(in_array("admin",$_SESSION['groups'])){//Auto accept 
-      //echo "Auto accept available";
-      $sql = ("INSERT INTO takelog (`ID`, `Date`, `User`, `Items`, `Event`,`Acknowledged`,`ACKBY`) VALUES (NULL, '$currDate', '$SESSuserName', '".json_encode($takeoutData)."', 'OUT',1,'$SESSuserName')");
+
+    //Auto accept available
+    if(in_array("admin",$_SESSION['groups'])){
+      if($_POST['takeoutAsUser']!=''){
+        //If another person was selected at takeout, use that person's name
+        $takeOutAsUser = $_POST['takeoutAsUser'];
+        $sql = ("INSERT INTO takelog (`ID`, `Date`, `User`, `Items`, `Event`,`Acknowledged`,`ACKBY`) VALUES (NULL, '$currDate', '$takeOutAsUser', '".json_encode($takeoutData)."', 'OUT',1,'$SESSuserName')");
+      }else{
+        $sql = ("INSERT INTO takelog (`ID`, `Date`, `User`, `Items`, `Event`,`Acknowledged`,`ACKBY`) VALUES (NULL, '$currDate', '$SESSuserName', '".json_encode($takeoutData)."', 'OUT',1,'$SESSuserName')");
+      }
+      
+    }else{
+
+          //If another person was selected at takeout, use that person's name
+    if($_POST['takeoutAsUser']!=''){
+      $takeOutAsUser = $_POST['takeoutAsUser'];
+      $sql = ("INSERT INTO takelog (`ID`, `Date`, `User`, `Items`, `Event`,`Acknowledged`,`ACKBY`) VALUES (NULL, '$currDate', '$takeOutAsUser', '".json_encode($takeoutData)."', 'OUT',0,NULL)");
     }else{
       $sql = ("INSERT INTO takelog (`ID`, `Date`, `User`, `Items`, `Event`,`Acknowledged`,`ACKBY`) VALUES (NULL, '$currDate', '$SESSuserName', '".json_encode($takeoutData)."', 'OUT',0,NULL)");
+    }
+    
     }
     //echo "sql: ".$sql."\n";
      $result=mysqli_query($mysqli,$sql);

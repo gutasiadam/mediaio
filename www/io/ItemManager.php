@@ -279,6 +279,24 @@ class itemHistoryManager{
 
 }
 
+class userManager{
+  static function getUsers(){
+    $mysqli = Database::runQuery_mysqli();
+    $rows = array();
+    $mysqli->set_charset("utf8");
+    $query = "SELECT usernameUsers FROM users";
+    if ($result = $mysqli->query($query)) {
+        while ($row = $result->fetch_assoc()) {
+            $rows[] = $row;
+        }
+    $a=json_encode($rows);
+        //var_dump($a);
+        echo $a;
+    }
+    return;
+  }
+}
+
 if(isset($_POST['mode'])){
 
   //Set timezone to the computer's timezone.
@@ -303,6 +321,13 @@ if(isset($_POST['mode'])){
   }
   if($_POST['mode']=='retrieveApproval'){
     echo retrieveManager::approveRetrieve($_POST['value']);
+    //echo $_POST['value'] ;
+    //Header set.
+    exit();
+  }
+
+  if($_POST['mode']=='getUsers'){
+    echo userManager::getUsers();
     //echo $_POST['value'] ;
     //Header set.
     exit();

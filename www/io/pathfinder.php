@@ -84,7 +84,6 @@ if(isset($_SESSION['UserUserName'])){
         //Get the Name of the item
         $TKI = $TKI[0];
         $query = "SELECT * FROM `takelog` WHERE JSON_CONTAINS(Items, "."'"."{".'"name" : "'.$TKI.'"}'."'".") ORDER BY `Date` DESC";
-        echo $query;
         $result=mysqli_query($connectionObject,$query);
         echo '<h3 class="panel-title">Tárgy útvonala - '.$TKI.'</h3>
         </div>

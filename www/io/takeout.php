@@ -82,6 +82,40 @@ error_reporting(E_ALL ^ E_NOTICE);
 			<div class="form-group">
         <table id="itemSearch" align="left"><tr>
         <td class="selectedItemsDisplay" rowspan="2" style="text-align:left;vertical-align:top;padding:0;min-width:300px;">
+        <div id="givetoAnotherPerson" style="visibility: hidden;">
+        <h6 class="text"  >Más nevében veszel ki eszközt?</h6>
+        <!-- A button on which if the user clicks, a modal will show up -->
+        <button id="givetoAnotherPerson_Button" type="button" class="btn btn-success" data-toggle="modal" data-target="#givetoAnotherPerson_Modal" style="visibility: hidden;">Igen</button>
+        <!-- The modal  -->
+
+            <div class="modal fade" id="givetoAnotherPerson_Modal" tabindex="-1" role="dialog" aria-labelledby="givetoAnotherPerson_ModalLabel" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Eszköz kivétele más helyett</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <!-- Perform an ajax query to ItemManager.php -->
+                    <div id='givetoAnotherPerson_UserName_Field'>
+
+                    <label for="givetoAnotherPerson_UserName">Felhasználó neve:</label>
+                    <select id="givetoAnotherPerson_UserName" name="givetoAnotherPerson_UserName" class="form-control" required>
+                      <option value="" disabled selected>Válassz felhasználót</option>
+                    </select>
+                      
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
           <h3><u>Kiválasztva:</u></h3>
           <ul id="output"></ul>
         </td>
@@ -94,16 +128,22 @@ error_reporting(E_ALL ^ E_NOTICE);
   			</tr></table>
 			<form autocomplete="off" action="/index.php">
 			</form>
+          
 					<div class="table-responsive">
 						<table class="table table-bordered table-dark" id="dynamic_field">
 				<form name="sendRequest" method="POST" action='/index.php'>
 						</table>
 				</form>
+        
         <table class="table table-bordered livearray" id="liveSelArrayResult"><td></td></table>
         
 			</div>
 		</div>
 	</body>
+
+
+  <!-- Navigation back to top -->
+  <div id='toTop'><i class="fas fa-chevron-up"></i></div>
 </html>
 <script>
 
@@ -169,7 +209,10 @@ var roleNum=getCookie("user_roleLevel");
   renameKey(d[i],'ConnectsToItems','relatedItems');
   //alert(d[i].uid);
 
-  //Sysadmin bypass
+  if(d[i].Status=='0' || d[i].Status=='2'){ //Taken out or waiting for UserCheck
+    d[i].state.disabled=true;
+  }else{
+    //Sysadmin bypass
    if(<?php echo in_array('system',$_SESSION['groups'])?'true':'false' ?>){//stúdiós restrict
     d[i].state.disabled=false;
   }else{
@@ -183,6 +226,8 @@ var roleNum=getCookie("user_roleLevel");
       d[i].state.disabled=true;
     }
   }
+  }
+
 
 
   d[i].originalName=d[i].text;
@@ -195,6 +240,23 @@ var roleNum=getCookie("user_roleLevel");
     d[i].text=d[i].text+' - '+d[i].uid;
   } 
 }
+
+//INvoked after JStree is loaded
+$('#jstree').bind('ready.jstree', function(e, data) {
+  // console.log("[tree loaded] - running coloring");
+  // //wait 100ms
+  // for(i=1;i<=d.length;i++){
+  //   if($('#jstree').jstree().get_node(i).original.Status=='2' || $('#jstree').jstree().get_node(i).original.Status=='0' ){
+  //     $("#jstree ul li:nth-child("+i+") a").attr('takeout', 'true');
+  //     $("#jstree ul li:nth-child("+i+") a").css({"background-color":"green","font-size":"20px","color":"red"});
+  //     console.log("[jstree] - running - "+i);
+  //     console.log($("#jstree ul li:nth-child("+i+") a"));
+  //   }
+  // }
+
+  // //Update style for items that are taken out.
+  // $('*[takeout="true"]').css({"background-color":"green","font-size":"20px","color":"red"});
+});
 
 $('#jstree').jstree({
   "plugins": ["search", "checkbox", "wholerow"],
@@ -260,6 +322,13 @@ $('#jstree').on("changed.jstree", function (e, data) {
   }else if(data.action=="deselect_all"){
     //
   }
+  if(containsOnlyStudioItems()){
+      $(`#givetoAnotherPerson`).css('visibility','visible')
+      $(`#givetoAnotherPerson_Button`).css('visibility','visible')
+    }else{
+      $(`#givetoAnotherPerson`).css('visibility','hidden')
+      $(`#givetoAnotherPerson_Button`).css('visibility','hidden')
+  }
     }).jstree();
 
 $('#jstree').on('changed.jstree', function (e, data) {
@@ -279,54 +348,90 @@ $('#jstree').on('changed.jstree', function (e, data) {
 
 
 $('#jstree').jstree().refresh();
+$('*[takeout-info="out"]').css({"font-size":"12px","color":"red"});
 //Right at load - start autologout.
 
   var selectList = [];
   var i=1;
+
+  //Change color of items that are taken out or waiting for usercheck
+function colorTakenItems(){
+    for(a=1;a<=d.length;a++){
+      if($('#jstree').jstree().get_node(a).original.Status=='2' || $('#jstree').jstree().get_node(a).original.Status=='0' ){
+        $("#jstree ul li:nth-child("+a+") a").attr('takeout', 'true');
+        $("#jstree ul li:nth-child("+a+") a").css({"font-size":"17px","color":"#ebcc83","text-decoration": "line-through"});
+      }
+    }
+  }
+
+  function containsOnlyStudioItems(){
+    if(takeOutPrepJSON.items.length==0){
+      return false;
+    }
+    for(j=0;j<takeOutPrepJSON.items.length;j++){
+      if($('#jstree').jstree().get_node(parseInt(takeOutPrepJSON.items[0].id)).original.TakeRestrict!='s'){
+        return false;
+      }
+    }
+    return true;
+  }
+
   $(document).ready(function(){
-  
-//get items from takeOutItems.json
+    //Color taken items
+    setTimeout(function (){
+      colorTakenItems();
+    }, 500);
 
-// function startTimer(duration, display) {
-//     var timer = duration, minutes, seconds;
-//     setInterval(function () {
-//         minutes = parseInt(timer / 60, 10)
-//         seconds = parseInt(timer % 60, 10);
+    //Back to top button
+    $(window).scroll(function() {
+    if ($(this).scrollTop()) {
+          $('#toTop').fadeIn();
+      } else {
+          $('#toTop').fadeOut();
+      }
+    });
 
-//         minutes = minutes < 10 ? "0" + minutes : minutes;
-//         seconds = seconds < 10 ? "0" + seconds : seconds;
+    //Make an ajax call
+    $.ajax({
+			url:"ItemManager.php",
+			method:"POST",
+			data:{mode: "getUsers"},
+			success:function(response)
+			{
+        //alert(response);
 
-//         display.textContent = minutes + ":" + seconds;
+        //Convert rerponse to JSON
+        var users = JSON.parse(response);
+        //For each user add a select option to givetoAnotherPerson_UserName
+        for (var i = 0; i < users.length; i++) {
+          $('#givetoAnotherPerson_UserName').append($('<option>', {
+              value: users[i].usernameUsers,
+              text: users[i].usernameUsers
+          }));
+        }
+			}
+		});
 
-//         if (--timer < 0) {
-//             timer = duration;
-//             window.location.href = "./utility/logout.ut.php"
-//         }
-//     }, 1000);
-// }
+    $("#toTop").click(function() {
+        $("html, body").animate({scrollTop: 0}, 1000);
+     });
 
-// window.onload = function () {
-//     var fiveMinutes = 60 * 10 - 1,
-//         display = document.querySelector('#time');
-//     startTimer(fiveMinutes, display);
-//     setInterval(updateTime, 1000);
-//     updateTime();
-// };
+
   document.getElementById("takeout2BTN").addEventListener("click", function() {
     if (takeOutPrepJSON.items.length==0){
       displayMessageInTitle("#doTitle","Nem választottál ki semmit!");
       return;
     }
+
     console.log("Kimenet:"+JSON.stringify(takeOutPrepJSON));
     //alert("Kimenet:"+JSON.stringify(takeOutPrepJSON));
       $.ajax({
       url:"./utility/takeout_administrator.php",
       //url:"./utility/dummy.php",
 			method:"POST",
-			data:{takeoutData: takeOutPrepJSON},
+			data:{takeoutData: takeOutPrepJSON, takeoutAsUser: $('#givetoAnotherPerson_UserName').val()},
 			success:function(response)
 			{
-        console.log(response);
         if(response=='200'){
           displayMessageInTitle("#doTitle","Sikeres kivétel! \nAz oldal hamarosan újratölt");
           $('#jstree').jstree(true).settings.core.data = d;
@@ -468,5 +573,37 @@ return arr.filter(function(ele){
     /*background-color: #D3D3D3;*/
     margin: 5px 0;
   }
+
+  #toTop{
+    position: fixed;
+    bottom: 20px;
+    right: 30px;
+    z-index: 99;
+    font-size: 18px;
+    border: none;
+    outline: none;
+    background-color: #000658;
+    color: white;
+    cursor: pointer;
+    padding: 15px;
+    display:none;
+    border-radius: 50%;
+  }
+
+  #toTop:hover {
+    background-color: #555;
+    animation-name: changefontsize;
+    animation-duration: 0.5s;
+    font-size: 22px;
+  }
+
+  @keyframes changefontsize {
+  from {font-size: 18px;}
+  to {font-size: 22px;}
+}
+
+
+
+  
 
 </style>
