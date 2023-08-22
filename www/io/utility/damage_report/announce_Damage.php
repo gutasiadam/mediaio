@@ -71,7 +71,7 @@ $TKI = $_SESSION['UserUserName'];
 <div class="contianer">
   <div class="row" style="width: 80%; margin: 0 auto;">
   <div class="col-sm">
-  <?php
+<?php
   echo "<form>";
     if (in_array("admin", $_SESSION["groups"])){
       $sql = "SELECT usernameUsers FROM `users`";
@@ -89,6 +89,7 @@ $TKI = $_SESSION['UserUserName'];
       
 
     }else{
+      //User can only select their own items
       echo "<select id='userNameSelector' name='user'>";
        echo "<option value='".$_SESSION['UserUserName']."'>".$_SESSION['UserUserName']."</option>";
       echo "</select>";
@@ -101,17 +102,71 @@ $TKI = $_SESSION['UserUserName'];
     //Create a HTML form long text input area
     echo "<textarea name='description' placeholder='Hiba leírása' rows='4' cols='50'></textarea>";
     //Create a FORM input that allows multiple images
-    echo "<input type='file' name='file[]' multiple='multiple' accept='image/*'>";
+    echo "<input type='file' id='file' name='upFile' accept='image/*'>";
     echo "<input type='submit' name='submit' value='Bejelentés'>";
 echo "</form>";
   ?>
   </div>
   </div>
+        <div class="uploadedImages">
+        <h6>Eddig feltöltött képek:</h6>
+    </div>
+    <p id='folder'></p>
 </div>
 
 <script>
   //When the dropdown selector changes, send a request to the server to get the user's data
   $(document).ready(function() {
+
+  $('input[type=file]').on('change', function () {
+
+    var uploadedImagesCount = 0;
+    var $files = $(this).get(0).files;
+
+    if ($files.length) {
+      // Reject big files
+      if ($files[0].size > $(this).data('max-size') * 1024) {
+        console.log('Please select a smaller file');
+        return false;
+      }
+
+      // Begin file upload
+      console.log('Uploading file to Host.');
+      var settings = {
+        // async: false,
+        // crossDomain: true,
+        processData: false,
+        contentType: false,
+        cache: false,
+        type: 'POST',
+        url: './upload-handler.php',
+        mimeType: 'multipart/form-data',
+      };
+
+    var formData = new FormData();
+    formData.append('upFile', $files[0]);
+      settings.data = formData;
+    }
+
+    console.log('Settings ok');
+
+    // Response contains stringified JSON
+      // Image URL available at response.data.link
+      $.ajax(settings).done(function (response) {
+        //convert response to json
+        //Append an image to the uploadedImages div with the url being the response
+        uploadedImagesCount++;
+        var img = $('<img />', {
+          id: 'img_'+uploadedImagesCount,
+          src: "/../../uploads/images/" + response,
+          alt: 'Uploaded Image'+uploadedImagesCount++,
+          width: '100px',
+        });
+        img.appendTo($('.uploadedImages'));
+        // $("#folder").text("Képek mappája: "+response);
+        
+      });
+  });
 
     $("#userNameSelector").change(function() {
       getItemForSelectedUser();
@@ -142,25 +197,42 @@ echo "</form>";
   });
   //When the submit button is clicked, send the form data and the uploaded images to the server
   $("form").submit(function(e) {
+
+    var zipfile='';
     e.preventDefault();
     var formData = new FormData(this);
     formData.append("method", "announceDamage");
-    console.log(formData);
     $.ajax({
-      url: "damage-backend.php",
-      type: "POST",
-      data: formData,
-      success: function(data) {
-        console.log(data);
-        if (data == 200) {
-          alert("Sikeres bejelentés!");
-        } else {
-          alert("Hiba történt a bejelentés során!");
-        }
-      },
-      cache: false,
-      contentType: false,
-      processData: false
+      type: 'POST',
+      url: './upload-handler.php',
+      data: {uploadComplete: true},
+      success: function (response) {
+        $('.uploadedImages h6').html('<h6>A képek feltöltése kész. Letöltheted a képeket: <a href="../../uploads/images/' + response+'.zip">Letöltés</a></h6>');
+        formData.append("zip-file",response);
+         console.log("zip-file0:"+response);
+        zipfile=response;
+        //Perform mail send
+
+        $.ajax({
+          url: "damage-backend.php",
+          type: "POST",
+          data: formData,
+          success: function(data) {
+            console.log(data);
+            if (data == 200) {
+              $('folder').text("Sikeres bejelentés!");
+            } else {
+              $('folder').text("Hiba történt a bejelentés során!");
+            }
+          },
+          cache: false,
+          contentType: false,
+          processData: false
+      });
+      }
     });
+
+   
+
   });
 </script>

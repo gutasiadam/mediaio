@@ -269,12 +269,16 @@ $('#jstree').jstree({
     }},
   "search": {
     "show_only_matches": true,
-    "show_only_matches_children": true
+    "show_only_matches_children": true,
+    "case_sensitive": false
   }
 });
 
 $('#search').on("keyup change", function () {
   $('#jstree').jstree(true).search($(this).val())
+  colorTakenItems();
+
+
 })
 
 $('#clear').click(function (e) {
@@ -359,8 +363,15 @@ function colorTakenItems(){
     for(a=1;a<=d.length;a++){
       if($('#jstree').jstree().get_node(a).original.Status=='2' || $('#jstree').jstree().get_node(a).original.Status=='0' ){
         $("#jstree ul li:nth-child("+a+") a").attr('takeout', 'true');
-        $("#jstree ul li:nth-child("+a+") a").css({"font-size":"17px","color":"#ebcc83","text-decoration": "line-through"});
+        $("#jstree ul li:nth-child("+a+") a").css({
+          "font-size":"17px",
+          "color":"#ebcc83",
+          "text-decoration": "line-through !important",
+          "font-weight": "normal !important"
+        });
+        $("#jstree ul li:nth-child("+a+") a").removeClass("jstree-search");
       }
+      
     }
   }
 

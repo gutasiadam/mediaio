@@ -1,9 +1,18 @@
-<?php 
+<?php
+use Mediaio\Database;
+require_once "../Database.php";
+session_start();
+include("../profile/header.php");
 
-    include ("../profile/header.php");
-        session_start();
-        if (in_array("teacher", $_SESSION["groups"]) or in_array("system", $_SESSION["groups"])){
-            $connect = new PDO("mysql:host=localhost;dbname=mediaio","root", "umvHVAZ%");?>
+
+//At least one condition is true
+ if (!(in_array("admin", $_SESSION["groups"]) || in_array("teacher", $_SESSION["groups"]))){
+  
+  echo "Nincs jogosultságod a lap megtekintéséhez!"; 
+  exit();
+  }?>
+
+
 <?php if (isset($_SESSION["userId"])) { ?> <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
   <a class="navbar-brand" href="index.php">
     <img src="../utility/logo2.png" height="50">
@@ -28,288 +37,378 @@
     </ul>
     <form method='post' class="form-inline my-2 my-lg-0" action=../utility/userLogging.php>
       <button class="btn btn-danger my-2 my-sm-0" name='logout-submit' type="submit">Kijelentkezés</button>
+      <script type="text/javascript">
+        window.onload = function () {
+          display = document.querySelector('#time');
+          var timeUpLoc="../utility/userLogging.php?logout-submit=y"
+          startTimer(display, timeUpLoc);
+        };
+      </script>
     </form>
     <a class="nav-link my-2 my-sm-0" href="./help.php">
       <i class="fas fa-question-circle fa-lg"></i>
     </a>
   </div>
-</nav> <?php  } ?><?php
-        }else{
-            header("Location: ../index.php?error=AccessViolation");
-            exit();
-        }
-        echo '<div class="printonly">'.date("Y/m/d").'</div>';
-    ?>
+</nav> 
 
-<html>
-<head>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js">  </script>
-  <script src="https://kit.fontawesome.com/2c66dc83e7.js" crossorigin="anonymous"></script>
-  <script src="https://unpkg.com/gijgo@1.9.13/js/gijgo.min.js" type="text/javascript"></script>
-  <link href="https://unpkg.com/gijgo@1.9.13/css/gijgo.min.css" rel="stylesheet" type="text/css" />
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Arpad Media IO</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-</head>
 <body>
-<div class="date" style="margin: 0 auto; padding-top: 50px;  text-align: center;"><div id="date"><?php echo date("Y/m/d"); ?></div></div>
-<div style="margin: 0 auto; padding-top: 50px;  text-align: center;"><button class="btn btn-warning noprint" data-toggle="modal" data-target="#budgetModal">Tétel hozzáadása</button></div>
-<div class="row">
-<div class="col-sm-6">
-<h1 align=center>Médiás költségvetés</br></h1>
-  <table class="budget_table">
-    <!--<tr><td class="tdTitle"><h3>Bevételek</h3></td>-->
-    <tr>
-      <td><table class="income_table money_table"><tr>
-        <?php 
-                $query = "SELECT * FROM `main_budget` WHERE (budget_type='m') ORDER BY `Year` DESC, `Month` DESC, `Day` DESC";
-                $statement = $connect->prepare($query);
-                $statement->execute();
-                $result = $statement->fetchAll();
-                foreach($result as $row){
-                  if ($row["Type"]=="EXP"){
-                    echo '<tr><td style="text-align: center;"><h3 class="text text-danger entry" style="margin-bottom: 0px;">-'.$row["Amount"].' Ft</h3><h5 style="margin-bottom: 10px;"><strong>'.$row["Year"].'/'.$row["Month"].'/'.$row["Day"].'</strong> '.$row["Description"].' '.$row["addedBy"].'</h5></td></tr>'; //' '.$row["budget_type"].
-                  }
-                  else{
-                    echo '<tr><td style="text-align: center;"><h3 class="text text-success entry" style="margin-bottom: 0px;">+'.$row["Amount"].' Ft</h3><h5 style="margin-bottom: 10px;"><strong>'.$row["Year"].'/'.$row["Month"].'/'.$row["Day"].'</strong> '.$row["Description"].' '.$row["addedBy"].'</h5></td></tr>'; //' '.$row["budget_type"].  
-                  }
-                }
-                ?>
-                </tr></table></td>
-                
-              </tr></table>
-              <?php 
-                $query = "SELECT * FROM `main_budget` WHERE budget_type='m' ORDER BY `Year` DESC, `Month` DESC, `Day` DESC";
-                $statement = $connect->prepare($query);
-                $statement->execute();
-                $result = $statement->fetchAll();
-                $TotalMoney=0;
-                foreach($result as $row){
-                  if ($row["Type"]=="EXP"){
-                    $row["Amount"]=$row["Amount"]*-1;
-                  }
-                  $TotalMoney += $row["Amount"];
-                }
-                echo '<h3 class="finalValue">Összesen: '.$TotalMoney.' Ft</h3>';
-                ?>
-                </div>
-                
-                
-<div class="col-sm-6">
-<h1 align=center>Egyesületi költségvetés</br></h1>
-                <table class="budget_table">
-                <tr>
-                <td><table class="money_table"><tr>
-                <?php 
-                $query = "SELECT * FROM `main_budget` WHERE (budget_type='s') ORDER BY `Year` DESC, `Month` DESC, `Day` DESC";
-                $statement = $connect->prepare($query);
-                $statement->execute();
-                $result = $statement->fetchAll();
-                foreach($result as $row){
-                  if ($row["Type"]=="EXP"){
-                    echo '<tr><td style="text-align: center;"><h3 class="text text-danger entry" style="margin-bottom: 0px;">-'.$row["Amount"].' Ft</h3><h5 style="margin-bottom: 10px;"><strong>'.$row["Year"].'/'.$row["Month"].'/'.$row["Day"].'</strong> '.$row["Description"].' '.$row["addedBy"].'</h5></td></tr>'; //' '.$row["budget_type"].
-                  }
-                  else{
-                    echo '<tr><td style="text-align: center;"><h3 class="text text-success entry" style="margin-bottom: 0px;">+'.$row["Amount"].' Ft</h3><h5 style="margin-bottom: 10px;"><strong>'.$row["Year"].'/'.$row["Month"].'/'.$row["Day"].'</strong> '.$row["Description"].' '.$row["addedBy"].'</h5></td></tr>'; //' '.$row["budget_type"].  
-                  }
-                }
-                ?>
-                </tr></table></td>
-                </tr></table>
-                <?php 
-                $query = "SELECT * FROM `main_budget` WHERE budget_type='s' ORDER BY `Year` DESC, `Month` DESC, `Day` DESC";
-                $statement = $connect->prepare($query);
-                $statement->execute();
-                $result = $statement->fetchAll();
-                $TotalMoney=0;
-                foreach($result as $row){
-                    if ($row["Type"]=="EXP"){
-                        $row["Amount"]=$row["Amount"]*-1;
-                    }
-                    $TotalMoney += $row["Amount"];
-                }
-                echo '<h3 class="finalValue">Összesen: '.$TotalMoney.' Ft</h3>';
-                $connect=null;
-                ?>
-                </div>
 
-<style>
-.two_col {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
-  grid-auto-rows: 50%;
-  height: 100vh;
-}
-</style>
 
-<!--Temporary development modal-->
-<div class="modal fade" id="WIPModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Fejlesztés alatt</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+    <div class="container">
+      <div class="container text-center">
+        <div class="row">
+          <div class="col">
+            <button data-toggle="modal" data-target="#addDataModal" type="button" class="btn btn-success noprint" style='height: 2rem'><i class="fa-solid fa-plus fa-xl" style="color: #ffffff;"></i></button>
+          </div>
       </div>
-      <div class="modal-body">
-        <h5><p>Kedves felhasználó!</p></h5>
-        <p>Az oldal feljesztése folyamatban van, kérlek ne használd ezt a funkciót.</p>
       </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Bezárás</button>
+
+      
+  <div class="row">
+    <div class="col">
+      <h1>Médiás</h1>
+      <div id="mediaTable_full">
+        <script>
+          $(document).ready(function() {
+            const startDate=2022;
+            const currentYear = new Date().getFullYear();
+            for (let index = 0; index <= currentYear-startDate; index++) {
+              const element = startDate+index;
+              $("#mediaTable_full").append("<div id='loadmediaTable_"+element+"'></div>");
+              $("#loadmediaTable_"+element).append("<h3>"+(element)+"</h3>");
+              $("#loadmediaTable_"+element+" h3").append("<button type='button' class='btn btn-light' onclick="+'loadResource("year","media",'+element+')'+"><i class='fas fa-level-down-alt' style='color: #1f2551;'></i></button>");
+              $("#mediaTable_full").append("<hr class='solid'>");
+            }
+          });
+        </script>
+
+      </div>
+    </div>
+    <div class="col">
+      <h1>Egyesületi</h1>
+      <div id="egyesuletTable_full">
+        <script>
+          $(document).ready(function() {
+            const startDate=2022;
+            const currentYear = new Date().getFullYear();
+            for (let index = 0; index <= currentYear-startDate; index++) {
+              const element = startDate+index;
+              $("#egyesuletTable_full").append("<div id='loadegyesuletTable_"+element+"'></div>");
+              $("#loadegyesuletTable_"+element).append("<h3>"+(element)+"</h3>");
+              $("#loadegyesuletTable_"+element+" h3").append("<button type='button' class='btn btn-light' onclick="+'loadResource("year","egyesulet",'+element+')'+"><i class='fas fa-level-down-alt' style='color: #1f2551;'></i></button>");
+              $("#egyesuletTable_full").append("<hr class='solid'>");
+            }
+          });
+        </script>
       </div>
     </div>
   </div>
 </div>
 
-<div class="modal fade" id="budgetModal" tabindex="-1" role="dialog" aria-labelledby="budgetModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
+</body>
+<!--Add Data Modal -->
+<div class="modal fade" id="addDataModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Költségvetés hozzádása</h5>
+        <h5 class="modal-title" id="exampleModalLabel">Tétel hozzáadása</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
-      <form id="sendBudgetForm">
-      <div class="form-group">
-      <input autocomplete="off" id="datepicker" class="form-control" type="text" placeholder="Dátum" required></input></div>
-      <div class="form-group">
-      <label class="form-check-label" for="budgetTypeSelect1">Típus</label>
-      <select class="form-control" id="budgetTypeSelect" required>
-      <option value="" selected disabled hidden>Válassz a legördülő menüből...</option>
-      <option value="INC">Bevétel</option>
-      <option value="EXP">Kiadás</option>
-    </select></div>
-    <div class="form-group"><input autocomplete="off" class="form-control" id="budgetName" type="text" placeholder="Bevétel/Kiadás címe" required></input></div>
-    <div class="form-group"><input autocomplete="off" value='<?php echo $_SESSION['UserUserName'];?>' class="form-control" id="userName" type="text" placeholder='none' hidden required></input></div>
-    <div class="form-group"><input autocomplete="off" class="form-control" id="budgetValue" type="number" placeholder="Érték" required></input></div>
-    <label class="form-check-label" for="budgetTypeSelect2">Kassza</label>
-    <select class="form-control" id="kassza" required>
-      <option value="" selected disabled hidden>Válassz a legördülő menüből..</option>
-      <option value="m">Médiás</option>
-      <option value="s">Egyesületi</option>
-    </select></div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Mégsem</button>
-        <input type="submit" id="sendBudget" class="btn btn-primary" value="Küldés"></input>
+                <form>
+        <div class="mb-3">
+          <label for="dateInput" class="form-label">Dátum</label>
+          <input type="date" class="form-control" id="dateInput" placeholder="" required>
+        </div>
+        <div class="mb-3">
+          <label for="typeSelect" class="form-label">Kassza</label>
+          <select id='typeSelect'>
+            <option value="media">Médiás</option>
+            <option value="egyesulet">Egyesületi</option>
+          </select>
+        </div>
+        <div class="mb-3">
+          <label for="valueInput" class="form-label">Összeg</label>
+          <input type="number" autocomplete="off" class="form-control" id="valueInput" name="value" min="-999999999" max="999999999" required>
+          </div>
+        <div class="mb-3">
+          <label for="nameInput" class="form-label">Tétel</label>
+          <input type="text" autocomplete="off" class="form-control" id="nameInput" placeholder="" required>
+        </div>
+        <div class="mb-3">
+          <label for="commentInput" class="form-label">Megjegyzés</label>
+          <input type="text" autocomplete="off" class="form-control" id="commentInput" placeholder="">
+        </div>
         </form>
       </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Mégsem</button>
+        <button type="button" class="btn btn-primary">Hozzáadás</button>
+        <script>
+          $(document).ready(function() {
+            $(".btn-primary").click(function() {
+              console.log("Clicked");
+              var date = $("#dateInput").val();
+              var type = $("#typeSelect").val();
+              var value = $("#valueInput").val();
+              var name = $("#nameInput").val();
+              var comment = $("#commentInput").val();
+              $.ajax({
+                url: 'budgetManager.php',
+                type: 'post',
+                data: {
+                  type: 'add',
+                  date: date,
+                  table: type,
+                  value: value,
+                  name: name,
+                  comment: comment
+                },
+                success: function(response) {
+                  console.log(response);
+                  if (response == '200') {
+                    console.log('ok');
+                    location.reload();
+                    //Reload the table
+                    // $("#loadmediaTable_"+year+"_"+month+" table").remove();
+                    // loadResource("month","media",year,month);
+                  } else {
+                    console.log("Error");
+                  }
+                }
+              });
+            });
+          });
+        </script>
+      </div>
     </div>
   </div>
 </div>
-</html>
+
+<!--Edit Data Modal -->
+<div class="modal fade" id="editDataModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Tétel módosítása</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+                <form>
+        <div class="mb-3">
+          <label for="dateInput" class="form-label">Dátum</label>
+          <input type="date" class="form-control" id="dateInput" placeholder="" required>
+        </div>
+        <div class="mb-3">
+          <label for="typeSelect" class="form-label">Kassza</label>
+          <select id='typeSelect'>
+            <option value="media">Médiás</option>
+            <option value="egyesulet">Egyesületi</option>
+          </select>
+        </div>
+        <div class="mb-3">
+          <label for="valueInput" class="form-label">Összeg</label>
+          <input type="number" autocomplete="off" class="form-control" id="valueInput" name="value" min="-999999999" max="999999999" required>
+          </div>
+        <div class="mb-3">
+          <label for="nameInput" class="form-label">Tétel</label>
+          <input type="text" autocomplete="off" class="form-control" id="nameInput" placeholder="" required>
+        </div>
+        <div class="mb-3">
+          <label for="commentInput" class="form-label">Megjegyzés</label>
+          <input type="text" autocomplete="off" class="form-control" id="commentInput" placeholder="">
+        </div>
+        <input type="hidden" id="idInput">
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Mégsem</button>
+        <button type="button" class="btn btn-warning">Módosítás</button>
+        <script>
+          $(document).ready(function() {
+            $(".btn-warning").click(function() {
+              var date = $("#editDataModal #dateInput").val();
+              var type = $("#editDataModal #typeSelect").val();
+              var value = $("#editDataModal #valueInput").val();
+              var name = $("#editDataModal #nameInput").val();
+              var comment = $("#editDataModal #commentInput").val();
+              var id = $("#editDataModal #idInput").val();
+              $.ajax({
+                url: 'budgetManager.php',
+                type: 'post',
+                data: {
+                  type: 'modify',
+                  id: id,
+                  date: date,
+                  table: type,
+                  value: value,
+                  name: name,
+                  comment: comment
+                },
+                success: function(response) {
+                  if (response == '200') {
+                    console.log('ok');
+                    location.reload();
+                  } else {
+                    console.log("Error");
+                    console.log(response);
+                  }
+                }
+              });
+            });
+          });
+        </script>
+      </div>
+    </div>
+  </div>
+</div>
+
+<?php  } 
+
+?>
+
+        <hr class="solid">
+        <div class="row">
+          <div class="col" id='sum_media'></div>
+          <div class="col" id='sum_egyesulet'></div>
+        <script>
+          $(document).ready(function() {
+            getSum();
+          });
+        </script>
+        </div>  
+
+
 <script>
-$('#sendBudgetForm').on('submit', function (e) {
-e.preventDefault();
-$('#budgetModal').modal('hide');
-var bType = $( "#budgetTypeSelect").val();
-var bName = document.getElementById('budgetName').value;
-var bVal = document.getElementById('budgetValue').value;
-var bUser = document.getElementById('userName').value;
-var bDate = document.getElementById('datepicker').value;
-var bKassza = $( "#kassza").val();
-$.ajax({
-       url:"budgetHandler.php",
-       type:"POST",
-       data:{bType:bType, bName:bName, bVal:bVal, bUser:bUser, bDate:bDate, bKassza:bKassza},
-       success:function(successNum){
-        if(successNum == 1){ // if true (1)
-      setTimeout(function(){// wait for 5 secs(2)
-           location.reload(); // then reload the page.(3)
-      }, 100); 
-   }
-       },
-       error: function(jqXHR, textStatus, errorThrown){
-          alert('error');
-      } 
-      })
+  function loadResource(type,table,value,value2=null){
+    console.log(type,table,value,value2);
+    if(type=='year'){
 
-});
-function startTimer(duration, display) {
-    var timer = duration, minutes, seconds;
-    setInterval(function () {
-        minutes = parseInt(timer / 60, 10)
-        seconds = parseInt(timer % 60, 10);
+      //Hide table's first button
+      $("#load"+table+"Table_"+value+" button").hide();
+      $.ajax({
+      url: 'budgetManager.php',
+      type: 'post',
+      data: {type:type,table:table,value:value},
+      success: function(response){
 
-        minutes = minutes < 10 ? "0" + minutes : minutes;
-        seconds = seconds < 10 ? "0" + seconds : seconds;
-
-        display.textContent = minutes + ":" + seconds;
-
-        if (--timer < 0) {
-            timer = duration;
-            window.location.href = "../utility/logout.ut.php"
+        //If no data is present
+        if(response=='[]'){
+          $("#load"+table+"Table_"+value).append("<h4>Nincs adat</h4>");
         }
-    }, 1000);
-}
+        response=JSON.parse(response);
+        for (let index = 0; index < response.length; index++) {
+          const element = response[index];
+          $("#load"+table+"Table_"+value).append("<div id='load"+table+"Table_"+value+"_"+element.month+"'></div>");
+          $("#load"+table+"Table_"+value+"_"+element.month).append("<h4>"+element.month+' - <span style="color: grey;">'+element.total_value+"</span></h4>");
+          $("#load"+table+"Table_"+value+"_"+element.month+" h4").append("<button type='button' class='btn btn-light' onclick="+'loadResource("month","'+table+'",'+value+','+element.month+')'+"><i class='fas noprint fa-level-down-alt' style='color: #1f2551;'></i></button>");
+          
+        }
+      }
+      });
+    }
+    if(type=='month'){
+      //Hide table's first button
+      $("#load"+table+"Table_"+value+"_"+value2+" button").hide();
+      $.ajax({
+      url: 'budgetManager.php',
+      type: 'post',
+      data: {type:type,table:table,value:value,value2:value2},
+      success: function(response){
+        
+        //Response will be a JSON object, containing the days, comments, name, and the values for the days
+        response=JSON.parse(response);
+        //If no data is present
+        if(response=='[]'){
+          $("#load"+table+"Table_"+value).append("<h4>Nincs adat</h4>");
+        }
+        $("#load"+table+"Table_"+value+"_"+value2).append("<table class='table' id='load"+table+"Table_"+value+"_"+value2+"_table'><tr><th>Dátum</th><th>Tétel</th><th>Összeg</th><th>Megjegyzés</th><th class='noprint'>Műveletek</th></tr></table>");
+        for (let index = 0; index < response.length; index++) {
+          const element = response[index];
+          $("#load"+table+"Table_"+value+"_"+value2+" table").append("<tr><td>"+element.Date+"</td><td>"+element.Name+"</td><td>"+element.Value+"</td><td>"+JSON.parse(element.Data).comment+"</td><td><a id='editData' onclick='showEditModal("+element.ID+","+'"'+table+'"'+","+value+","+value2+","+JSON.stringify(element)+")' href='#'</a><i class='far noprint fa-lg fa-edit'></i></a> | <font color='red'><i class='far fa-lg fa-x noprint' onclick='deleteResource("+element.ID+","+'"'+table+'"'+","+value+","+value2+")'></i></td></tr></font>");
+      }
+    }
+      });
+    }
+  }
 
-window.onload = function () {
-   $('#WIPModal').modal();
-    var fiveMinutes = 10 * 60 - 1,
-        display = document.querySelector('#time');
-    startTimer(fiveMinutes, display);
-};
-$( document ).ready(function() {
-  $('#datepicker').datepicker({
-    format: "yyyy/mm/dd",
-    uiLibrary: 'bootstrap',
-            weekStart: 1,
-            clearBtn: true,
-            language: "hu",
-            autoclose: true
-});
-});
+
+  function deleteResource(id,table,year,month){
+    // console.log(id,table,year,month);
+    $.ajax({
+      url: 'budgetManager.php',
+      type: 'post',
+      data: {type:'delete',id:id},
+      success: function(response){
+        if(response=='200'){
+          console.log('ok');
+          //Reload the table
+          $("#load"+table+"Table_"+year+"_"+month).remove();
+          loadResource("year",table,year,month);
+          loadResource("month",table,year,month);
+          getSum();
+        }else{
+          console.log("Error");
+        }
+      }
+      });
+  }
+
+
+  function getSum(){
+        //Get full sum of both tables.
+    $.ajax({
+      url: 'budgetManager.php',
+      type: 'post',
+      data: {
+        type: 'sum'
+      },
+      success: function(response) {
+        response = JSON.parse(response);
+        $("#sum_media").empty();
+        $("#sum_egyesulet").empty();
+        if(response.length<2){
+          $("#sum_media").append("<h6 style='color: grey;'>Mindkét sorban legalább egy tételnek szerepelnie kell az összegzéshez.</h6>");
+        }else{
+          $("#sum_media").append("<h6>"+response[0].sum+"</h6>");
+          $("#sum_egyesulet").append("<h6>"+response[1].sum+"</h6>");
+        }
+
+
+      }
+    });
+  }
+
+   function showEditModal(id,table,year,month,element){
+    //change editDataModal datinput value to the date of the element
+    $("#editDataModal #dateInput").val(element.Date);
+    $("#editDataModal #typeSelect").val(table);
+    $("#editDataModal #valueInput").val(element.Value);
+    $("#editDataModal #nameInput").val(element.Name);
+    $("#editDataModal #commentInput").val(JSON.parse(element.Data).comment);
+    $("#editDataModal #idInput").val(id);
+    $('#editDataModal').modal('show');
+   }
+
+
 
 </script>
 
+
 <style>
-
-.printonly {
-  display: none;
+  hr.solid {
+  border-top: 3px solid #bbb;
 }
 
-@media print{
-  .printonly * {
-    display: inline;
-    background: red;
-  }
-  .noprint {
-    display: none;
-  }
-}
-
-.budget_table{
-  max-width: 1000px;
-  border-style: solid;
-  text-align: center;
-  margin: 0 auto; 
-}
-
-.finalValue{
-  /*padding-top: 25px;
-  padding-left: 20px;
-  width: 500px;*/
-  text-align: center;
-  margin: 0 auto; 
-}
-
-.money_table{
-  padding-left: 5px;
-  margin: 0 auto;
-}
-
-.entry{
-  /* A bemeneti kiadások/bevételek classja*/
-}
-
-#unavailable{
-  font-size:18px;
-  color: red;
+@media print
+{    
+    .noprint, .noprint *
+    {
+        display: none !important;
+    }
 }
 </style>
