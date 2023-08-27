@@ -56,9 +56,10 @@ include("../profile/header.php");
 
     <div class="container">
       <div class="container text-center">
+      </br>
         <div class="row">
           <div class="col">
-            <button data-toggle="modal" data-target="#addDataModal" type="button" class="btn btn-success noprint" style='height: 2rem'><i class="fa-solid fa-plus fa-xl" style="color: #ffffff;"></i></button>
+            <button data-toggle="modal" data-target="#addDataModal" type="button" class="btn btn-success noprint" style='height: 2rem'><i class="fas fa-plus fa-xl" style="color: #ffffff;"></i></button>
           </div>
       </div>
       </div>
@@ -329,7 +330,7 @@ include("../profile/header.php");
         $("#load"+table+"Table_"+value+"_"+value2).append("<table class='table' id='load"+table+"Table_"+value+"_"+value2+"_table'><tr><th>Dátum</th><th>Tétel</th><th>Összeg</th><th>Megjegyzés</th><th class='noprint'>Műveletek</th></tr></table>");
         for (let index = 0; index < response.length; index++) {
           const element = response[index];
-          $("#load"+table+"Table_"+value+"_"+value2+" table").append("<tr><td>"+element.Date+"</td><td>"+element.Name+"</td><td>"+element.Value+"</td><td>"+JSON.parse(element.Data).comment+"</td><td><a id='editData' onclick='showEditModal("+element.ID+","+'"'+table+'"'+","+value+","+value2+","+JSON.stringify(element)+")' href='#'</a><i class='far noprint fa-lg fa-edit'></i></a> | <font color='red'><i class='far fa-lg fa-x noprint' onclick='deleteResource("+element.ID+","+'"'+table+'"'+","+value+","+value2+")'></i></td></tr></font>");
+          $("#load"+table+"Table_"+value+"_"+value2+" table").append("<tr><td>"+element.Date+"</td><td>"+element.Name+"</td><td>"+element.Value+"</td><td>"+JSON.parse(element.Data).comment+"</td><td><a id='editData' onclick='showEditModal("+element.ID+","+'"'+table+'"'+","+value+","+value2+","+JSON.stringify(element)+")' href='#'</a><i class='far noprint fa-lg fa-edit'></i></a><span class='noprint'> | </span><font color='red'><i class='fas fa-lg fa-times noprint' onclick='deleteResource("+element.ID+","+'"'+table+'"'+","+value+","+value2+")'></i></td></tr></font>");
       }
     }
       });

@@ -47,7 +47,7 @@ A webapp a következő funkciókkal rendelkezik
 
 ## Telepítés
 
-A repo klónozása után állítsuk be a .env fájlunkban az example.env-ben is látott értékeket, majd futtassuk a gyökérmappában a `docker-compose --env-file --build <env filename>.env up` parancsot.
+A repo klónozása után állítsuk be a .env fájlunkban az example.env-ben is látott értékeket, majd futtassuk a gyökérmappában a `docker-compose --env-file <env filename>.env up --build` parancsot.
 
 Ezután a php konténeren belül futtassuk  a `www/io` mappában a `composer install` parancsot. 
 Az adatbázis strukrúához és a mail api key-hez segítséget a `www/io/examples` mappában kaphatunk. A kitöltött JSON fájlokat a `www/io/utility` mappába tegyük

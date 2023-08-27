@@ -25,7 +25,7 @@ if( isset($_POST['takeoutData'])){
 
     //Auto accept available
     if(in_array("admin",$_SESSION['groups'])){
-      if($_POST['takeoutAsUser']!=''){
+      if($_POST['takeoutAsUser']!='null'){
         //If another person was selected at takeout, use that person's name
         $takeOutAsUser = $_POST['takeoutAsUser'];
         $sql = ("INSERT INTO takelog (`ID`, `Date`, `User`, `Items`, `Event`,`Acknowledged`,`ACKBY`) VALUES (NULL, '$currDate', '$takeOutAsUser', '".json_encode($takeoutData)."', 'OUT',1,'$SESSuserName')");
@@ -36,7 +36,7 @@ if( isset($_POST['takeoutData'])){
     }else{
 
           //If another person was selected at takeout, use that person's name
-    if($_POST['takeoutAsUser']!=''){
+    if($_POST['takeoutAsUser']!='null'){
       $takeOutAsUser = $_POST['takeoutAsUser'];
       $sql = ("INSERT INTO takelog (`ID`, `Date`, `User`, `Items`, `Event`,`Acknowledged`,`ACKBY`) VALUES (NULL, '$currDate', '$takeOutAsUser', '".json_encode($takeoutData)."', 'OUT',0,NULL)");
     }else{
@@ -44,11 +44,12 @@ if( isset($_POST['takeoutData'])){
     }
     
     }
-    //echo "sql: ".$sql."\n";
      $result=mysqli_query($mysqli,$sql);
       if($result == TRUE){
         //Change every item as taken in the database
-        //echo "Change every item as taken in the database";
+
+        //If another person was selected at takeout, use that person's name
+        if($_POST['takeoutAsUser']!='null'){$SESSuserName=$_POST['takeoutAsUser'];}
         foreach ($takeoutData as $i){
           $name= $i["name"];
           if(in_array("admin",$_SESSION['groups'])){//Auto accept complete, automatically update databse

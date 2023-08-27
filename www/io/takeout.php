@@ -69,25 +69,7 @@ error_reporting(E_ALL ^ E_NOTICE);
   </div>
 </nav> <?php  } ?>
 
-
-  <body ><!--style="background-color:#DCDCDC"-->
-
-
-</select>
-
-		<div class="container">
-    
-			<br /><br />
-			<h2 class="rainbow" align="center" id="doTitle">Tárgy kivétel</h2><br />
-			<div class="form-group">
-        <table id="itemSearch" align="left"><tr>
-        <td class="selectedItemsDisplay" rowspan="2" style="text-align:left;vertical-align:top;padding:0;min-width:300px;">
-        <div id="givetoAnotherPerson" style="visibility: hidden;">
-        <h6 class="text"  >Más nevében veszel ki eszközt?</h6>
-        <!-- A button on which if the user clicks, a modal will show up -->
-        <button id="givetoAnotherPerson_Button" type="button" class="btn btn-success" data-toggle="modal" data-target="#givetoAnotherPerson_Modal" style="visibility: hidden;">Igen</button>
-        <!-- The modal  -->
-
+<!-- GivetoAnotherperson Modal -->
             <div class="modal fade" id="givetoAnotherPerson_Modal" tabindex="-1" role="dialog" aria-labelledby="givetoAnotherPerson_ModalLabel" aria-hidden="true">
               <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -115,7 +97,32 @@ error_reporting(E_ALL ^ E_NOTICE);
             </div>
           </div>
         </div>
-      </div>
+
+
+  <body >
+
+
+</select>
+
+		
+    
+			<br /><br />
+			<h2 class="rainbow" align="center" id="doTitle">Tárgy kivétel</h2><br />
+
+			<div class="form-group">
+        <div class="container">
+        <div class="row">
+        <div class="col-md-3">
+        <table id="itemSearch" align="left"><tr>
+        <td class="selectedItemsDisplay" rowspan="2" style="text-align:left;vertical-align:top;padding:0;min-width:300px;">
+        <div id="givetoAnotherPerson" style="visibility: hidden;">
+        <h6 class="text"  >Más nevében veszel ki eszközt?</h6>
+        <!-- A button on which if the user clicks, a modal will show up -->
+        <button id="givetoAnotherPerson_Button" type="button" class="btn btn-success" data-toggle="modal" data-target="#givetoAnotherPerson_Modal" style="visibility: hidden;">Igen</button>
+        <!-- The modal  -->
+
+
+        </div> <!-- End of givetoAnotherPerson -->
           <h3><u>Kiválasztva:</u></h3>
           <ul id="output"></ul>
         </td>
@@ -126,6 +133,9 @@ error_reporting(E_ALL ^ E_NOTICE);
 
       </div></td>
   			</tr></table>
+        </div>
+        </div>
+        </div>
 			<form autocomplete="off" action="/index.php">
 			</form>
           
@@ -435,7 +445,6 @@ function colorTakenItems(){
     }
 
     console.log("Kimenet:"+JSON.stringify(takeOutPrepJSON));
-    //alert("Kimenet:"+JSON.stringify(takeOutPrepJSON));
       $.ajax({
       url:"./utility/takeout_administrator.php",
       //url:"./utility/dummy.php",
@@ -450,6 +459,7 @@ function colorTakenItems(){
           setTimeout(() => {  $('#jstree').jstree().refresh(); }, 2000);
           setTimeout(() => {  window.location.href = window.location.href }, 1000);
         }else{
+          //console.log(response);
           displayMessageInTitle("#doTitle","Hiba történt.");
         }
 

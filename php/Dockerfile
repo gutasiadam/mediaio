@@ -3,6 +3,12 @@
 	RUN apt-get update; apt-get install -y libmagickwand-dev; pecl install imagick; docker-php-ext-enable imagick;
 	RUN apt-get update && apt-get install -y zip
 	
+	# Install zip
+	#install some base extensions
+	RUN apt-get install -y zip libzip-dev \
+	&& docker-php-ext-configure zip --with-libzip \
+	&& docker-php-ext-install zip
+	RUN docker-php-ext-install zip
 	
 	RUN apt-get update && apt-get install -y libfreetype6-dev libjpeg62-turbo-dev libpng-dev && docker-php-ext-configure gd && docker-php-ext-install -j$(nproc) gd
 	RUN docker-php-ext-install exif

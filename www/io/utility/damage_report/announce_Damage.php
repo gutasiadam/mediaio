@@ -72,7 +72,7 @@ $TKI = $_SESSION['UserUserName'];
   <div class="row" style="width: 80%; margin: 0 auto;">
   <div class="col-sm">
 <?php
-  echo "<form>";
+  echo "<form id='damageReportForm'>";
     if (in_array("admin", $_SESSION["groups"])){
       $sql = "SELECT usernameUsers FROM `users`";
       $result = Database::runQuery($sql);
@@ -196,7 +196,7 @@ echo "</form>";
     }
   });
   //When the submit button is clicked, send the form data and the uploaded images to the server
-  $("form").submit(function(e) {
+  $("#damageReportForm").submit(function(e) {
 
     var zipfile='';
     e.preventDefault();
