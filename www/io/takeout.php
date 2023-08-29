@@ -98,58 +98,30 @@ error_reporting(E_ALL ^ E_NOTICE);
           </div>
         </div>
 
-
-  <body >
-
-
-</select>
-
-		
-    
+  <body>
 			<br /><br />
 			<h2 class="rainbow" align="center" id="doTitle">Tárgy kivétel</h2><br />
-
-			<div class="form-group">
-        <div class="container">
-        <div class="row">
-        <div class="col-md-3">
-        <table id="itemSearch" align="left"><tr>
-        <td class="selectedItemsDisplay" rowspan="2" style="text-align:left;vertical-align:top;padding:0;min-width:300px;">
-        <div id="givetoAnotherPerson" style="visibility: hidden;">
+  <div class="container">
+  <div class="row align-items-start">
+    <div class="col-4">
+      <h3 style='text-align: center'>Kiválasztva</h3>
+      <ul class="selectedItemsDisplay" id="output"></ul>
+      <div id="givetoAnotherPerson" style="visibility: hidden;">
         <h6 class="text"  >Más nevében veszel ki eszközt?</h6>
-        <!-- A button on which if the user clicks, a modal will show up -->
         <button id="givetoAnotherPerson_Button" type="button" class="btn btn-success" data-toggle="modal" data-target="#givetoAnotherPerson_Modal" style="visibility: hidden;">Igen</button>
-        <!-- The modal  -->
-
-
-        </div> <!-- End of givetoAnotherPerson -->
-          <h3><u>Kiválasztva:</u></h3>
-          <ul id="output"></ul>
-        </td>
-    				<td><div class="col-md-9">
+    </div> 
+    </div>
+    <div class="col-4">
       Keresés: <input type="text" id="search"  style='margin-bottom: 10px' placeholder="Kezdd el ide írni, mit vinnél el.." autocomplete="off" /></br><button class="btn btn-warning" id="clear">Keresés törlése</button> <button class="btn btn-success" id="takeout2BTN">Mehet</button>
-<div id="jstree">
+      <div id="jstree">
+      </div>
+    </div>
+    <div class="col">
+      <h3 style='text-align: center'>Presetek</h3>
+    </div>
+  </div>
 </div>
-
-      </div></td>
-  			</tr></table>
-        </div>
-        </div>
-        </div>
-			<form autocomplete="off" action="/index.php">
-			</form>
-          
-					<div class="table-responsive">
-						<table class="table table-bordered table-dark" id="dynamic_field">
-				<form name="sendRequest" method="POST" action='/index.php'>
-						</table>
-				</form>
-        
-        <table class="table table-bordered livearray" id="liveSelArrayResult"><td></td></table>
-        
-			</div>
-		</div>
-	</body>
+  </body>
 
 
   <!-- Navigation back to top -->
@@ -251,7 +223,7 @@ var roleNum=getCookie("user_roleLevel");
   } 
 }
 
-//INvoked after JStree is loaded
+//Invoked after JStree is loaded
 $('#jstree').bind('ready.jstree', function(e, data) {
   // console.log("[tree loaded] - running coloring");
   // //wait 100ms
@@ -579,12 +551,13 @@ return arr.filter(function(ele){
     display: none;
   }
 
-  .selectedItemsDisplay ul{
+  .selectedItemsDisplay{
     list-style: none;
     background-color: #777777;
     color: white;
-    font-size: 20px;
-    
+    font-size: 17px;
+    padding-bottom: 0.2rem;
+    padding-top: 0.2rem;
   }
 
   .selectedItemsDisplay li{
@@ -593,6 +566,11 @@ return arr.filter(function(ele){
     left: -30px;
     /*background-color: #D3D3D3;*/
     margin: 5px 0;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: center;
   }
 
   #toTop{

@@ -54,6 +54,17 @@ Az adatbázis strukrúához és a mail api key-hez segítséget a `www/io/exampl
 
 **Minden segítségre szükség van!!**
 
+### Adatbázis beállítása
+
+A `database` mappa tartalmazza azt az SQL fájlt, amelynek segítségével létre lehet hozni az adatbázis szerkezetét, az adatok nélkül. Ezután be kell regisztrálni egy felhasználót, akihez hozzárendeljük a `system` és `admin` jogosultságot. Ezt a `users` táblában tehetjük meg, a következő JSON objektum hozzáadásával az adatbázisban:
+```
+{
+    "groups": [
+        "admin",
+        "system"
+    ]
+}
+```
   
 
 ###### Bármilyen egyéb kérdés esetén vedd fel a kapcsolatot a projekt GitHUb oldalán [the project page](https://github.com/gutasiadam/mediaio  "the project's page") vagy a GitHubomon. [my GitHub](https://github.com/gutasiadam  "my GitHub").
