@@ -1,4 +1,5 @@
 <?php
+error_reporting(E_ERROR | E_PARSE);
 use Mediaio\Database;
 require_once "../Database.php";
 session_start();
@@ -88,7 +89,28 @@ $conn->close();
             if($row['Event']=="SERVICE"){
               $event="🔧";
             }else{$event=$row['Event'];} 
-            echo '<tr><td>'.$row['Date'].'</td><td>'.$row['User'].'</td><td>'.$row['Items'].'</td><td>'.$event.'</td><td>'.$ackcol.'</td><td>'.$row['ACKBY'].'</td></tr>';
+            //Make row['Items'] JSON's name field unordered list
+            $items=json_decode($row['Items'],true);
+            $items=array_column($items, 'name');
+            //TODO: concatenate UID to the name
+            $items2=json_decode($row['Items'],true);
+            $items2=array_column($items2, 'UID');
+
+
+
+            $items="<ul><li>".implode("</li><li>",$items)."</li></ul>";
+            $row['Items']=$items;
+            //If event is OUT, TR is red, else its green
+            if($row['Event']=="OUT"){
+              echo '<tr class="table-danger"><td>'.$row['Date'].'</td><td>'.$row['User'].'</td><td>'.$row['Items'].'</td><td>'.$event.'</td><td>'.$ackcol.'</td><td>'.$row['ACKBY'].'</td></tr>';
+            }
+            else if($row['Event']=="IN"){
+              echo '<tr class="table-success"><td>'.$row['Date'].'</td><td>'.$row['User'].'</td><td>'.$row['Items'].'</td><td>'.$event.'</td><td>'.$ackcol.'</td><td>'.$row['ACKBY'].'</td></tr>';
+            }else{
+              echo '<tr><td>'.$row['Date'].'</td><td>'.$row['User'].'</td><td>'.$row['Items'].'</td><td>'.$event.'</td><td>'.$ackcol.'</td><td>'.$row['ACKBY'].'</td></tr>';
+            }
+
+            
            }
   ?>
 </table>

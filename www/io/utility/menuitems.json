@@ -7,7 +7,8 @@
         {"name": "pathfinder","icon": "fas fa-project-diagram fa-lg", "href": "pathfinder.php"},
         {"name": "events","icon": "fas fa-calendar-alt fa-lg", "href": "events/"},
         {"name": "maintenance", "icon": "fas fa-broom fa-lg", "href": "maintenance/index.php"},
-        {"name": "profile","icon": "fas fa-user-alt fa-lg", "href": "profile/index.php"}
+        {"name": "profile","icon": "fas fa-user-alt fa-lg", "href": "profile/index.php"},
+        {"name": "forms","icon": "fab fa-wpforms fa-lg", "href": "forms/index.php"}
         
     ],
     "info" : [
@@ -23,8 +24,19 @@
         {"name": "pathfinder","icon": "fas fa-project-diagram fa-3x", "href": "./pathfinder.php", "displayName": "PathFinder"},
         {"name": "events","icon": "fas fa-calendar-alt fa-3x", "href": "events/", "displayName": "Naptár"},
         {"name": "broom", "icon": "fas fa-broom fa-3x", "href": "./maintenance/", "displayName": "Takarítás"},
-        {"name": "fileServer", "icon": "fas fa-server fa-3x", "displayName": "Fájlszerver"},
-        {"name": "profile","icon": "fas fa-user-alt fa-3x", "href": "profile/index.php", "displayName": "Profil"}
+        
+        {"name": "profile","icon": "fas fa-user-alt fa-3x", "href": "profile/index.php", "displayName": "Profil"},
+        {
+            "name": "forms",
+            "icon": "fab fa-wpforms fa-3x",
+            "href": "forms/index.php",
+            "displayName": "Formok"
+        },
+        {
+            "name": "fileServer",
+            "icon": "fas fa-server fa-3x",
+            "displayName": "Fájlszerver"
+        }
         
     ]
 }

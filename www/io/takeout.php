@@ -67,8 +67,10 @@ error_reporting(E_ALL ^ E_NOTICE);
       <i class="fas fa-question-circle fa-lg"></i>
     </a>
   </div>
-</nav> <?php  } ?>
-
+</nav> <?php  } 
+//Limit GivetoAnotherperson modal to admin users only
+if(in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["groups"])){
+  ?>
 <!-- GivetoAnotherperson Modal -->
             <div class="modal fade" id="givetoAnotherPerson_Modal" tabindex="-1" role="dialog" aria-labelledby="givetoAnotherPerson_ModalLabel" aria-hidden="true">
               <div class="modal-dialog" role="document">
@@ -97,7 +99,32 @@ error_reporting(E_ALL ^ E_NOTICE);
             </div>
           </div>
         </div>
-
+<!-- End of GivetoAnotherperson Modal -->
+<?php  } ?>
+<!-- Presets Modal -->
+            <div class="modal fade" id="presets_Modal" tabindex="-1" role="dialog" aria-labelledby="presets_ModalLabel" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Elérhető presetek</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <div id="presetsLoading" class="spinner-grow text-info" role="status"></div>
+                    <div id="presetsContainer"></div>
+                      
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+<!-- End of Presets Modal -->
   <body>
 			<br /><br />
 			<h2 class="rainbow" align="center" id="doTitle">Tárgy kivétel</h2><br />
@@ -106,18 +133,12 @@ error_reporting(E_ALL ^ E_NOTICE);
     <div class="col-4">
       <h3 style='text-align: center'>Kiválasztva</h3>
       <ul class="selectedItemsDisplay" id="output"></ul>
-      <div id="givetoAnotherPerson" style="visibility: hidden;">
-        <h6 class="text"  >Más nevében veszel ki eszközt?</h6>
-        <button id="givetoAnotherPerson_Button" type="button" class="btn btn-success" data-toggle="modal" data-target="#givetoAnotherPerson_Modal" style="visibility: hidden;">Igen</button>
-    </div> 
     </div>
-    <div class="col-4">
-      Keresés: <input type="text" id="search"  style='margin-bottom: 10px' placeholder="Kezdd el ide írni, mit vinnél el.." autocomplete="off" /></br><button class="btn btn-warning" id="clear">Keresés törlése</button> <button class="btn btn-success" id="takeout2BTN">Mehet</button>
+    <div class="col-8">
+      Keresés: <input type="text" id="search"  style='margin-bottom: 10px' placeholder="Kezdd el ide írni, mit vinnél el.." autocomplete="off" /></br><button class="btn btn-warning" id="clear" style='margin-bottom: 6px'>Keresés törlése</button> <button class="btn btn-success" id="takeout2BTN" style='margin-bottom: 6px'>Mehet</button> <button class="btn btn-info" onclick="showPresetsModal()" style='margin-bottom:6px'>Presetek</button> <button id="givetoAnotherPerson_Button" type="button" class="btn btn-dark" data-toggle="modal" data-target="#givetoAnotherPerson_Modal" style="visibility: hidden; margin-bottom: 6px">Másnak veszek ki</button>
       <div id="jstree">
       </div>
     </div>
-    <div class="col">
-      <h3 style='text-align: center'>Presetek</h3>
     </div>
   </div>
 </div>
@@ -128,7 +149,36 @@ error_reporting(E_ALL ^ E_NOTICE);
   <div id='toTop'><i class="fas fa-chevron-up"></i></div>
 </html>
 <script>
+function showPresetsModal(){
+  $('#presets_Modal').modal('show');
 
+  //get Preset Items
+    $.ajax({
+			url:"ItemManager.php",
+			method:"POST",
+			data:{mode: "getPresets"},
+			success:function(response)
+			{
+
+
+        //Convert rerponse to JSON
+        var presets = JSON.parse(response);
+        takeoutPresets=[];
+        //For each user add a select option to givetoAnotherPerson_UserName
+        if(presets.length>0){
+          $('#presetsLoading').hide();
+        }
+        $('#presetsContainer').html('');
+
+        for (var i = 0; i < presets.length; i++) {
+          console.log(presets[i]);
+          takeoutPresets.push(presets[i]);
+          $("#presetsContainer").append('<button class="btn btn-info2" onclick="addItems('+i+')">'+presets[i].Name+'</button></br></br>');
+        }
+			}
+		});
+
+}
 
 //Load takeOutItems.json
 d=({})
@@ -282,6 +332,21 @@ function deselect_node(ID){
 takeOutPrepJSON['items']=tmp_filtered;
 }
 
+//Add Preset Items
+function addItems(id){
+
+    selectionArray=[];
+    addArray=JSON.parse(takeoutPresets[id].Items).items;
+    addArray.forEach(element => {
+        for (j=1; j <= d.length; j++){
+          if($('#jstree').jstree().get_node(j).original.uid==element & $('#jstree').jstree().get_node(j).state.disabled==false){
+            selectionArray.push(j);
+          }
+        }
+      $('#jstree').jstree().select_node(selectionArray);
+      })
+    };
+
 $('#jstree').on("changed.jstree", function (e, data) {
   if(data.action=="select_node"){
     itemArr={};
@@ -308,7 +373,7 @@ $('#jstree').on("changed.jstree", function (e, data) {
   }else if(data.action=="deselect_all"){
     //
   }
-  if(containsOnlyStudioItems()){
+  if(containsOnlyStudioItems() && <?php echo (in_array('system',$_SESSION['groups']) || in_array('admin',$_SESSION['groups']))?'true':'false' ?>){
       $(`#givetoAnotherPerson`).css('visibility','visible')
       $(`#givetoAnotherPerson_Button`).css('visibility','visible')
     }else{
@@ -384,7 +449,8 @@ function colorTakenItems(){
       }
     });
 
-    //Make an ajax call
+
+    //get Users
     $.ajax({
 			url:"ItemManager.php",
 			method:"POST",

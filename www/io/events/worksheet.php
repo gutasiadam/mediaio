@@ -16,35 +16,6 @@ setcookie("Cookie_eventId", $_GET['eventId'], time() + (86400 * 30), "/");
   <script src="https://kit.fontawesome.com/2c66dc83e7.js" crossorigin="anonymous"></script>
 </head>
 <?php
-// if(isset($_POST["wEvent"]) && isset($_SESSION['UserUserName']))
-// {
-//  if(!isset($_POST['wComment'])){$wComment="";}
-//  else{$wComment=$_POST['wComment'];}
-//  $connect=Database::runQuery_mysqli();
- 
-// //change the query above to make it bindable
-//  $query = "
-//  INSERT INTO worksheet 
-//  (FullName, EventID, Worktype, Location, Comment, RecordDate) 
-//  VALUES (?, ?, ?, ?, ?, Now())
-//  ";
-
-
-// //execute query with paramter binding
-//   $stmt = $connect->prepare($query);
-//   $fullName=$_SESSION['lastName']." ".$_SESSION['firstName'];
-//   $stmt->bind_param("sssss", $fullName, $_POST['wEvent'], $_POST['wType'], $_POST['wLoc'], $wComment);
-//   $result = $stmt->execute();
-
-
-//  if($result){
-//      echo "1";
-//  }
-//  else{
-//      echo "2";
-//  }
-//  exit();
-// }
 
 if(isset($_POST["uId"]) && isset($_SESSION['UserUserName']))
 {

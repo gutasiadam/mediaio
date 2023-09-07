@@ -51,17 +51,19 @@ session_start();
                     <tr><td><form action="chpwd.php"><button class="btn btn-warning">Jelszócsere <i class="fas fa-key"></i></button></form></td></tr>
                     <tr><td><form action="userlist.php"><button class="btn btn-dark">Elérhetőségek megtekintése <i class="fas fa-address-book"></i></i></button></form></td></tr>
                     <tr><td><form action="rules.php"><button class="btn btn-secondary">Dokumentumok <i class="fas fa-folder-open"></i></i></button></form></td></tr>
+                    <tr><td><form action="../utility/damage_report/announce_Damage.php"><button class="btn btn-warning">Sérülés bejelentése <i class="fas fa-file-alt"></i></button></form></td></tr>
           <?php
                     if (in_array("admin", $_SESSION["groups"])){
             echo '
+                    <tr><td><form action="../utility/damage_report/service.php"><button class="btn btn-warning">Szervíz <i class="fas fa-wrench"></i></i></button></form></td></tr>
                     <tr><td><form action="usercheck.php"><button class="btn btn-success">UserCheck <i class="fas fa-user-check"></i></button></form></td></tr>
-                    <tr><td><form action="../utility/damage_report/announce_Damage.php"><button class="btn btn-warning">Sérülés bejelentése <i class="fas fa-file-alt"></i></button></form></td></tr>
-                    <tr><td><form action="stats.php"><button class="btn btn-dark">Áttekintés <i class="fas fa-chart-pie"></i></i></button></form></td></tr>';
+                    ';
                   }
                     if(in_array("system", $_SESSION["groups"]) or in_array("teacher", $_SESSION["groups"])){ //SYSADMIN OR TEACHER
                     echo '
                     <tr><td><form action="../budget/"><button class="btn btn-info">Költségvetés <i class="fas fa-coins"></i></button></form></td></tr>
-					          <tr><td><form action="points.php"><button class="btn btn-success">Pontszámok <i class="fas fa-calculator"></i></button></form> </td></tr>';
+					          <tr><td><form action="points.php"><button class="btn btn-success">Pontszámok <i class="fas fa-calculator"></i></button></form> </td></tr>
+                    <tr><td><form action="stats.php"><button class="btn btn-dark">Áttekintés <i class="fas fa-chart-pie"></i></i></button></form></td></tr>';
                     }
                     if(in_array("system", $_SESSION["groups"])){
                       echo '

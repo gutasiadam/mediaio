@@ -51,8 +51,21 @@ include("../profile/header.php");
   </div>
 </nav> 
 
-<body>
 
+<body>
+  <form>
+  <div class="mb-3">
+  <div class="container range noprint">
+    <div class="row">
+      <div class="col">
+    <label for="customRange3" class="form-label" id="yearRangeLabel">Adatok betöltése eddig:</label>
+    <input type="range" class="form-range" min="2022" max="<?php echo date("Y");?>" value="<?php echo date("Y");?>" step="1" id="yearRange">
+    <span id="yearRangeValue"><?php echo date("Y");?></span>
+  </div>
+  </div>
+  </div>
+  </div>
+  </form>
 
     <div class="container">
       <div class="container text-center">
@@ -70,17 +83,29 @@ include("../profile/header.php");
       <h1>Médiás</h1>
       <div id="mediaTable_full">
         <script>
-          $(document).ready(function() {
-            const startDate=2022;
+
+          //Updates both tables
+          function updateTables(){
+            $("#mediaTable_full").empty();
+            $("#egyesuletTable_full").empty();
+            const startDate=parseInt($("#yearRange").val());
             const currentYear = new Date().getFullYear();
             for (let index = 0; index <= currentYear-startDate; index++) {
               const element = startDate+index;
+              //clear both table divs
+
+
               $("#mediaTable_full").append("<div id='loadmediaTable_"+element+"'></div>");
               $("#loadmediaTable_"+element).append("<h3>"+(element)+"</h3>");
               $("#loadmediaTable_"+element+" h3").append("<button type='button' class='btn btn-light' onclick="+'loadResource("year","media",'+element+')'+"><i class='fas fa-level-down-alt' style='color: #1f2551;'></i></button>");
               $("#mediaTable_full").append("<hr class='solid'>");
+
+              $("#egyesuletTable_full").append("<div id='loadegyesuletTable_"+element+"'></div>");
+              $("#loadegyesuletTable_"+element).append("<h3>"+(element)+"</h3>");
+              $("#loadegyesuletTable_"+element+" h3").append("<button type='button' class='btn btn-light' onclick="+'loadResource("year","egyesulet",'+element+')'+"><i class='fas fa-level-down-alt' style='color: #1f2551;'></i></button>");
+              $("#egyesuletTable_full").append("<hr class='solid'>");
             }
-          });
+          }
         </script>
 
       </div>
@@ -90,15 +115,7 @@ include("../profile/header.php");
       <div id="egyesuletTable_full">
         <script>
           $(document).ready(function() {
-            const startDate=2022;
-            const currentYear = new Date().getFullYear();
-            for (let index = 0; index <= currentYear-startDate; index++) {
-              const element = startDate+index;
-              $("#egyesuletTable_full").append("<div id='loadegyesuletTable_"+element+"'></div>");
-              $("#loadegyesuletTable_"+element).append("<h3>"+(element)+"</h3>");
-              $("#loadegyesuletTable_"+element+" h3").append("<button type='button' class='btn btn-light' onclick="+'loadResource("year","egyesulet",'+element+')'+"><i class='fas fa-level-down-alt' style='color: #1f2551;'></i></button>");
-              $("#egyesuletTable_full").append("<hr class='solid'>");
-            }
+            updateTables();
           });
         </script>
       </div>
@@ -148,7 +165,24 @@ include("../profile/header.php");
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Mégsem</button>
         <button type="button" class="btn btn-primary">Hozzáadás</button>
         <script>
+          function openTodaysResources(){
+            //Automatically opens down todays year and month
+            var today=new Date();
+            var year=today.getFullYear();
+            var month=today.getMonth()+1;
+
+            
+              loadResource("year","media",year);
+              loadResource("year","egyesulet",year);
+
+              //Delay, to make sure tables are loaded
+            setTimeout(function(){ 
+              loadResource("month","media",year,month);
+              loadResource("month","egyesulet",year,month);
+            }, 500);
+          }
           $(document).ready(function() {
+            openTodaysResources();
             $(".btn-primary").click(function() {
               console.log("Clicked");
               var date = $("#dateInput").val();
@@ -285,6 +319,21 @@ include("../profile/header.php");
 
 
 <script>
+
+  $(document).on('input change', '#yearRange', function() {
+    $('#yearRangeValue').html( $(this).val() );
+    updateTables();
+  });
+
+  //If the year range is changed, reload the tables
+
+  function getMonthName(monthNumber) {
+    const date = new Date();
+    date.setMonth(monthNumber - 1);
+
+    return date.toLocaleString('hu-HU', { month: 'long' });
+  }
+
   function loadResource(type,table,value,value2=null){
     console.log(type,table,value,value2);
     if(type=='year'){
@@ -299,13 +348,17 @@ include("../profile/header.php");
 
         //If no data is present
         if(response=='[]'){
-          $("#load"+table+"Table_"+value).append("<h4>Nincs adat</h4>");
+          $("#load"+table+"Table_"+value).append("<h4>Nincs adat az adott időszakra.</h4>");
         }
         response=JSON.parse(response);
         for (let index = 0; index < response.length; index++) {
           const element = response[index];
+
+          //Add "Ft" to total value
+          element.total_value=element.total_value+" Ft";
+
           $("#load"+table+"Table_"+value).append("<div id='load"+table+"Table_"+value+"_"+element.month+"'></div>");
-          $("#load"+table+"Table_"+value+"_"+element.month).append("<h4>"+element.month+' - <span style="color: grey;">'+element.total_value+"</span></h4>");
+          $("#load"+table+"Table_"+value+"_"+element.month).append("<h4>"+getMonthName(element.month)+' - <span style="color: grey;">'+element.total_value+"</span></h4>");
           $("#load"+table+"Table_"+value+"_"+element.month+" h4").append("<button type='button' class='btn btn-light' onclick="+'loadResource("month","'+table+'",'+value+','+element.month+')'+"><i class='fas noprint fa-level-down-alt' style='color: #1f2551;'></i></button>");
           
         }
@@ -330,7 +383,19 @@ include("../profile/header.php");
         $("#load"+table+"Table_"+value+"_"+value2).append("<table class='table' id='load"+table+"Table_"+value+"_"+value2+"_table'><tr><th>Dátum</th><th>Tétel</th><th>Összeg</th><th>Megjegyzés</th><th class='noprint'>Műveletek</th></tr></table>");
         for (let index = 0; index < response.length; index++) {
           const element = response[index];
+          
+          
+
+          //If Value is negative, color it red
+          if(element.Value<0){
+            //Add "Ft" to values
+            element.Value=element.Value+" Ft";
+            $("#load"+table+"Table_"+value+"_"+value2+" table").append("<tr><td>"+element.Date+"</td><td>"+element.Name+"</td><td><font color='red'>"+element.Value+"</font></td><td>"+JSON.parse(element.Data).comment+"</td><td><a id='editData' onclick='showEditModal("+element.ID+","+'"'+table+'"'+","+value+","+value2+","+JSON.stringify(element)+")' href='#'</a><i class='far noprint fa-lg fa-edit'></i></a><span class='noprint'> | </span><font color='red'><i class='fas fa-lg fa-times noprint' onclick='deleteResource("+element.ID+","+'"'+table+'"'+","+value+","+value2+")'></i></td></tr></font>");
+          }else{
+            //Add "Ft" to values
+            element.Value=element.Value+" Ft";
           $("#load"+table+"Table_"+value+"_"+value2+" table").append("<tr><td>"+element.Date+"</td><td>"+element.Name+"</td><td>"+element.Value+"</td><td>"+JSON.parse(element.Data).comment+"</td><td><a id='editData' onclick='showEditModal("+element.ID+","+'"'+table+'"'+","+value+","+value2+","+JSON.stringify(element)+")' href='#'</a><i class='far noprint fa-lg fa-edit'></i></a><span class='noprint'> | </span><font color='red'><i class='fas fa-lg fa-times noprint' onclick='deleteResource("+element.ID+","+'"'+table+'"'+","+value+","+value2+")'></i></td></tr></font>");
+          }
       }
     }
       });
@@ -375,6 +440,9 @@ include("../profile/header.php");
         if(response.length<2){
           $("#sum_media").append("<h6 style='color: grey;'>Mindkét sorban legalább egy tételnek szerepelnie kell az összegzéshez.</h6>");
         }else{
+          //Add "Ft" to values
+          response[0].sum=response[0].sum+" Ft";
+          response[1].sum=response[1].sum+" Ft";
           $("#sum_media").append("<h6>"+response[0].sum+"</h6>");
           $("#sum_egyesulet").append("<h6>"+response[1].sum+"</h6>");
         }

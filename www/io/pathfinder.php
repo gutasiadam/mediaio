@@ -94,22 +94,22 @@ if(isset($_SESSION['UserUserName'])){
            foreach($result as $row)
            {
             if($row["Acknowledged"]==0){
-              echo '<div class="timeline__item ">
+              echo '<div class="timeline__item left">
               <div class="timeline__content service">
                <h2>'. $row["Date"]. ' ('. $row["User"] . ')</h2>
                <h6>Jóváhagyásra vár.</h6></div></div>';
             }else{
             if($row["Event"]=="OUT"){
-              echo '<div class="timeline__item ">
+              echo '<div class="timeline__item right">
               <div class="timeline__content out">
                <h2>'. $row["Date"]. ' ('. $row["User"] .')</h2>';} 
             if($row["Event"]=="IN"){
-              echo '<div class="timeline__item ">
+              echo '<div class="timeline__item left">
               <div class="timeline__content in">
                <h2>'. $row["Date"]. ' ('. $row["User"] . ')</h2>';
             }
             if($row["Event"]=="SERVICE"){
-              echo '<div class="timeline__item ">
+              echo '<div class="timeline__item right">
               <div class="timeline__content service">
                <h2>'. $row["Date"]. ' ('. $row["User"] . ')</h2>
                <h6>Szervizelés</h6>';

@@ -6,7 +6,10 @@ session_start();
 include "header.php";
 
 
-if(!isset($_SESSION['userId'])){header("Location: index.php?error=AccessViolation");}
+if(!isset($_SESSION['userId'])){
+  echo "Ehhez a funkcióhoz be kell jelentkezned!";
+  exit();
+}
 
 $SESSuserName = $_SESSION['UserUserName'];
 error_reporting(E_ALL ^ E_NOTICE);
@@ -106,15 +109,23 @@ var goStatus = 0;
       <br>
           <div class="row">
           <!-- THIS TABLE HOLDS THE TWO CHILDS-->
-            <div class="col-md-4"><table class="table table-bordered table-dark" style="line-height: 10px;" id="dynamic_field"><tr><div style="text-align:center;" class="text-primary"><strong></hr></strong></div></tr></table></div>
+            <div class="col-md-4">
+              <table class="table table-bordered table-dark" style="line-height: 10px;" id="dynamic_field">
+              <tr>
+                <div style="text-align:center;" class="text-primary"><strong></hr></strong></div>
+              </tr>
+            </table>
           </div>
+        </div>
           
 						
-				<form name="sendRequest" method="POST" action='/index.php'>
-              
-				</form>
+				<form name="sendRequest" method="POST" action='/index.php'></form>
         <table class="table table-bordered livearray" id="liveSelArrayResult"><td></td></table>
-        
+        <div class="row">
+              <div class="col">
+                <form action="../utility/damage_report/announce_Damage.php"><button class="btn btn-warning">Sérülés bejelentése <i class="fas fa-file-alt"></i></button></form>
+              </div>
+        </div>
 			</div>
       </div>
 		</div>

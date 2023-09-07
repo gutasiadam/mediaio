@@ -3,6 +3,7 @@ namespace Mediaio;
 use Mediaio\Database;
 require_once("../Database.php");
 session_start();
+error_reporting(E_ERROR | E_PARSE);
 include "header.php";
 if(!(in_array("admin", $_SESSION["groups"]))){
     exit();

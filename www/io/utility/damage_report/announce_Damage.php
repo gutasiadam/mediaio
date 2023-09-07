@@ -31,7 +31,7 @@ $TKI = $_SESSION['UserUserName'];
 
     <script>
     $(window).on('load', function () {
-      console.log("Finishing UI");
+      //console.log("Finishing UI");
       setInterval(() => {
         $(".UI_loading").fadeOut("slow");
       }, 200);
@@ -67,8 +67,13 @@ $TKI = $_SESSION['UserUserName'];
       <i class="fas fa-question-circle fa-lg"></i>
     </a>
   </div>
-</nav> <?php  } ?> 
+</nav> <?php  }else{
+  echo "Ehhez a funkcióhoz be kell jelentkezned!";
+  exit();
+} ?> 
 <div class="contianer">
+  <h3 id="titleBar">Probléma bejelentése</h3>
+  <p id="folder">A bejelentés beküldése után a tárgy átkerül a szervízhez, nem fogod tudni visszahozni azt. Meg fog keresni majd egy vezetőségi tag.</p>
   <div class="row" style="width: 80%; margin: 0 auto;">
   <div class="col-sm">
 <?php
@@ -188,7 +193,7 @@ echo "</form>";
           $("#userItemSelector").empty();
           for (var i = 0; i < userItems.length; i++) {
             $("#userItemSelector").append(
-              "<option value='" +userItems[i].UID +"'>" + userItems[i].UID+" - "+userItems[i].Nev +"</option>"
+              "<option value='" +userItems[i].UID +"'itemName='"+userItems[i].Nev+"'>" + userItems[i].UID+" - "+userItems[i].Nev +"</option>"
             );
           }
         },
@@ -207,8 +212,12 @@ echo "</form>";
       url: './upload-handler.php',
       data: {uploadComplete: true},
       success: function (response) {
+        console.log("zip-file:"+response);
         $('.uploadedImages h6').html('<h6>A képek feltöltése kész. Letöltheted a képeket: <a href="../../uploads/images/' + response+'.zip">Letöltés</a></h6>');
         formData.append("zip-file",response);
+        
+        //Add selected options itemName attribute to the form data
+        formData.append("itemName", $("#userItemSelector option:selected").attr("itemName"));
          console.log("zip-file0:"+response);
         zipfile=response;
         //Perform mail send
@@ -220,9 +229,9 @@ echo "</form>";
           success: function(data) {
             console.log(data);
             if (data == 200) {
-              $('folder').text("Sikeres bejelentés!");
+              $('#folder').text("Sikeres bejelentés!");
             } else {
-              $('folder').text("Hiba történt a bejelentés során!");
+              $('#folder').text("Hiba történt a bejelentés során!");
             }
           },
           cache: false,

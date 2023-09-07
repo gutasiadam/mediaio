@@ -34,7 +34,6 @@ class takeOutManager{
           //Acknowledge events in log.
           $sql.="UPDATE takelog SET Acknowledged=1, ACKBY='".$userName."' WHERE User='".$_POST['user']."' AND Date='".$_POST['date']."' AND EVENT='OUT' AND JSON_CONTAINS(Items, '".$_POST['data']."'); COMMIT;";
       
-          echo $sql;
           $connection=Database::runQuery_mysqli();
           if(!$connection->multi_query($sql)){
             printf("Error message: %s\n", $connection->error);
@@ -295,6 +294,22 @@ class userManager{
     }
     return;
   }
+
+  static function getPresets(){
+    $mysqli = Database::runQuery_mysqli();
+    $rows = array();
+    $mysqli->set_charset("utf8");
+    $query = "SELECT Name, Items FROM takeoutpresets";
+    if ($result = $mysqli->query($query)) {
+        while ($row = $result->fetch_assoc()) {
+            $rows[] = $row;
+        }
+    $a=json_encode($rows);
+        //var_dump($a);
+        echo $a;
+    }
+    return;
+  }
 }
 
 if(isset($_POST['mode'])){
@@ -328,6 +343,13 @@ if(isset($_POST['mode'])){
 
   if($_POST['mode']=='getUsers'){
     echo userManager::getUsers();
+    //echo $_POST['value'] ;
+    //Header set.
+    exit();
+  }
+
+  if($_POST['mode']=='getPresets'){
+    echo userManager::getPresets();
     //echo $_POST['value'] ;
     //Header set.
     exit();
