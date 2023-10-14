@@ -31,16 +31,6 @@ class Database{
         }
         //$connection->close();
         return $connection->query($query);
-        /*$statement = mysqli_stmt_init($connection);
-        if (!mysqli_stmt_prepare($statement, $query)){
-            return $query;
-            exit();
-        }else{
-        mysqli_stmt_execute($statement);
-        $result = mysqli_stmt_get_result($statement);
-        
-        return $result;
-        }*/
     }
 
     //Runs query, and returns the mysqli object as a result.

@@ -78,6 +78,94 @@ class takeOutManager{
     
   }
 
+  /*Take out items from the database. Sets the item status to 0 (taken out)
+
+  Input: Item UIDs in an array.
+  Privilege validation is done too.
+  Bypasses the userCheck process for now.
+  Currenty limited behaviour (Only empty takerestrict items work!)*/
+
+  //TODO: update this behaviour.
+  static function REST_takeout($items,$userData){
+    $successfulTakeouts=0;
+    $successfulItems=array();
+    foreach ($items as $item) {
+      # Check if it is taken out or marked as restri
+      $sql = ("SELECT Status, TakeRestrict, RentBy FROM leltar WHERE UID=?");
+      //Get a new database connection
+      $connection=Database::runQuery_mysqli();
+      $stmt = $connection->prepare($sql);
+      $stmt->bind_param("s", $item);
+      $stmt->execute();
+      $result = $stmt->get_result();
+      $row = $result->fetch_assoc();
+      
+      if($row['Status']==0 && $row['RentBy']!=NULL && $row['TakeRestrict']!=""){ //TODO: Update this line!
+        //Item is taken out, or currenty limited by api (Only empty takerestrics items work!)
+        continue;
+      }else{
+        $sql = "UPDATE leltar SET Status = 0, RentBy = ? WHERE UID = ?";
+        $stmt = $connection->prepare($sql);
+        $stmt->bind_param("ss", $userData['username'], $item);
+        $stmt->execute();
+        
+        // Check affected rows on the prepared statement
+        if ($stmt->affected_rows == 1) {
+            // All good, return OK message
+            $successfulItems[] = $item;
+            $successfulTakeouts++;
+        }
+        
+        $stmt->close();
+        
+
+
+      }
+    }
+    return array('successfulTakeouts'=>$successfulTakeouts,'successfulItems'=>$successfulItems);
+  }
+
+  /*Retrieve items to the database. Sets the item status to 1.
+
+  Input: Item UIDs in an array.
+  Privilege validation is done too.
+  Bypasses the userCheck process for now.*/
+
+  //TODO: update this behaviour.
+  static function REST_retrieve($items,$userData){
+    $successfulRetrieves=0;
+    $successfulItems=array();
+    foreach ($items as $item) {
+      # Check if it is taken out or marked as restri
+      $sql = ("SELECT Status, TakeRestrict, RentBy FROM leltar WHERE UID=?");
+      //Get a new database connection
+      $connection=Database::runQuery_mysqli();
+      $stmt = $connection->prepare($sql);
+      $stmt->bind_param("s", $item);
+      $stmt->execute();
+      $result = $stmt->get_result();
+      $row = $result->fetch_assoc();
+      
+      if($row['Status']==0 && $row['RentBy']==$userData['username']){
+        //Item is taken out by this user.
+        $sql = "UPDATE leltar SET Status = 1, RentBy = NULL WHERE UID = ?";
+        $stmt = $connection->prepare($sql);
+        $stmt->bind_param("s", $item);
+        $stmt->execute();
+        
+        // Check affected rows on the prepared statement
+        if ($stmt->affected_rows == 1) {
+            // All good, return OK message
+            $successfulItems[] = $item;
+            $successfulRetrieves++;
+        }
+        $stmt->close();
+      }else{
+        continue;
+      }
+    }
+    return array('successfulRetrieves'=>$successfulRetrieves,'successfulItems'=>$successfulItems);
+  }
 }
 
 class retrieveManager{
@@ -265,11 +353,21 @@ class itemDataManager{
       }
       $a=json_encode($rows);
           //var_dump($a);
-          $itemsJSONFile = fopen('./data/takeOutItems.json', 'w');
+          $itemsJSONFile = fopen(__DIR__.'/data/takeOutItems.json', 'w');
           fwrite($itemsJSONFile, $a);
           fclose($itemsJSONFile);
       }
       return;
+    }
+
+    static function listItems(){
+      //Refresh takeoutJSON
+      self::generateTakeoutJSON();
+      //Return json
+      $itemsJSONFile = fopen(__DIR__.'/data/takeOutItems.json', 'r');
+      $itemsJSON = fread($itemsJSONFile, filesize(__DIR__.'/data/takeOutItems.json'));
+      fclose($itemsJSONFile);
+      return $itemsJSON;
     }
 
 }
