@@ -28,6 +28,7 @@ error_reporting(E_ALL ^ E_NOTICE);
 
 <script src="utility/jstree.js"></script>
   <link href='../style/main.css' rel='stylesheet' />
+  <link rel="stylesheet" href="../style/takeout.css">
   <link href="utility/themes/default/style.min.css" rel="stylesheet"/>
 <html >
       <title>MediaIo - takeout</title>
@@ -542,7 +543,7 @@ return arr.filter(function(ele){
 
 </script>
 
-<style>
+<!-- <style> -->
   * {
     box-sizing: border-box;
   }

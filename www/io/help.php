@@ -8,6 +8,7 @@
 <!DOCTYPE html>
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+<link rel="stylesheet" href="../style/help.css">
 <html>
 <head>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
@@ -132,7 +133,7 @@
       
 	</body>
 <style>
-.successtable{
+/* .successtable{
   width: 30%;
 }
 
@@ -193,7 +194,7 @@
   80% { color: #09457a; }
   100% { color: #5f0976; }
 }
-
+ */
 </style>
 
 <script type="text/javascript">

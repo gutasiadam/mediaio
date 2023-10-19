@@ -33,6 +33,7 @@ var goStatus = 0;
 </script>
 
 <html >
+<link rel="stylesheet" href="../style/retrieve.css">
 <?php if (isset($_SESSION["userId"])) { ?> <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
   <a class="navbar-brand" href="index.php">
     <img src="./utility/logo2.png" height="50">
@@ -241,9 +242,9 @@ $('table > tbody  > tr > td > button ').each(function(index, tr) {
 
 });
 </script>
-
+<!-- 
 <style>
-  * {
+   * {
     box-sizing: border-box;
   }
 
@@ -314,7 +315,7 @@ $('table > tbody  > tr > td > button ').each(function(index, tr) {
     display:none;
   }
 
-</style>
+</style> -->
 
 <?php //Message handler
 if(isset($_GET['state'])){

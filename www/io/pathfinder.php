@@ -8,10 +8,9 @@ session_start();
 if(isset($_SESSION['UserUserName'])){
 ?>
 
-<html>  
+<html> 
+<link rel="stylesheet" href="../style/pathfinder.css">
     <head>
-        
-        <link rel="stylesheet" href="utility/pathfinder.css" />
         <script src="utility/jquery.js"></script>
   <title>PathFinder</title>
   
@@ -313,7 +312,7 @@ function searchByUID(){
 
 </script>
 
-<style>
+<!-- <style>
   * {
     box-sizing: border-box;
   }
@@ -392,7 +391,7 @@ function searchByUID(){
 
   .livearray{
     display:none;
-  }
+  } -->
 </style>
 
 <?php
