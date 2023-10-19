@@ -9,7 +9,7 @@
   <script src="https://kit.fontawesome.com/2c66dc83e7.js" crossorigin="anonymous"></script>
   <script src="../utility/_initMenu.js"></script>
   <link rel="stylesheet" href="./maintenance.css">
-  <link rel="stylesheet" href="../main.css">
+  <link rel="stylesheet" href="../style/main.css">
     <meta charset="utf-8" />
     <meta locale="hu" >
     <meta http-equiv="X-UA-Compatible" content="IE=edge">

@@ -7,7 +7,7 @@ if(!isset($_SESSION['userId'])){
   <head>
     <title>Arpad Media IO</title>
     <link rel="icon" type="image/x-icon" href="../logo.ico">
-  <link href='../main.css' rel='stylesheet' />
+  <link href='../style/main.css' rel='stylesheet' />
   <div class="UI_loading"><img class="loadingAnimation" src="../utility/mediaIO_loading_logo.gif"></div>
     <meta charset='utf-8' />
     <script src="https://kit.fontawesome.com/2c66dc83e7.js" crossorigin="anonymous"></script>

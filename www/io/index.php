@@ -7,6 +7,7 @@ error_reporting(E_ERROR | E_PARSE);
 
 ?>
 <!DOCTYPE html>
+<link rel="stylesheet" href="../style/index.css">
 <?php if (isset($_SESSION["userId"])) { ?> <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
   <a class="navbar-brand" href="index.php">
     <img src="./utility/logo2.png" height="50">
@@ -120,9 +121,11 @@ error_reporting(E_ERROR | E_PARSE);
         });
         $(".login").submit();
       });
-    </script><style>
+    </script>
+    
+  <style>
 
-    @media (min-height: 500px) {
+/*     @media (min-height: 500px) {
   footer {
     display: block;
   }
@@ -255,7 +258,7 @@ error_reporting(E_ERROR | E_PARSE);
         }
 
       }
-
+ */
     </style><?php } else { ?><div class="alert alert-warning alert-dismissible fade show" id="note" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><strong>Kedves <?php if ( isset($_SESSION["firstName"]) ) { echo $_SESSION["firstName"]; }?>!</strong> Az oldal <u>folyamatos fejlesztés</u> alatt áll. Ha hibát szeretnél bejelenteni/észrevételed van, írj az arpadmedia.io@gmail.com címre, vagy <a href="mailto:arpadmedia.io@gmail.com?Subject=MediaIO%20Hibabejelent%C3%A9s" target="_top">írj most egy e-mailt!</a></div><h1 align=center class="rainbow">Árpád Média IO</h1><div class="row justify-content-center mainRow1" style="text-align: center; width:100%; max-width: 1000px; margin: 0 auto;"></div><br><div class="row justify-content-center mainRow2" style="text-align: center; width:100%; max-width: 1000px; margin: 0 auto;"></div><br><div class="row justify-content-center mainRow3" style="text-align: center; width:100%; max-width: 1000px; margin: 0 auto;"></div><br>
     <div class="row justify-content-center mainRow4" style="text-align: center; width:100%; max-width: 1000px; margin: 0 auto;"></div>
     <br><script type="text/javascript">

@@ -27,7 +27,7 @@ error_reporting(E_ALL ^ E_NOTICE);
 ?>
 
 <script src="utility/jstree.js"></script>
-  <link href='main.css' rel='stylesheet' />
+  <link href='../style/main.css' rel='stylesheet' />
   <link href="utility/themes/default/style.min.css" rel="stylesheet"/>
 <html >
       <title>MediaIo - takeout</title>
