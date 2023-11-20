@@ -1,0 +1,15 @@
+.registererror {
+    font-size: 20px;
+    color: red;
+}
+
+.success {
+    font-size: 20px;
+    color: green;
+    background-color: #669999;
+}
+
+table {
+    vertical-align: middle;
+    text-align: center;
+}

@@ -85,35 +85,3 @@ $( document ).ready(function() {
   $(".spinner-border").hide();
 });
 </script>
-<style>
-.logintable{
-  width: 15%;
-  text-align: center;
-  margin: 0 auto; 
-}
-
-.rainbow {
-  -webkit-animation: color 10s linear infinite;
-  animation: color 10s linear infinite;  
-}
-
-
-@-webkit-keyframes color {
-  0% { color: #000000; }
-  20% { color: #c91d2b; } 
-  40% { color: #ba833e; }
-  60% { color: #0f6344; }
-  80% { color: #09457a; }
-  100% { color: #5f0976; }
-}
-
-@keyframes background {
-  0% { color: #000000; }
-  20% { color: #c91d2b; } 
-  40% { color: #ba833e; }
-  60% { color: #0f6344; }
-  80% { color: #09457a; }
-  100% { color: #5f0976; }
-}
-
-</style>
