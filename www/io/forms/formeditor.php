@@ -2,7 +2,8 @@
 session_start();
     include("header.php");
     include("../translation.php");?>
-    <html>
+<html>
+
 <?php 
 if (in_array("admin", $_SESSION["groups"])) {?>
     <script src="../utility/_initMenu.js" crossorigin="anonymous"></script>
@@ -14,7 +15,7 @@ if (in_array("admin", $_SESSION["groups"])) {?>
               drawMenuItemsRight('forms',menuItems,2);
             });</script>
     
-        
+<link rel="stylesheet" href="../style/formeditor.css">       
  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
   <a class="navbar-brand" href="index.php">
     <img src="../utility/logo2.png" height="50">
@@ -104,51 +105,7 @@ Csak nem szerkesztés alatt levő form esetén:
 } 
 ?>
 
-<style>
-    .drag-zone{
-        border: 3px solid #ccc;
-        min-height: 100px;
-        padding: 10px;
-        border-style: dotted;
-    }
 
-    .formElement{
-        border: 1px solid #ccc;
-        padding: 10px;
-        margin: 10px;
-        display: inline-block;
-    }
-
-    .formElement:hover{
-        border: 2px solid aqua;
-        padding: 10px;
-        margin: 10px;
-        display: inline-block;
-        background-color: #eee;
-    }
-
-    .modifyButton{
-        margin-left: 20px;
-    }
-
-    .formElementText{
-        margin-left: 20px;
-    }
-
-    .editorZone{
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-    }
-
-    .formElementEditorField{
-        border: 1px solid #ccc;
-        padding: 10px;
-        margin-top: -10px;
-        display: inline-block;
-
-    }
-</style>
 
 <script>
     i=1;

@@ -14,6 +14,8 @@ setcookie("Cookie_eventId", $_GET['eventId'], time() + (86400 * 30), "/");
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js">  </script>
   <script src="https://kit.fontawesome.com/2c66dc83e7.js" crossorigin="anonymous"></script>
+
+  <link href='../style/events.css' rel='stylesheet' />
 </head>
 <?php
 
@@ -285,20 +287,3 @@ function getCookie(cname) {
 
 
 </script>
-
-
-
-<style>
-
-body{
-    padding: 20px;
-}
-
-@media print
-{    
-    .noprint, .noprint *
-    {
-        display: none !important;
-    }
-}
-</style>

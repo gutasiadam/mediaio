@@ -3,8 +3,9 @@ session_start();
 include("header.php");
 include("../translation.php"); ?>
 <script src="../utility/_initMenu.js" crossorigin="anonymous"></script>
-<link rel="stylesheet" href="../styles/profile_index.css">
+
 <html>
+
 <script> $(document).ready(function () {
     menuItems = importItem("../utility/menuitems.json");
     drawMenuItemsLeft("profile", menuItems, 2);
@@ -47,7 +48,11 @@ if (isset($_SESSION["userId"])) { ?>
     </div>
   </nav>
 
-  <body>
+  <head>
+    <link rel="stylesheet" href="../styles/common.css">
+  </head>
+
+  <body id="profile-index">
     <h1 align=center class="rainbow">Opciók</h1>
     <table class="logintable">
       <tr>

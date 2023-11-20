@@ -94,10 +94,6 @@ session_start();
 </body>
 
 
-<style>
-
-</style>
-
 <script>
     //onload
     $( document ).ready(function() {

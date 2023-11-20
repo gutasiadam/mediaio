@@ -11,6 +11,7 @@
 <html>
 <head>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <link rel="stylesheet" href="../style/help.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js">  </script>
   <script src="https://kit.fontawesome.com/2c66dc83e7.js" crossorigin="anonymous"></script>
@@ -103,70 +104,7 @@
     </p></div>
       
 	</body>
-<style>
-.successtable{
-  width: 30%;
-}
 
-.logintable{
-  width: 15%;
-  text-align: center;
-  margin: 0 auto; 
-}
-
-.nav{
-  align:left;
-}
-
-.col-6{
-  border-style: solid;
-  border-width: 1px;
-  transition: 0.5s;
-  text-align:center;
-}
-
-.col-6:hover{
-  background-color:#3b3b3b;
-  border-radius: 25px;
-}
-
-.ab{
-  color: #3b3b3b;
-  transition: 0.5s;
-}
-
-.ab:hover{
-  color: #ffffff;
-}
-
-.rainbow {
-  -webkit-animation: color 15s linear infinite;
-  animation: color 15s linear infinite;  
-}
-
-.szoveg{
-    width:90%;
-    margin:auto;
-}
-@-webkit-keyframes color {
-  0% { color: #000000; }
-  20% { color: #c91d2b; } 
-  40% { color: #ba833e; }
-  60% { color: #0f6344; }
-  80% { color: #09457a; }
-  100% { color: #5f0976; }
-}
-
-@keyframes background {
-  0% { color: #000000; }
-  20% { color: #c91d2b; } 
-  40% { color: #ba833e; }
-  60% { color: #0f6344; }
-  80% { color: #09457a; }
-  100% { color: #5f0976; }
-}
-
-</style>
 
 <script type="text/javascript">
 $(".szoveg").hide();

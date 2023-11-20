@@ -7,7 +7,7 @@ if (!isset($_SESSION["userId"])) {
 error_reporting(E_ALL | E_WARNING | E_NOTICE);
 require_once("./header.php");
 ?>
-<link rel="stylesheet" href="../styles/maintenance.css">
+<link rel="stylesheet" href="../style/common.css">
 <html>
 <script src="../utility/_initMenu.js" crossorigin="anonymous"></script>
 <script> $(document).ready(function () {
@@ -15,7 +15,11 @@ require_once("./header.php");
     drawMenuItemsLeft("maintenance", menuItems, 2);
     drawMenuItemsRight('maintenance', menuItems, 2);
   });</script>
+
+<body id="maintenance_index">
 <?php if (isset($_SESSION["userId"])) { ?>
+
+  
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <a class="navbar-brand" href="index.php">
       <img src="../utility/logo2.png" height="50">
@@ -74,7 +78,7 @@ require_once("./header.php");
 
 
   </table>
-
+</body>
 </html>
 
 
