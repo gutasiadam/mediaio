@@ -2,6 +2,7 @@
 namespace Mediaio;
 require_once __DIR__.'/./ItemManager.php';
 use Mediaio\itemDataManager;
+
 /* takeOut szabályok
 
 Status!=1 Nem vehető ki!
@@ -49,7 +50,7 @@ error_reporting(E_ALL ^ E_NOTICE);
     </ul>
     <ul class="navbar-nav navbarPhP">
       <li>
-        <a class="nav-link disabled timelock" href="#"><span id="time"> 10:00 </span><?php echo ' '.$_SESSION['UserUserName'];?>
+        <a class="nav-link disabled timelock" href="#"><span id="time"> 30:00 </span><?php echo ' '.$_SESSION['UserUserName'];?>
         </a>
       </li>
     </ul>
@@ -59,7 +60,7 @@ error_reporting(E_ALL ^ E_NOTICE);
         window.onload = function () {
           display = document.querySelector('#time');
           var timeUpLoc="utility/userLogging.php?logout-submit=y"
-          startTimer(display, timeUpLoc);
+          startTimer(display, timeUpLoc,30);
         };
       </script>
     </form>

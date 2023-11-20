@@ -73,7 +73,7 @@ class Core{
                 return array('code' => '401');
             }
             $stmt->close();
-            return array('code' => '500');
+            return array('code' => '418');
         }
 
     }

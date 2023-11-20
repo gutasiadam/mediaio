@@ -16,10 +16,10 @@ console.log("_initMenu file called, loading...");
         return varName;
       };
       
-function startTimer(display, timeUpLoc) {
+function startTimer(display, timeUpLoc,minutes=10) {
   //Self correcting timer, for auto logout
   var start = Date.now()/1000;//in seconds
-    var duration = start+(60*10+1); //Auto-logout after 10 minutes
+    var duration = start+(60*minutes+1); //Auto-logout after minutes
     var timer = duration, minutes, seconds;
     console.log("Timer start with" + duration);
   setInterval(function () {
@@ -57,32 +57,44 @@ function startTimer(display, timeUpLoc) {
 
       //Loop trough Menu left side
       //jumpupfolderstruct: ha almappában van, és feljebb kell ugrani.
-      function drawMenuItemsLeft(activeName,menuItems,jumpupFolderStruct=1){
-        for (i = 0; i < menuItems.menu.left.length; i++) {
-        //draw item on top side
-         //console.log(menuItems.menu.left[i]);
-         if (menuItems.menu.left[i].name == activeName){
-          $('.navbarUl').append('<li class="nav-item active imported"><a class="nav-link" href="'+("../").repeat(jumpupFolderStruct-1)+menuItems.menu.left[i].href+'"><i class="'+menuItems.menu.left[i].icon+'"></i></a></li>');
-         }else{
-          $('.navbarUl').append('<li class="nav-item imported"><a class="nav-link" href="'+("../").repeat(jumpupFolderStruct-1)+menuItems.menu.left[i].href+'"><i class="'+menuItems.menu.left[i].icon+'"></i></a></li>');
-         }
-         }};
-        function drawMenuItemsRight(activeName,menuItems,jumpupFolderStruct=1){
-            console.log("drawMenuItemsRight called.")
-            if (menuItems){
-                for (i = 0; i < menuItems.menu.right.length; i++) {
-                    //draw item on top side
-                     console.log(menuItems.menu.right[i]);
-                     if (menuItems.menu.right[i].name == activeName){
-                      $('.menuRight').append('<a class="nav-link my-2 my-sm-0 active" href="'+("../").repeat(jumpupFolderStruct-1)+menuItems.menu.right[i].href+'"><i class="'+menuItems.menu.right[i].icon+'"></i></a>');
-                     }else{
-                      $('.menuRight').append('<a class="nav-link my-2 my-sm-0" href="'+("../").repeat(jumpupFolderStruct-1)+menuItems.menu.right[i].href+'"><i class="'+menuItems.menu.right[i].icon+'"></i></a>');
-                     } 
-            }}else{
-                console.log("menItems not defined!")
+      function drawMenuItemsLeft(activeName, menuItems, jumpupFolderStruct = 1) {
+        for (let i = 0; i < menuItems.menu.left.length; i++) {
+          if (menuItems.menu.left[i].hasOwnProperty('target') === false) {
+            // Add target field if not defined
+            menuItems.menu.left[i].target = "_self";
+          }
+      
+          // Draw item on top side
+          if (menuItems.menu.left[i].name == activeName) {
+            $('.navbarUl').append('<li class="nav-item active imported"><a class="nav-link" target="' + menuItems.menu.left[i].target + '" href="' + ("../").repeat(jumpupFolderStruct - 1) + menuItems.menu.left[i].href + '"><i class="' + menuItems.menu.left[i].icon + '"></i></a></li>');
+          } else {
+            $('.navbarUl').append('<li class="nav-item imported"><a class="nav-link" target="' + menuItems.menu.left[i].target + '" href="' + ("../").repeat(jumpupFolderStruct - 1) + menuItems.menu.left[i].href + '"><i class="' + menuItems.menu.left[i].icon + '"></i></a></li>');
+          }
+        }
+      }
+      
+
+      function drawMenuItemsRight(activeName, menuItems, jumpupFolderStruct = 1) {
+        console.log("drawMenuItemsRight called.")
+        if (menuItems && menuItems.menu && menuItems.menu.right) {
+          for (let i = 0; i < menuItems.menu.right.length; i++) {
+            if (menuItems.menu.right[i].hasOwnProperty('target') === false) {
+              menuItems.menu.right[i].target = "_self";
             }
-            
-             };
+      
+            // Draw item on top side
+            console.log(menuItems.menu.right[i]);
+            if (menuItems.menu.right[i].name == activeName) {
+              $('.menuRight').append('<a class="nav-link my-2 my-sm-0 active" target="' + menuItems.menu.right[i].target + '" href="' + ("../").repeat(jumpupFolderStruct - 1) + menuItems.menu.right[i].href + '"><i class="' + menuItems.menu.right[i].icon + '"></i></a>');
+            } else {
+              $('.menuRight').append('<a class="nav-link my-2 my-sm-0" target="' + menuItems.menu.right[i].target + '" href="' + ("../").repeat(jumpupFolderStruct - 1) + menuItems.menu.right[i].href + '"><i class="' + menuItems.menu.right[i].icon + '"></i></a>');
+            }
+          }
+        } else {
+          console.log("menuItems or its properties are not defined!");
+        }
+      }
+      
 
     function drawIndexTable(menuItems,jumpupFolderStruct=1){
 

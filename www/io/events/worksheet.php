@@ -70,10 +70,14 @@ if(isset($_GET['eventId'])){
     try {
       $event = $service->events->get($calendarId, $eventId);
     } catch (Google_Service_Exception $e) {
-      echo '<h2 class="mb-2 mr-sm-2" id="titleString">Nem található esemény ezzel az azonosítóval.</h2>';
-      //Add a button that returns to calendar page
-      echo '<a href="index.php"><button class="btn btn-info noprint mb-2 mr-sm-2" data-toggle="modal" data-target="#addWorkSheetData">Vissza a naptárra</button></a>';
+      try {
+        $event = $service->events->get('hq37buvra0ju1sci457sk66pfk@group.calendar.google.com', $eventId);
+      } catch (Google_Service_Exception $e) {
+        echo '<h2 class="mb-2 mr-sm-2" id="titleString">Nem található esemény ezzel az azonosítóval.</h2>';
+        //Add a button that returns to calendar page
+        echo '<a href="index.php"><button class="btn btn-info noprint mb-2 mr-sm-2" data-toggle="modal" data-target="#addWorkSheetData">Vissza a naptárra</button></a>';
         exit();
+      }
     }
     
     // Catch if event does not exist
@@ -148,8 +152,12 @@ $result = $connect->query($query);
       <div class="modal-body">
         <form id="editWorkData">
         <div class="form-group"></div>
-        <div class="form-group"><input class="form-control" type="text" autocomplete="off" id="Edit_WorkType" value="helyErtek" placeholder="A fájlok helye a szerveren" required></input></div>
-        <div class="form-group"><input class="form-control" type="text" autocomplete="off" id="Edit_fileLocation" value="helyErtek" placeholder="A fájlok helye a szerveren" required></input></div>
+        <div class="form-group">
+          <input class="form-control" type="text" autocomplete="off" id="Edit_WorkType" value="helyErtek" placeholder="A fájlok helye a szerveren" required>
+        </input></div>
+        <div class="form-group">
+          <label for="Edit_fileLocation">Fájl helye a szerveren</label>
+          <input class="form-control" type="text" autocomplete="off" id="Edit_fileLocation" value="helyErtek" placeholder="A fájlok helye a szerveren" required></input></div>
         <div class="form-group"><input class="form-control" type="text" autocomplete="off" id="Edit_Comment" value="CommentErtek" placeholder="Egyéb megjegyzés (nem kötelező)"></input></div>
       </div>
       <div class="modal-footer">
@@ -177,7 +185,14 @@ $result = $connect->query($query);
         <div class="form-group">
         <div class="form-group">
         <div class="form-group"><input class="form-control" type="text" autocomplete="off" id="workTypeSelect" placeholder="Elvégzett feladat" required></input></div>
-        <div class="form-group"><input class="form-control" type="text" autocomplete="off" id="fileLocation" placeholder="A fájlok helye a szerveren" required></input></div>
+        <div class="form-group">
+          <label for="fileLocation">Fájl helye a szerveren</label>
+          <input class="form-control" type="text" autocomplete="off" id="fileLocation" placeholder="A fájlok helye a szerveren" required></input></div>
+        <input id="folderSelectFieldInput" list="folderSelectField" oninput="onFolderSelectFieldInput()">
+<datalist id="folderSelectField">
+</datalist>  
+<button type="button" onclick="updateFolderData()"><i class="fas fa-folder-open"></i></button>
+        <span id="loadingData">Fájlok lekérése folyamatban...</span>
         <div class="form-group"><input class="form-control" type="text" autocomplete="off" id="userComment" placeholder="Egyéb megjegyzés (nem kötelező)"></input></div>
         <input class="form-control" type="hidden" id="upDateId" value="NUL"></input>
       </div>
@@ -228,6 +243,7 @@ function showDetails(id,type,loc,comment){
   document.getElementById('Edit_WorkType').value = type;
   document.getElementById('Edit_fileLocation').value = loc;
   document.getElementById('Edit_Comment').value = comment;
+
   $('#editModal').modal('show');
 }
 
@@ -247,6 +263,46 @@ function deleteSheet(id){
       } 
       })
 }
+
+function updateFolderData(){
+  document.getElementById("loadingData").innerHTML = "Mappák lekérése folyamatban...";
+  folder="Munka"
+  if(document.getElementById("fileLocation").value == ""){
+    folder="Munka"
+  }else{
+    folder=document.getElementById("fileLocation").value 
+  }
+  console.log(folder);
+  getFolderData(folder)
+  .then(data => {
+    data;
+    document.getElementById("loadingData").innerHTML = "";
+    console.log(data.body)
+  
+    //Clear datalist
+    document.getElementById("folderSelectField").innerHTML = "";
+
+    //handle directory error.
+    if(data.data.files == undefined){
+      document.getElementById("loadingData").innerHTML = "Nem létező útvonal!";
+      return;
+    }
+    data.data.files.forEach(element => {
+      console.log(element.name);
+      //Add every element to folderSelectField
+      var option = document.createElement("option");
+      option.value = element.name;
+      document.getElementById("folderSelectField").appendChild(option);
+    });
+
+    document.getElementById("loadingData").innerHTML = "";
+  })
+}
+
+$('#addWorkSheetData').on('show.bs.modal', function (event) {
+  document.getElementById("fileLocation").value = "Munka"
+  updateFolderData();
+})
 
 $('#editWorkData').on('submit', function (e) {
 console.log("LOG-8");
@@ -283,11 +339,26 @@ function getCookie(cname) {
      return "";
 }
 
+//When a datalist item is selected.
+
+function onFolderSelectFieldInput(){
+  var val = document.getElementById("folderSelectFieldInput").value;
+    var opts = document.getElementById('folderSelectField').children;
+    for (var i = 0; i < opts.length; i++) {
+      if (opts[i].value === val) {
+        // An item was selected from the list!
+        // yourCallbackHere()
+        //alert(opts[i].value);
+        document.getElementById('fileLocation').value += "/"+opts[i].value;
+        document.getElementById("folderSelectFieldInput").value = '';
+        break;
+      }
+    }
+}
+
 
 </script>
-
-
-
+<script src="./apiCommunications.js"></script>
 <style>
 
 body{

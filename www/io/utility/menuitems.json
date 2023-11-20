@@ -7,6 +7,7 @@
         {"name": "pathfinder","icon": "fas fa-project-diagram fa-lg", "href": "pathfinder.php"},
         {"name": "events","icon": "fas fa-calendar-alt fa-lg", "href": "events/"},
         {"name": "maintenance", "icon": "fas fa-broom fa-lg", "href": "maintenance/index.php"},
+        {"name": "nas","icon": "fas fa-server fa-lg", "href": "https://nas.arpadmedia.hu","target" : "_blank"},
         {"name": "profile","icon": "fas fa-user-alt fa-lg", "href": "profile/index.php"},
         {"name": "forms","icon": "fab fa-wpforms fa-lg", "href": "forms/index.php"}
         

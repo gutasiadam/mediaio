@@ -65,6 +65,21 @@ A `database` mappa tartalmazza azt az SQL fájlt, amelynek segítségével létr
     ]
 }
 ```
+
+#### Adatbázis belépési adatainak beállítása
+A szerveroldali szkriptek az io `server/dbCredentials.json` fájlból olvassák ki a belépési adatokat. A **NAS_** kezdetű beállítások a SYNOLOGY API-ra vonatkoznak, ezt csak akkor kell beállítani, ha használni szeretnénk az API-t.
+
+```
+{
+  "username": "IO_username",
+  "password": "IO_password",
+  "schema": "arpadmedia",
+  "NAS_domain": "nas.arpadmedia.hu",
+  "NAS_username": "APIUserName",
+  "NAS_password": "APIPASS"
+}
+
+```
   
 
 ###### Bármilyen egyéb kérdés esetén vedd fel a kapcsolatot a projekt GitHUb oldalán [the project page](https://github.com/gutasiadam/mediaio  "the project's page") vagy a GitHubomon. [my GitHub](https://github.com/gutasiadam  "my GitHub").

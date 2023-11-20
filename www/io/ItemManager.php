@@ -370,6 +370,59 @@ class itemDataManager{
       return $itemsJSON;
     }
 
+    static function listByCriteria($itemState,$orderCriteria){
+      $stateArray = array(
+        'in' => 'RentBy IS NULL',
+        'out' => 'RentBy IS NOT NULL',
+        'all' => '1=1'
+      );
+
+      $orderbyArray = array(
+        'name' => 'Nev',
+        'uid' => 'UID',
+        'status' => 'Status',
+        'rentby' => 'RentBy',
+        'id' => 'ID',
+        'takerestrict' => 'TakeRestrict',
+        'type' => 'Tipus',
+      );
+
+      $sql = "SELECT * FROM leltar WHERE ".$stateArray[$itemState]." ORDER BY ".$orderbyArray[$orderCriteria];
+      //Get a new database connection
+      $connection=Database::runQuery_mysqli();
+      $stmt = $connection->prepare($sql);
+      $stmt->execute();
+      $result = $stmt->get_result();
+      $rows = array();
+      while ($row = $result->fetch_assoc()) {
+        $rows[] = $row;
+      }
+      $result=json_encode($rows);
+      return $result;
+      
+    }
+
+    static function listUserItems($userData){
+      //If userdata is empty, return a json with the error message.
+      if(empty($userData)){
+        return json_encode(array('type'=>'error', 'text' => 'Invalid api key'));
+      }
+      $sql = "SELECT * FROM leltar WHERE RentBy = ?";
+      //Get a new database connection
+      $connection=Database::runQuery_mysqli();
+      $stmt = $connection->prepare($sql);
+      $stmt->bind_param("s", $userData['username']);
+      $stmt->execute();
+      $result = $stmt->get_result();
+      $rows = array();
+      while ($row = $result->fetch_assoc()) {
+        $rows[] = $row;
+      }
+      $result=json_encode($rows);
+      return $result;
+
+    }
+
 }
 
 class itemHistoryManager{

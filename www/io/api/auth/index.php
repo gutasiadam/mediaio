@@ -9,8 +9,7 @@ switch($request_method)
   {
     case 'GET':
       // Retrive Products
-      if(!empty($_GET["useremail"])&&!empty($_GET["pwd"]&&$_GET["method"]=="createApiKey"))
-      {
+      if(!empty($_GET["useremail"])&&!empty($_GET["pwd"]&&$_GET["method"]=="createApiKey")){
         $_GET["login-submit"]=true;
         
         $c=new Core();
@@ -22,9 +21,11 @@ switch($request_method)
 		//set the content type to json
 		header('Content-Type: application/json');
 		//echo the json string
-    if($status['code']==200){
+    if($status['code']=='200'){
       echo json_encode(array('key'=>$status['token'], 'code' => $status['code']));
       exit();
+    }else{
+      echo "Inside error.";
     }
 
       }
@@ -34,7 +35,7 @@ switch($request_method)
         $response=$c->loginWithApikey($_GET["apikey"]);
         header("HTTP/1.0 ".$response['code']);
         header('Content-Type: application/json');
-        if ($response['code']==200){
+        if ($response['code']=='200'){
           echo json_encode(array('code'=>$response['code'], 'response' => $response['userData']));
           exit();
         }else{
@@ -55,7 +56,7 @@ switch($request_method)
 	  }
       else
       {
-        header("HTTP/1.0 500 Internal Server Error");
+        header("HTTP/1.0 409");
       }
       break;
     default:

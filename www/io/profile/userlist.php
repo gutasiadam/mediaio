@@ -62,7 +62,7 @@ if(!isset($_SESSION['userId'])){
 <?php 
 
 	$countOfRec=0;
-	$sql = "SELECT usernameUsers, emailUsers, lastName, firstName, teleNum, AdditionalData FROM users ORDER BY usernameUsers ASC";
+	$sql = "SELECT usernameUsers, emailUsers, lastName, firstName, teleNum, AdditionalData FROM users ORDER BY lastName, firstName ASC";
   $conn=Database::runQuery_mysqli();
 	$result = $conn->query($sql);
 
@@ -74,7 +74,7 @@ if ($result->num_rows > 0) {
       if(!empty($row["AdditionalData"])){
       $groupData=json_decode($row["AdditionalData"],true);
 
-      //store every array value of groupData["groups"] in a string
+
       $userGroups=implode(", ",$groupData["groups"]);
       }else{
         $userGroups="Nincs csoport";

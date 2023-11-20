@@ -21,16 +21,41 @@ switch($request_method)
           echo json_encode(array('type'=>'error', 'text' => 'Invalid api key'));
           exit();
         }
-        //Code was OK, list items
+        //Code was OK
+
+        //List by critria
+        if(isset($_GET["type"]) && $_GET["orderby"]){
+          $itemManager=new itemDataManager();
+          $itemsJSON=json_decode($itemManager->listByCriteria($_GET["type"],$_GET["orderby"]));
+          header("HTTP/1.0 200 OK");
+          header('Content-Type: application/json');
+          echo json_encode(array('items'=>$itemsJSON, 'text' => 'OK.'));
+          exit();
+        }
+        
+        //list user items
+        if(isset($_GET["mode"]) & $_GET["mode"]=="user"){
+          $itemManager=new itemDataManager();
+          $itemsJSON=json_decode($itemManager->listUserItems($loginResponse['userData']));
+          header("HTTP/1.0 200 OK");
+          header('Content-Type: application/json');
+          echo json_encode(array('items'=>$itemsJSON, 'text' => 'OK.'));
+          exit();
+        }
+
+        else{
+        //list  every item
         $itemManager=new itemDataManager();
         $itemsJSON=json_decode($itemManager->listItems($_GET,true));
 		    header("HTTP/1.0 200 OK");
 		    header('Content-Type: application/json');
 		    echo json_encode(array('items'=>$itemsJSON, 'text' => 'OK.'));
+        }
+
       }
       else
       {
-        header("HTTP/1.0 500 Internal Server Error");
+        //header("HTTP/1.0 500 Internal Server Error");
       }
       break;
     default:
