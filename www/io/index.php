@@ -7,13 +7,12 @@ error_reporting(E_ERROR | E_PARSE);
 
 ?>
 <!DOCTYPE html>
-<link rel="stylesheet" href="../style/common.css">
 <?php if (isset($_SESSION["userId"])) { ?>
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <a class="navbar-brand" href="index.php">
-      <img src="./utility/logo2.png" height="50">
+      <img src="./utility/logo2.png" height="50"> 
     </a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
       aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -26,7 +25,7 @@ error_reporting(E_ERROR | E_PARSE);
           });
         </script>
       </ul>
-      <ul class="navbar-nav navbarPhP">
+      <ul class="navbar-nav ms-auto navbarPhP">
         <li>
           <a class="nav-link disabled timelock" href="#"><span id="time"> 10:00 </span>
             <?php echo ' ' . $_SESSION['UserUserName']; ?>
@@ -58,17 +57,11 @@ error_reporting(E_ERROR | E_PARSE);
     <form class="login" action="utility/userLogging.php" method="post" autocomplete="off">
       <fieldset>
         <legend id="zsoka" class="legend text"> MediaIO </legend>
-        <div class="input">
+        <div class="login-input">
           <input type="text" name="useremail" placeholder="Felhasználónév/E-mail" required />
-          <span>
-            <i class="fa fa-envelope-o"></i>
-          </span>
         </div>
-        <div class="input">
-          <input type="password" name="pwd" placeholder="Jelszó" required />
-          <span>
-            <i class="fa fa-lock"></i>
-          </span>
+        <div class="login-input">
+          <input id="password" type="password" name="pwd" placeholder="Jelszó" required />
         </div>
         <button class="btn btn-dark" type="submit" name="login-submit">
           <i class="fa fa-long-arrow-right"></i>

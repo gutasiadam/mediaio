@@ -2,8 +2,8 @@
 session_start();
 include("header.php");
 include("../translation.php"); ?>
-<link rel="stylesheet" href="../style/common.css">
-<html id="formeditor">
+<link rel="stylesheet" href="../style/common.scss">
+<html>
 
 <?php
 if (in_array("admin", $_SESSION["groups"])) { ?>
@@ -28,7 +28,7 @@ if (in_array("admin", $_SESSION["groups"])) { ?>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto navbarUl">
             </ul>
-            <ul class="navbar-nav navbarPhP">
+            <ul class="navbar-nav ms-auto navbarPhP">
                 <li>
                     <a class="nav-link disabled timelock" href="#"><span id="time"> 10:00 </span>
                         <?php echo ' ' . $_SESSION['UserUserName']; ?>

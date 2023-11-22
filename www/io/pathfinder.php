@@ -11,7 +11,6 @@ if (isset($_SESSION['UserUserName'])) {
   ?>
 
   <html>
-  <link rel="stylesheet" href="../style/common.css">
 
   <head>
     <script src="utility/jquery.js"></script>
@@ -36,7 +35,7 @@ if (isset($_SESSION['UserUserName'])) {
             });
           </script>
         </ul>
-        <ul class="navbar-nav navbarPhP">
+        <ul class="navbar-nav ms-auto navbarPhP">
           <li>
             <a class="nav-link disabled timelock" href="#"><span id="time"> 10:00 </span>
               <?php echo ' ' . $_SESSION['UserUserName']; ?>
@@ -63,8 +62,8 @@ if (isset($_SESSION['UserUserName'])) {
   <body>
     <div class="container">
       <br />
-      <h1 align="center" class="rainbow">Tárgy kölcsönzési története</h1>
-      <table id="itemSearch" align="left">
+      <h1 class="rainbow">Tárgy kölcsönzési története</h1>
+      <table id="itemSearch">
         <tr>
           <form action="./pathfinder.php" method="GET" autocomplete="off">
 
@@ -72,7 +71,7 @@ if (isset($_SESSION['UserUserName'])) {
                 placeholder='<?php echo $applicationSearchField; ?>'>
     </div>
     </td>
-    <td><button type="submit" name="add" id="add" class="btn btn-info2 mb-2 mr-sm-2">
+    <td><button type="submit" name="add" id="add" class="btn btn-primary">
         <?php echo $button_Find; ?>
       </button><span id='sendQueryButtonLoc'></span></td>
     </tr>
@@ -103,8 +102,7 @@ if (isset($_SESSION['UserUserName'])) {
         </div>
         <div class="panel-body">
          <div class="timeline">
-          <div class="timeline__wrap">
-           <div class="timeline__items">';
+          <div class="timeline__wrap">';
             foreach ($result as $row) {
               if ($row["Acknowledged"] == 0) {
                 echo '<div class="timeline__item left">

@@ -49,7 +49,7 @@ if (isset($_SESSION["userId"])) { ?>
   </nav>
 
   <head>
-    <link rel="stylesheet" href="../style/common.css">
+    <link rel="stylesheet" href="../style/common.scss">
   </head>
 
   <body>

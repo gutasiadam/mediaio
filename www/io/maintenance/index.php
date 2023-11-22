@@ -7,7 +7,6 @@ if (!isset($_SESSION["userId"])) {
 error_reporting(E_ALL | E_WARNING | E_NOTICE);
 require_once("./header.php");
 ?>
-<link rel="stylesheet" href="../style/common.css">
 <html>
 <script src="../utility/_initMenu.js" crossorigin="anonymous"></script>
 <script> $(document).ready(function () {
@@ -57,9 +56,9 @@ require_once("./header.php");
   </div>
   <?php
   if ((in_array("admin", $_SESSION["groups"]))) {
-    echo '<table>
-              <tr><td><button type="button" class="btn btn-info table-Control edit_Table_Button noprint" data-toggle="modal" data-target="#add_Work_Modal">Új feladat</button> 
-              <input type="checkbox" id="showOldTasks" name="showOldTasks" value="true"><label for="vehicle1">Régebbi feladatok</label></td>
+    echo '<table class="maintanence-admin">
+              <tr><td><button type="button" class="btn btn-success" data-toggle="modal" data-target="#add_Work_Modal">Új feladat</button> 
+              <input type="checkbox" id="showOldTasks" name="showOldTasks" value="true"><label id="old_tasks" for="vehicle1">Régebbi feladatok</label></td>
               </table>';
 
   } ?>
@@ -273,8 +272,8 @@ require_once("./header.php");
 
             $('.takaritasirend').append('<tr id=tr' + element['id'] + '><td>' + element['datum'] + '</td><td>' + element['szemely1'] + '</td><td>' +
               SZ1Status + '</td><td>' + element['szemely2'] + '</td><td>' + SZ2Status + '</td><td><button class="btn btn-warning" onclick=modifyStatus(' + element['id'] + ')>Módosít</button> <button class="btn btn-success" onclick=applyToWork(' + element['id'] + ')>Jelentkezem</button> <button class="btn btn-danger" onclick=deleteWork(' + element['id'] + ')>Törlés</button></td></tr>');
-            if (element['szemely1'] != null) { $('#tr' + element['id']).find("td:eq(1)").append(' <button class="btn btn-danger" style="float: right; margin-left: 10px; margin-right: 5px;" onclick=deleteUserFromWork(' + element['id'] + ',1)>X</button>') }
-            if (element['szemely2'] != null) { $('#tr' + element['id']).find("td:eq(3)").append(' <button class="btn btn-danger" style="float: right; margin-left: 10px; margin-right: 5px;" onclick=deleteUserFromWork(' + element['id'] + ',2)>X</button>') }
+            if (element['szemely1'] != null) { $('#tr' + element['id']).find("td:eq(1)").append(' <button class="btn btn-danger" style="margin-left: 10px; margin-right: 5px;" onclick=deleteUserFromWork(' + element['id'] + ',1)>X</button>') }
+            if (element['szemely2'] != null) { $('#tr' + element['id']).find("td:eq(3)").append(' <button class="btn btn-danger" style="margin-left: 10px; margin-right: 5px;" onclick=deleteUserFromWork(' + element['id'] + ',2)>X</button>') }
           });
         } else {
           $('.takaritasirend').append('<tr><th>Dátum</th><th>1. Személy</th><th>2. Személy</th></tr>');

@@ -79,29 +79,63 @@
      vertical-align: middle;
  }
 
- .btn-info2 {
+ .btn\ btn-primary {
      color: white;
      background-color: #000658;
      border-color: #000658;
      border-width: 2px
  }
 
- .btn-info2:hover {
+ .btn\ btn-primary:hover {
      color: black;
      background-color: #ffffff;
      border-color: #000658;
      border-width: 2px
  }
 
- /* body {
-    font: 16px Arial;                                       /* FASZ KIVAN EZZEL NÉZZ RÁ KÉSŐŐŐBBB! */
- /*
-} */
-
  .autocomplete {
      position: relative;
      display: inline-block;
  }
+
+ .login-input {
+     position: relative;
+     width: 100%;
+     margin: 15px auto;
+ }
+
+ .login-input input[name="useremail"] {
+     width: 100%;
+     padding: 10px 5px 10px 10px;
+     display: block;
+     border: 1px solid #EDEDED;
+     border-radius: 4px;
+     transition: 0.2s ease-out;
+     color: darken(#EDEDED, 30%);
+
+     &:focus {
+         padding: 10px 5px 10px 10px;
+         outline: 0;
+         border-color: #FF7052;
+     }
+ }
+
+ .login-input input[name="pwd"] {
+     width: 100%;
+     padding: 10px 5px 10px 10px;
+     display: block;
+     border: 1px solid #EDEDED;
+     border-radius: 4px;
+     transition: 0.2s ease-out;
+     color: darken(#EDEDED, 30%);
+
+     &:focus {
+         padding: 10px 5px 10px 10px;
+         outline: 0;
+         border-color: #FF7052;
+     }
+ }
+
 
  input {
      border: 1px solid transparent;
@@ -129,18 +163,11 @@
  }
 
 
- .in {
-     background-color: #B8F5C2;
+ #itemSearch {
+     display: flex;
+     justify-content: center;
+     align-items: center;
  }
-
- .out {
-     background-color: #F5B8B8;
- }
-
- .service {
-     background-color: #f1ee8e;
- }
-
 
  .autocomplete-items {
      position: relative;
@@ -194,9 +221,20 @@
      z-index: 9999;
  }
 
+ .maintanence-admin {
+    vertical-align: middle;
+    margin-bottom: 10px;
+ }
+
+ label#old_tasks {
+    text-align: center;
+    
+ }
+
  .takaritasirend {
      border: 2px solid #0e0a7d;
      width: fit-content;
+     vertical-align: middle;
  }
 
  .takaritasirend td {
@@ -207,7 +245,6 @@
      padding-top: 5px;
      padding-bottom: 5px;
      font-size: large;
-     vertical-align: middle;
      text-align: center;
 
  }
@@ -242,7 +279,7 @@
  }
 
  .logintable {
-     width: 40%;
+     width: 15%;
      text-align: center;
      margin: 0 auto;
  }
@@ -261,11 +298,17 @@
  }
 
 
-
  .timeline {
      -webkit-box-sizing: border-box;
      box-sizing: border-box;
      position: relative;
+ }
+
+ .panel-title {
+     display: flex;
+     justify-content: center;
+     align-items: center;
+     padding-top: 30px;
  }
 
  .timeline *,
@@ -326,25 +369,29 @@
      opacity: 0;
  }
 
- .timeline__item.fadeIn {
+ .timeline__items.fadeIn {
      -webkit-animation-name: fadeIn;
      animation-name: fadeIn;
  }
 
- .timeline__item--left {
+ .timeline__item.left {
+     position: relative;
      left: 0;
  }
 
- .timeline__item--right {
+ .timeline__item.right {
+     /* EZT KÉNE SZÉTBASZNI A BÜDÖS KURVA ANYJÁBA HOGY MŰKÖDJÖN */
+     position: relative;
+
      left: 50%;
-     padding: .625rem 0 .625rem 2.5rem;
+     padding: .625rem 0 .625rem .625rem;
  }
 
- .timeline__item--right:after {
-     left: -10px;
+ .timeline__item.right:after {
+     left: auto;
  }
 
- .timeline__item--right .timeline__content:before {
+ .timeline__item.right:before {
      border-bottom: 10px solid transparent;
      border-right: 12px solid #ccc;
      border-left: none;
@@ -352,7 +399,7 @@
      left: -12px;
  }
 
- .timeline__item--right .timeline__content:after {
+ .timeline__item.right:after {
      border-bottom: 9px solid transparent;
      border-right: 11px solid #fff;
      border-left: none;
@@ -361,13 +408,24 @@
  }
 
  .timeline__content {
-     background-color: #fff;
      border: 10px solid #ccc;
      border-radius: 10px;
      color: #333;
      display: block;
      padding: 1.25rem;
      position: relative;
+ }
+
+ .timeline__content.in {
+     background-color: #B8F5C2;
+ }
+
+ .timeline__content.out {
+     background-color: #F5B8B8;
+ }
+
+ .timeline__content.service {
+     background-color: #f1ee8e;
  }
 
  .timeline__content:after,
@@ -382,7 +440,7 @@
      width: 0;
  }
 
- .timeline__content:before {
+ .timeline__content.in:before {
      border-bottom: 10px solid transparent;
      border-left: 12px solid #ccc;
      border-top: 10px solid transparent;
@@ -390,11 +448,27 @@
      z-index: 1;
  }
 
- .timeline__content:after {
+ .timeline__content.in:after {
      border-bottom: 9px solid transparent;
      border-left: 11px solid #fff;
      border-top: 9px solid transparent;
      right: -10px;
+     z-index: 2;
+ }
+
+ .timeline__content.out:before {
+     border-bottom: 10px solid transparent;
+     border-left: 12px solid #ccc;
+     border-top: 10px solid transparent;
+     right: -12px;
+     z-index: 1;
+ }
+
+ .timeline__content.out:after {
+     border-bottom: 9px solid transparent;
+     border-left: 11px solid #fff;
+     border-top: 9px solid transparent;
+     left: -10px;
      z-index: 2;
  }
 
@@ -726,7 +800,7 @@
      color: #dbdbdb;
      text-align: left;
      font-size: 10;
-     align: right;
+     align-items: right;
  }
 
  #exampleModalLabel {
@@ -753,7 +827,7 @@
  }
 
  .help-logintable {
-     width: 15%;
+     width: 40%;
      text-align: center;
      margin: 0 auto;
  }
@@ -786,6 +860,9 @@
  .rainbow {
      -webkit-animation: color 15s linear infinite;
      animation: color 15s linear infinite;
+     display: flex;
+     justify-content: center;
+     align-items: center;
  }
 
  .szoveg {
@@ -793,54 +870,326 @@
      margin: auto;
  }
 
- @-webkit-keyframes color {
-     0% {
-         color: #000000;
-     }
+ .drag-zone {
+     border: 3px solid #ccc;
+     min-height: 100px;
+     padding: 10px;
+     border-style: dotted;
+ }
 
-     20% {
-         color: #c91d2b;
-     }
+ .formElement {
+     border: 1px solid #ccc;
+     padding: 10px;
+     margin: 10px;
+     display: inline-block;
+ }
 
-     40% {
-         color: #ba833e;
-     }
+ .formElement:hover {
+     border: 2px solid aqua;
+     padding: 10px;
+     margin: 10px;
+     display: inline-block;
+     background-color: #eee;
+ }
 
-     60% {
-         color: #0f6344;
-     }
+ .modifyButton {
+     margin-left: 20px;
+ }
 
-     80% {
-         color: #09457a;
-     }
+ .formElementText {
+     margin-left: 20px;
+ }
 
-     100% {
-         color: #5f0976;
+ .editorZone {
+     display: flex;
+     flex-direction: column;
+     justify-content: center;
+ }
+
+ .formElementEditorField {
+     border: 1px solid #ccc;
+     padding: 10px;
+     margin-top: -10px;
+     display: inline-block;
+
+ }
+
+ .registererror {
+     font-size: 20px;
+     color: red;
+ }
+
+ .success {
+     font-size: 20px;
+     color: green;
+     background-color: #669999;
+ }
+
+ .signuptable {
+     vertical-align: middle;
+     text-align: center;
+     margin: 0 auto;
+ }
+
+ /* INDEX.PHP */
+
+ @media (min-height: 500px) {
+     footer {
+         display: block;
      }
  }
 
- @keyframes background {
+ @media (max-height: 499px) {
+     footer {
+         display: none;
+     }
+ }
+
+ #errorbox {
+     position: relative;
+     text-align: center;
+ }
+
+ .login {
+     position: relative;
+     top: 50%;
+     width: 250px;
+     display: table;
+     margin: -150px auto 0 auto;
+     background: #fff;
+     border-radius: 4px;
+     z-index: 2;
+ }
+
+ .legend {
+     position: relative;
+     width: 100%;
+     display: block;
+     background: #1d2660;
+     padding: 15px;
+     color: #fff;
+     font-size: 25px;
+
+     &:after {
+         content: "";
+         background-image: url(http://simpleicon.com/wp-content/uploads/multy-user.png);
+         background-size: 100px 100px;
+         background-repeat: no-repeat;
+         background-position: 152px -16px;
+         opacity: 0.06;
+         top: 0;
+         left: 0;
+         bottom: 0;
+         right: 0;
+         position: absolute;
+     }
+ }
+
+ .submit {
+     width: 45px;
+     height: 45px;
+     display: block;
+     margin: 0 auto -15px auto;
+     background: #fff;
+     border-radius: 100%;
+     border: 1px solid #FF7052;
+     color: #FF7052;
+     font-size: 24px;
+     cursor: pointer;
+     box-shadow: 0px 0px 0px 7px #fff;
+     transition: 0.2s ease-out;
+
+     &:hover,
+     &:focus {
+         background: #FF7052;
+         color: #fff;
+         outline: 0;
+     }
+ }
+
+ .feedback {
+     position: absolute;
+     bottom: -70px;
+     width: 100%;
+     text-align: center;
+     color: #fff;
+     background: #2ecc71;
+     padding: 10px 0;
+     font-size: 12px;
+     display: none;
+     opacity: 0;
+
+     &:before {
+         bottom: 100%;
+         left: 50%;
+         border: solid transparent;
+         content: "";
+         height: 0;
+         width: 0;
+         position: absolute;
+         pointer-events: none;
+         border-color: rgba(46, 204, 113, 0);
+         border-bottom-color: #2ecc71;
+         border-width: 10px;
+         margin-left: -10px;
+     }
+
+ }
+
+
+ /* Index részek */
+
+
+
+ @media print {
+     .noprint {
+         display: none;
+     }
+ }
+
+ /* UI INIT */
+
+ .UI_loading {
+     display: grid;
+     place-items: center;
+     position: fixed;
+     left: 0px;
+     top: 0px;
+     width: 100%;
+     height: 100%;
+     z-index: 9999;
+     background-color: rgb(255, 255, 255);
+ }
+
+ .loadingAnimation {
+     width: 100px;
+     height: 100px;
+ }
+
+ .loadText {
+     color: #ffffff;
+ }
+
+
+ /*Other */
+ .rainbow {
+     -webkit-animation: color 10s linear infinite;
+     animation: color 10s linear infinite;
+ }
+
+ @-webkit-keyframes color {
      0% {
-         color: #000000;
+         color: #316B83;
      }
 
      20% {
-         color: #c91d2b;
+         color: #22577A;
      }
 
      40% {
-         color: #ba833e;
+         color: #38A3A5;
      }
 
      60% {
-         color: #0f6344;
+         color: #57CC99;
      }
 
      80% {
-         color: #09457a;
+         color: #38A3A5;
      }
 
      100% {
-         color: #5f0976;
+         color: #316B83;
      }
+ }
+
+ @keyframes color {
+     0% {
+         color: #316B83;
+     }
+
+     20% {
+         color: #22577A;
+     }
+
+     40% {
+         color: #38A3A5;
+     }
+
+     60% {
+         color: #57CC99;
+     }
+
+     80% {
+         color: #38A3A5;
+     }
+
+     100% {
+         color: #316B83;
+     }
+ }
+
+ nav {
+     font-size: large;
+ }
+
+ nav .navbarPhP {
+     font-size: 1.3rem !important;
+ }
+
+ .navbar-brand {
+     padding-left: 15px;
+ }
+
+ .successtable {
+     z-index: 999;
+     position: relative !important;
+     width: 80%;
+     margin: 0 auto;
+     margin-bottom: 10px;
+ }
+
+ .successtable2 {
+     z-index: 999;
+     width: 80%;
+     margin: 0 auto;
+     margin-top: 60px;
+     color: white;
+ }
+
+ .col-6 {
+     border-style: solid;
+     border-width: 1px;
+     transition: 0.5s;
+     text-align: center;
+ }
+
+ .col-6:hover {
+     background-color: #3b3b3b;
+     border-radius: 25px;
+ }
+
+ .ab {
+     color: #3b3b3b;
+     transition: 0.5s;
+ }
+
+ .ab:hover {
+     color: #ffffff;
+ }
+
+ #note {
+     z-index: 10;
+ }
+
+ .formmain {
+     position: absolute;
+     top: 50%;
+     left: 50%;
+     margin-right: -50%;
+     width: 30%;
+     transform: translate(-50%, -50%);
+     background-color: #ededed;
+     border-radius: 50px;
+     box-shadow: 10px 6px 50px grey;
  }
