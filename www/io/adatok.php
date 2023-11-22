@@ -3,13 +3,14 @@ namespace Mediao;
 include "translation.php";
 include "header.php";
 //Suppresses error messages
-error_reporting(E_ERROR | E_PARSE);
+//error_reporting(E_ERROR | E_PARSE);
 
 namespace Mediaio;
 //require "./Mediaio_autoload.php";
 
+//require __DIR__."/ItemManager.php";
 use Mediaio\itemDataManager;
-require "./itemManager.php";
+require "./ItemManager.php";
 
 ?>
 <!DOCTYPE html>
@@ -54,24 +55,24 @@ require "./itemManager.php";
 <form>
 Mutasd a
 <div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" name="rentable" id="inlinea" value="1" <?php if(isset($_GET['rentable']) && $_GET['rentable'] == '1') echo 'checked';?>>
-  <label class="form-check-label" for="inlinea">Médiás,</label>
+  <input class="form-check-input" type="checkbox" name="rentable" id="inline_a" value="1" <?php if(isset($_GET['rentable']) && $_GET['rentable'] == '1') echo 'checked';?>>
+  <label class="form-check-label" for="inline_a">Médiás,</label>
 </div>
 <div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" name="studio" id="inlineb" value="2" <?php if(isset($_GET['studio']) && $_GET['studio'] == '2') echo 'checked';?>>
-  <label class="form-check-label" for="inlineb">Stúdiós,</label>
+  <input class="form-check-input" type="checkbox" name="studio" id="inline_b" value="2" <?php if(isset($_GET['studio']) && $_GET['studio'] == '2') echo 'checked';?>>
+  <label class="form-check-label" for="inline_b">Stúdiós,</label>
 </div>
 <div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" name="Event" id="inlined" value="5" <?php if(isset($_GET['Event']) && $_GET['Event'] == '5') echo 'checked';?>>
-  <label class="form-check-label" for="inlined">Event</label>
+  <input class="form-check-input" type="checkbox" name="Event" id="inline_d" value="5" <?php if(isset($_GET['Event']) && $_GET['Event'] == '5') echo 'checked';?>>
+  <label class="form-check-label" for="inline_d">Event</label>
 </div>
 <div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" name="nonRentable" id="inlinec" value="3" <?php if(isset($_GET['nonRentable']) && $_GET['nonRentable'] == '3') echo 'checked';?>>
-  <label class="form-check-label" for="inlinec">Nem Kölcsönözhető,</label>
+  <input class="form-check-input" type="checkbox" name="nonRentable" id="inline_c" value="3" <?php if(isset($_GET['nonRentable']) && $_GET['nonRentable'] == '3') echo 'checked';?>>
+  <label class="form-check-label" for="inline_c">Nem Kölcsönözhető,</label>
 </div>
 <div class="form-check form-check-inline">
-  <input class="form-check-input" type="checkbox" name="Out" id="inlined" value="4" <?php if(isset($_GET['Out']) && $_GET['Out'] == '4') echo 'checked';?>>
-  <label class="form-check-label" for="inlined">Kinnlevő,</label>
+  <input class="form-check-input" type="checkbox" name="Out" id="inline_e" value="4" <?php if(isset($_GET['Out']) && $_GET['Out'] == '4') echo 'checked';?>>
+  <label class="form-check-label" for="inline_e">Kinnlevő,</label>
 </div>
 
 

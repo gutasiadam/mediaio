@@ -17,10 +17,16 @@ error_reporting(E_ERROR | E_PARSE);
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto navbarUl">
       <script>
-        $(document).ready(function() {
-          menuItems = importItem("./utility/menuitems.json");
-          drawMenuItemsLeft('index', menuItems);
-        });
+        // $(document).ready(function() {
+        //   menuItems = importItem("./utility/menuitems.json");
+        //   drawMenuItemsLeft('index', menuItems);
+        // });
+
+        //Document ready in javascript
+         window.onload = function() {
+           menuItems = importItem("./utility/menuitems.json");
+           drawMenuItemsLeft('index', menuItems);
+         };
       </script>
     </ul>
     <ul class="navbar-nav navbarPhP">
@@ -256,8 +262,13 @@ error_reporting(E_ERROR | E_PARSE);
 
       }
 
-    </style><?php } else { ?><div class="alert alert-warning alert-dismissible fade show" id="note" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><strong>Kedves <?php if ( isset($_SESSION["firstName"]) ) { echo $_SESSION["firstName"]; }?>!</strong> Az oldal <u>folyamatos fejlesztés</u> alatt áll. Ha hibát szeretnél bejelenteni/észrevételed van, írj az arpadmedia.io@gmail.com címre, vagy <a href="mailto:arpadmedia.io@gmail.com?Subject=MediaIO%20Hibabejelent%C3%A9s" target="_top">írj most egy e-mailt!</a></div><h1 align=center class="rainbow">Árpád Média IO</h1><div class="row justify-content-center mainRow1" style="text-align: center; width:100%; max-width: 1000px; margin: 0 auto;"></div><br><div class="row justify-content-center mainRow2" style="text-align: center; width:100%; max-width: 1000px; margin: 0 auto;"></div><br><div class="row justify-content-center mainRow3" style="text-align: center; width:100%; max-width: 1000px; margin: 0 auto;"></div><br>
-    <div class="row justify-content-center mainRow4" style="text-align: center; width:100%; max-width: 1000px; margin: 0 auto;"></div>
+    </style><?php } else { ?><br>
+    <h1 align=center class="rainbow">Árpád Média IO</h1>
+    <div class="row justify-content-center mainRow1" style="text-align: center; width:100%; max-width: 1000px; margin: 0 auto;"></div><br>
+    <div class="row justify-content-center mainRow2" style="text-align: center; width:100%; max-width: 1000px; margin: 0 auto;"></div><br>
+    <div class="row justify-content-center mainRow3" style="text-align: center; width:100%; max-width: 1000px; margin: 0 auto;"></div><br>
+    <div class="row justify-content-center mainRow4" style="text-align: center; width:100%; max-width: 1000px; margin: 0 auto;"></div><br>
+    <div class="row justify-content-center mainRow5" style="text-align: center; width:100%; max-width: 1000px; margin: 0 auto;"></div><br>
     <br><script type="text/javascript">
       $(document).ready(function() {
         drawMenuItemsRight('index', menuItems);

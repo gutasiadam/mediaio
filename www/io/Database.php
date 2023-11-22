@@ -7,8 +7,6 @@ class Database{
     static function runQuery($query){
         // Specify the path to the JSON file
             $file_path = $_SERVER["DOCUMENT_ROOT"].'/server/dbCredentials.json';
-
-			//echo $file_path;
             // Read the contents of the file
             $json_data = file_get_contents($file_path);
 
@@ -27,20 +25,11 @@ class Database{
         $connection = mysqli_connect('mysql', $username, $password, $schema);
 		mysqli_set_charset($connection,"utf8mb4");
         if (!$connection){
+		echo "Errored";
             die("Connection failed: ".mysqli_connect_error());
         }
         //$connection->close();
         return $connection->query($query);
-        /*$statement = mysqli_stmt_init($connection);
-        if (!mysqli_stmt_prepare($statement, $query)){
-            return $query;
-            exit();
-        }else{
-        mysqli_stmt_execute($statement);
-        $result = mysqli_stmt_get_result($statement);
-        
-        return $result;
-        }*/
     }
 
     //Runs query, and returns the mysqli object as a result.

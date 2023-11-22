@@ -2,3 +2,4 @@ data.env
 data/
 nginx/arpadmedia.hu.crt
 nginx/arpadmedia.hu.key
+**/.DS_Store
