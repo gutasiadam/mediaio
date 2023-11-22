@@ -81,7 +81,7 @@ if (!isset($_SESSION['userId'])) {
   </nav>
 <?php } ?>
 
-<body id="events_index">
+<body>
 
 
   <div class="alert alert-warning alert-dismissible fade show" role="alert">

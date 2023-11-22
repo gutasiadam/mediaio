@@ -79,7 +79,7 @@ function PhparrayCookie()
   </nav>
 <?php } ?>
 
-<body id="retrieve">
+<body>
   <div class="container">
     <br /><br />
     <h2 class="rainbow" align="center" id="doTitle">Visszahozás</h2><br />

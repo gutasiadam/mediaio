@@ -28,9 +28,9 @@ error_reporting(E_ALL ^ E_NOTICE);
 
 <script src="utility/jstree.js"></script>
   <link href='../style/main.css' rel='stylesheet' />
-  <link rel="stylesheet" href="../style/takeout.css">
+  <link rel="stylesheet" href="../style/common.css">
   <link href="utility/themes/default/style.min.css" rel="stylesheet"/>
-<html >
+<html>
       <title>MediaIo - takeout</title>
 <?php if (isset($_SESSION["userId"])) { ?> <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
   <a class="navbar-brand" href="index.php">

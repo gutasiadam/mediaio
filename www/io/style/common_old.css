@@ -1,0 +1,374 @@
+/* ========================================= main.php ========================================= PROBLÉMÁS!!!!!!!!!!!!!!!!!!!!! */
+
+
+@media print {
+    .noprint {
+        display: none;
+    }
+}
+
+/* UI INIT */
+
+#main .UI_loading {
+    display: grid;
+    place-items: center;
+    position: fixed;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    background-color: rgb(255, 255, 255);
+}
+
+#main .loadingAnimation {
+    width: 100px;
+    height: 100px;
+}
+
+#main .loadText {
+    color: #ffffff;
+}
+
+
+/*Other */
+#main .rainbow {
+    -webkit-animation: color 10s linear infinite;
+    animation: color 10s linear infinite;
+}
+
+body#main {
+    animation: color 10s linear infinite;
+    -webkit-animation: color 10s linear infinite;
+}
+
+@-webkit-keyframes color {
+    0% {
+        color: #316B83;
+    }
+
+    20% {
+        color: #22577A;
+    }
+
+    40% {
+        color: #38A3A5;
+    }
+
+    60% {
+        color: #57CC99;
+    }
+
+    80% {
+        color: #38A3A5;
+    }
+
+    100% {
+        color: #316B83;
+    }
+}
+
+@keyframes color {
+    0% {
+        color: #316B83;
+    }
+
+    20% {
+        color: #22577A;
+    }
+
+    40% {
+        color: #38A3A5;
+    }
+
+    60% {
+        color: #57CC99;
+    }
+
+    80% {
+        color: #38A3A5;
+    }
+
+    100% {
+        color: #316B83;
+    }
+}
+
+
+#main nav {
+    font-size: large;
+}
+
+#main nav .navbarPhP {
+    font-size: 1.3rem !important;
+}
+
+#main .successtable {
+    z-index: 999;
+    position: relative !important;
+    width: 80%;
+    margin: 0 auto;
+    margin-bottom: 10px;
+}
+
+#main .successtable2 {
+    z-index: 999;
+    width: 80%;
+    margin: 0 auto;
+    margin-top: 60px;
+    color: white;
+}
+
+#main .logintable {
+    width: 15%;
+    text-align: center;
+    margin: 0 auto;
+}
+
+/*.main .nav{
+    align:left;
+  }*/
+
+#main .col-6 {
+    border-style: solid;
+    border-width: 1px;
+    transition: 0.5s;
+    text-align: center;
+}
+
+#main .col-6:hover {
+    background-color: #3b3b3b;
+    border-radius: 25px;
+}
+
+#main .ab {
+    color: #3b3b3b;
+    transition: 0.5s;
+}
+
+#main .ab:hover {
+    color: #ffffff;
+}
+
+#main #note {
+    z-index: 10;
+}
+
+#main .formmain {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-right: -50%;
+    width: 30%;
+    transform: translate(-50%, -50%);
+    background-color: #ededed;
+    border-radius: 50px;
+    box-shadow: 10px 6px 50px grey;
+}
+
+/* ========================================= index.php ========================================= */
+
+
+@media (min-height: 500px) {
+    footer {
+        display: block;
+    }
+}
+
+@media (max-height: 499px) {
+    footer {
+        display: none;
+    }
+}
+
+#index #errorbox {
+    position: relative;
+    text-align: center;
+}
+
+#index .login {
+    position: relative;
+    top: 50%;
+    width: 250px;
+    display: table;
+    margin: -150px auto 0 auto;
+    background: #fff;
+    border-radius: 4px;
+    z-index: 2;
+}
+
+#index .legend {
+    position: relative;
+    width: 100%;
+    display: block;
+    background: #1d2660;
+    padding: 15px;
+    color: #fff;
+    font-size: 25px;
+
+    &:after {
+        content: "";
+        background-image: url(http://simpleicon.com/wp-content/uploads/multy-user.png);
+        background-size: 100px 100px;
+        background-repeat: no-repeat;
+        background-position: 152px -16px;
+        opacity: 0.06;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        position: absolute;
+    }
+}
+
+#index .input {
+    position: relative;
+    width: 90%;
+    margin: 15px auto;
+
+    span {
+        position: absolute;
+        display: block;
+        color: darken(#EDEDED, 10%);
+        left: 10px;
+        top: 8px;
+        font-size: 20px;
+    }
+
+    input {
+        width: 100%;
+        padding: 10px 5px 10px 40px;
+        display: block;
+        border: 1px solid #EDEDED;
+        border-radius: 4px;
+        transition: 0.2s ease-out;
+        color: darken(#EDEDED, 30%);
+
+        &:focus {
+            padding: 10px 5px 10px 10px;
+            outline: 0;
+            border-color: #FF7052;
+        }
+    }
+}
+
+#index .submit {
+    width: 45px;
+    height: 45px;
+    display: block;
+    margin: 0 auto -15px auto;
+    background: #fff;
+    border-radius: 100%;
+    border: 1px solid #FF7052;
+    color: #FF7052;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: 0px 0px 0px 7px #fff;
+    transition: 0.2s ease-out;
+
+    &:hover,
+    &:focus {
+        background: #FF7052;
+        color: #fff;
+        outline: 0;
+    }
+}
+
+#index .feedback {
+    position: absolute;
+    bottom: -70px;
+    width: 100%;
+    text-align: center;
+    color: #fff;
+    background: #2ecc71;
+    padding: 10px 0;
+    font-size: 12px;
+    display: none;
+    opacity: 0;
+
+    &:before {
+        bottom: 100%;
+        left: 50%;
+        border: solid transparent;
+        content: "";
+        height: 0;
+        width: 0;
+        position: absolute;
+        pointer-events: none;
+        border-color: rgba(46, 204, 113, 0);
+        border-bottom-color: #2ecc71;
+        border-width: 10px;
+        margin-left: -10px;
+    }
+
+}
+
+
+/* ========================================= formeditor.php ========================================= */
+
+#formeditor .drag-zone {
+    border: 3px solid #ccc;
+    min-height: 100px;
+    padding: 10px;
+    border-style: dotted;
+}
+
+#formeditor .formElement {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin: 10px;
+    display: inline-block;
+}
+
+#formeditor .formElement:hover {
+    border: 2px solid aqua;
+    padding: 10px;
+    margin: 10px;
+    display: inline-block;
+    background-color: #eee;
+}
+
+#formeditor .modifyButton {
+    margin-left: 20px;
+}
+
+#formeditor .formElementText {
+    margin-left: 20px;
+}
+
+#formeditor .editorZone {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+#formeditor .formElementEditorField {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-top: -10px;
+    display: inline-block;
+
+}
+
+/* ========================================= signup.php ========================================= */
+
+#signup .registererror {
+    font-size: 20px;
+    color: red;
+}
+
+#signup .success {
+    font-size: 20px;
+    color: green;
+    background-color: #669999;
+}
+
+#signup table {
+    vertical-align: middle;
+    text-align: center;
+}
+
+
+/* ========================================= help.php ========================================= */
+
+

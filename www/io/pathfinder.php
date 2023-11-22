@@ -60,7 +60,7 @@ if (isset($_SESSION['UserUserName'])) {
     </nav>
   <?php } ?>
 
-  <body id="pathfinder">
+  <body>
     <div class="container">
       <br />
       <h1 align="center" class="rainbow">Tárgy kölcsönzési története</h1>

@@ -51,7 +51,7 @@ error_reporting(E_ERROR | E_PARSE);
   </nav>
 <?php } ?>
 
-<body id="index">
+<body>
   <?php
   if (!isset($_SESSION["userId"])) { ?>
 

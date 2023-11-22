@@ -16,7 +16,7 @@ require_once("./header.php");
     drawMenuItemsRight('maintenance', menuItems, 2);
   });</script>
 
-<body id="maintenance_index">
+<body>
 <?php if (isset($_SESSION["userId"])) { ?>
 
   
@@ -231,7 +231,7 @@ require_once("./header.php");
         $('.takaritasirend').empty();
         result = JSON.parse(result);
         if (result[0] == "Admin") {
-          $('.takaritasirend').append('<tr><th>Dátum</th><th>1. Személy</th><th>Státusz</th><th>2. Személy</th><th>Státusz</th><th></th></tr>');
+          $('.takaritasirend').append('<tr><th>Dátum</th><th>1. Személy</th><th>Státusz</th><th>2. Személy</th><th>Státusz</th><th>Eszközök</th></tr>');
           result[1].forEach(element => {
             //console.log(element);
 

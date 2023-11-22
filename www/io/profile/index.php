@@ -49,12 +49,12 @@ if (isset($_SESSION["userId"])) { ?>
   </nav>
 
   <head>
-    <link rel="stylesheet" href="../styles/common.css">
+    <link rel="stylesheet" href="../style/common.css">
   </head>
 
-  <body id="profile-index">
+  <body>
     <h1 align=center class="rainbow">Opciók</h1>
-    <table class="logintable">
+    <table class="help-logintable">
       <tr>
         <td>
           <form action="pfcurr.php"><button class="btn btn-dark">Mutasd a nálam levő tárgyakat <i
