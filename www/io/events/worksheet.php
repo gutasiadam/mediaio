@@ -79,29 +79,10 @@ if(isset($_GET['eventId'])){
         exit();
       }
     }
-    
-    // Catch if event does not exist
 
-    // Display the event details
-    // echo "Event summary: " . $event->getSummary() . "<br>";
-    // echo "Event start time: " . $event->getStart()->getDateTime() . "<br>";
-    // echo "Event end time: " . $event->getEnd()->getDateTime() . "<br>"; 
-    
-    //MŰKÖDŐ ÁG
     $connect=Database::runQuery_mysqli();
     //Esemény címénak, egyéb adatainak megtalálása és eltárolása
     $query = "SELECT * from events WHERE id = '$eventId'";
-    // //
-
-    // $statement = $connect->prepare($query);
-    // $statement->execute();
-    // $result = $statement->fetchAll();
-
-    // foreach($result as $row){
-    //     $eventName=$row[1];
-    //     $eventStart=$row[2];
-    //     $eventEnd=$row[3];
-
     //execute query and return the result in a for loop
     $result = $connect->query($query);
     foreach($result as $row){
@@ -235,6 +216,9 @@ $.ajax({
         window.location.href = "./worksheet.php?eventId="+wEvent;
       } 
       })
+
+      //Generate sharing link from folder field
+      
 });
 
 function showDetails(id,type,loc,comment){

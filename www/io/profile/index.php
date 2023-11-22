@@ -38,9 +38,6 @@ session_start();
         };
       </script>
     </form>
-    <a class="nav-link my-2 my-sm-0" href="./help.php">
-      <i class="fas fa-question-circle fa-lg"></i>
-    </a>
   </div>
 </nav>
 
@@ -57,13 +54,13 @@ session_start();
             echo '
                     <tr><td><form action="../utility/damage_report/service.php"><button class="btn btn-warning">Szervíz <i class="fas fa-wrench"></i></i></button></form></td></tr>
                     <tr><td><form action="usercheck.php"><button class="btn btn-success">UserCheck <i class="fas fa-user-check"></i></button></form></td></tr>
+                    <tr><td><form action="stats.php"><button class="btn btn-dark">Áttekintés <i class="fas fa-chart-pie"></i></i></button></form></td></tr>
                     ';
                   }
                     if(in_array("system", $_SESSION["groups"]) or in_array("teacher", $_SESSION["groups"])){ //SYSADMIN OR TEACHER
                     echo '
                     <tr><td><form action="../budget/"><button class="btn btn-info">Költségvetés <i class="fas fa-coins"></i></button></form></td></tr>
-					          <tr><td><form action="points.php"><button class="btn btn-success">Pontszámok <i class="fas fa-calculator"></i></button></form> </td></tr>
-                    <tr><td><form action="stats.php"><button class="btn btn-dark">Áttekintés <i class="fas fa-chart-pie"></i></i></button></form></td></tr>';
+					          <tr><td><form action="points.php"><button class="btn btn-success">Pontszámok <i class="fas fa-calculator"></i></button></form> </td></tr>';
                     }
                     if(in_array("system", $_SESSION["groups"])){
                       echo '

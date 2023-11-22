@@ -2,8 +2,8 @@
 namespace Mediaio;
 
 class synologyAPICommunicationManager{
-	private $credentials;
-	private $sid;
+	private $credentials=null;
+	private $sid=null;
 	function __construct(){
 		//Read from the dbCredentials file
 		$file_path = $_SERVER["DOCUMENT_ROOT"].'/server/dbCredentials.json';
@@ -128,6 +128,18 @@ elseif(($_GET['mode'])=='getRootFolderData'){
 		$api->obtainSID();
 	}
 	$api->runRequest("/webapi/entry.cgi?api=SYNO.FileStation.List&version=2&method=list&additional=%5B%22owner%22%2C%22time%22%2C%22perm%22%2C%22type%22%5D&folder_path=%2F".urlencode($_GET['path']), array(), "GET");
+}
+
+elseif(($_GET['mode']=='share')){
+	if($api->getSid()==null){
+		$api->obtainSID();
+	}
+	if(isset($_GET['path']) && isset($_GET['expire_date'])){
+		$api->runRequest("/webapi/entry.cgi?api=SYNO.FileStation.Sharing&version=3&method=create&path=/".urlencode($_GET['path'])."&date_expired=".urlencode($_GET['expire_date']),array(),"GET");
+	}else{
+		return 503;
+	}
+	
 }
 
 elseif(($_GET['mode']=='logout')){
