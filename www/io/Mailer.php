@@ -1,7 +1,7 @@
 <?php
 namespace Mediaio;
 
-/* require_once __DIR__ .'/vendor/autoload.php' */;
+//require_once __DIR__ .'/vendor/autoload.php';
 require_once __DIR__ .'/Config.php';
 
 use SendinBlue\Client\Configuration;
@@ -11,6 +11,10 @@ use SendinBlue\Client\Model\SendSmtpEmail;
 //SMTP needs accurate times, and the PHP time zone MUST be set
 //This should be done in your php.ini, but this is how to do it if you don't have access to that
 date_default_timezone_set('Europe/Budapest');
+
+/**
+ * Handles sending e-mails
+ */
 
 class MailService
 {

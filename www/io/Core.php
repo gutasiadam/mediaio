@@ -28,10 +28,61 @@ class Core{
         $this->$color=$userData[7];
     }
 
-    function loginUser($postData){
+    //Validate user with api key
+    function loginWithApikey($apikey){
+        $sql = "SELECT * from users WHERE apikey='$apikey';";
+        $result = Database::runQuery($sql);
+        if($row = mysqli_fetch_assoc($result)){
+            //session_start();
+            $userDataArray=array();
+            $userDataArray['userId'] = $row['idUsers'];
+            $userDataArray['username'] = $row['usernameUsers']; //Bevare! usernameUsers field has different name in the RESTAPI mode!
+            $userDataArray['firstName'] = $row['firstName'];
+            // $userDataArray['email']= $row['emailUsers'];
+            // $userDataArray['lastName'] = $row['lastName'];
+            // $userDataArray['fullName'] = ($row['lastName']." ".$row['firstName']);
+            $userDataArray['role'] = $row['Userrole'];
+            $userDataArray['color'] = "#FFFF66";
+            $userDataArray['AdditionalData']=json_decode($row['AdditionalData'], true, JSON_UNESCAPED_SLASHES);
+            // $userDataArray['groups'] = $additionalData['groups'];
+            return array('code' => 200, 'userData' => $userDataArray);
+        }else{
+            return array('code' => 401);
+        }
+    }
+
+    //Destroy api key
+    function destroyApiKey($apikey){
+        $sql = "UPDATE users SET APIKey=NULL WHERE APIKey=?;";
+        $connection = Database::runQuery_mysqli();
+        $stmt = mysqli_stmt_init($connection);
+        if (!mysqli_stmt_prepare($stmt, $sql)){
+            return array('code' => '500');
+        }else{
+            $stmt = $connection->prepare($sql);
+            $stmt->bind_param("s", $apikey);
+            //echo binded statement
+            $stmt->execute();
+            
+            // Check affected rows on the prepared statement
+            if ($stmt->affected_rows == 1) {
+                $stmt->close();
+                return array('code' => '200');
+            }else{
+                $stmt->close();
+                return array('code' => '401');
+            }
+            $stmt->close();
+            return array('code' => '418');
+        }
+
+    }
+
+    function loginUser($postData, $RESTAPImode=false){
         //read the loginPageSettings.json file
-        $file = fopen("../data/loginPageSettings.json", "r");
-        $message = fread($file, filesize("../data/loginPageSettings.json"));
+        //var_dump($postData);
+        $file = fopen(__DIR__."/data/loginPageSettings.json", "r");
+        $message = fread($file, filesize(__DIR__."/data/loginPageSettings.json"));
         $message = json_decode($message, true);
         //check if the limit is set
 
@@ -52,6 +103,11 @@ class Core{
                         if($row = mysqli_fetch_assoc($result)){
                             $pwdcheck = password_verify($password, $row['pwdUsers']);
                             if ($pwdcheck == false){
+                                if($RESTAPImode==true){
+                                    //echo "Wrong pass";
+                                    return array('code' => 401);
+                                    exit();
+                                }
                                 header("Location: ../index.php?error=WrongPass");
                                 exit();
                             }else if($pwdcheck == true){
@@ -66,6 +122,28 @@ class Core{
                                         header("Location: ../index.php?error=loginLimit");
                                         exit();
                                     }
+                                }
+
+                                if($RESTAPImode==true){
+                                    //echo "OK";
+                                    //Generate a 2048 character long, base64 encoded token.
+                                    $token = base64_encode(openssl_random_pseudo_bytes(128));
+                                    //Store key in database
+                                    $sql = "UPDATE users SET apikey='$token' WHERE usernameUsers='$userName' OR emailUsers='$userName';";
+                                    $conn = Database::runQuery_mysqli();
+                                    $result = mysqli_query($conn,$sql);
+                                    //echo $sql;
+                                    //Check affected rows
+                                    if($conn->affected_rows!=1){
+                                        return array('code' => 500);
+                                    }else{
+                                        return array('token' => $token, 'code' => 200);
+                                    }
+
+                                    //bind parameters
+                                    
+
+                                    exit();
                                 }
 
                                 $_SESSION['userId'] = $row['idUsers'];
@@ -377,6 +455,8 @@ class Core{
             //if(mysqli_affected_rows($result)!)
         }
     }   
+
+
 }
 
 //Jelszocsere

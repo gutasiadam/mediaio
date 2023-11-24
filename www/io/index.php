@@ -7,53 +7,60 @@ error_reporting(E_ERROR | E_PARSE);
 
 ?>
 <!DOCTYPE html>
-<?php if (isset($_SESSION["userId"])) { ?>
+<?php if (isset($_SESSION["userId"])) { ?> 
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <a class="navbar-brand" href="index.php">
-      <img src="./utility/logo2.png" height="50"> 
-    </a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+  <a class="navbar-brand" href="index.php">
+    <img src="./utility/logo2.png" height="50">
+  </a>
+
+  <!-- Load Menu and Index table Icons and links -->
+  <script type="text/javascript">
+        window.onload = function () {
+
+          menuItems = importItem("./utility/menuitems.json");
+          drawMenuItemsLeft('index', menuItems);
+
+          drawMenuItemsRight('index', menuItems);
+          drawIndexTable(menuItems, 0);
+
+          display = document.querySelector('#time');
+          var timeUpLoc="utility/userLogging.php?logout-submit=y"
+          startTimer(display, timeUpLoc);
+        };
+  </script>
+
+  <!-- Mobile Navigation - Additional toggle button -->
+  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav mr-auto navbarUl">
-        <script>
-          $(document).ready(function () {
-            menuItems = importItem("./utility/menuitems.json");
-            drawMenuItemsLeft('index', menuItems);
-          });
-        </script>
-      </ul>
-      <ul class="navbar-nav ms-auto navbarPhP">
-        <li>
-          <a class="nav-link disabled timelock" href="#"><span id="time"> 10:00 </span>
-            <?php echo ' ' . $_SESSION['UserUserName']; ?>
-          </a>
-        </li>
-      </ul>
-      <form method='post' class="form-inline my-2 my-lg-0" action=utility/userLogging.php>
-        <button class="btn btn-danger my-2 my-sm-0" id="logoutBtn" name='logout-submit'
-          type="submit">Kijelentkezés</button>
-        <script type="text/javascript">
-          window.onload = function () {
-            display = document.querySelector('#time');
-            var timeUpLoc = "utility/userLogging.php?logout-submit=y"
-            startTimer(display, timeUpLoc);
-          };
-        </script>
-      </form>
-      <a class="nav-link my-2 my-sm-0" href="./help.php">
-        <i class="fas fa-question-circle fa-lg"></i>
-      </a>
-    </div>
-  </nav>
-<?php } ?>
+  </button>
 
-<body>
-  <?php
-  if (!isset($_SESSION["userId"])) { ?>
+  <!-- Main Navigation -->
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto navbarUl">
+    </ul>
+    <ul class="navbar-nav ms-auto navbarPhP">
 
+      <!-- Timeout timer -->
+      <li><a class="nav-link disabled timelock" href="#"><span id="time"> 10:00 </span>
+        <?php echo ' '.$_SESSION['UserUserName'];?>
+      </a></li>
+    </ul>
+
+    <!-- User logout button -->
+    <form method='post' class="form-inline my-2 my-lg-0" action=utility/userLogging.php>
+      <button class="btn btn-danger my-2 my-sm-0" id="logoutBtn" name='logout-submit' type="submit">Kijelentkezés</button>
+    </form>
+
+  </div>
+</nav> <?php  } ?>
+
+<body><?php
+
+    //If the user is not logged in, display the login form
+
+    if (!isset($_SESSION["userId"])) { ?>
+    
+    <!-- Login form -->
     <form class="login" action="utility/userLogging.php" method="post" autocomplete="off">
       <fieldset>
         <legend id="zsoka" class="legend text"> MediaIO </legend>
@@ -77,6 +84,8 @@ error_reporting(E_ERROR | E_PARSE);
     <h6 align=center id="SystemMsg" class="successtable2" style="display:none;"></h6>
     <footer class="page-footer font-small blue">
       <div class="fixed-bottom" align="center">
+
+        <!-- Messages appear here -->
         <h3 id="errorbox"></h3>
         <?php
         //If a motd exists, print it
@@ -91,10 +100,7 @@ error_reporting(E_ERROR | E_PARSE);
         <a href="./profile/lostPwd.php">
           <h6>Elfelejtett jelszó?</h6>
         </a>
-        <p class="Footer">
-          <!-- <h6 class="text success text-success">🔧 Az e-mailek küldése ismét üzemel. </h6> -->
-          Code by <a href="https://github.com/gutasiadam">Adam Gutasi</a>
-        </p>
+        <p class="Footer">Code by <a href="https://github.com/gutasiadam">Adam Gutasi</a></p>
       </div>
     </footer>
     </div>

@@ -3,51 +3,44 @@ session_start();
 if (!isset($_SESSION["userId"])) {
   header("Location: ../index.php?error=AccessViolation");
   exit();
+  header("Location: ../index.php?error=AccessViolation");
+  exit();
 }
 error_reporting(E_ALL | E_WARNING | E_NOTICE);
 require_once("./header.php");
 ?>
 <html>
 <script src="../utility/_initMenu.js" crossorigin="anonymous"></script>
-<script> $(document).ready(function () {
+<script>
+  $(document).ready(function() {
     menuItems = importItem("../utility/menuitems.json");
     drawMenuItemsLeft("maintenance", menuItems, 2);
     drawMenuItemsRight('maintenance', menuItems, 2);
-  });</script>
-
-<body>
-  <?php if (isset($_SESSION["userId"])) { ?>
-
-
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-      <a class="navbar-brand" href="index.php">
-        <img src="../utility/logo2.png" height="50">
-      </a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto navbarUl">
-        </ul>
-        <ul class="navbar-nav ms-auto navbarPhP">
-          <li>
-            <a class="nav-link disabled timelock" href="#"><span id="time"> 10:00 </span>
-              <?php echo ' ' . $_SESSION['UserUserName']; ?>
-            </a>
-          </li>
-        </ul>
-        <form method='post' class="form-inline my-2 my-lg-0" action=../utility/userLogging.php>
-          <button class="btn btn-danger my-2 my-sm-0" name='logout-submit' type="submit">Kijelentkezés</button>
-        </form>
-        <a class="nav-link my-2 my-sm-0" href="./help.php">
-          <i class="fas fa-question-circle fa-lg"></i>
-        </a>
-      </div>
-    </nav>
-  <?php } ?>
-  <br>
-  <h1 align=center class="rainbow">Takarítási rend, feladatok: </h1>
+  });
+</script>
+<?php if (isset($_SESSION["userId"])) { ?> <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="index.php">
+      <img src="../utility/logo2.png" height="50">
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto navbarUl">
+      </ul>
+      <ul class="navbar-nav ms-auto navbarPhP">
+        <li>
+          <a class="nav-link disabled timelock" href="#"><span id="time"> 10:00 </span><?php echo ' ' . $_SESSION['UserUserName']; ?>
+          </a>
+        </li>
+      </ul>
+      <form method='post' class="form-inline my-2 my-lg-0" action=../utility/userLogging.php>
+        <button class="btn btn-danger my-2 my-sm-0" name='logout-submit' type="submit">Kijelentkezés</button>
+      </form>
+    </div>
+  </nav> <?php  } ?>
+<br>
+<h1 align=center class="rainbow">Takarítási rend, feladatok: </h1>
 
   <div class="tableParent">
     <div class="form-check">
@@ -83,7 +76,7 @@ require_once("./header.php");
 
 
 <div class="modal" tabindex="-1" role="dialog" id="add_Work_Modal" data-backdrop="false">
-  <div class="modal-dialog" role="document">
+  <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title">Új feladat hozzáadása</h5>
@@ -98,6 +91,8 @@ require_once("./header.php");
             <input type="date" class="form-control" id="work_Date" aria-describedby="emailHelp"
               placeholder="Dátum. ÉV/HÓ/NAP formátumban">
 
+          </div>
+        </form>
           </div>
         </form>
       </div>
@@ -135,11 +130,20 @@ require_once("./header.php");
         if (result == 201) {
           $('#tr' + ID).css('color', 'red');
           $('#tr' + ID).find("td:eq(0)").html("Már jelentkeztél!");
+        if (result == 201) {
+          $('#tr' + ID).css('color', 'red');
+          $('#tr' + ID).find("td:eq(0)").html("Már jelentkeztél!");
         }
         if (result == 202) {
           $('#tr' + ID).css('color', 'red');
           $('#tr' + ID).find("td:eq(0)").html("Nincs szabad hely!");
+        if (result == 202) {
+          $('#tr' + ID).css('color', 'red');
+          $('#tr' + ID).find("td:eq(0)").html("Nincs szabad hely!");
         }
+      }
+    });
+  }
       }
     });
   }
@@ -158,6 +162,9 @@ require_once("./header.php");
       }
     });
   }
+      }
+    });
+  }
 
   function deleteWork(ID) {
     var Date = $('#work_Date').val();
@@ -170,6 +177,9 @@ require_once("./header.php");
         if (result == 200) {
           location.reload();
         }
+      }
+    });
+  }
       }
     });
   }
@@ -209,8 +219,12 @@ require_once("./header.php");
         if (result == 200) {
           location.reload();
         } else {
+        } else {
           console.log(result)
         }
+      }
+    });
+  }
       }
     });
   }
@@ -281,7 +295,22 @@ require_once("./header.php");
 
           result[0].forEach(element => {
             console.log(element);
+          result[0].forEach(element => {
+            console.log(element);
 
+            if (element['szemely1'] == null) {
+              element['szemely1'] = "<button style='display: block; margin: auto;' class='btn btn-success' onclick=applyToWork(" + element['id'] + ")>Jelentkezés</button>"
+            } else {
+
+            }
+            if (element['szemely2'] == null) {
+              element['szemely2'] = "<button style='display: block; margin: auto;' class='btn btn-success' onclick=applyToWork(" + element['id'] + ")>Jelentkezés</button>"
+            } else {
+
+            }
+
+            $('.takaritasirend').append('<tr id=tr' + element['id'] + '><td>' + element['datum'] + '</td><td>' + element['szemely1'] + '</td><td>' + element['szemely2'] + '</td></tr>');
+          });
             if (element['szemely1'] == null) {
               element['szemely1'] = "<button style='display: block; margin: auto;' class='btn btn-success' onclick=applyToWork(" + element['id'] + ")>Jelentkezés</button>"
             } else {

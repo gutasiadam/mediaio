@@ -13,10 +13,10 @@ if (!isset($_SESSION['userId'])) {
   <link href='../style/common.scss' rel='stylesheet' />
   <div class="UI_loading"><img class="loadingAnimation" src="../utility/mediaIO_loading_logo.gif"></div>
   <meta charset='utf-8' />
-  <script src="https://kit.fontawesome.com/2c66dc83e7.js" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js">  </script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+  <script type="text/javascript" src="https://code.jquery.com/jquery-latest.min.js"></script>
   <script src="../utility/_initMenu.js" crossorigin="anonymous"></script>
   <link href='./core/main.css' rel='stylesheet' />
   <link href='./daygrid/main.css' rel='stylesheet' />
@@ -41,23 +41,21 @@ if (!isset($_SESSION['userId'])) {
   <!-- HOZZÁADÁS MODAL -->
 </head>
 <script>
-  $(window).on('load', function () {
+  $(window).on('load', function() {
     $(".UI_loading").fadeOut("slow");
   });
 </script>
-<?php if (isset($_SESSION["userId"])) { ?>
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<?php if (isset($_SESSION["userId"])) { ?> <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <a class="navbar-brand" href="index.php">
       <img src="../utility/logo2.png" height="50">
     </a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav mr-auto navbarUl">
         <script>
-          $(document).ready(function () {
+          $(document).ready(function() {
             menuItems = importItem("../utility/menuitems.json");
             drawMenuItemsLeft('events', menuItems, 2);
           });
@@ -65,39 +63,24 @@ if (!isset($_SESSION['userId'])) {
       </ul>
       <ul class="navbar-nav ms-auto navbarPhP">
         <li>
-          <a class="nav-link disabled timelock" href="#"><span id="time"> 10:00 </span>
-            <?php echo ' ' . $_SESSION['UserUserName']; ?>
+          <a class="nav-link disabled timelock" href="#"><span id="time"> 10:00 </span><?php echo ' ' . $_SESSION['UserUserName']; ?>
           </a>
         </li>
       </ul>
       <form method='post' class="form-inline my-2 my-lg-0" action=../utility/userLogging.php>
         <button class="btn btn-danger my-2 my-sm-0" name='logout-submit' type="submit">Kijelentkezés</button>
       </form>
-      <a class="nav-link my-2 my-sm-0" href="./help.php">
-        <i class="fas fa-question-circle fa-lg"></i>
-      </a>
     </div>
-  </nav>
-<?php } ?>
+  </nav> <?php  } ?>
 
 <body>
 
-
-  <div class="alert alert-warning alert-dismissible fade show" role="alert">
-    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-      <span aria-hidden="true">&times;</span>
-    </button>
-    <strong>Kedves
-      <?php echo $_SESSION['firstName']; ?>!
-    </strong> Az oldal nem támogatja a Firefox böngészőt. Ha azt használod, kérlek válts egy másik böngészőre.
-  </div>
-  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-    aria-hidden="true">
+  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="exampleModalLabel">Esemény hozzáadása</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
@@ -120,14 +103,11 @@ if (!isset($_SESSION['userId'])) {
             </select>
             </br>
             <input class="form-control" id="addEventName" type="text" placeholder="esemény címe"></input></br>
-            <h6 class="mailSend"><i class="fas fa-exclamation-circle"></i> Hozzáadás után az e-mail címedre (
-              <?php echo $_SESSION['email']; ?>) érkezni fog egy levél. Kérlek ellenőrizd az adatokat, és az
-              <strong>esemény hozzáadása</strong> linkkel erősítsd meg
-              szándékodat. <u>(megerősítés után már nem tudod törölni az eseményt.)</u>
-            </h6>
+            <h6 class="mailSend"><i class="fas fa-exclamation-circle"></i> Hozzáadás után az e-mail címedre (<?php echo $_SESSION['email']; ?>) érkezni fog egy levél. Kérlek ellenőrizd az adatokat, és az <strong>esemény hozzáadása</strong> linkkel erősítsd meg
+              szándékodat. <u>(megerősítés után már nem tudod törölni az eseményt.)</u></h6>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Mégsem</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Mégsem</button>
           <input type="submit" class="btn btn-primary"></button>
           <input type="hidden" id="addEventStartVal"></input>
           <input type="hidden" id="addEventEndVal"></input>
@@ -138,15 +118,12 @@ if (!isset($_SESSION['userId'])) {
   </div>
 
   <!-- OPCIÓK MODAL -->
-  <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-    aria-hidden="true">
+  <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="optionsLabel">Opcíók</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
           <?php if ($_SESSION['role'] >= 3) {
@@ -164,7 +141,7 @@ if (!isset($_SESSION['userId'])) {
         </div>
         <div class="modal-footer">
           <span id="deleteEventName"></span>
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Mégsem</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Mégsem</button>
         </div>
       </div>
     </div>
@@ -177,47 +154,16 @@ if (!isset($_SESSION['userId'])) {
         <div id='calendar'>
       </td>
       </div>
-      <!-- <td>
-  <h3 class="text-dark">Eseménynaptár - segítség</h3>
-  <span class="badge badge-success">Hozzáadás</span><h6 class="text-dark">Jelöld ki a naptárban az időszakot, majd töltsd ki a felugró ablakot</h6>
-  <span class="badge badge-danger">Törlés</span><h6 class="text-dark">Kattints rá az adott eseményre, majd válaszd ki a törlés opciót</h6>
-  <span class="badge badge-info">Áttevés</span><h6 class="text-dark">Húzd át az eseményt egy másik napra/időpontra</h6>
-  <span class="badge badge-dark">Rövidítés/hosszabítás</span><h6 class="text-dark">Heti nézetben kezdd el az eseményt le/felfele húzni, akkár több napon át.</h6>
-  <p><h4 class="text-dark">Eseménytípusok színei</h4><table style="table-layout: fixed;">
-  <tr><td class="text-dark" style="background-color:#ff6363;"> Délelőtti iskolai esemény </td>  <td class="text-dark" style="background-color: #81c773; "> Gyűlés </td>  <td class="text-dark" style="background-color: #59ffba;"> Workshop </td></tr>
-  <tr><td class="text-dark" style="background-color: #ffb145;"> Külsős esemény </td>  <td class="text-dark" style="background-color: #db4040;">  Délutáni iskolai esemény </td>     <td class="text-dark" style="background-color: #917fe3;"> Otthoni munka </td></tr>
-  <tr><td class="text-dark" style="background-color: #fffd6b;"> Szünet </td>   <td class="text-dark" style="background-color: #787878;"> Egyéb </td>    <td class="text-dark" style="background-color: #bd7966;"> Hétvégi iskolai esemény </td></tr>
-  </table></p></td> -->
   </table>
-
-  <!--Temporary development modal-->
-  <div class="modal fade" id="WIPModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Fejlesztés alatt</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <h5>
-            <p>Kedves felhasználó!</p>
-          </h5>
-          <p>Az oldal feljesztése folyamatban van, kérlek ne használd ezt a funkciót.</p>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Bezárás</button>
-        </div>
-      </div>
-    </div>
-  </div>
 
 </body>
 
 </html>
 
+<script>
+  function openNav() {
+    document.getElementById("sideHelp1").style.width = "250px";
+  }
 <script>
   function openNav() {
     document.getElementById("sideHelp1").style.width = "250px";

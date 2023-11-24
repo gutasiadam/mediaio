@@ -1,91 +1,86 @@
 <?php
+
 namespace Mediaio;
 
 use Mediaio\Database;
-
-require_once "Database.php";
-include "translation.php";
-include "header.php";
 session_start();
-if (isset($_SESSION['UserUserName'])) {
-  ?>
 
-  <html>
+if(isset($_SESSION['UserUserName'])){ //If user is logged in
+  require_once "Database.php";
+  include "translation.php";
+  include "header.php";
 
+?>
+
+<html>  
   <head>
-    <script src="utility/jquery.js"></script>
-    <title>PathFinder</title>
+    <link rel="stylesheet" href="utility/pathfinder.css" />
+  <title>PathFinder</title>
+</head>
+<script src="utility/jquery.js"></script>
 
-  </head>
-  <?php if (isset($_SESSION["userId"])) { ?>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-      <a class="navbar-brand" href="index.php">
-        <img src="./utility/logo2.png" height="50">
-      </a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto navbarUl">
-          <script>
-            $(document).ready(function () {
-              menuItems = importItem("./utility/menuitems.json");
-              drawMenuItemsLeft('pathfinder', menuItems);
-            });
-          </script>
-        </ul>
-        <ul class="navbar-nav ms-auto navbarPhP">
-          <li>
-            <a class="nav-link disabled timelock" href="#"><span id="time"> 10:00 </span>
-              <?php echo ' ' . $_SESSION['UserUserName']; ?>
-            </a>
-          </li>
-        </ul>
-        <form method='post' class="form-inline my-2 my-lg-0" action=utility/userLogging.php>
-          <button class="btn btn-danger my-2 my-sm-0" name='logout-submit' type="submit">Kijelentkezés</button>
-          <script type="text/javascript">
-            window.onload = function () {
-              display = document.querySelector('#time');
-              var timeUpLoc = "utility/userLogging.php?logout-submit=y"
-              startTimer(display, timeUpLoc);
-            };
-          </script>
-        </form>
-        <a class="nav-link my-2 my-sm-0" href="./help.php">
-          <i class="fas fa-question-circle fa-lg"></i>
+  <!-- If user is logged in -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="index.php"><img src="./utility/logo2.png" height="50"></a>
+
+      <!-- Load Menu and Index table Icons and links -->
+  <script type="text/javascript">
+        window.onload = function () {
+
+          menuItems = importItem("./utility/menuitems.json");
+          drawMenuItemsLeft('pathfinder', menuItems);
+
+          drawMenuItemsRight('pathfinder', menuItems);
+          drawIndexTable(menuItems, 0);
+
+          display = document.querySelector('#time');
+          var timeUpLoc="utility/userLogging.php?logout-submit=y"
+          startTimer(display, timeUpLoc);
+        };
+  </script>
+  
+    <!-- Mobile Navigation - Additional toggle button -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Main Navigation -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto navbarUl">
+    </ul>
+    <ul class="navbar-nav ms-auto navbarPhP">
+      <li>
+        <a class="nav-link disabled timelock" href="#"><span id="time"> 10:00 </span><?php echo ' '.$_SESSION['UserUserName'];?>
         </a>
-      </div>
-    </nav>
-  <?php } ?>
-
-  <body>
-    <div class="container">
-      <br />
-      <h1 class="rainbow">Tárgy kölcsönzési története</h1>
-      <table id="itemSearch">
-        <tr>
-          <form action="./pathfinder.php" method="GET" autocomplete="off">
-
-            <td><input id="id_itemNameAdd" type="text" name="pfItem" class="form-control mb-2 mr-sm-2"
-                placeholder='<?php echo $applicationSearchField; ?>'>
-    </div>
-    </td>
-    <td><button type="submit" name="add" id="add" class="btn btn-primary">
-        <?php echo $button_Find; ?>
-      </button><span id='sendQueryButtonLoc'></span></td>
-    </tr>
+      </li>
+    </ul>
+    <form method='post' class="form-inline my-2 my-lg-0" action=utility/userLogging.php>
+      <button class="btn btn-danger my-2 my-sm-0" name='logout-submit' type="submit">Kijelentkezés</button>
     </form>
-    </table>
-    <div class="table-responsive">
-      <table class="table table-bordered" id="dynamic_field">
-    </div>
-    </div>
-    </div>
+  </div>
+</nav>
 
-    <div class="form-group">
-      <div class="panel panel-default">
-        <div class="panel-heading">
+<body>  
+  <div class="container">
+  <br />
+  <h1 align="center" class="rainbow">Tárgy kölcsönzési története</h1>
+
+  <!-- Item search table -->
+  <table id="itemSearch" align="left">
+    <tr><form action="./pathfinder.php" method="GET" autocomplete="off">
+      <td><input id="id_itemNameAdd" type="text" name="pfItem" class="form-control mb-2 mr-sm-2" placeholder='<?php echo $applicationSearchField;?>'></div></td>
+      <td><button type="submit" name="add" id="add" class="btn btn-info2 mb-2 mr-sm-2" ><?php echo $button_Find;?></button><span id='sendQueryButtonLoc'></span></td>
+    </form></tr>
+  </table>  
+	<div class="table-responsive">
+		<table class="table table-bordered" class="dynamic_marked" id="dynamic_field">
+  </div>
+</div>
+			
+<!-- Timeline panel code -->
+<div class="form-group">
+   <div class="panel panel-default">
+    <div class="panel-heading">
 
           <?php
           if (isset($_GET['pfItem'])) {
@@ -125,23 +120,14 @@ if (isset($_SESSION['UserUserName'])) {
               <div class="timeline__content service">
                <h2>' . $row["Date"] . ' (' . $row["User"] . ')</h2>
                <h6>Szervizelés</h6>';
-                }
-                if ($row["ACKBY"] != NULL)
-                  echo '<h6 style="color: grey;">✔: ' . $row["ACKBY"] . '</h6>';
-                echo '</div></div>';
-              }
-
-              /*if($row["Event"]=="INwA"){
-                echo '<div class="timeline__item ">
-                <div class="timeline__content inwa">
-                 <h2>'. $row["Date"]. ' by '. $row["User"] . '</h2>
-                 <p> Authkóddal jött be. </p>
-                </div>
-               </div>';
-              }*/
-
             }
-            echo '
+            if($row["ACKBY"]!=NULL)
+            echo '<h6 style="color: grey;">✔: '. $row["ACKBY"]. '</h6>';
+            echo '</div></div>';
+            }
+            
+           }
+           echo '
            </div>
           </div>
          </div>
@@ -153,53 +139,40 @@ if (isset($_SESSION['UserUserName'])) {
 
   </html>
 
-  <script>
-    /*$(document).ready(function(){
-     jQuery('.timeline').timeline({
-      mode: 'horizontal',
-      //visibleItems: 4
-      //Remove this comment for see Timeline in Horizontal Format otherwise it will display in Vertical Direction Timeline
-     });
-    });*/
-    var dbItems = []; //For search by Name
-    var dbUidItems = [];//For search by UID
-    var ItemNames = []; //For search by Name
-    var d = {};
-    function loadJSON(callback) {
-      console.log("[loadJSON] - called.")
-      var jqxhr = $.getJSON("./data/takeOutItems.json", function () {
-        console.log("[loadJSON] - OK");
-      })
-        .done(function (data) {
-          console.log('load complete');
-          d = jqxhr.responseJSON;
-          $.each(data, function (i, item) {
-            //console.log(i+item);
-            var itemData = {};
-            itemData['Nev'] = item['Nev'];
-            itemData['UID'] = item['UID'];
-            dbItems.push(itemData);
-            ItemNames.push(item['Nev'] + " - " + item['UID']);
-            // dbItems.push(item['Nev']);
-            // dbUidItems.push(item['UID']);
-          })
-        })
-        .fail(function () {
-          console.log("hiba");
-        })
-        .always(function () {
-          console.log("Adatok betöltése kész");
-        });
+<script>
+var dbItems=[]; //For search by Name
+var dbUidItems=[];//For search by UID
+var ItemNames=[]; //For search by Name
+var d = {};
+function loadJSON(callback) {   
+console.log("[loadJSON] - called.")
+var jqxhr = $.getJSON( "./data/takeOutItems.json", function() {
+  console.log( "[loadJSON] - OK" );
+})
+  .done(function(data) {
+    console.log('load complete');
+    d=jqxhr.responseJSON;
+    $.each( data, function( i, item ) {
+      //console.log(i+item);
+      var itemData={};
+      itemData['Nev']=item['Nev'];
+      itemData['UID']=item['UID'];
+      dbItems.push(itemData);
+      ItemNames.push(item['Nev']+" - "+item['UID']);
+      // dbItems.push(item['Nev']);
+      // dbUidItems.push(item['UID']);
+    })
+  })
+  .fail(function() {
+    console.log( "hiba" );
+  })
+  .always(function() {
+    console.log( "Adatok betöltése kész" );
+  });
+ 
 
-
-      // Perform other work here ...
-
-      // Set another completion function for the request above
-      /*jqxhr.always(function() {
-        console.log( "second complete" );
-      });*/
-    }
-    loadJSON();
+}
+loadJSON();
 
     //Process takeout
 
@@ -326,8 +299,9 @@ if (isset($_SESSION['UserUserName'])) {
 
   </script>
 
-  <?php
-} else {
-  //header("Location: ./index.php?error=AccessViolation");
-  echo "SESSION ERROR";
-} ?>
+<?php
+}
+else{
+  //User is not logged in.
+    header("Location: ./index.php?error=AccessViolation");
+}?>

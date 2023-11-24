@@ -1,17 +1,12 @@
 <?php
+
 namespace Mediaio;
 
 require_once __DIR__ . '/./ItemManager.php';
 use Mediaio\itemDataManager;
 
-/* takeOut szabályok
-
-Status!=1 Nem vehető ki!
-TakeRestrict='' bárki kiveheti
-TakeRestrict='s' stúdiós és afeletti veheti ki.
-TakeRestrict='*' sysadmin veheti ki.
-*/
 include "header.php";
+
 
 
 if (!isset($_SESSION['userId'])) {
@@ -28,22 +23,21 @@ error_reporting(E_ALL ^ E_NOTICE);
 ?>
 
 <script src="utility/jstree.js"></script>
+<link href='main.css' rel='stylesheet' />
 <link href="utility/themes/default/style.min.css" rel="stylesheet" />
 <html>
 <title>MediaIo - takeout</title>
-<?php if (isset($_SESSION["userId"])) { ?>
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<?php if (isset($_SESSION["userId"])) { ?> <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <a class="navbar-brand" href="index.php">
       <img src="./utility/logo2.png" height="50">
     </a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav mr-auto navbarUl">
         <script>
-          $(document).ready(function () {
+          $(document).ready(function() {
             menuItems = importItem("./utility/menuitems.json");
             drawMenuItemsLeft('takeout', menuItems);
           });
@@ -51,38 +45,32 @@ error_reporting(E_ALL ^ E_NOTICE);
       </ul>
       <ul class="navbar-nav ms-auto navbarPhP">
         <li>
-          <a class="nav-link disabled timelock" href="#"><span id="time"> 10:00 </span>
-            <?php echo ' ' . $_SESSION['UserUserName']; ?>
+          <a class="nav-link disabled timelock" href="#"><span id="time"> 30:00 </span><?php echo ' ' . $_SESSION['UserUserName']; ?>
           </a>
         </li>
       </ul>
       <form method='post' class="form-inline my-2 my-lg-0" action=utility/userLogging.php>
         <button class="btn btn-danger my-2 my-sm-0" name='logout-submit' type="submit">Kijelentkezés</button>
         <script type="text/javascript">
-          window.onload = function () {
+          window.onload = function() {
             display = document.querySelector('#time');
             var timeUpLoc = "utility/userLogging.php?logout-submit=y"
-            startTimer(display, timeUpLoc);
+            startTimer(display, timeUpLoc, 30);
           };
         </script>
       </form>
-      <a class="nav-link my-2 my-sm-0" href="./help.php">
-        <i class="fas fa-question-circle fa-lg"></i>
-      </a>
     </div>
-  </nav>
-<?php }
-//Limit GivetoAnotherperson modal to admin users only
-if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["groups"])) {
-  ?>
+  </nav> <?php  }
+        //Limit GivetoAnotherperson modal to admin users only
+        if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["groups"])) {
+          ?>
   <!-- GivetoAnotherperson Modal -->
-  <div class="modal fade" id="givetoAnotherPerson_Modal" tabindex="-1" role="dialog"
-    aria-labelledby="givetoAnotherPerson_ModalLabel" aria-hidden="true">
+  <div class="modal fade" id="givetoAnotherPerson_Modal" tabindex="-1" role="dialog" aria-labelledby="givetoAnotherPerson_ModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="exampleModalLabel">Eszköz kivétele más helyett</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
@@ -97,7 +85,7 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
 
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
           </div>
         </div>
       </div>
@@ -105,17 +93,14 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
   </div>
   </div>
   <!-- End of GivetoAnotherperson Modal -->
-<?php } ?>
+<?php  } ?>
 <!-- Presets Modal -->
-<div class="modal fade" id="presets_Modal" tabindex="-1" role="dialog" aria-labelledby="presets_ModalLabel"
-  aria-hidden="true">
+<div class="modal fade" id="presets_Modal" tabindex="-1" role="dialog" aria-labelledby="presets_ModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLabel">Elérhető presetek</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         <div id="presetsLoading" class="spinner-grow text-info" role="status"></div>
@@ -123,7 +108,7 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
 
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
       </div>
     </div>
   </div>
@@ -142,14 +127,18 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
         <ul class="selectedItemsDisplay" id="output"></ul>
       </div>
       <div class="col-8">
-        Keresés: <input type="text" id="search" style='margin-bottom: 10px'
-          placeholder="Kezdd el ide írni, mit vinnél el.." autocomplete="off" /></br><button class="btn btn-warning"
-          id="clear" style='margin-bottom: 6px'>Keresés törlése</button> <button class="btn btn-success"
-          id="takeout2BTN" style='margin-bottom: 6px'>Mehet</button> <button class="btn btn-primary"
-          onclick="showPresetsModal()" style='margin-bottom:6px'>Presetek</button> <button
-          id="givetoAnotherPerson_Button" type="button" class="btn btn-dark" data-toggle="modal"
-          data-target="#givetoAnotherPerson_Modal" style="visibility: hidden; margin-bottom: 6px">Másnak veszek
-          ki</button>
+        Keresés: <input type="text" id="search" style='margin-bottom: 10px' placeholder="Kezdd el ide írni, mit vinnél el.." autocomplete="off" />
+
+        <div class="row optionsButtons">
+          <button class="btn btn-warning" id="clear" style='margin-bottom: 6px'>Keresés törlése</button>
+          <button class="btn btn-success" id="takeout2BTN" style='margin-bottom: 6px'>Mehet</button> <button class="btn btn-info" onclick="showPresetsModal()" style='margin-bottom:6px'>Presetek</button>
+          <button id="givetoAnotherPerson_Button" type="button" class="btn btn-dark" data-toggle="modal" data-bs-target="#givetoAnotherPerson_Modal" style="visibility: hidden; margin-bottom: 6px">Másnak veszek ki</button>
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
+            <label class="form-check-label" for="flexSwitchCheckDefault">Csak használatra</label>
+          </div>
+        </div>
+
         <div id="jstree">
         </div>
       </div>
@@ -171,8 +160,10 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
     $.ajax({
       url: "ItemManager.php",
       method: "POST",
-      data: { mode: "getPresets" },
-      success: function (response) {
+      data: {
+        mode: "getPresets"
+      },
+      success: function(response) {
 
 
         //Convert rerponse to JSON
@@ -187,7 +178,7 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
         for (var i = 0; i < presets.length; i++) {
           console.log(presets[i]);
           takeoutPresets.push(presets[i]);
-          $("#presetsContainer").append('<button class="btn btn-primary" onclick="addItems(' + i + ')">' + presets[i].Name + '</button></br></br>');
+          $("#presetsContainer").append('<button class="btn btn-info2" onclick="addItems(' + i + ')">' + presets[i].Name + '</button></br></br>');
         }
       }
     });
@@ -199,11 +190,23 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
 
   function displayMessageInTitle(selector, message) {
     baseText = $(selector).text();
-    $(selector).animate({ 'opacity': 0 }, 400, function () {
-      $(this).html('<h2 class="text text-success" role="alert">' + message + '</h2>').animate({ 'opacity': 1 }, 400);
-      $(this).html('<h2 class="text text-success" role="alert">' + message + '</h2>').animate({ 'opacity': 1 }, 3000);
-      $(this).html('<h2 class="text text-success" role="alert">' + message + '</h2>').animate({ 'opacity': 0 }, 400);
-      setTimeout(function () { $(selector).text(baseText).animate({ 'opacity': 1 }, 400); }, 3800);;
+    $(selector).animate({
+      'opacity': 0
+    }, 400, function() {
+      $(this).html('<h2 class="text text-success" role="alert">' + message + '</h2>').animate({
+        'opacity': 1
+      }, 400);
+      $(this).html('<h2 class="text text-success" role="alert">' + message + '</h2>').animate({
+        'opacity': 1
+      }, 3000);
+      $(this).html('<h2 class="text text-success" role="alert">' + message + '</h2>').animate({
+        'opacity': 0
+      }, 400);
+      setTimeout(function() {
+        $(selector).text(baseText).animate({
+          'opacity': 1
+        }, 400);
+      }, 3800);;
     });
   }
 
@@ -214,7 +217,7 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
     var xobj = new XMLHttpRequest();
     xobj.overrideMimeType("application/json");
     xobj.open('GET', './data/takeOutItems.json', false); // Replace 'my_data' with the path to your file
-    xobj.onreadystatechange = function () {
+    xobj.onreadystatechange = function() {
       if (xobj.readyState == 4 && xobj.status == "200") {
         // Required use of an anonymous callback as .open will NOT return a value but simply returns undefined in asynchronous mode
         callback(xobj.responseText);
@@ -242,7 +245,7 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
     delete obj[oldKey];
   }
 
-  loadJSON(function (response) {
+  loadJSON(function(response) {
     // Parse JSON string into object
     console.log("[loadJSON] - done");
   });
@@ -260,16 +263,16 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
       d[i].state.disabled = true;
     } else {
       //Sysadmin bypass
-      if (<?php echo in_array('system', $_SESSION['groups']) ? 'true' : 'false' ?>) {//stúdiós restrict
+      if (<?php echo in_array('system', $_SESSION['groups']) ? 'true' : 'false' ?>) { //stúdiós restrict
         d[i].state.disabled = false;
       } else {
-        if (d[i].TakeRestrict == 's' && <?php echo (in_array('studio', $_SESSION['groups']) || in_array('admin', $_SESSION['groups'])) ? 'false' : 'true' ?>) {//stúdiós restrict
+        if (d[i].TakeRestrict == 's' && <?php echo (in_array('studio', $_SESSION['groups']) || in_array('admin', $_SESSION['groups'])) ? 'false' : 'true' ?>) { //stúdiós restrict
           d[i].state.disabled = true;
         }
         if (d[i].TakeRestrict == '*') {
           d[i].state.disabled = true;
         }
-        if (d[i].TakeRestrict == 'e' && <?php echo (in_array('event', $_SESSION['groups']) || in_array('admin', $_SESSION['groups'])) ? 'false' : 'true' ?>) {// event eszköz restrict
+        if (d[i].TakeRestrict == 'e' && <?php echo (in_array('event', $_SESSION['groups']) || in_array('admin', $_SESSION['groups'])) ? 'false' : 'true' ?>) { // event eszköz restrict
           d[i].state.disabled = true;
         }
       }
@@ -289,21 +292,7 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
   }
 
   //Invoked after JStree is loaded
-  $('#jstree').bind('ready.jstree', function (e, data) {
-    // console.log("[tree loaded] - running coloring");
-    // //wait 100ms
-    // for(i=1;i<=d.length;i++){
-    //   if($('#jstree').jstree().get_node(i).original.Status=='2' || $('#jstree').jstree().get_node(i).original.Status=='0' ){
-    //     $("#jstree ul li:nth-child("+i+") a").attr('takeout', 'true');
-    //     $("#jstree ul li:nth-child("+i+") a").css({"background-color":"green","font-size":"20px","color":"red"});
-    //     console.log("[jstree] - running - "+i);
-    //     console.log($("#jstree ul li:nth-child("+i+") a"));
-    //   }
-    // }
-
-    // //Update style for items that are taken out.
-    // $('*[takeout="true"]').css({"background-color":"green","font-size":"20px","color":"red"});
-  });
+  $('#jstree').bind('ready.jstree', function(e, data) {});
 
   $('#jstree').jstree({
     "plugins": ["search", "checkbox", "wholerow"],
@@ -322,14 +311,14 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
     }
   });
 
-  $('#search').on("keyup change", function () {
+  $('#search').on("keyup change", function() {
     $('#jstree').jstree(true).search($(this).val())
     colorTakenItems();
 
 
   })
 
-  $('#clear').click(function (e) {
+  $('#clear').click(function(e) {
     $('#search').val('').change().focus()
   })
   //JSON Object of selectted Items:
@@ -342,7 +331,7 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
     var nodeUid = $('#jstree').jstree().get_node(ID).original.uid;
     //Deselect the node
     $('#jstree').jstree().deselect_node(ID);
-    var tmp_filtered = $.grep(takeOutPrepJSON['items'], function (e) {
+    var tmp_filtered = $.grep(takeOutPrepJSON['items'], function(e) {
       return e.id != ID;
     });
     takeOutPrepJSON['items'] = tmp_filtered;
@@ -363,7 +352,7 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
     })
   };
 
-  $('#jstree').on("changed.jstree", function (e, data) {
+  $('#jstree').on("changed.jstree", function(e, data) {
     if (data.action == "select_node") {
       itemArr = {};
       itemArr.id = data.node.id;
@@ -398,12 +387,14 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
     }
   }).jstree();
 
-  $('#jstree').on('changed.jstree', function (e, data) {
+  $('#jstree').on('changed.jstree', function(e, data) {
     var objects = data.instance.get_selected(true)
-    var leaves = $.grep(objects, function (o) { return data.instance.is_leaf(o) })
+    var leaves = $.grep(objects, function(o) {
+      return data.instance.is_leaf(o)
+    })
     var list = $('#output')
     list.empty()
-    $.each(leaves, function (i, o) {
+    $.each(leaves, function(i, o) {
       iName = o.text;
       //console.log(o);
       toAdd = o.text + '<button class="btn btn-danger removeSelection" onclick="deselect_node(' + o.id + ')" id="deselectBtn_' + i + '">X</button>';
@@ -415,7 +406,10 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
 
 
   $('#jstree').jstree().refresh();
-  $('*[takeout-info="out"]').css({ "font-size": "12px", "color": "red" });
+  $('*[takeout-info="out"]').css({
+    "font-size": "12px",
+    "color": "red"
+  });
   //Right at load - start autologout.
 
   var selectList = [];
@@ -486,8 +480,10 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
       }
     });
 
-    $("#toTop").click(function () {
-      $("html, body").animate({ scrollTop: 0 }, 1000);
+    $("#toTop").click(function() {
+      $("html, body").animate({
+        scrollTop: 0
+      }, 1000);
     });
 
 

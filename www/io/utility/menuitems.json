@@ -3,40 +3,29 @@
         {"name": "index","icon": "fas fa-home fa-lg", "href": "index.php"},
         {"name": "takeout","icon": "fas fa-upload fa-lg", "href": "takeout.php"},
         {"name": "retrieve","icon": "fas fa-download fa-lg", "href": "retrieve.php"},
-        {"name": "adatok","icon": "fas fa-database fa-lg", "href": "adatok.php"},
+        {"name": "adatok","icon": "fas fa-database fa-lg", "href": "adatok.php?Out=4&orderByField=Nev&order=ASC"},
         {"name": "pathfinder","icon": "fas fa-project-diagram fa-lg", "href": "pathfinder.php"},
         {"name": "events","icon": "fas fa-calendar-alt fa-lg", "href": "events/"},
         {"name": "maintenance", "icon": "fas fa-broom fa-lg", "href": "maintenance/index.php"},
-        {"name": "profile","icon": "fas fa-user-alt fa-lg", "href": "profile/index.php"},
-        {"name": "forms","icon": "fab fa-wpforms fa-lg", "href": "forms/index.php"}
+        {"name": "nas","icon": "fas fa-server fa-lg", "href": "https://nas.arpadmedia.hu","target" : "_blank","external":true},
+        {"name": "profile","icon": "fas fa-user-alt fa-lg", "href": "profile"}
         
     ],
     "info" : [
         {"name": "adminRoles", "message": "Admin jogokkal rendelkezel."}
     ],
     "right" : [
-        {"name": "help","icon": "fas fa-question-circle fa-lg", "href": "help.php"}
+      
     ]},
     "indexTable":[
         {"name": "takeout","icon": "fas fa-upload fa-3x", "href": "takeout.php", "displayName": "Kivétel"},
         {"name": "retrieve","icon": "fas fa-download fa-3x", "href": "retrieve.php", "displayName": "Visszahozás"},
-        {"name": "adatok","icon": "fas fa-database fa-3x", "href": "./adatok.php", "displayName": "Adatok"},
+        {"name": "adatok","icon": "fas fa-database fa-3x", "href": "./adatok.php?Out=4&orderByField=Nev&order=ASC", "displayName": "Adatok"},
         {"name": "pathfinder","icon": "fas fa-project-diagram fa-3x", "href": "./pathfinder.php", "displayName": "PathFinder"},
         {"name": "events","icon": "fas fa-calendar-alt fa-3x", "href": "events/", "displayName": "Naptár"},
         {"name": "broom", "icon": "fas fa-broom fa-3x", "href": "./maintenance/", "displayName": "Takarítás"},
-        
-        {"name": "profile","icon": "fas fa-user-alt fa-3x", "href": "profile/index.php", "displayName": "Profil"},
-        {
-            "name": "forms",
-            "icon": "fab fa-wpforms fa-3x",
-            "href": "forms/index.php",
-            "displayName": "Formok"
-        },
-        {
-            "name": "fileServer",
-            "icon": "fas fa-server fa-3x",
-            "displayName": "Fájlszerver"
-        }
+        {"name": "Server","icon": "fas fa-server fa-3x","href": "https://nas.arpadmedia.hu","displayName": "Fájlszerver"},
+        {"name": "profile","icon": "fas fa-user-alt fa-3x", "href": "profile/index.php", "displayName": "Profil"}
         
     ]
 }

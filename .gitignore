@@ -2,5 +2,6 @@ data.env
 data/
 nginx/arpadmedia.hu.crt
 nginx/arpadmedia.hu.key
+**/.DS_Store
 example.env
 www/io/Mailer.php
