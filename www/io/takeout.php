@@ -140,7 +140,6 @@ error_reporting(E_ALL ^ E_NOTICE);
           </div> -->
         </div>
 
-
         <div id="jstree">
         </div>
       </div>

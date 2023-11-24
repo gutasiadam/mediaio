@@ -3,8 +3,6 @@ session_start();
 if (!isset($_SESSION["userId"])) {
   header("Location: ../index.php?error=AccessViolation");
   exit();
-  header("Location: ../index.php?error=AccessViolation");
-  exit();
 }
 error_reporting(E_ALL | E_WARNING | E_NOTICE);
 require_once("./header.php");
@@ -90,7 +88,6 @@ require_once("./header.php");
             <label for="work_Date">Dátum</label>
             <input type="date" class="form-control" id="work_Date" aria-describedby="emailHelp"
               placeholder="Dátum. ÉV/HÓ/NAP formátumban">
-
           </div>
         </form>
       </div>
@@ -136,10 +133,13 @@ require_once("./header.php");
           $('#tr' + ID).css('color', 'red');
           $('#tr' + ID).find("td:eq(0)").html("Nincs szabad hely!");
         }
+        if (result == 202) {
+          $('#tr' + ID).css('color', 'red');
+          $('#tr' + ID).find("td:eq(0)").html("Nincs szabad hely!");
+        }
       }
     });
   }
-
   function addWork() {
     var Date = $('#work_Date').val();
     $.ajax({
@@ -154,7 +154,6 @@ require_once("./header.php");
       }
     });
   }
-
   function deleteWork(ID) {
     var Date = $('#work_Date').val();
     $.ajax({
@@ -209,7 +208,6 @@ require_once("./header.php");
       }
     });
   }
-
 
   function renderWork() {
     var getOldTasks = false;
