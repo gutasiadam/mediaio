@@ -16,68 +16,69 @@ require_once("./header.php");
   });</script>
 
 <body>
-<?php if (isset($_SESSION["userId"])) { ?>
+  <?php if (isset($_SESSION["userId"])) { ?>
 
-  
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <a class="navbar-brand" href="index.php">
-      <img src="../utility/logo2.png" height="50">
-    </a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav mr-auto navbarUl">
-      </ul>
-      <ul class="navbar-nav navbarPhP">
-        <li>
-          <a class="nav-link disabled timelock" href="#"><span id="time"> 10:00 </span>
-            <?php echo ' ' . $_SESSION['UserUserName']; ?>
-          </a>
-        </li>
-      </ul>
-      <form method='post' class="form-inline my-2 my-lg-0" action=../utility/userLogging.php>
-        <button class="btn btn-danger my-2 my-sm-0" name='logout-submit' type="submit">Kijelentkezés</button>
-      </form>
-      <a class="nav-link my-2 my-sm-0" href="./help.php">
-        <i class="fas fa-question-circle fa-lg"></i>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <a class="navbar-brand" href="index.php">
+        <img src="../utility/logo2.png" height="50">
       </a>
-    </div>
-  </nav>
-<?php } ?>
-<br>
-<h1 align=center class="rainbow">Takarítási rend, feladatok: </h1>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto navbarUl">
+        </ul>
+        <ul class="navbar-nav ms-auto navbarPhP">
+          <li>
+            <a class="nav-link disabled timelock" href="#"><span id="time"> 10:00 </span>
+              <?php echo ' ' . $_SESSION['UserUserName']; ?>
+            </a>
+          </li>
+        </ul>
+        <form method='post' class="form-inline my-2 my-lg-0" action=../utility/userLogging.php>
+          <button class="btn btn-danger my-2 my-sm-0" name='logout-submit' type="submit">Kijelentkezés</button>
+        </form>
+        <a class="nav-link my-2 my-sm-0" href="./help.php">
+          <i class="fas fa-question-circle fa-lg"></i>
+        </a>
+      </div>
+    </nav>
+  <?php } ?>
+  <br>
+  <h1 align=center class="rainbow">Takarítási rend, feladatok: </h1>
 
-<div class="tableParent">
-  <div class="form-check">
-    <!--<input class="form-check-input noprint" type="checkbox" value="" id="showOnlyMyTasks_checkBox" data-toggle="toggle">
+  <div class="tableParent">
+    <div class="form-check">
+      <!--<input class="form-check-input noprint" type="checkbox" value="" id="showOnlyMyTasks_checkBox" data-toggle="toggle">
   <label class="form-check-label noprint" for="defaultCheck1"> Csak a saját feladataimat mutasd</label>-->
-  </div>
-  <?php
-  if ((in_array("admin", $_SESSION["groups"]))) {
-    echo '<table class="maintanence-admin">
-              <tr><td><button type="button" class="btn btn-success" data-toggle="modal" data-target="#add_Work_Modal">Új feladat</button> 
+    </div>
+    <?php
+    if ((in_array("admin", $_SESSION["groups"]))) {
+      echo '<table class="maintanence-admin">
+              <tr><td><button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#add_Work_Modal">Új feladat</button> 
               <input type="checkbox" id="showOldTasks" name="showOldTasks" value="true"><label id="old_tasks" for="vehicle1">Régebbi feladatok</label></td>
               </table>';
 
-  } ?>
+    } ?>
 
-  <ul style="margin-left:5%; padding-right: 5px;">
-    <li>Szemét kiürítése</li>
-    <li>Felsöprés</li>
-    <li>Elmosogatás</li>
-    <li>Porszívózás a stúdióban</li>
-    <li>Felmosás (a tárgyalóban minimális vízzel)</li>
-    <li>Rendrakás</li>
-  </ul>
+    <ul style="margin-left:5%; padding-right: 5px;">
+      <li>Szemét kiürítése</li>
+      <li>Felsöprés</li>
+      <li>Elmosogatás</li>
+      <li>Porszívózás a stúdióban</li>
+      <li>Felmosás (a tárgyalóban minimális vízzel)</li>
+      <li>Rendrakás</li>
+    </ul>
 
-  <table class="takaritasirend" id="takaritasirend">
+    <table class="takaritasirend" id="takaritasirend">
 
 
 
-  </table>
+    </table>
 </body>
+
 </html>
 
 
@@ -86,7 +87,7 @@ require_once("./header.php");
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title">Új feladat hozzáadása</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
