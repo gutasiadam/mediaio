@@ -3,7 +3,6 @@
 namespace Mediaio;
 
 require_once __DIR__ . '/./ItemManager.php';
-
 use Mediaio\itemDataManager;
 
 include "header.php";
@@ -128,16 +127,17 @@ error_reporting(E_ALL ^ E_NOTICE);
         <ul class="selectedItemsDisplay" id="output"></ul>
       </div>
       <div class="col-8">
-        Keresés: <input type="text" id="search" style='margin-bottom: 10px' placeholder="Kezdd el ide írni, mit vinnél el.." autocomplete="off" />
-
-        <div class="row optionsButtons">
-          <button class="btn btn-warning" id="clear" style='margin-bottom: 6px'>Keresés törlése</button>
-          <button class="btn btn-success" id="takeout2BTN" style='margin-bottom: 6px'>Mehet</button> <button class="btn btn-info" onclick="showPresetsModal()" style='margin-bottom:6px'>Presetek</button>
-          <button id="givetoAnotherPerson_Button" type="button" class="btn btn-dark" data-toggle="modal" data-bs-target="#givetoAnotherPerson_Modal" style="visibility: hidden; margin-bottom: 6px">Másnak veszek ki</button>
-          <div class="form-check form-switch">
+      Keresés: <input type="text" id="search" style='margin-bottom: 10px' placeholder="Kezdd el ide írni, mit vinnél el.." autocomplete="off" />
+        <div class="row optionsButtons d-flex flex-row">
+          <button class="btn btn-warning col-3" id="clear" style='margin-bottom: 6px'>Keresés törlése</button>
+          <button class="btn btn-success col-3" id="takeout2BTN" style='margin-bottom: 6px'>Mehet</button>
+          <button class="btn btn-info col-3" onclick="showPresetsModal()" style='margin-bottom:6px'>Presetek</button>
+          <button id="givetoAnotherPerson_Button" type="button" class="btn btn-dark col-3" data-toggle="modal" data-bs-target="#givetoAnotherPerson_Modal" style="visibility: hidden; margin-bottom: 6px">Másnak veszek ki</button>
+          <!-- Belső használatra kivétel - későbbi release -->
+          <!-- <div class="form-check form-switch col-2">
             <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
             <label class="form-check-label" for="flexSwitchCheckDefault">Csak használatra</label>
-          </div>
+          </div> -->
         </div>
 
         <div id="jstree">
@@ -179,7 +179,7 @@ error_reporting(E_ALL ^ E_NOTICE);
         for (var i = 0; i < presets.length; i++) {
           console.log(presets[i]);
           takeoutPresets.push(presets[i]);
-          $("#presetsContainer").append('<button class="btn btn-info2" onclick="addItems(' + i + ')">' + presets[i].Name + '</button></br></br>');
+          $("#presetsContainer").append('<button class="btn mediaBlue" onclick="addItems(' + i + ')">' + presets[i].Name + '</button></br></br>');
         }
       }
     });
@@ -445,14 +445,14 @@ error_reporting(E_ALL ^ E_NOTICE);
     return true;
   }
 
-  $(document).ready(function() {
+  $(document).ready(function () {
     //Color taken items
-    setTimeout(function() {
+    setTimeout(function () {
       colorTakenItems();
     }, 500);
 
     //Back to top button
-    $(window).scroll(function() {
+    $(window).scroll(function () {
       if ($(this).scrollTop()) {
         $('#toTop').fadeIn();
       } else {
@@ -465,10 +465,8 @@ error_reporting(E_ALL ^ E_NOTICE);
     $.ajax({
       url: "ItemManager.php",
       method: "POST",
-      data: {
-        mode: "getUsers"
-      },
-      success: function(response) {
+      data: { mode: "getUsers" },
+      success: function (response) {
         //alert(response);
 
         //Convert rerponse to JSON
@@ -490,7 +488,7 @@ error_reporting(E_ALL ^ E_NOTICE);
     });
 
 
-    document.getElementById("takeout2BTN").addEventListener("click", function() {
+    document.getElementById("takeout2BTN").addEventListener("click", function () {
       if (takeOutPrepJSON.items.length == 0) {
         displayMessageInTitle("#doTitle", "Nem választottál ki semmit!");
         return;
@@ -501,21 +499,14 @@ error_reporting(E_ALL ^ E_NOTICE);
         url: "./utility/takeout_administrator.php",
         //url:"./utility/dummy.php",
         method: "POST",
-        data: {
-          takeoutData: takeOutPrepJSON,
-          takeoutAsUser: $('#givetoAnotherPerson_UserName').val()
-        },
-        success: function(response) {
+        data: { takeoutData: takeOutPrepJSON, takeoutAsUser: $('#givetoAnotherPerson_UserName').val() },
+        success: function (response) {
           if (response == '200') {
             displayMessageInTitle("#doTitle", "Sikeres kivétel! \nAz oldal hamarosan újratölt");
             $('#jstree').jstree(true).settings.core.data = d;
             //Fa újratöltése
-            setTimeout(() => {
-              $('#jstree').jstree().refresh();
-            }, 2000);
-            setTimeout(() => {
-              window.location.href = window.location.href
-            }, 1000);
+            setTimeout(() => { $('#jstree').jstree().refresh(); }, 2000);
+            setTimeout(() => { window.location.href = window.location.href }, 1000);
           } else {
             //console.log(response);
             displayMessageInTitle("#doTitle", "Hiba történt.");
@@ -524,12 +515,12 @@ error_reporting(E_ALL ^ E_NOTICE);
         }
       });
     });
-    $('#submit').click(function() {
+    $('#submit').click(function () {
       $.ajax({
         url: "name.php",
         method: "POST",
         data: $('#add_name').serialize(),
-        success: function(data) {
+        success: function (data) {
           //alert(data);
           $('#add_name')[0].reset();
         }
@@ -553,153 +544,10 @@ error_reporting(E_ALL ^ E_NOTICE);
   // dbItem remover tool - Prevents an item to be added twice to the list
   function arrayRemove(arr, value) {
 
-    return arr.filter(function(ele) {
+    return arr.filter(function (ele) {
       return ele != value;
     });
 
   }
+
 </script>
-
-<style>
-  * {
-    box-sizing: border-box;
-  }
-
-  .btn-info2 {
-    color: white;
-    background-color: #000658;
-    border-color: #000658;
-    border-width: 2px
-  }
-
-  .btn-info2:hover {
-    color: black;
-    background-color: #ffffff;
-    border-color: #000658;
-    border-width: 2px
-  }
-
-  body {
-    font: 16px Arial;
-    background-color: #ffffff;
-    /*#363636 */
-    background: transparent;
-  }
-
-  /*the container must be positioned relative:*/
-  .autocomplete {
-    position: relative;
-    display: inline-block;
-  }
-
-  input {
-    border: 1px solid transparent;
-    background-color: #f1f1f1;
-    padding: 10px;
-    font-size: 16px;
-  }
-
-  input[type=text] {
-    background-color: #f1f1f1;
-    width: 100%;
-  }
-
-  input[type=submit] {
-    background-color: DodgerBlue;
-    color: #fff;
-    cursor: pointer;
-  }
-
-  .autocomplete-items {
-    position: absolute;
-    border: 1px solid #d4d4d4;
-    border-bottom: none;
-    border-top: none;
-    z-index: 99;
-    /*position the autocomplete items to be the same width as the container:*/
-    top: 100%;
-    left: 0;
-    right: 0;
-  }
-
-  .autocomplete-items div {
-    padding: 10px;
-    cursor: pointer;
-    background-color: #fff;
-    border-bottom: 1px solid #d4d4d4;
-  }
-
-  /*when hovering an item:*/
-  .autocomplete-items div:hover {
-    background-color: #e9e9e9;
-  }
-
-  /*when navigating through the items using the arrow keys:*/
-  .autocomplete-active {
-    background-color: Black !important;
-    color: #ffffff;
-  }
-
-  .livearray {
-    display: none;
-  }
-
-  .jstree-hidden {
-    display: none;
-  }
-
-  .selectedItemsDisplay {
-    list-style: none;
-    background-color: #777777;
-    color: white;
-    font-size: 17px;
-    padding-bottom: 0.2rem;
-    padding-top: 0.2rem;
-  }
-
-  .selectedItemsDisplay li {
-    list-style-type: none;
-    position: relative;
-    left: -30px;
-    /*background-color: #D3D3D3;*/
-    margin: 5px 0;
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  #toTop {
-    position: fixed;
-    bottom: 20px;
-    right: 30px;
-    z-index: 99;
-    font-size: 18px;
-    border: none;
-    outline: none;
-    background-color: #000658;
-    color: white;
-    cursor: pointer;
-    padding: 15px;
-    display: none;
-    border-radius: 50%;
-  }
-
-  #toTop:hover {
-    background-color: #555;
-    animation-name: changefontsize;
-    animation-duration: 0.5s;
-    font-size: 22px;
-  }
-
-  @keyframes changefontsize {
-    from {
-      font-size: 18px;
-    }
-
-    to {
-      font-size: 22px;
-    }
-  }
-</style>

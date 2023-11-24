@@ -2,7 +2,9 @@
 
 namespace Mediaio;
 
+
 use Mediaio\Database;
+
 
 session_start();
 require_once('../Database.php');
@@ -11,7 +13,7 @@ include "header.php";
 if (isset($_SESSION['userId'])) {
   error_reporting(E_ALL ^ E_NOTICE);
   //index.php
-?>
+  ?>
 
   <html>
 
@@ -95,7 +97,7 @@ if (isset($_SESSION['userId'])) {
 
               if ($row['Status'] != '2') {
                 echo '
-             <div class="col-2"><button class="btn btn-success " id="bringback' . $imodal . '" data-toggle="modal" data-bs-target="#b' . $imodal . '">Visszahoztam</button></div>
+             <div class="col-2"><button class="btn btn-success " id="bringback' . $imodal . '" data-bs-toggle="modal" data-bs-target="#b' . $imodal . '">Visszahoztam</button></div>
              
              ';
                 echo '
@@ -104,9 +106,7 @@ if (isset($_SESSION['userId'])) {
               <div class="modal-content">
                 <div class="modal-header">
                   <h5 class="modal-title" id="exampleModalLabel">' . $row["Nev"] . ' Visszahozása</h5>
-                  <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
               <input type="hidden" id="retrieveItem_' . $imodal . '" name="retrieveItem" value="' . $row["Nev"] . '"/> 
@@ -116,7 +116,7 @@ if (isset($_SESSION['userId'])) {
               </div>
               <h6></h6>
               <h6 id="emailHelp" class="form-text text-muted">A kipipálással igazolom, hogy amit visszahoztam sérülésmentes, és kifogástalanul működik. Sérülés esetén azonnal jelezd azt a vezetőségnek.</h6>
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">❌</button>
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">❌</button>
                   <button type="submit" id="' . $imodal . '" onClick="reply_click(this.id)" class="btn go_btn btn-success disabled">☑</button>
                   <a href="../utility/damage_report/announce_Damage.php" class="btn go_btn btn-warning">Problémát jelentek be</a>
                   
@@ -126,6 +126,7 @@ if (isset($_SESSION['userId'])) {
                   </div>
                   </div>   
             ';
+
               }
               $imodal++;
               echo '</div>';
@@ -152,7 +153,7 @@ if (isset($_SESSION['userId'])) {
     }
   </style>
 
-<?php
+  <?php
 } else {
   echo ("A tartalom megtekintéséhez először jelentkezz be.");
 }
@@ -169,22 +170,16 @@ if (isset($_SESSION['userId'])) {
     $.ajax({
       method: 'POST',
       url: '../ItemManager.php',
-      data: {
-        data: retrieveJSON,
-        mode: "retrieveStaging"
-      },
-      success: function(response) {
+      data: { data: retrieveJSON, mode: "retrieveStaging" },
+      success: function (response) {
         if (response == 200) {
           $('.sysResponse').append('Sikeres művelet! Az oldal hamarosan újratölt.');
         }
-        setTimeout(function() {
-          location.reload();
-        }, 1500);
+        setTimeout(function () { location.reload(); }, 1500);
 
       },
-      error: function(XMLHttpRequest, textStatus, errorThrown) {
-        console.log("Status: " + textStatus);
-        console.log("Hiba: " + errorThrown);
+      error: function (XMLHttpRequest, textStatus, errorThrown) {
+        console.log("Status: " + textStatus); console.log("Hiba: " + errorThrown);
       }
 
     });
@@ -195,19 +190,32 @@ if (isset($_SESSION['userId'])) {
     retrieveItem = document.getElementById('retrieveItem_' + (clicked_id)).value
     //alert(retrieveItem);
     if ($('.intactItems').is(":checked")) {
-      retrieve(retrieveItem); // AJAXos visszahozás megkezdése
+      retrieve(retrieveItem);// AJAXos visszahozás megkezdése
     } else {
       alert('Ha probléma akad a tárggyal, jelezd azt a vezetőségnek!');
       //$( ".intactItems" ).effect( "shake" );
     }
 
   }
-  $(document).on('click', '.intactItems', function() { // Submit gomb engedélyezése, ha az Intact form ki lett pipálva.
+  $(document).on('click', '.intactItems', function () { // Submit gomb engedélyezése, ha az Intact form ki lett pipálva.
     if ($('.intactItems').is(":checked")) {
       $('.go_btn').removeClass('disabled');
     }
   });
 
+  function copyText(item) {
+    /* Get the text field */
+    var copyText = document.getElementById('$code'.item);
+    /* Select the text field */
+    copyText.select();
+    copyText.setSelectionRange(0, 99999); /*For mobile devices*/
+    /* Copy the text inside the text field */
+    document.execCommand("copy");
+    /* Alert the copied text */
+    alert("Copied the text: " + copyText.value);
+  }
+  /*$(document).on('click', '.authToggle', function(){
+    setTimeout(function(){ window.location.href = "./utility/logout.ut.php"; }, 3000);});*/
   function copyText(item) {
     /* Get the text field */
     var copyText = document.getElementById('$code'.item);

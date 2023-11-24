@@ -1,6 +1,7 @@
 <?php
 
 namespace Mediaio;
+
 use Mediaio\Database;
 session_start();
 
@@ -68,7 +69,7 @@ if(isset($_SESSION['UserUserName'])){ //If user is logged in
   <table id="itemSearch" align="left">
     <tr><form action="./pathfinder.php" method="GET" autocomplete="off">
       <td><input id="id_itemNameAdd" type="text" name="pfItem" class="form-control mb-2 mr-sm-2" placeholder='<?php echo $applicationSearchField;?>'></div></td>
-      <td><button type="submit" name="add" id="add" class="btn btn-info2 mb-2 mr-sm-2" ><?php echo $button_Find;?></button><span id='sendQueryButtonLoc'></span></td>
+      <td><button type="submit" name="add" id="add" class="btn mediaBlue mb-2 mr-sm-2" ><?php echo $button_Find;?></button><span id='sendQueryButtonLoc'></span></td>
     </form></tr>
   </table>  
 	<div class="table-responsive">
@@ -81,44 +82,43 @@ if(isset($_SESSION['UserUserName'])){ //If user is logged in
    <div class="panel panel-default">
     <div class="panel-heading">
 
-    <?php 
-    if(isset($_GET['pfItem'])){
-        $connectionObject=Database::runQuery_mysqli();
-        $TKI = $_GET['pfItem'];
-        //find all occurences of '-' and split by the last occurence using regex
-        $TKI = preg_split('/ -/', $TKI);
+          <?php
+          if (isset($_GET['pfItem'])) {
+            $connectionObject = Database::runQuery_mysqli();
+            $TKI = $_GET['pfItem'];
+            //find all occurences of '-' and split by the last occurence using regex
+            $TKI = preg_split('/ -/', $TKI);
 
-        //Get the Name of the item
-        $TKI = $TKI[0];
-        $query = "SELECT * FROM `takelog` WHERE JSON_CONTAINS(Items, "."'"."{".'"name" : "'.$TKI.'"}'."'".") ORDER BY `Date` DESC";
-        $result=mysqli_query($connectionObject,$query);
-        echo '<h3 class="panel-title">Tárgy útvonala - '.$TKI.'</h3>
+            //Get the Name of the item
+            $TKI = $TKI[0];
+            $query = "SELECT * FROM `takelog` WHERE JSON_CONTAINS(Items, " . "'" . "{" . '"name" : "' . $TKI . '"}' . "'" . ") ORDER BY `Date` DESC";
+            $result = mysqli_query($connectionObject, $query);
+            echo '<h3 class="panel-title">Tárgy útvonala - ' . $TKI . '</h3>
         </div>
         <div class="panel-body">
          <div class="timeline">
-          <div class="timeline__wrap">
-           <div class="timeline__items">';
-           foreach($result as $row)
-           {
-            if($row["Acknowledged"]==0){
-              echo '<div class="timeline__item left">
+          <div class="timeline__wrap">';
+            foreach ($result as $row) {
+              if ($row["Acknowledged"] == 0) {
+                echo '<div class="timeline__item left">
               <div class="timeline__content service">
-               <h2>'. $row["Date"]. ' ('. $row["User"] . ')</h2>
+               <h2>' . $row["Date"] . ' (' . $row["User"] . ')</h2>
                <h6>Jóváhagyásra vár.</h6></div></div>';
-            }else{
-            if($row["Event"]=="OUT"){
-              echo '<div class="timeline__item right">
+              } else {
+                if ($row["Event"] == "OUT") {
+                  echo '<div class="timeline__item right">
               <div class="timeline__content out">
-               <h2>'. $row["Date"]. ' ('. $row["User"] .')</h2>';} 
-            if($row["Event"]=="IN"){
-              echo '<div class="timeline__item left">
+               <h2>' . $row["Date"] . ' (' . $row["User"] . ')</h2>';
+                }
+                if ($row["Event"] == "IN") {
+                  echo '<div class="timeline__item left">
               <div class="timeline__content in">
-               <h2>'. $row["Date"]. ' ('. $row["User"] . ')</h2>';
-            }
-            if($row["Event"]=="SERVICE"){
-              echo '<div class="timeline__item right">
+               <h2>' . $row["Date"] . ' (' . $row["User"] . ')</h2>';
+                }
+                if ($row["Event"] == "SERVICE") {
+                  echo '<div class="timeline__item right">
               <div class="timeline__content service">
-               <h2>'. $row["Date"]. ' ('. $row["User"] . ')</h2>
+               <h2>' . $row["Date"] . ' (' . $row["User"] . ')</h2>
                <h6>Szervizelés</h6>';
             }
             if($row["ACKBY"]!=NULL)
@@ -132,11 +132,12 @@ if(isset($_SESSION['UserUserName'])){ //If user is logged in
           </div>
          </div>
         </div>';
-    }
-    $connect = null;
-    ?>
-    </body>  
-</html>
+          }
+          $connect = null;
+          ?>
+  </body>
+
+  </html>
 
 <script>
 var dbItems=[]; //For search by Name
@@ -173,212 +174,130 @@ var jqxhr = $.getJSON( "./data/takeOutItems.json", function() {
 }
 loadJSON();
 
-//Process takeout
+    //Process takeout
 
 
-// dbItem remover tool - Prevents an item to be added twice to the list
-function arrayRemove(arr, value) {
+    // dbItem remover tool - Prevents an item to be added twice to the list
+    function arrayRemove(arr, value) {
 
-return arr.filter(function(ele){
-    return ele != value;
-});
+      return arr.filter(function (ele) {
+        return ele != value;
+      });
 
-}
-function autocomplete(inp, arr) {
-  /*the autocomplete function takes two arguments,
-  the text field element and an array of possible autocompleted values:*/
-  var currentFocus;
-  /*execute a function when someone writes in the text field:*/
-  inp.addEventListener("input", function(e) {
-      var a, b, i, val = this.value;
-      /*close any already open lists of autocompleted values*/
-      closeAllLists();
-      if (!val) { return false;}
-      currentFocus = -1;
-      /*create a DIV element that will contain the items (values):*/
-      a = document.createElement("DIV");
-      a.setAttribute("id", this.id + "autocomplete-list");
-      a.setAttribute("class", "autocomplete-items");
-      /*append the DIV element as a child of the autocomplete container:*/
-      this.parentNode.appendChild(a);
-      /*for each item in the array...*/
-      for (i = 0; i < arr.length; i++) {
-        /*check if the item contains the searched term:*/
-        if (arr[i].toUpperCase().includes(val.toUpperCase())) {
-          /*create a DIV element for each matching element:*/
-          b = document.createElement("DIV");
-          /*make the matching letters bold:*/
-          var boldStartIndex=arr[i].toUpperCase().indexOf(val.toUpperCase());
-          b.innerHTML = arr[i].substr(0, boldStartIndex);
-          b.innerHTML += "<strong>" + arr[i].substr(boldStartIndex, val.length) + "</strong>";
-          b.innerHTML += arr[i].substr(boldStartIndex+val.length);
-          b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
-          /*execute a function when someone clicks on the item value (DIV element):*/
-          b.addEventListener("click", function(e) {
+    }
+    function autocomplete(inp, arr) {
+      /*the autocomplete function takes two arguments,
+      the text field element and an array of possible autocompleted values:*/
+      var currentFocus;
+      /*execute a function when someone writes in the text field:*/
+      inp.addEventListener("input", function (e) {
+        var a, b, i, val = this.value;
+        /*close any already open lists of autocompleted values*/
+        closeAllLists();
+        if (!val) { return false; }
+        currentFocus = -1;
+        /*create a DIV element that will contain the items (values):*/
+        a = document.createElement("DIV");
+        a.setAttribute("id", this.id + "autocomplete-list");
+        a.setAttribute("class", "autocomplete-items");
+        /*append the DIV element as a child of the autocomplete container:*/
+        this.parentNode.appendChild(a);
+        /*for each item in the array...*/
+        for (i = 0; i < arr.length; i++) {
+          /*check if the item contains the searched term:*/
+          if (arr[i].toUpperCase().includes(val.toUpperCase())) {
+            /*create a DIV element for each matching element:*/
+            b = document.createElement("DIV");
+            /*make the matching letters bold:*/
+            var boldStartIndex = arr[i].toUpperCase().indexOf(val.toUpperCase());
+            b.innerHTML = arr[i].substr(0, boldStartIndex);
+            b.innerHTML += "<strong>" + arr[i].substr(boldStartIndex, val.length) + "</strong>";
+            b.innerHTML += arr[i].substr(boldStartIndex + val.length);
+            b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
+            /*execute a function when someone clicks on the item value (DIV element):*/
+            b.addEventListener("click", function (e) {
               /*insert the value for the autocomplete text field:*/
               inp.value = this.getElementsByTagName("input")[0].value;
               /*close the list of autocompleted values,
               (or any other open lists of autocompleted values:*/
               closeAllLists();
-          });
-          a.appendChild(b);
+            });
+            a.appendChild(b);
+          }
+        }
+      });
+      /*execute a function presses a key on the keyboard:*/
+      inp.addEventListener("keydown", function (e) {
+        var x = document.getElementById(this.id + "autocomplete-list");
+        if (x) x = x.getElementsByTagName("div");
+        if (e.keyCode == 40) {
+          /*If the arrow DOWN key is pressed,
+          increase the currentFocus variable:*/
+          currentFocus++;
+          /*and and make the current item more visible:*/
+          addActive(x);
+        } else if (e.keyCode == 38) { //up
+          /*If the arrow UP key is pressed,
+          decrease the currentFocus variable:*/
+          currentFocus--;
+          /*and and make the current item more visible:*/
+          addActive(x);
+        } else if (e.keyCode == 13) {
+          /*If the ENTER key is pressed, prevent the form from being submitted,*/
+          e.preventDefault();
+          if (currentFocus > -1) {
+            /*and simulate a click on the "active" item:*/
+            if (x) x[currentFocus].click();
+          }
+        }
+      });
+      function addActive(x) {
+        /*a function to classify an item as "active":*/
+        if (!x) return false;
+        /*start by removing the "active" class on all items:*/
+        removeActive(x);
+        if (currentFocus >= x.length) currentFocus = 0;
+        if (currentFocus < 0) currentFocus = (x.length - 1);
+        /*add class "autocomplete-active":*/
+        x[currentFocus].classList.add("autocomplete-active");
+      }
+      function removeActive(x) {
+        /*a function to remove the "active" class from all autocomplete items:*/
+        for (var i = 0; i < x.length; i++) {
+          x[i].classList.remove("autocomplete-active");
         }
       }
-  });
-  /*execute a function presses a key on the keyboard:*/
-  inp.addEventListener("keydown", function(e) {
-      var x = document.getElementById(this.id + "autocomplete-list");
-      if (x) x = x.getElementsByTagName("div");
-      if (e.keyCode == 40) {
-        /*If the arrow DOWN key is pressed,
-        increase the currentFocus variable:*/
-        currentFocus++;
-        /*and and make the current item more visible:*/
-        addActive(x);
-      } else if (e.keyCode == 38) { //up
-        /*If the arrow UP key is pressed,
-        decrease the currentFocus variable:*/
-        currentFocus--;
-        /*and and make the current item more visible:*/
-        addActive(x);
-      } else if (e.keyCode == 13) {
-        /*If the ENTER key is pressed, prevent the form from being submitted,*/
-        e.preventDefault();
-        if (currentFocus > -1) {
-          /*and simulate a click on the "active" item:*/
-          if (x) x[currentFocus].click();
+      function closeAllLists(elmnt) {
+        /*close all autocomplete lists in the document,
+        except the one passed as an argument:*/
+        var x = document.getElementsByClassName("autocomplete-items");
+        for (var i = 0; i < x.length; i++) {
+          if (elmnt != x[i] && elmnt != inp) {
+            x[i].parentNode.removeChild(x[i]);
+          }
         }
       }
-  });
-  function addActive(x) {
-    /*a function to classify an item as "active":*/
-    if (!x) return false;
-    /*start by removing the "active" class on all items:*/
-    removeActive(x);
-    if (currentFocus >= x.length) currentFocus = 0;
-    if (currentFocus < 0) currentFocus = (x.length - 1);
-    /*add class "autocomplete-active":*/
-    x[currentFocus].classList.add("autocomplete-active");
-  }
-  function removeActive(x) {
-    /*a function to remove the "active" class from all autocomplete items:*/
-    for (var i = 0; i < x.length; i++) {
-      x[i].classList.remove("autocomplete-active");
-    }
-  }
-  function closeAllLists(elmnt) {
-    /*close all autocomplete lists in the document,
-    except the one passed as an argument:*/
-    var x = document.getElementsByClassName("autocomplete-items");
-    for (var i = 0; i < x.length; i++) {
-      if (elmnt != x[i] && elmnt != inp) {
-        x[i].parentNode.removeChild(x[i]);
-      }
-    }
-  }
-    /*execute a function when someone clicks in the document:*/
-    document.addEventListener("click", function (e) {
+      /*execute a function when someone clicks in the document:*/
+      document.addEventListener("click", function (e) {
         closeAllLists(e.target);
-    });
-  }
-
-  autocomplete(document.getElementById("id_itemNameAdd"), ItemNames);
-  // autocomplete(document.getElementById("id_itemUIDAdd"), dbUidItems);
-
-//Search bz inputted UID value
-function searchByUID(){
- var uidName=document.getElementById('id_itemUIDAdd').value;
- d.forEach(element => {
-    if(element['UID']==uidName){
-      console.log("pfItem="+element['Nev']);
-       window.location.href = window.location.href.split("?")[0]+"?pfItem="+element['Nev'].replace(/ /g,'+');
+      });
     }
- });
-}
 
-</script>
+    autocomplete(document.getElementById("id_itemNameAdd"), ItemNames);
+    // autocomplete(document.getElementById("id_itemUIDAdd"), dbUidItems);
 
-<style>
-  * {
-    box-sizing: border-box;
-  }
+    //Search bz inputted UID value
+    function searchByUID() {
+      var uidName = document.getElementById('id_itemUIDAdd').value;
+      d.forEach(element => {
+        if (element['UID'] == uidName) {
+          console.log("pfItem=" + element['Nev']);
+          window.location.href = window.location.href.split("?")[0] + "?pfItem=" + element['Nev'].replace(/ /g, '+');
+        }
+      });
+    }
 
-  .btn-info2{color:white;background-color:#000658;border-color:#000658;border-width:2px}.btn-info2:hover{color:black;background-color:#ffffff;border-color:#000658;border-width:2px}
-
-  body {
-    font: 16px Arial;  
-  }
-
-  /*the container must be positioned relative:*/
-  .autocomplete {
-    position: relative;
-    display: inline-block;
-  }
-
-  input {
-    border: 1px solid transparent;
-    background-color: #f1f1f1;
-    padding: 10px;
-    font-size: 16px;
-  }
-
-  input[type=text] {
-    background-color: #f1f1f1;
-    width: 100%;
-  }
-
-  input[type=submit] {
-    background-color: DodgerBlue;
-   color: #fff;
-   cursor: pointer;
-  }
-
-
-  .in{
-    background-color:#B8F5C2;
-  }
-  .out{
-    background-color:#F5B8B8;
-  }
-  .service{
-    background-color:#f1ee8e;
-  }
-
-  .autocomplete-items {
-    position: relative;
-    border: 1px solid #d4d4d4;
-    border-bottom: none;
-    border-top: none;
-    z-index: 99;
-    /*position the autocomplete items to be the same width as the container:*/
-    top: 100%;
-    left: 0;
-    right: 0;
-  }
-
-  .autocomplete-items div {
-    padding: 10px;
-    cursor: pointer;
-    background-color: #fff; 
-    border-bottom: 1px solid #d4d4d4; 
-    position: relative;
-  }
-
-  /*when hovering an item:*/
-  .autocomplete-items div:hover {
-    background-color: #e9e9e9; 
-  }
-
-  /*when navigating through the items using the arrow keys:*/
-  .autocomplete-active {
-    background-color: Black !important; 
-    color: #ffffff; 
-  }
-
-  .livearray{
-    display:none;
-  }
-</style>
+  </script>
 
 <?php
 }

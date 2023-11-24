@@ -1,5 +1,6 @@
 <?php
 namespace Mediao;
+
 include "translation.php";
 include "header.php";
 
@@ -80,96 +81,36 @@ require "./ItemManager.php";
   <option value="DESC" <?php if(isset($_GET['order']) && $_GET['order'] == 'DESC') echo 'selected';?>>csökkenő</option>
 </select>
 
-<label for="order">sorrendben.</label>
-<button class="btn btn-success my-2 my-sm-0" type="submit">Mehet</button>
-</form>
+    <label for="order">sorrendben.</label>
+    <button class="btn btn-success my-2 my-sm-0" type="submit">Mehet</button>
+  </form>
 
-<?php 
-	$countOfRec=0;
-  $displayData= array("Event"=>$_GET['Event'],"rentable"=>$_GET['rentable'],"studio"=>$_GET['studio'],"nonRentable"=>$_GET['nonRentable'],"Out"=>$_GET['Out'],"orderByField"=>$_GET['orderByField'],"order"=>$_GET['order']);
-  $result=itemDataManager::getItemData($displayData);
-if ($result!=NULL && $result->num_rows > 0) {
-	echo "<table id="."dataTable"." align=center class="."table"."><th onclick=sort(0)>UID</th><th onclick=sort(1)>Név</th><th onclick=sort(2)>Típus</th><th onclick=sort(3)>Kivette</th>";
-     //output data of each row
+  <?php
+  $countOfRec = 0;
+  $displayData = array("Event" => $_GET['Event'], "rentable" => $_GET['rentable'], "studio" => $_GET['studio'], "nonRentable" => $_GET['nonRentable'], "Out" => $_GET['Out'], "orderByField" => $_GET['orderByField'], "order" => $_GET['order']);
+  $result = itemDataManager::getItemData($displayData);
+  if ($result != NULL && $result->num_rows > 0) {
+    echo "<table id=" . "dataTable" . " align=center class=" . "table" . "><th onclick=sort(0)>UID</th><th onclick=sort(1)>Név</th><th onclick=sort(2)>Típus</th><th onclick=sort(3)>Kivette</th>";
+    //output data of each row
     //Displays amount of records found in leltar_master DB
-    while($row = $result->fetch_assoc()) {
-		if($row["Status"]==0){
-			echo "<tr style='background-color:#fffeab;' ><td><a id=#".$row["UID"]."></a>".$row["UID"]. "</td><td>" . $row["Nev"]. "</td><td>" . $row["Tipus"]. "</td><td><strong>". $row["RentBy"]."</strong></td></tr>";
-		}
-    else if($row["TakeRestrict"]=="s"){
-			echo "<tr style='background-color:#7db3e8;' ><td><a id=#".$row["UID"]."></a>".$row["UID"]. "</td><td>" . $row["Nev"]. "</td><td>" . $row["Tipus"]. "</td><td><strong>". $row["RentBy"]."</strong></td></tr>";
-		}
-		else if($row["TakeRestrict"]=="*"){
-			echo "<tr style='background-color:#F5B8B8;' ><td><a id=#".$row["UID"]."></a>".$row["UID"]. "</td><td>" . $row["Nev"]. "</td><td>" . $row["Tipus"]. "</td><td><strong>". $row["RentBy"]."</strong></td></tr>";
-		}else if($row["TakeRestrict"]=="e"){
-			echo "<tr style='background-color:#4ca864;' ><td><a id=#".$row["UID"]."></a>".$row["UID"]. "</td><td>" . $row["Nev"]. "</td><td>" . $row["Tipus"]. "</td><td><strong>". $row["RentBy"]."</strong></td></tr>";
-		}
-    else{
-			echo "<tr><td><a id=#".$row["UID"]."></a>".$row["UID"]. "</td><td>" . $row["Nev"]. "</td><td>" . $row["Tipus"]. "</td><td>". "</td></tr>";
-		}
-		$countOfRec += 1;
-	}
-} else {
+    while ($row = $result->fetch_assoc()) {
+      if ($row["Status"] == 0) {
+        echo "<tr style='background-color:#fffeab;' ><td><a id=#" . $row["UID"] . "></a>" . $row["UID"] . "</td><td>" . $row["Nev"] . "</td><td>" . $row["Tipus"] . "</td><td><strong>" . $row["RentBy"] . "</strong></td></tr>";
+      } else if ($row["TakeRestrict"] == "s") {
+        echo "<tr style='background-color:#7db3e8;' ><td><a id=#" . $row["UID"] . "></a>" . $row["UID"] . "</td><td>" . $row["Nev"] . "</td><td>" . $row["Tipus"] . "</td><td><strong>" . $row["RentBy"] . "</strong></td></tr>";
+      } else if ($row["TakeRestrict"] == "*") {
+        echo "<tr style='background-color:#F5B8B8;' ><td><a id=#" . $row["UID"] . "></a>" . $row["UID"] . "</td><td>" . $row["Nev"] . "</td><td>" . $row["Tipus"] . "</td><td><strong>" . $row["RentBy"] . "</strong></td></tr>";
+      } else if ($row["TakeRestrict"] == "e") {
+        echo "<tr style='background-color:#4ca864;' ><td><a id=#" . $row["UID"] . "></a>" . $row["UID"] . "</td><td>" . $row["Nev"] . "</td><td>" . $row["Tipus"] . "</td><td><strong>" . $row["RentBy"] . "</strong></td></tr>";
+      } else {
+        echo "<tr><td><a id=#" . $row["UID"] . "></a>" . $row["UID"] . "</td><td>" . $row["Nev"] . "</td><td>" . $row["Tipus"] . "</td><td>" . "</td></tr>";
+      }
+      $countOfRec += 1;
+    }
+  } else {
     echo "// Nem található a keresési feltételeknek megfelelő tárgy a rendszerben. //";
-}
-echo "</table>";
-?>
-<style>
-  .btn-info2{color:white;background-color:#000658;border-color:#000658;border-width:2px}.btn-info2:hover{color:black;background-color:#ffffff;border-color:#000658;border-width:2px}
-  .autocomplete {
-    position: relative;
-    display: inline-block;
   }
+  echo "</table>";
+  ?>
 
-  input {
-    border: 1px solid transparent;
-    background-color: #f1f1f1;
-    padding: 10px;
-    font-size: 16px;
-  }
-
-  input[type=text] {
-    background-color: #f1f1f1;
-    width: 100%;
-  }
-
-  input[type=submit] {
-    background-color: DodgerBlue;
-   color: #fff;
-   cursor: pointer;
-  }
-
-  .autocomplete-items {
-    position: absolute;
-    border: 1px solid #d4d4d4;
-    border-bottom: none;
-    border-top: none;
-    z-index: 99;
-    /*position the autocomplete items to be the same width as the container:*/
-    top: 100%;
-    left: 0;
-    right: 0;
-  }
-
-  .autocomplete-items div {
-    padding: 10px;
-    cursor: pointer;
-    background-color: #fff; 
-    border-bottom: 1px solid #d4d4d4; 
-  }
-
-  /*when hovering an item:*/
-  .autocomplete-items div:hover {
-    background-color: #e9e9e9; 
-  }
-
-  /*when navigating through the items using the arrow keys:*/
-  .autocomplete-active {
-    background-color: Black !important; 
-    color: #ffffff; 
-  }
-
-  .livearray{
-    display:none;
-  }
-</style>
+</body>

@@ -16,7 +16,7 @@ $TKI = $_SESSION['UserUserName'];
 - Hiba leírását
 -->
 <head>
-  <link href='../../main.css' rel='stylesheet' />
+  <link href='../../style/main.css' rel='stylesheet' />
   <div class="UI_loading"><img class="loadingAnimation" src="../mediaIO_loading_logo.gif"></div>
     <meta charset='utf-8' />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">

@@ -18,6 +18,7 @@ setcookie("Cookie_eventId", $_GET['eventId'], time() + (86400 * 30), "/");
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
   <script type="text/javascript" src="https://code.jquery.com/jquery-latest.min.js"></script>
   <script src="https://kit.fontawesome.com/2c66dc83e7.js" crossorigin="anonymous"></script>
+  <link href='../style/events.css' rel='stylesheet' />
 </head>
 <?php
 
@@ -571,17 +572,4 @@ if (isset($_SESSION['UserUserName'])) {
     }
   }
 </script>
-<script src="./apiCommunications.js"></script>
-<style>
-  body {
-    padding: 20px;
-  }
-
-  @media print {
-
-    .noprint,
-    .noprint * {
-      display: none !important;
-    }
-  }
-</style>
+<script src="apiCommunications.js"></script>

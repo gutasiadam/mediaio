@@ -7,3 +7,8 @@
  - Tartalmazza az e-mailek küldéséhez szükséges API kulcsot
 
 
+> loginPageSettings.json
+
+ - Tartalmazza az oldal globális beállításait (motd/belépéskorlátozás)
+
+

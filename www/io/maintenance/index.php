@@ -40,34 +40,35 @@ require_once("./header.php");
 <br>
 <h1 align=center class="rainbow">Takarítási rend, feladatok: </h1>
 
-<div class="tableParent">
-  <div class="form-check">
-    <!--<input class="form-check-input noprint" type="checkbox" value="" id="showOnlyMyTasks_checkBox" data-toggle="toggle">
+  <div class="tableParent">
+    <div class="form-check">
+      <!--<input class="form-check-input noprint" type="checkbox" value="" id="showOnlyMyTasks_checkBox" data-toggle="toggle">
   <label class="form-check-label noprint" for="defaultCheck1"> Csak a saját feladataimat mutasd</label>-->
-  </div>
-  <?php
-  if ((in_array("admin", $_SESSION["groups"]))) {
-    echo '<table>
-              <tr><td><button type="button" class="btn btn-info table-Control edit_Table_Button noprint" data-bs-toggle="modal" data-bs-target="#add_Work_Modal">Új feladat</button> 
-              <input type="checkbox" id="showOldTasks" name="showOldTasks" value="true"><label for="vehicle1">Régebbi feladatok</label></td>
-              </table>';
-  } ?>
-
-  <ul style="margin-left:5%; padding-right: 5px;">
-    <li>Szemét kiürítése</li>
-    <li>Felsöprés</li>
-    <li>Elmosogatás</li>
-    <li>Porszívózás a stúdióban</li>
-    <li>Felmosás (a tárgyalóban minimális vízzel)</li>
-    <li>Rendrakás</li>
-  </ul>
-
-  <div class="col-10">
-    <div class="table-responsive">
-      <table class="takaritasirend table" id="takaritasirend">
-      </table>
     </div>
-  </div>
+    <?php
+    if ((in_array("admin", $_SESSION["groups"]))) {
+      echo '<table class="maintanence-admin">
+              <tr><td><button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#add_Work_Modal">Új feladat</button> 
+              <input type="checkbox" id="showOldTasks" name="showOldTasks" value="true"><label id="old_tasks" for="vehicle1">Régebbi feladatok</label></td>
+              </table>';
+
+    } ?>
+
+    <ul style="margin-left:5%; padding-right: 5px;">
+      <li>Szemét kiürítése</li>
+      <li>Felsöprés</li>
+      <li>Elmosogatás</li>
+      <li>Porszívózás a stúdióban</li>
+      <li>Felmosás (a tárgyalóban minimális vízzel)</li>
+      <li>Rendrakás</li>
+    </ul>
+
+    <table class="takaritasirend" id="takaritasirend">
+
+
+
+    </table>
+</body>
 
 </html>
 
@@ -77,22 +78,23 @@ require_once("./header.php");
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title">Új feladat hozzáadása</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
       </div>
       <div class="modal-body">
         <form id="add_Work_Form">
           <div class="form-group">
             <label for="work_Date">Dátum</label>
-            <input type="date" class="form-control" id="work_Date" aria-describedby="emailHelp" placeholder="Dátum. ÉV/HÓ/NAP formátumban">
-
+            <input type="date" class="form-control" id="work_Date" aria-describedby="emailHelp"
+              placeholder="Dátum. ÉV/HÓ/NAP formátumban">
           </div>
         </form>
       </div>
       <div class="modal-footer">
-        <!--<button type="button" class="btn btn-success">Mentés</button>-->
         <div id="processing">Feldolgozás..</div>
         <button type="button" class="btn btn-success send_Work_update" onclick=addWork()>Mentés</button>
-        <button type="button" class="btn btn-danger clear_Update" data-bs-dismiss="modal">Mégsem</button>
+        <button type="button" class="btn btn-danger clear_Update" data-dismiss="modal">Mégsem</button>
       </div>
     </div>
   </div>
@@ -101,7 +103,7 @@ require_once("./header.php");
 
 <script>
   //Ha nincs feladat, ne is jelenjen meg a táblázat:
-  window.onload = function() {
+  window.onload = function () {
     display = document.querySelector('#time');
     var timeUpLoc = "./userLogging.php?logout-submit=y"
     startTimer(display, timeUpLoc);
@@ -114,13 +116,14 @@ require_once("./header.php");
       url: "maintenanceManager.php",
       type: "POST",
       async: true,
-      data: {
-        method: "apply",
-        workID: ID
-      },
-      success: function(result) {
+      data: { method: "apply", workID: ID },
+      success: function (result) {
         if (result == 200) {
           location.reload();
+        }
+        if (result == 201) {
+          $('#tr' + ID).css('color', 'red');
+          $('#tr' + ID).find("td:eq(0)").html("Már jelentkeztél!");
         }
         if (result == 201) {
           $('#tr' + ID).css('color', 'red');
@@ -130,46 +133,41 @@ require_once("./header.php");
           $('#tr' + ID).css('color', 'red');
           $('#tr' + ID).find("td:eq(0)").html("Nincs szabad hely!");
         }
+        if (result == 202) {
+          $('#tr' + ID).css('color', 'red');
+          $('#tr' + ID).find("td:eq(0)").html("Nincs szabad hely!");
+        }
       }
     });
   }
-
   function addWork() {
     var Date = $('#work_Date').val();
     $.ajax({
       url: "maintenanceManager.php",
       type: "POST",
       async: true,
-      data: {
-        method: "add",
-        Date: Date
-      },
-      success: function(result) {
+      data: { method: "add", Date: Date },
+      success: function (result) {
         if (result == 200) {
           location.reload();
         }
       }
     });
   }
-
   function deleteWork(ID) {
     var Date = $('#work_Date').val();
     $.ajax({
       url: "maintenanceManager.php",
       type: "POST",
       async: true,
-      data: {
-        method: "delete",
-        workID: ID
-      },
-      success: function(result) {
+      data: { method: "delete", workID: ID },
+      success: function (result) {
         if (result == 200) {
           location.reload();
         }
       }
     });
   }
-
   function deleteUserFromWork(ID, userN) {
     console.log(ID + userN);
     var Date = $('#work_Date').val();
@@ -177,12 +175,8 @@ require_once("./header.php");
       url: "maintenanceManager.php",
       type: "POST",
       async: true,
-      data: {
-        method: "deleteUser",
-        workID: ID,
-        user: userN
-      },
-      success: function(result) {
+      data: { method: "deleteUser", workID: ID, user: userN },
+      success: function (result) {
         if (result == 200) {
           location.reload();
         } else {
@@ -192,7 +186,7 @@ require_once("./header.php");
     });
   }
   //if showOldTasks is changed, rerender the table
-  $('#showOldTasks').change(function() {
+  $('#showOldTasks').change(function () {
     renderWork();
   });
 
@@ -204,13 +198,8 @@ require_once("./header.php");
       url: "maintenanceManager.php",
       type: "POST",
       async: true,
-      data: {
-        method: "modify",
-        workID: ID,
-        status1: s1,
-        status2: s2
-      },
-      success: function(result) {
+      data: { method: "modify", workID: ID, status1: s1, status2: s2 },
+      success: function (result) {
         if (result == 200) {
           location.reload();
         } else {
@@ -230,16 +219,13 @@ require_once("./header.php");
       url: "maintenanceManager.php",
       type: "POST",
       async: true,
-      data: {
-        method: "get",
-        getOldTasks: getOldTasks
-      },
-      success: function(result) {
+      data: { method: "get", getOldTasks: getOldTasks },
+      success: function (result) {
         //clear .takaritasirend table
         $('.takaritasirend').empty();
         result = JSON.parse(result);
         if (result[0] == "Admin") {
-          $('.takaritasirend').append('<tr><th>Dátum</th><th>1. Személy</th><th>Státusz</th><th>2. Személy</th><th>Státusz</th><th></th></tr>');
+          $('.takaritasirend').append('<tr><th>Dátum</th><th>1. Személy</th><th>Státusz</th><th>2. Személy</th><th>Státusz</th><th>Eszközök</th></tr>');
           result[1].forEach(element => {
             //console.log(element);
 
@@ -281,19 +267,30 @@ require_once("./header.php");
 
             $('.takaritasirend').append('<tr id=tr' + element['id'] + '><td>' + element['datum'] + '</td><td>' + element['szemely1'] + '</td><td>' +
               SZ1Status + '</td><td>' + element['szemely2'] + '</td><td>' + SZ2Status + '</td><td><button class="btn btn-warning" onclick=modifyStatus(' + element['id'] + ')>Módosít</button> <button class="btn btn-success" onclick=applyToWork(' + element['id'] + ')>Jelentkezem</button> <button class="btn btn-danger" onclick=deleteWork(' + element['id'] + ')>Törlés</button></td></tr>');
-            if (element['szemely1'] != null) {
-              $('#tr' + element['id']).find("td:eq(1)").append(' <button class="btn btn-danger" style="float: right; margin-left: 10px; margin-right: 5px;" onclick=deleteUserFromWork(' + element['id'] + ',1)>X</button>')
-            }
-            if (element['szemely2'] != null) {
-              $('#tr' + element['id']).find("td:eq(3)").append(' <button class="btn btn-danger" style="float: right; margin-left: 10px; margin-right: 5px;" onclick=deleteUserFromWork(' + element['id'] + ',2)>X</button>')
-            }
+            if (element['szemely1'] != null) { $('#tr' + element['id']).find("td:eq(1)").append(' <button class="btn btn-danger" style="margin-left: 10px; margin-right: 5px;" onclick=deleteUserFromWork(' + element['id'] + ',1)>X</button>') }
+            if (element['szemely2'] != null) { $('#tr' + element['id']).find("td:eq(3)").append(' <button class="btn btn-danger" style="margin-left: 10px; margin-right: 5px;" onclick=deleteUserFromWork(' + element['id'] + ',2)>X</button>') }
           });
         } else {
           $('.takaritasirend').append('<tr><th>Dátum</th><th>1. Személy</th><th>2. Személy</th></tr>');
 
           result[0].forEach(element => {
             console.log(element);
+          result[0].forEach(element => {
+            console.log(element);
 
+            if (element['szemely1'] == null) {
+              element['szemely1'] = "<button style='display: block; margin: auto;' class='btn btn-success' onclick=applyToWork(" + element['id'] + ")>Jelentkezés</button>"
+            } else {
+
+            }
+            if (element['szemely2'] == null) {
+              element['szemely2'] = "<button style='display: block; margin: auto;' class='btn btn-success' onclick=applyToWork(" + element['id'] + ")>Jelentkezés</button>"
+            } else {
+
+            }
+
+            $('.takaritasirend').append('<tr id=tr' + element['id'] + '><td>' + element['datum'] + '</td><td>' + element['szemely1'] + '</td><td>' + element['szemely2'] + '</td></tr>');
+          });
             if (element['szemely1'] == null) {
               element['szemely1'] = "<button style='display: block; margin: auto;' class='btn btn-success' onclick=applyToWork(" + element['id'] + ")>Jelentkezés</button>"
             } else {
@@ -311,4 +308,6 @@ require_once("./header.php");
       }
     });
   }
+
+
 </script>

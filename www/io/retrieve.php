@@ -2,7 +2,9 @@
 
 namespace Mediaio;
 
+
 use Mediaio\Database;
+
 
 require_once('./Database.php');
 session_start();
@@ -16,8 +18,7 @@ include "header.php";
 $SESSuserName = $_SESSION['UserUserName'];
 
 
-function PhparrayCookie()
-{
+function PhparrayCookie(){
   array_push($selItems, $_COOKIE['id_itemNameAdd']);
   foreach ($selItems as $x) {
     echo $x . " ";
@@ -26,6 +27,7 @@ function PhparrayCookie()
 ?>
 <script>
   var goStatus = 0;
+
 </script>
 
 <html>
@@ -136,6 +138,7 @@ function PhparrayCookie()
 </body>
 
 </html>
+
 <script>
   function prepare(id, txt) {
     $('#dynamic_field').append('<tr id="prep-' + id + '"><td class="dynamic-field"><button id="prep-' + id + '" class="btn btn-dark" onclick="unstage(this.id);"><i class="fas fa-angle-double-left"></i> ' + txt + '</button></td></tr>');
@@ -280,94 +283,6 @@ function PhparrayCookie()
 
   });
 </script>
-
-<style>
-  * {
-    box-sizing: border-box;
-  }
-
-  .btn-info2 {
-    color: white;
-    background-color: #000658;
-    border-color: #000658;
-    border-width: 2px
-  }
-
-  .btn-info2:hover {
-    color: black;
-    background-color: #ffffff;
-    border-color: #000658;
-    border-width: 2px
-  }
-
-  body {
-    font: 16px Arial;
-  }
-
-  /*the container must be positioned relative:*/
-  .autocomplete {
-    position: relative;
-    display: inline-block;
-  }
-
-  input {
-    border: 1px solid transparent;
-    background-color: #f1f1f1;
-    padding: 10px;
-    font-size: 16px;
-  }
-
-  input[type=text] {
-    background-color: #f1f1f1;
-    width: 100%;
-  }
-
-  input[type=submit] {
-    background-color: DodgerBlue;
-    color: #fff;
-    cursor: pointer;
-  }
-
-  .autocomplete-items {
-    position: absolute;
-    border: 1px solid #d4d4d4;
-    border-bottom: none;
-    border-top: none;
-    z-index: 99;
-    /*position the autocomplete items to be the same width as the container:*/
-    top: 100%;
-    left: 0;
-    right: 0;
-  }
-
-  .autocomplete-items div {
-    padding: 10px;
-    cursor: pointer;
-    background-color: #fff;
-    border-bottom: 1px solid #d4d4d4;
-  }
-
-  /*when hovering an item:*/
-  .autocomplete-items div:hover {
-    background-color: #e9e9e9;
-  }
-
-  /*when navigating through the items using the arrow keys:*/
-  .autocomplete-active {
-    background-color: Black !important;
-    color: #ffffff;
-  }
-
-  .livearray {
-    display: none;
-  }
-
-  .statement {
-    text-align: justify;
-    border: 1px solid;
-    padding: 10 10 10 10;
-  }
-</style>
 
 <?php //Message handler
 if (isset($_GET['state'])) {

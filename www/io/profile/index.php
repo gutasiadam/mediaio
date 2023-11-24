@@ -1,8 +1,8 @@
 <?php
 session_start();
-    include("header.php");
-    include("../translation.php");?>
-    <script src="../utility/_initMenu.js" crossorigin="anonymous"></script>
+include("header.php");
+include("../translation.php"); ?>
+<script src="../utility/_initMenu.js" crossorigin="anonymous"></script>
 
     <html>
 <script> $( document ).ready(function() {
@@ -44,24 +44,48 @@ session_start();
   </div>
 </nav>
 
-                    <body>
-                    <h1 align=center class="rainbow">Opciók</h1>
-                    <table class="logintable">
-                    <tr><td><form action="pfcurr.php"><button class="btn btn-dark">Mutasd a nálam levő tárgyakat <i class="fas fa-project-diagram"></i></button></form></td></tr>
-                    <tr><td><form action="chPwd.php"><button class="btn btn-warning">Jelszócsere <i class="fas fa-key"></i></button></form></td></tr>
-                    <tr><td><form action="userlist.php"><button class="btn btn-dark">Elérhetőségek megtekintése <i class="fas fa-address-book"></i></i></button></form></td></tr>
-                    <tr><td><form action="rules.php"><button class="btn btn-secondary">Dokumentumok <i class="fas fa-folder-open"></i></i></button></form></td></tr>
-                    <tr><td><form action="../utility/damage_report/announce_Damage.php"><button class="btn btn-warning">Sérülés bejelentése <i class="fas fa-file-alt"></i></button></form></td></tr>
-          <?php
-                    if (in_array("admin", $_SESSION["groups"])){
-            echo '
+  <body>
+    <h1 align=center class="rainbow">Opciók</h1>
+    <table class="help-logintable">
+      <tr>
+        <td>
+          <form action="pfcurr.php"><button class="btn btn-dark">Mutasd a nálam levő tárgyakat <i
+                class="fas fa-project-diagram"></i></button></form>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <form action="chPwd.php"><button class="btn btn-warning">Jelszócsere <i class="fas fa-key"></i></button></form>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <form action="userlist.php"><button class="btn btn-dark">Elérhetőségek megtekintése <i
+                class="fas fa-address-book"></i></i></button></form>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <form action="rules.php"><button class="btn btn-secondary">Dokumentumok <i
+                class="fas fa-folder-open"></i></i></button></form>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <form action="../utility/damage_report/announce_Damage.php"><button class="btn btn-warning">Sérülés bejelentése
+              <i class="fas fa-file-alt"></i></button></form>
+        </td>
+      </tr>
+      <?php
+      if (in_array("admin", $_SESSION["groups"])) {
+        echo '
                     <tr><td><form action="../utility/damage_report/service.php"><button class="btn btn-warning">Szervíz <i class="fas fa-wrench"></i></i></button></form></td></tr>
                     <tr><td><form action="usercheck.php"><button class="btn btn-success">UserCheck <i class="fas fa-user-check"></i></button></form></td></tr>
                     <tr><td><form action="stats.php"><button class="btn btn-dark">Áttekintés <i class="fas fa-chart-pie"></i></i></button></form></td></tr>
                     ';
-                  }
-                    if(in_array("system", $_SESSION["groups"]) or in_array("teacher", $_SESSION["groups"])){ //SYSADMIN OR TEACHER
-                    echo '
+      }
+      if (in_array("system", $_SESSION["groups"]) or in_array("teacher", $_SESSION["groups"])) { //SYSADMIN OR TEACHER
+        echo '
                     <tr><td><form action="../budget/"><button class="btn btn-info">Költségvetés <i class="fas fa-coins"></i></button></form></td></tr>
 					          <tr><td><form action="points.php"><button class="btn btn-success">Pontszámok <i class="fas fa-calculator"></i></button></form> </td></tr>';
                     }
@@ -70,26 +94,14 @@ session_start();
                       <tr><td><form action="roles.php"><button class="btn btn-danger">Engedélyek módosítása <i class="fas fa-radiation"></i></button></form></td></tr>
                       <tr><td><form action="../utility/loginPageSettings.php"><button class="btn btn-danger">Motd/Belépések korlátozása <i class="fas fa-user-shield"></i></button></form></td></tr>
                       <tr><td><form action="../utility/refetchData.php"><button class="btn btn-success disabled">Adattáblák frissítése - Frissíts a kivétel oldal betöltésével! <i class="fas fa-sync"></i></i></button></form></td></tr>';
-                    } ?>
-                    </table><?php
-          
-        }else{
-            header("Location: ../index.php?error=AccessViolation");
-            exit();
-        }
-    ?>
+      } ?>
+    </table>
+    <?php
+
+} else {
+  header("Location: ../index.php?error=AccessViolation");
+  exit();
+}
+?>
+
 </html>
-
-<style>
-.logintable{
-  width: 30%;
-  text-align: center;
-  margin: 0 auto; 
-}
-
-
-#unavailable{
-  font-size:18px;
-  color: red;
-}
-</style>

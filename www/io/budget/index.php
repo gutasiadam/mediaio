@@ -69,7 +69,7 @@ include("../profile/header.php");
       </br>
         <div class="row">
           <div class="col">
-            <button data-toggle="modal" data-bs-target="#addDataModal" type="button" class="btn btn-success noprint" style='height: 2rem'><i class="fas fa-plus fa-xl" style="color: #ffffff;"></i></button>
+            <button data-bs-toggle="modal" data-bs-target="#addDataModal" type="button" class="btn btn-success noprint" style='height: 2rem'><i class="fas fa-plus fa-xl" style="color: #ffffff;"></i></button>
           </div>
       </div>
       </div>

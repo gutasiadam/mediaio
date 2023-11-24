@@ -1,7 +1,7 @@
 <!-- Default header  -->
 
 <head>
-  <link href='./main.css' rel='stylesheet' />
+  <link href='../style/common.scss' rel='stylesheet' />
   <link rel="icon" type="image/x-icon" href="./logo.ico">
   <div class="UI_loading"><img class="loadingAnimation" src="./utility/mediaIO_loading_logo.gif"></div>
   <meta charset='utf-8' />

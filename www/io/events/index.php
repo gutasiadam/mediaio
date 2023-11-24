@@ -4,12 +4,13 @@ if (!isset($_SESSION['userId'])) {
   header("Location: ../index.php?error=AccessViolation");
 }
 #echo $_SESSION['color'];
-?><html lang='en'>
+?>
+<html lang='en'>
 
 <head>
   <title>Arpad Media IO</title>
   <link rel="icon" type="image/x-icon" href="../logo.ico">
-  <link href='../main.css' rel='stylesheet' />
+  <link href='../style/common.scss' rel='stylesheet' />
   <div class="UI_loading"><img class="loadingAnimation" src="../utility/mediaIO_loading_logo.gif"></div>
   <meta charset='utf-8' />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
@@ -28,6 +29,7 @@ if (!isset($_SESSION['userId'])) {
   <script src='./interaction/main.js'></script>
 
 
+  <link href='https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css' rel='stylesheet' />
   <script src="./moment/main.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="./defaultCalendarRender.js"></script>
@@ -157,68 +159,6 @@ if (!isset($_SESSION['userId'])) {
 </body>
 
 </html>
-<style>
-  .sideHelp {
-    height: 100%;
-    /* 100% Full-height */
-    width: 0;
-    /* 0 width - change this with JavaScript */
-    position: fixed;
-    /* Stay in place */
-    z-index: 1;
-    /* Stay on top */
-    top: 0;
-    /* Stay at the top */
-    left: 0;
-    background-color: #222;
-    /* Black*/
-    overflow-y: hidden;
-    overflow-x: hidden;
-    /* Disable horizontal scroll */
-    padding-top: 60px;
-    /* Place content 60px from the top */
-    transition: 0.5s;
-    /* 0.5 second transition effect to slide in the sidenav */
-    padding-left: 10px;
-  }
-
-  table {
-    text-align: left;
-  }
-
-  .closebtn {
-    color: white;
-    transition: .8s ease-in-out;
-    display: block;
-  }
-
-  .closebtn:hover {
-    color: red;
-    transform: rotateX(45deg);
-    transition: 0.5s;
-    -webkit-transform: rotateX(45deg);
-    -moz-transform: rotateX(45deg);
-    -o-transform: rotateX(45deg);
-  }
-
-  #calendar {
-    margin-left: 2%;
-    width: 90%;
-  }
-
-  #deleteEventName {
-    position: relative;
-    color: #dbdbdb;
-    text-align: left;
-    font-size: 10;
-    align: right;
-  }
-
-  #exampleModalLabel {
-    position: absolute;
-    font-size: 30;
-  }
-</style>
 
 <script>
   function openNav() {
@@ -230,14 +170,14 @@ if (!isset($_SESSION['userId'])) {
     document.getElementById("sideHelp1").style.width = "0";
   }
 
-  window.onload = function() {
+  window.onload = function () {
     //$('#WIPModal').modal()
     display = document.querySelector('#time');
     var timeUpLoc = "../utility/userLogging.php?logout-submit=y"
     startTimer(display, timeUpLoc);
   };
 
-  $(document).ready(function() {
+  $(document).ready(function () {
     $(".mailSend").hide();
   });
 </script>
