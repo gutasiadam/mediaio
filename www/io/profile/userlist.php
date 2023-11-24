@@ -1,6 +1,5 @@
 <?php 
 session_start();
-include "header.php";
 use Mediaio\Core;
 use Mediaio\Database;
 use Mediaio\MailService;
@@ -8,15 +7,13 @@ require __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__.'/../Core.php';
 require_once __DIR__.'/../Database.php';
 require_once __DIR__.'/../Mailer.php';
+include("header.php");
 if(!isset($_SESSION['userId'])){
   header("Location: index.php?error=AccessViolation");}?>
 
 <head>
 <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-	  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
-  <script src="https://kit.fontawesome.com/2c66dc83e7.js" crossorigin="anonymous"></script>
 </head>
 <title>Elérhetőségek</title>
 
@@ -24,7 +21,7 @@ if(!isset($_SESSION['userId'])){
   <a class="navbar-brand" href="index.php">
     <img src="../utility/logo2.png" height="50">
   </a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
@@ -36,7 +33,7 @@ if(!isset($_SESSION['userId'])){
         });
       </script>
     </ul>
-    <ul class="navbar-nav navbarPhP">
+    <ul class="navbar-nav ms-auto navbarPhP">
       <li>
         <a class="nav-link disabled timelock" href="#"><span id="time"> 10:00 </span><?php echo ' '.$_SESSION['UserUserName'];?>
         </a>
@@ -52,9 +49,6 @@ if(!isset($_SESSION['userId'])){
         };
       </script>
     </form>
-    <a class="nav-link my-2 my-sm-0" href="./help.php">
-      <i class="fas fa-question-circle fa-lg"></i>
-    </a>
   </div>
 </nav> <?php  } ?>
 

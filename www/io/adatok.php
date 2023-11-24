@@ -2,58 +2,51 @@
 namespace Mediao;
 include "translation.php";
 include "header.php";
-//Suppresses error messages
-//error_reporting(E_ERROR | E_PARSE);
 
 namespace Mediaio;
-//require "./Mediaio_autoload.php";
 
-//require __DIR__."/ItemManager.php";
 use Mediaio\itemDataManager;
 require "./ItemManager.php";
 
 ?>
 <!DOCTYPE html>
-<?php if (isset($_SESSION["userId"])) { ?> <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-  <a class="navbar-brand" href="index.php">
-    <img src="./utility/logo2.png" height="50">
-  </a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
+<?php if (isset($_SESSION["userId"])) { ?> 
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="index.php"><img src="./utility/logo2.png" height="50"></a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto navbarUl">
-      <script>
-        $(document).ready(function() {
-          menuItems = importItem("./utility/menuitems.json");
-          drawMenuItemsLeft('adatok', menuItems);
-        });
-      </script>
     </ul>
-    <ul class="navbar-nav navbarPhP">
+    <ul class="navbar-nav ms-auto navbarPhP">
+      <!-- Autologout -->
       <li>
-        <a class="nav-link disabled timelock" href="#"><span id="time"> 10:00 </span><?php echo ' '.$_SESSION['UserUserName'];?>
-        </a>
+        <a class="nav-link disabled timelock" href="#"><span id="time"> 10:00 </span><?php echo ' '.$_SESSION['UserUserName'];?></a>
       </li>
     </ul>
+
     <form method='post' class="form-inline my-2 my-lg-0" action=utility/userLogging.php>
       <button class="btn btn-danger my-2 my-sm-0" name='logout-submit' type="submit">Kijelentkezés</button>
       <script type="text/javascript">
         window.onload = function () {
+          menuItems = importItem("./utility/menuitems.json");
+          drawMenuItemsLeft('adatok', menuItems);
+
           display = document.querySelector('#time');
           var timeUpLoc="utility/userLogging.php?logout-submit=y"
           startTimer(display, timeUpLoc);
         };
       </script>
     </form>
-    <a class="nav-link my-2 my-sm-0" href="./help.php">
-      <i class="fas fa-question-circle fa-lg"></i>
-    </a>
   </div>
 </nav> <?php  } ?>
 <br>
 <form>
-Mutasd a
+  <!-- Selection -->
+<span>Mutasd a</span>
 <div class="form-check form-check-inline">
   <input class="form-check-input" type="checkbox" name="rentable" id="inline_a" value="1" <?php if(isset($_GET['rentable']) && $_GET['rentable'] == '1') echo 'checked';?>>
   <label class="form-check-label" for="inline_a">Médiás,</label>
@@ -74,9 +67,7 @@ Mutasd a
   <input class="form-check-input" type="checkbox" name="Out" id="inline_e" value="4" <?php if(isset($_GET['Out']) && $_GET['Out'] == '4') echo 'checked';?>>
   <label class="form-check-label" for="inline_e">Kinnlevő,</label>
 </div>
-
-
-tárgyakat,
+<span>tárgyakat,</span>
 <select id="orderByField" name="orderByField">
   <option value="UID" <?php if(isset($_GET['orderByField']) && $_GET['orderByField'] == 'UID') echo 'selected';?>>UID</option>
   <option value="Nev" <?php if(isset($_GET['orderByField']) && $_GET['orderByField'] == 'Nev') echo 'selected';?>>Név</option>

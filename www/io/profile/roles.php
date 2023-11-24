@@ -17,10 +17,6 @@ if(!in_array("system", $_SESSION["groups"])) {
 
 <html>  
     <head>
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js">  </script>
-  <script src="https://kit.fontawesome.com/2c66dc83e7.js" crossorigin="anonymous"></script>
   <script>
   var imodal=0;
   
@@ -32,7 +28,7 @@ if(!in_array("system", $_SESSION["groups"])) {
   <a class="navbar-brand" href="index.php">
     <img src="../utility/logo2.png" height="50">
   </a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
@@ -44,7 +40,7 @@ if(!in_array("system", $_SESSION["groups"])) {
         });
       </script>
     </ul>
-    <ul class="navbar-nav navbarPhP">
+    <ul class="navbar-nav ms-auto navbarPhP">
       <li>
         <a class="nav-link disabled timelock" href="#"><span id="time"> 10:00 </span><?php echo ' '.$_SESSION['UserUserName'];?>
         </a>
@@ -60,9 +56,6 @@ if(!in_array("system", $_SESSION["groups"])) {
         };
       </script>
     </form>
-    <a class="nav-link my-2 my-sm-0" href="./help.php">
-      <i class="fas fa-question-circle fa-lg"></i>
-    </a>
   </div>
 </nav> <?php } ?>
     <body>  

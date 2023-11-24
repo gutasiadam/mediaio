@@ -17,7 +17,7 @@ include("../profile/header.php");
   <a class="navbar-brand" href="index.php">
     <img src="../utility/logo2.png" height="50">
   </a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
@@ -29,7 +29,7 @@ include("../profile/header.php");
         });
       </script>
     </ul>
-    <ul class="navbar-nav navbarPhP">
+    <ul class="navbar-nav ms-auto navbarPhP">
       <li>
         <a class="nav-link disabled timelock" href="#"><span id="time"> 10:00 </span><?php echo ' '.$_SESSION['UserUserName'];?>
         </a>
@@ -45,9 +45,6 @@ include("../profile/header.php");
         };
       </script>
     </form>
-    <a class="nav-link my-2 my-sm-0" href="./help.php">
-      <i class="fas fa-question-circle fa-lg"></i>
-    </a>
   </div>
 </nav> 
 
@@ -72,7 +69,7 @@ include("../profile/header.php");
       </br>
         <div class="row">
           <div class="col">
-            <button data-toggle="modal" data-target="#addDataModal" type="button" class="btn btn-success noprint" style='height: 2rem'><i class="fas fa-plus fa-xl" style="color: #ffffff;"></i></button>
+            <button data-toggle="modal" data-bs-target="#addDataModal" type="button" class="btn btn-success noprint" style='height: 2rem'><i class="fas fa-plus fa-xl" style="color: #ffffff;"></i></button>
           </div>
       </div>
       </div>
@@ -130,9 +127,7 @@ include("../profile/header.php");
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLabel">Tétel hozzáadása</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
                 <form>
@@ -162,7 +157,7 @@ include("../profile/header.php");
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Mégsem</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Mégsem</button>
         <button type="button" class="btn btn-primary">Hozzáadás</button>
         <script>
           function openTodaysResources(){
@@ -228,9 +223,7 @@ include("../profile/header.php");
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLabel">Tétel módosítása</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
                 <form>
@@ -261,7 +254,7 @@ include("../profile/header.php");
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Mégsem</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Mégsem</button>
         <button type="button" class="btn btn-warning">Módosítás</button>
         <script>
           $(document).ready(function() {

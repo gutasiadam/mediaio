@@ -15,7 +15,7 @@
         {"name": "adminRoles", "message": "Admin jogokkal rendelkezel."}
     ],
     "right" : [
-        {"name": "help","icon": "fas fa-question-circle fa-lg", "href": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"}
+      
     ]},
     "indexTable":[
         {"name": "takeout","icon": "fas fa-upload fa-3x", "href": "takeout.php", "displayName": "Kivétel"},

@@ -1,4 +1,9 @@
 <?php 
+
+/**
+ * ItemManager.php
+ * Manages the takeout and retrieve processes, stats and user Lists.
+ */
 namespace Mediaio;
 require_once __DIR__.'/Database.php';
 require_once __DIR__.'/Core.php';
@@ -426,10 +431,13 @@ class itemDataManager{
 }
 
 class itemHistoryManager{
-
+  #TODO: Take code from Pathfinder and implement it here.
 }
 
 class userManager{
+  /**
+   * Get every user from the database
+   */
   static function getUsers(){
     $mysqli = Database::runQuery_mysqli();
     $rows = array();
@@ -445,6 +453,10 @@ class userManager{
     }
     return;
   }
+
+  /**
+   * Get present presets from the database
+   */
 
   static function getPresets(){
     $mysqli = Database::runQuery_mysqli();
@@ -463,6 +475,9 @@ class userManager{
   }
 }
 
+/**
+ * Handle URL requests
+ */
 if(isset($_POST['mode'])){
 
   //Set timezone to the computer's timezone.
