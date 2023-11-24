@@ -12,6 +12,25 @@
 
  /* ================================================================= EDDIG ================================================================= */
 
+
+
+ /* AMBlue Button */
+button.mediaBlue{
+    background-color: #000658;
+    border-color: #000658;
+    border-width: 2px;
+    color: white;
+    transition: 0.2s linear;
+
+    &:hover{
+        background-color: #ffffff;
+        color: black;
+        border-color: #000658;
+        border-width: 2px;
+        transition: 0.2s linear;
+    }
+}
+
  .jstree-hidden {
      display: none;
  }
@@ -150,7 +169,6 @@
  }
 
  input[type=submit] {
-     background-color: DodgerBlue;
      color: #fff;
      cursor: pointer;
  }
@@ -836,17 +854,6 @@
      box-align: left;
  }
 
- .col-6 {
-     border-style: solid;
-     border-width: 1px;
-     transition: 0.5s;
-     text-align: center;
- }
-
- .col-6:hover {
-     background-color: #3b3b3b;
-     border-radius: 25px;
- }
 
  .ab {
      color: #3b3b3b;
@@ -855,6 +862,19 @@
 
  .ab:hover {
      color: #ffffff;
+     border-radius: 25px;
+     transition: 0.5s;
+     
+ }
+
+ .ab a{
+    border: 1px solid #3b3b3b;
+    transition: 0.5s;
+ }
+
+ .ab a:hover{
+    border: 1px solid #ffffff;
+    background-color: #3b3b3b;
  }
 
  .rainbow {
@@ -1157,25 +1177,18 @@
      color: white;
  }
 
- .col-6 {
-     border-style: solid;
-     border-width: 1px;
-     transition: 0.5s;
-     text-align: center;
- }
-
- .col-6:hover {
-     background-color: #3b3b3b;
-     border-radius: 25px;
- }
-
- .ab {
+ .ab a{
+    border-style: 1px solid #3b3b3b;
      color: #3b3b3b;
      transition: 0.5s;
  }
 
- .ab:hover {
-     color: #ffffff;
+ .ab td:hover{
+    background-color: #3b3b3b;
+ }
+
+ .ab a:hover {
+    color: #ffffff;
  }
 
  #note {

@@ -11,16 +11,17 @@ if(isset($_POST["wEvent"]))
  if(!isset($_POST['wComment'])){$wComment="";}else{$wComment=$_POST['wComment'];}
  $query = "
  INSERT INTO worksheet 
- (FullName, EventID, Worktype, Location, Comment) 
- VALUES ('".$_SESSION['lastName']." ".$_SESSION['firstName']."', '".$_POST['wEvent']."', '".$_POST['wType']."', '".$_POST['wLoc']."','".$wComment."');";
+ (FullName, EventID, Worktype, Location, Link, Comment) 
+ VALUES ('".$_SESSION['lastName']." ".$_SESSION['firstName']."', '".$_POST['wEvent']."', '".$_POST['wType']."', '".$_POST['wLoc']."', '".$_POST['link']."','".$wComment."');";
 
  //Run query
- //echo $query;
+ echo $query;
 $result = mysqli_query($connect, $query);
  if($result){
      echo "1";
  }
  else{
+
      echo "2";
  }
 }

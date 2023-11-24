@@ -38,7 +38,7 @@ if(!isset($_SESSION['userId'])){
 
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
 					<a class="navbar-brand" href="index.php">Arpad Media IO</a>
-					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+					<button class="navbar-toggler" type="button" data-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 					  <span class="navbar-toggler-icon"></span>
 					</button>
 				  
@@ -83,9 +83,7 @@ if(!isset($_SESSION['userId'])){
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLabel">Esemény hozzáadása</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         <h6>Esemény hozzáadása <span id="addEventInterval"></span> időben</h6>
@@ -108,7 +106,7 @@ if(!isset($_SESSION['userId'])){
         szándékodat. <u>(megerősítés után már nem tudod törölni az eseményt.)</u></h6>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Mégsem</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Mégsem</button>
         <input type="submit" class="btn btn-primary" value="Hozzáadás" ></button>
         <input type="hidden" id="addEventStartVal"></input>
         <input type="hidden" id="addEventEndVal"></input>
@@ -124,9 +122,7 @@ if(!isset($_SESSION['userId'])){
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLabel">Opcíók</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         <form id="sendDelEvent">
@@ -142,7 +138,7 @@ if(!isset($_SESSION['userId'])){
       </div>
       <div class="modal-footer">
       <span id="deleteEventName"></span>
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Mégsem</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Mégsem</button>
       </div>
     </div>
   </div>

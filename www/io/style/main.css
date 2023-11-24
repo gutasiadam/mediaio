@@ -83,14 +83,56 @@ nav .navbarPhP {
   align:left;
 }*/
 
-.col-6{
+.dynamic-field {
+  width: 100%;
+  margin-left: 15px;
+}
+
+.dynamic-field > button{
+  width: 100%;
+  padding: 18px;
+  text-align: left;
+}
+
+.dynamic-table tr td{
+  padding: 0;
+}
+
+.optionsButtons{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+}
+
+.optionsButtons > button{
+  flex: 0 1 auto;
+}
+
+.dynamic-field > td {
+  font-size: xx-large;
+  margin-right: 15px;
+  vertical-align: middle;
+}
+
+.menuTable{
   border-style: solid;
   border-width: 1px;
   transition: 0.5s;
   text-align:center;
 }
 
-.col-6:hover{
+.menuTable a:hover{
+  color: #ffffff;
+  transition: 0.5s;
+}
+
+.menuTable a{
+  color: #000658;
+  transition: 0.5s;
+}
+
+.menuTable:hover {
   background-color:#3b3b3b;
   border-radius: 25px;
 }

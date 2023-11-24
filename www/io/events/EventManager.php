@@ -1,14 +1,19 @@
 <?php 
-//namespace Mediaio;
+// ini_set('display_errors', 'On');
+// ini_set('log_errors', 'On');
+// echo __DIR__;
+// error_reporting(E_ALL);
+// echo error_reporting();
 use Mediaio\Core;
 use Mediaio\Database;
 use Mediaio\MailService;
+
 require __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__.'/../Core.php';
 require_once __DIR__.'/../Database.php';
 require_once __DIR__.'/../Mailer.php';
-putenv('GOOGLE_APPLICATION_CREDENTIALS=../utility/credentials.json');
 
+putenv('GOOGLE_APPLICATION_CREDENTIALS=../utility/credentials.json');
 class EventManager{
     // const ip_address='192.168.0.24';
     static function loadEvents(){
@@ -21,7 +26,6 @@ class EventManager{
     $service = new Google_Service_Calendar($client);
 
     // Frissítjük a Google_Client objektumot az új naptárral
-    //$client->setAccessToken($client->getAccessToken());
     // Lekérdezzük az összes elérhető naptárat
     $today = new DateTime();
     $oneYearAgo = $today->sub(new DateInterval('P1Y'));
@@ -46,7 +50,7 @@ class EventManager{
           'title'   => $event->getSummary(),
           'start'   => $event->start->dateTime,
           'end'   => $event->end->dateTime,
-          'backgroundColor' => "#4452b8",
+          'backgroundColor' => "#0e6ab5",
           'textColor' => "#ffffff",
           'borderColor' => "#ffffff"
         );
@@ -74,8 +78,8 @@ class EventManager{
           'title'   => $event->getSummary(),
           'start'   => $event->start->dateTime,
           'end'   => $event->end->dateTime,
-          'backgroundColor' => "#7c87cd",
-          'textColor' => "#000000",
+          'backgroundColor' => "#20295E",
+          'textColor' => "#ffffff",
           'borderColor' => "#ffffff"
         );
         $start = $event->start->dateTime;

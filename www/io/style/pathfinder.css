@@ -2,14 +2,14 @@
     box-sizing: border-box;
 }
 
-.btn-info2 {
+.mediaBlue {
     color: white;
     background-color: #000658;
     border-color: #000658;
     border-width: 2px
 }
 
-.btn-info2:hover {
+.mediaBlue:hover {
     color: black;
     background-color: #ffffff;
     border-color: #000658;
