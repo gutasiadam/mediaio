@@ -38,36 +38,51 @@ $TKI = $_SESSION['UserUserName'];
  });
   </script>
 </head>
-<?php if (isset($_SESSION["userId"])) { ?> <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-  <a class="navbar-brand" href="../../index.php">
-    <img src="../../utility/logo2.png" height="50">
+<?php if (isset($_SESSION["userId"])) { ?> 
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <a class="navbar-brand" href="index.php">
+    <img src="../logo2.png" height="50">
   </a>
+
+  <!-- Load Menu and Index table Icons and links -->
+  <script type="text/javascript">
+        window.onload = function () {
+
+          menuItems = importItem("../menuitems.json");
+          drawMenuItemsLeft('profile', menuItems,3);
+
+          drawMenuItemsRight('profile', menuItems,3);
+
+          display = document.querySelector('#time');
+          var timeUpLoc="utility/userLogging.php?logout-submit=y"
+          startTimer(display, timeUpLoc);
+        };
+  </script>
+
+  <!-- Mobile Navigation - Additional toggle button -->
   <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
+      <span class="navbar-toggler-icon"></span>
   </button>
+
+  <!-- Main Navigation -->
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto navbarUl">
-      <script>
-        $(document).ready(function() {
-          menuItems = importItem("../../utility/menuitems.json");
-          drawMenuItemsLeft('profile', menuItems,3);
-        });
-      </script>
     </ul>
-    <ul class="navbar-nav navbarPhP">
-      <li>
-        <a class="nav-link disabled timelock" href="#"><span id="time"> 10:00 </span><?php echo ' '.$_SESSION['UserUserName'];?>
-        </a>
-      </li>
+    <ul class="navbar-nav ms-auto navbarPhP">
+
+      <!-- Timeout timer -->
+      <li><a class="nav-link disabled timelock" href="#"><span id="time"> 10:00 </span>
+        <?php echo ' '.$_SESSION['UserUserName'];?>
+      </a></li>
     </ul>
-    <form method='post' class="form-inline my-2 my-lg-0" action=../../utility/userLogging.php>
-      <button class="btn btn-danger my-2 my-sm-0" name='logout-submit' type="submit">Kijelentkezés</button>
+
+    <!-- User logout button -->
+    <form method='post' class="form-inline my-2 my-lg-0" action=utility/userLogging.php>
+      <button class="btn btn-danger my-2 my-sm-0" id="logoutBtn" name='logout-submit' type="submit">Kijelentkezés</button>
     </form>
-    <a class="nav-link my-2 my-sm-0" href="../../help.php">
-      <i class="fas fa-question-circle fa-lg"></i>
-    </a>
+
   </div>
-</nav> <?php  }else{
+</nav> <?php  } else{
   echo "Ehhez a funkcióhoz be kell jelentkezned!";
   exit();
 } ?> 

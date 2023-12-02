@@ -168,6 +168,11 @@ button.mediaBlue{
      width: 100%;
  }
 
+ input[type=password] {
+    background-color: #f1f1f1;
+    width: 100%;
+}
+
  input[type=submit] {
      color: #fff;
      cursor: pointer;
@@ -1157,8 +1162,8 @@ button.mediaBlue{
      font-size: 1.3rem !important;
  }
 
- .navbar-brand {
-     padding-left: 15px;
+ .navbar{
+    padding: 0.5rem 1rem;
  }
 
  .successtable {
@@ -1175,6 +1180,11 @@ button.mediaBlue{
      margin: 0 auto;
      margin-top: 60px;
      color: white;
+ }
+
+ logout-button {
+     margin-left: 10px;
+     margin-right: 20px;
  }
 
  .ab a{

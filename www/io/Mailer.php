@@ -1,7 +1,7 @@
 <?php
 namespace Mediaio;
 
-//require_once __DIR__ .'/vendor/autoload.php';
+require_once __DIR__ .'/vendor/autoload.php';
 require_once __DIR__ .'/Config.php';
 
 use SendinBlue\Client\Configuration;
@@ -21,15 +21,11 @@ class MailService
 
     static function sendContactMail($name,$to,$subject,$content)
     {
-        //echo $to;
-        // Read the JSON file into a string
-        $jsonString = file_get_contents(__DIR__.'/utility/mailCredentials.json');
+        $jsonString = file_get_contents(__DIR__.'/server/mailCredentials.json');
 
-        // Decode the JSON string into a PHP object
         $data = json_decode($jsonString);
 
-        // Access the field using object syntax
-        $apiKey = $data->mailApiKey;
+        $apiKey = $data->ApiKey;
         $config = Configuration::getDefaultConfiguration()->setApiKey('api-key', $apiKey);
         $apiInstance = new TransactionalEmailsApi(null, $config);
 

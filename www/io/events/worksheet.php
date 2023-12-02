@@ -21,48 +21,6 @@ setcookie("Cookie_eventId", $_GET['eventId'], time() + (86400 * 30), "/");
   <link href='../style/events.css' rel='stylesheet' />
 </head>
 <?php
-
-//Edit worksheet
-if (isset($_POST["uId"]) && isset($_SESSION['UserUserName'])) {
-  if (!isset($_POST['uComment'])) {
-    $uComment = "";
-  } else {
-    $uComment = $_POST['uComment'];
-  }
-  $connect = Database::runQuery_mysqli();
-
-  $query = "
-  UPDATE worksheet
-  SET Comment=?, Location=?, Worktype=?, Link=?
-  WHERE ID=?";
-
-  //bind params to query
-  $stmt = $connect->prepare($query);
-
-  //var data= {uType: uType,uLoc: uLoc,uComment: uComment,uId: uId,linkUrl: linkUrl}
-  $stmt->bind_param("sssss", $uComment, $_POST['uLoc'], $_POST['uType'], $_POST['linkUrl'], $_POST['uId']);
-
-
-  $result = $stmt->execute();
-
-  var_dump($stmt);
-
-  var_dump($result);
-
-  if ($result) {
-    echo "1";
-  } else {
-    echo "2";
-  }
-  exit();
-}
-
-if (isset($_POST["deleteId"])) {
-  $WorkId = $_POST["deleteId"];
-  $query = "DELETE from worksheet WHERE ID='$WorkId'";
-  $connect = Database::runQuery($query);
-}
-
 if (isset($_SESSION['UserUserName'])) {
 
   if (isset($_GET['eventId'])) {
@@ -107,7 +65,7 @@ if (isset($_SESSION['UserUserName'])) {
 
 <title>Munkalap - ' . $event->getSummary() . '</title>
 
-<body>
+<body class="px-3 py-3">
 <h2 class="mb-2 mr-sm-2" id="titleString">Munkalap - <strong>' . $event->getSummary() . '</strong>  <button type="button" class="btn btn-success noprint mb-2 mr-sm-2" data-bs-toggle="modal" data-bs-target="#addWorkSheetData">
 <i style="font-size: 30px;" class="fas fa-plus fa-2x"></i>
 </button>
@@ -216,7 +174,7 @@ if (isset($_SESSION['UserUserName'])) {
                 </div>
                 <div class="modal-footer">
                   <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Mégsem</button>
-                  <input type="submit" class="btn btn-primary" value="Hozzáadás"></button>
+                  <input type="submit" class="btn btn-warning" value="Szerkesztés"></button>
                 </div>
                 <input class="form-control" type="hidden" id="upDateId" value="NUL"></input>
               </div>
@@ -395,6 +353,7 @@ if (isset($_SESSION['UserUserName'])) {
     document.getElementById("titleString").innerHTML = "Adatpont törlése folyamatban...";
     $.ajax({
       type: "POST",
+      url: 'wHandler.php',
       data: {
         deleteId: id
       },
@@ -508,6 +467,7 @@ if (isset($_SESSION['UserUserName'])) {
 
     $.ajax({
       type: "POST",
+      url: 'wHandler.php',
       data: {
         uType: uType,
         uLoc: uLoc,

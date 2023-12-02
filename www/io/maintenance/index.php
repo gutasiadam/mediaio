@@ -105,7 +105,7 @@ require_once("./header.php");
   //Ha nincs feladat, ne is jelenjen meg a táblázat:
   window.onload = function () {
     display = document.querySelector('#time');
-    var timeUpLoc = "./userLogging.php?logout-submit=y"
+    var timeUpLoc = "../utility/userLogging.php?logout-submit=y"
     startTimer(display, timeUpLoc);
     renderWork();
     $('#processing').hide();

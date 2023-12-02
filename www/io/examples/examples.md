@@ -11,4 +11,7 @@
 
  - Tartalmazza az oldal globális beállításait (motd/belépéskorlátozás)
 
+> mediaio.sql
+ - Az adatbáziskezelőbe történő importálással inicializálhatóak a használt táblák.
+
 
