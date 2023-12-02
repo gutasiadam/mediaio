@@ -1,14 +1,14 @@
 { "menu": {
     "left" : [
-        {"name": "index","icon": "fas fa-home fa-lg", "href": "index.php"},
-        {"name": "takeout","icon": "fas fa-upload fa-lg", "href": "takeout.php"},
-        {"name": "retrieve","icon": "fas fa-download fa-lg", "href": "retrieve.php"},
-        {"name": "adatok","icon": "fas fa-database fa-lg", "href": "adatok.php?Out=4&orderByField=Nev&order=ASC"},
-        {"name": "pathfinder","icon": "fas fa-project-diagram fa-lg", "href": "pathfinder.php"},
-        {"name": "events","icon": "fas fa-calendar-alt fa-lg", "href": "events/"},
-        {"name": "maintenance", "icon": "fas fa-broom fa-lg", "href": "maintenance/index.php"},
-        {"name": "nas","icon": "fas fa-server fa-lg", "href": "https://nas.arpadmedia.hu","target" : "_blank","external":true},
-        {"name": "profile","icon": "fas fa-user-alt fa-lg", "href": "profile"}
+        {"name": "index","icon": "fas fa-home fa-lg", "href": "index.php", "displayName": "Kezdőlap"},
+        {"name": "takeout","icon": "fas fa-upload fa-lg", "href": "takeout.php", "displayName": "Kivétel"},
+        {"name": "retrieve","icon": "fas fa-download fa-lg", "href": "retrieve.php", "displayName": "Visszahozás"},
+        {"name": "adatok","icon": "fas fa-database fa-lg", "href": "adatok.php?Out=4&orderByField=Nev&order=ASC", "displayName": "Adatok"},
+        {"name": "pathfinder","icon": "fas fa-project-diagram fa-lg", "href": "pathfinder.php", "displayName": "PathFinder"},
+        {"name": "events","icon": "fas fa-calendar-alt fa-lg", "href": "events/", "displayName": "Naptár"},
+        {"name": "maintenance", "icon": "fas fa-broom fa-lg", "href": "maintenance/index.php",  "displayName": "Takarítás"},
+        {"name": "nas","icon": "fas fa-server fa-lg", "href": "https://nas.arpadmedia.hu","target" : "_blank","external":true, "displayName": "Fájlszerver"},
+        {"name": "profile","icon": "fas fa-user-alt fa-lg", "href": "profile",  "displayName": "Profil"}
         
     ],
     "info" : [

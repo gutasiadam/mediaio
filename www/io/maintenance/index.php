@@ -49,7 +49,7 @@ require_once("./header.php");
     if ((in_array("admin", $_SESSION["groups"]))) {
       echo '<table class="maintanence-admin">
               <tr><td><button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#add_Work_Modal">Új feladat</button> 
-              <input type="checkbox" id="showOldTasks" name="showOldTasks" value="true"><label id="old_tasks" for="vehicle1">Régebbi feladatok</label></td>
+              <input type="checkbox" id="showOldTasks" name="showOldTasks" value="true"><label id="old_tasks" for="showOldTasks">Régebbi feladatok</label></td>
               </table>';
 
     } ?>
@@ -62,12 +62,12 @@ require_once("./header.php");
       <li>Felmosás (a tárgyalóban minimális vízzel)</li>
       <li>Rendrakás</li>
     </ul>
-
+    <div class="table-responsive">
     <table class="takaritasirend" id="takaritasirend">
 
 
-
     </table>
+    </div>
 </body>
 
 </html>
@@ -105,7 +105,7 @@ require_once("./header.php");
   //Ha nincs feladat, ne is jelenjen meg a táblázat:
   window.onload = function () {
     display = document.querySelector('#time');
-    var timeUpLoc = "./userLogging.php?logout-submit=y"
+    var timeUpLoc = "../utility/userLogging.php?logout-submit=y"
     startTimer(display, timeUpLoc);
     renderWork();
     $('#processing').hide();

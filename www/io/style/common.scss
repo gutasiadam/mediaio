@@ -15,21 +15,21 @@
 
 
  /* AMBlue Button */
-button.mediaBlue{
-    background-color: #000658;
-    border-color: #000658;
-    border-width: 2px;
-    color: white;
-    transition: 0.2s linear;
+ button.mediaBlue {
+     background-color: #000658;
+     border-color: #000658;
+     border-width: 2px;
+     color: white;
+     transition: 0.2s linear;
 
-    &:hover{
-        background-color: #ffffff;
-        color: black;
-        border-color: #000658;
-        border-width: 2px;
-        transition: 0.2s linear;
-    }
-}
+     &:hover {
+         background-color: #ffffff;
+         color: black;
+         border-color: #000658;
+         border-width: 2px;
+         transition: 0.2s linear;
+     }
+ }
 
  .jstree-hidden {
      display: none;
@@ -90,6 +90,11 @@ button.mediaBlue{
      }
  }
 
+
+ #takeout-option-buttons {
+     display: inline-flex;
+
+ }
 
 
  #dynamic_field td {
@@ -225,6 +230,7 @@ button.mediaBlue{
  .tableparent {
      display: grid;
      place-items: center;
+     overflow: hidden;
  }
 
  .se-pre-con {
@@ -240,19 +246,35 @@ button.mediaBlue{
  }
 
  .maintanence-admin {
-    vertical-align: middle;
-    margin-bottom: 10px;
+     vertical-align: middle;
+     margin-bottom: 10px;
  }
 
+ .maintanence-admin tbody tr td input#showOldTasks {
+     transform: scale(1.5);
+     margin-left: 5px;
+     margin-right: 5px;
+ }
+
+
  label#old_tasks {
-    text-align: center;
-    
+     text-align: center;
+     font-size: 18px;
+     color: #858585;
+
  }
 
  .takaritasirend {
      border: 2px solid #0e0a7d;
-     width: fit-content;
-     vertical-align: middle;
+     display: block;
+     overflow: auto;
+     white-space: nowrap;
+     width: 90vw;
+     max-width: fit-content;
+     position: absolute;
+     left: 50%;
+     transform: translate(-50%, 0%);
+
  }
 
  .takaritasirend td {
@@ -300,6 +322,11 @@ button.mediaBlue{
      width: 15%;
      text-align: center;
      margin: 0 auto;
+
+     tbody tr td form button {
+         width: 100%;
+         box-sizing: border-box;
+     }
  }
 
  #unavailable {
@@ -418,11 +445,8 @@ button.mediaBlue{
  }
 
  .timeline__item.right:after {
-     border-bottom: 9px solid transparent;
-     border-right: 11px solid #fff;
-     border-left: none;
-     border-top: 9px solid transparent;
-     left: -10px;
+     position: absolute;
+     left: -10;
  }
 
  .timeline__content {
@@ -488,6 +512,7 @@ button.mediaBlue{
      border-top: 9px solid transparent;
      left: -10px;
      z-index: 2;
+     transform: rotate(180deg);
  }
 
  .timeline__content h2 {
@@ -854,6 +879,26 @@ button.mediaBlue{
      box-align: left;
  }
 
+ #navbarSupportedContent .navbar-nav .nav-link .nav-sandwich {
+     display: none;
+ }
+
+ @media (max-width: 990px) {
+     #navbarSupportedContent .navbar-nav .nav-link {
+         padding-left: 15px;
+
+         .nav-sandwich {
+             padding-left: 50px;
+             display: inline-flex;
+         }
+
+         .nav-icon {
+             display: inline-block;
+             width: 30px;
+         }
+     }
+ }
+
 
  .ab {
      color: #3b3b3b;
@@ -864,17 +909,17 @@ button.mediaBlue{
      color: #ffffff;
      border-radius: 25px;
      transition: 0.5s;
-     
+
  }
 
- .ab a{
-    border: 1px solid #3b3b3b;
-    transition: 0.5s;
+ .ab a {
+     border: 1px solid #3b3b3b;
+     transition: 0.5s;
  }
 
- .ab a:hover{
-    border: 1px solid #ffffff;
-    background-color: #3b3b3b;
+ .ab a:hover {
+     border: 1px solid #ffffff;
+     background-color: #3b3b3b;
  }
 
  .rainbow {
@@ -883,6 +928,14 @@ button.mediaBlue{
      display: flex;
      justify-content: center;
      align-items: center;
+     padding-top: 10px;
+     padding-bottom: 10px;
+     font-size: calc(2rem + 1vw);
+ }
+
+ .rainbow#options-header {
+     padding-top: 10px;
+     padding-bottom: 10px;
  }
 
  .szoveg {
@@ -1177,18 +1230,18 @@ button.mediaBlue{
      color: white;
  }
 
- .ab a{
-    border-style: 1px solid #3b3b3b;
+ .ab a {
+     border-style: 1px solid #3b3b3b;
      color: #3b3b3b;
      transition: 0.5s;
  }
 
- .ab td:hover{
-    background-color: #3b3b3b;
+ .ab td:hover {
+     background-color: #3b3b3b;
  }
 
  .ab a:hover {
-    color: #ffffff;
+     color: #ffffff;
  }
 
  #note {
