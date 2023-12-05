@@ -870,10 +870,15 @@
  }
 
  .help-logintable {
-     width: 40%;
-     text-align: center;
-     margin: 0 auto;
- }
+    width: 30%;
+    text-align: center;
+    margin: 0 auto;
+
+    @media (max-width: 990px)
+    {
+        width: 60%;
+    }
+}
 
  .nav {
      box-align: left;
