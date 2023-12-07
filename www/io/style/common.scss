@@ -35,6 +35,39 @@
      display: none;
  }
 
+ .jstree-default .jstree-anchor.jstree-clicked i.jstree-icon.jstree-checkbox {
+     background-image: url("../utility/jstree/checked.svg") !important;
+     background-position: 0 0 !important;
+     margin: 0 7px 2px -12px !important;
+ }
+
+ .jstree-default .jstree-anchor i.jstree-icon.jstree-checkbox {
+     background-image: url("../utility/jstree/empty.svg") !important;
+     background-position: 0 0 !important;
+     margin: 0 7px 0 -12px !important;
+ }
+
+ .jstree-default .jstree-node {
+    padding-bottom: 5px;
+ }
+
+ #jstree {
+     display: block;
+     width: 60%;
+     overflow: auto;
+     white-space: nowrap;
+     position: absolute;
+     margin-top: 5px;
+     height: calc(100vh - 360px);
+
+     @media (max-width: 575px) {
+         height: calc(100vh - 450px);
+     }
+
+     max-height: fit-content;
+
+ }
+
  .selectedItemsDisplay {
      list-style: none;
      background-color: #777777;
@@ -42,18 +75,51 @@
      font-size: 17px;
      padding-bottom: 0.2rem;
      padding-top: 0.2rem;
+     overflow: auto;
+     max-height: calc(100vh - 290px);
+
  }
 
  .selectedItemsDisplay li {
      list-style-type: none;
      position: relative;
-     left: -30px;
+
+     .selected_name {
+        max-width: 70vh;
+        display: inline-block;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        margin-right: 10px;
+     }
+
+     .removeSelection {
+        display: inline-block;
+        margin-left: auto;
+        margin-right: 15px;
+        margin-bottom: 5px;
+     }
+
+     @media (max-width: 990px) {
+         left: -20px;
+         flex-direction: column;
+         .selected_name {
+            text-align: center;
+            margin: 0;
+         }
+
+         .removeSelection {
+            margin: 0;
+            margin-bottom: 5px;
+         }
+     }
+
      /*background-color: #D3D3D3;*/
-     margin: 5px 0;
+     margin-bottom: 5px;
+     border-bottom: 1px solid #000000;
      display: flex;
+     width: 100%;
      flex-direction: row;
      flex-wrap: nowrap;
-     justify-content: space-between;
      align-items: center;
  }
 
@@ -92,8 +158,10 @@
 
 
  #takeout-option-buttons {
-     display: inline-flex;
-
+     display: contents;
+     margin-left: 0;
+     align-items: center;
+     width: 100%;
  }
 
 
@@ -870,15 +938,14 @@
  }
 
  .help-logintable {
-    width: 30%;
-    text-align: center;
-    margin: 0 auto;
+     width: 30%;
+     text-align: center;
+     margin: 0 auto;
 
-    @media (max-width: 990px)
-    {
-        width: 60%;
-    }
-}
+     @media (max-width: 990px) {
+         width: 60%;
+     }
+ }
 
  .nav {
      box-align: left;
