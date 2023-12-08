@@ -130,7 +130,7 @@ if(in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["group
   <br /><br />
   <h2 class="rainbow" id="doTitle">Tárgy kivétel</h2><br />
   <div class="container">
-    <div class="row align-items-start">
+    <div class="row align-items-start" id="takeout-container">
       <div class="col-4">
         <h3 style='text-align: center; overflow: hidden'>Kiválasztva</h3>
         <ul class="selectedItemsDisplay" id="output"></ul>
@@ -155,10 +155,9 @@ if(in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["group
             <label class="form-check-label text-nowrap" for="flexSwitchCheckDefault">Csak használatra</label>
           </div> -->
         </div>
-
-        <div id="jstree">
-        </div>
       </div>
+      <div id="jstree">
+        </div>
     </div>
   </div>
   </div>

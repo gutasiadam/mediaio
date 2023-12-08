@@ -48,12 +48,20 @@
  }
 
  .jstree-default .jstree-node {
-    padding-bottom: 5px;
+     padding-bottom: 5px;
+ }
+
+ #takeout-container{
+        display: flex;
+        justify-content: space-between;
+        #jstree {
+            margin-left: auto;
+        }
  }
 
  #jstree {
      display: block;
-     width: 60%;
+     width: 55vw;
      overflow: auto;
      white-space: nowrap;
      position: absolute;
@@ -61,11 +69,13 @@
      height: calc(100vh - 360px);
 
      @media (max-width: 575px) {
+         margin-left: 0;
+         left: 0;
          height: calc(100vh - 450px);
+         position: relative;
+         font-size: large;
+         width: 100%;
      }
-
-     max-height: fit-content;
-
  }
 
  .selectedItemsDisplay {
@@ -76,7 +86,11 @@
      padding-bottom: 0.2rem;
      padding-top: 0.2rem;
      overflow: auto;
-     max-height: calc(100vh - 290px);
+     max-height: calc(100vh - 340px);
+
+     @media (max-width: 575px) {
+         max-height: 150px;
+     }
 
  }
 
@@ -85,31 +99,32 @@
      position: relative;
 
      .selected_name {
-        max-width: 70vh;
-        display: inline-block;
-        text-overflow: ellipsis;
-        overflow: hidden;
-        margin-right: 10px;
+         max-width: 70vh;
+         display: inline-block;
+         text-overflow: ellipsis;
+         overflow: hidden;
+         margin-right: 10px;
      }
 
      .removeSelection {
-        display: inline-block;
-        margin-left: auto;
-        margin-right: 15px;
-        margin-bottom: 5px;
+         display: inline-block;
+         margin-left: auto;
+         margin-right: 15px;
+         margin-bottom: 5px;
      }
 
      @media (max-width: 990px) {
          left: -20px;
          flex-direction: column;
+
          .selected_name {
-            text-align: center;
-            margin: 0;
+             text-align: center;
+             margin: 0;
          }
 
          .removeSelection {
-            margin: 0;
-            margin-bottom: 5px;
+             margin: 0;
+             margin-bottom: 5px;
          }
      }
 
@@ -257,7 +272,11 @@
  #itemSearch {
      display: flex;
      justify-content: center;
-     align-items: center;
+     align-items: flex-start;
+
+     tbody tr td {
+         align-items: start;
+     }
  }
 
  .autocomplete-items {
@@ -1000,8 +1019,6 @@
      display: flex;
      justify-content: center;
      align-items: center;
-     padding-top: 10px;
-     padding-bottom: 10px;
      font-size: calc(2rem + 1vw);
  }
 
