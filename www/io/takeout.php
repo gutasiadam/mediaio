@@ -2,7 +2,7 @@
 
 namespace Mediaio;
 
-require_once __DIR__.'/./ItemManager.php';
+require_once __DIR__ . '/./ItemManager.php';
 
 use Mediaio\itemDataManager;
 
@@ -10,7 +10,7 @@ include "header.php";
 
 
 
-if(!isset($_SESSION['userId'])) {
+if (!isset($_SESSION['userId'])) {
   header("Location: index.php?error=AccessViolation");
   exit();
 }
@@ -23,12 +23,13 @@ $SESSuserName = $_SESSION['UserUserName'];
 error_reporting(E_ALL ^ E_NOTICE);
 ?>
 
+
 <script src="utility/jstree.js"></script>
 <link href='main.css' rel='stylesheet' />
 <link href="utility/themes/default/style.min.css" rel="stylesheet" />
 <html>
 <title>MediaIo - takeout</title>
-<?php if(isset($_SESSION["userId"])) { ?>
+<?php if (isset($_SESSION["userId"])) { ?>
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <a class="navbar-brand" href="index.php">
       <img src="./utility/logo2.png" height="50">
@@ -49,7 +50,7 @@ error_reporting(E_ALL ^ E_NOTICE);
       <ul class="navbar-nav ms-auto navbarPhP">
         <li>
           <a class="nav-link disabled timelock" href="#"><span id="time"> 30:00 </span>
-            <?php echo ' '.$_SESSION['UserUserName']; ?>
+            <?php echo ' ' . $_SESSION['UserUserName']; ?>
           </a>
         </li>
       </ul>
@@ -68,7 +69,7 @@ error_reporting(E_ALL ^ E_NOTICE);
   </nav>
 <?php }
 //Limit GivetoAnotherperson modal to admin users only
-if(in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["groups"])) {
+if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["groups"])) {
   ?>
   <!-- GivetoAnotherperson Modal -->
   <div class="modal fade" id="givetoAnotherPerson_Modal" tabindex="-1" role="dialog"
@@ -77,8 +78,7 @@ if(in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["group
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="givetoAnotherPerson_Modal_Label">Eszköz kivétele más helyett</h5>
-          <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
           </button>
         </div>
         <div class="modal-body">
@@ -131,10 +131,11 @@ if(in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["group
   <h2 class="rainbow" id="doTitle">Tárgy kivétel</h2><br />
   <div class="container">
     <div class="row align-items-start" id="takeout-container">
-      <div class="col-4">
-        <a href="#sidebar" class="" data-bs-toggle="offcanvas" role="button" aria-controls="sidebar">Kiválasztva</a>
+      <div class="col-4" id="selected-desktop">
+        <h3>Kiválasztva:</h3>
+        <ul class="selectedItemsDisplay" id="output-desktop"></ul>
       </div>
-      <div class="col-8">
+      <div class="col">
         Keresés: <input type="text" id="search" style='margin-bottom: 10px'
           placeholder="Kezdd el ide írni, mit vinnél el.." autocomplete="off" />
         <div class="row optionsButtons" id="takeout-option-buttons">
@@ -145,34 +146,42 @@ if(in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["group
             style='margin-bottom: 6px'>Mehet</button>
           <button class="btn btn-sm btn-info col-lg-auto mb-1" onclick="showPresetsModal()"
             style='margin-bottom:6px'>Presetek</button>
-          <button class="btn btn-sm btn-dark col-lg-auto mb-1 text-nowrap" id="givetoAnotherPerson_Button"
-            type="button" data-bs-toggle="modal" data-bs-target="#givetoAnotherPerson_Modal"
-            style="margin-bottom: 6px">Másnak veszek ki</button>
+          <button class="btn btn-sm btn-dark col-lg-auto mb-1 text-nowrap" id="givetoAnotherPerson_Button" type="button"
+            data-bs-toggle="modal" data-bs-target="#givetoAnotherPerson_Modal" style="margin-bottom: 6px">Másnak veszek
+            ki</button>
+          <button href="#sidebar" class="btn btn-sm btn-secondary mb-1" id="show_selected" data-bs-toggle="offcanvas"
+            role="button" aria-controls="sidebar">Kiválasztva
+            <span id="selectedCount" class="badge bg-danger">0</span>
+          </button>
+
           <!-- Belső használatra kivétel - későbbi release -->
           <!-- <div class="form-check form-switch col-2">
             <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
             <label class="form-check-label text-nowrap" for="flexSwitchCheckDefault">Csak használatra</label>
           </div> -->
         </div>
+        <div id="jstree">
+        </div>
       </div>
 
-      <div id="jstree">
-        </div>
+
       <!-- Offcanvas -->
       <div class="offcanvas offcanvas-start" tabindex="-1" id="sidebar" aria-labelledby="sidebar-label">
         <div class="offcanvas-header">
-          <h5 class="offcanvas-title" id="sidebar-label">Kiválasztva</h5>
+          <h4 class="offcanvas-title" id="sidebar-label">Kiválasztva</h4>
           <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
         <div class="offcanvas-body" id="sidebar-body">
           <div class="row">
             <div class="col-12">
-              <ul class="selectedItemsDisplay" id="output"></ul>
+              <ul class="selectedItemsDisplay" id="output-mobile"></ul>
             </div>
+            <button class="btn btn-sm btn-secondary col-lg-auto mb-1" id="takeout2BTN">Itt lenne egy takout
+              gomb...</button>
           </div>
+        </div>
       </div>
     </div>
-  </div>
   </div>
 </body>
 
@@ -182,6 +191,14 @@ if(in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["group
 
 </html>
 <script>
+  //Selected items badge counter
+  var badge = document.getElementById("selectedCount");
+
+  //Preventing double click zoom
+  document.addEventListener('dblclick', function (event) {
+    event.preventDefault();
+  }, { passive: false });
+
   function reloadSavedSelections() {
     //Try re-selectiong items that are saved in the takeOutItems cookie.
     var selecteditems = getCookie("selectedItems").split(',');
@@ -382,6 +399,7 @@ if(in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["group
     takeOutPrepJSON['items'] = [];
 
     decideGiveToAnotherPerson_visibility();
+    parseInt(badge.textContent = 0);
   }
 
   //Deselect a node.
@@ -469,11 +487,15 @@ if(in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["group
       //Run selection
 
       $('#jstree').jstree().select_node(selectionArray);
+      parseInt(badge.textContent++);
 
       updateSelectionCookie();
     } else if (data.action == "deselect_node") {
       //Deselecting node should NOT affects the relatedItems.
       deselect_node(data.node.id);
+
+      //Update badge counter
+      badge.textContent--;
 
       updateSelectionCookie();
     } else if (data.action == "deselect_all") {
@@ -502,11 +524,11 @@ if(in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["group
    */
   function decideGiveToAnotherPerson_visibility() {
     if (containsOnlyStudioItems() && <?php echo (in_array('system', $_SESSION['groups']) || in_array('admin', $_SESSION['groups'])) ? 'true' : 'false' ?>) {
-      $(`#givetoAnotherPerson`).css('visibility', 'visible')
-      $(`#givetoAnotherPerson_Button`).css('visibility', 'visible')
+      $(`#givetoAnotherPerson`).css('display', 'block')
+      $(`#givetoAnotherPerson_Button`).css('display', 'block')
     } else {
-      $(`#givetoAnotherPerson`).css('visibility', 'hidden')
-      $(`#givetoAnotherPerson_Button`).css('visibility', 'hidden')
+      $(`#givetoAnotherPerson`).css('display', 'none')
+      $(`#givetoAnotherPerson_Button`).css('display', 'none')
     }
   }
 
@@ -515,12 +537,17 @@ if(in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["group
     var leaves = $.grep(objects, function (o) {
       return data.instance.is_leaf(o)
     })
-    var list = $('#output')
+    var list;
+    if (window.innerWidth < 575) { // Decide if mobile or desktop
+      list = $('#output-mobile')
+    } else {
+      list = $('#output-desktop')
+    }
     list.empty()
     $.each(leaves, function (i, o) {
       iName = o.text;
       //console.log(o);
-      toAdd = '<span class="selected_name">' + o.text +'</span><button class="btn btn-danger removeSelection" onclick="deselect_node(' + o.id + ')" id="deselectBtn_' + i + '">X</button>';
+      toAdd = '<span class="selected_name">' + o.text + '</span><button class="btn btn-danger removeSelection" onclick="deselect_node(' + o.id + ')" id="deselectBtn_' + i + '">X</button>';
       //console.log(toAdd);
       $('<li/>').html(toAdd).appendTo(list);
     })

@@ -18,7 +18,8 @@ include "header.php";
 $SESSuserName = $_SESSION['UserUserName'];
 
 
-function PhparrayCookie(){
+function PhparrayCookie()
+{
   array_push($selItems, $_COOKIE['id_itemNameAdd']);
   foreach ($selItems as $x) {
     echo $x . " ";
@@ -31,11 +32,13 @@ function PhparrayCookie(){
 </script>
 
 <html>
-<?php if (isset($_SESSION["userId"])) { ?> <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<?php if (isset($_SESSION["userId"])) { ?>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <a class="navbar-brand" href="index.php">
       <img src="./utility/logo2.png" height="50">
     </a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
@@ -43,14 +46,15 @@ function PhparrayCookie(){
       </ul>
       <ul class="navbar-nav ms-auto navbarPhP">
         <li>
-          <a class="nav-link disabled timelock" href="#"><span id="time"> 10:00 </span><?php echo ' ' . $_SESSION['UserUserName']; ?>
+          <a class="nav-link disabled timelock" href="#"><span id="time"> 10:00 </span>
+            <?php echo ' ' . $_SESSION['UserUserName']; ?>
           </a>
         </li>
       </ul>
       <form method='post' class="form-inline my-2 my-lg-0" action=utility/userLogging.php>
         <button class="btn btn-danger my-2 my-sm-0" name='logout-submit' type="submit">Kijelentkezés</button>
         <script type="text/javascript">
-          window.onload = function() {
+          window.onload = function () {
             display = document.querySelector('#time');
             var timeUpLoc = "utility/userLogging.php?logout-submit=y"
             startTimer(display, timeUpLoc);
@@ -61,7 +65,8 @@ function PhparrayCookie(){
         </script>
       </form>
     </div>
-  </nav> <?php  } ?>
+  </nav>
+<?php } ?>
 
 <body>
   <div class="container">
@@ -73,14 +78,16 @@ function PhparrayCookie(){
     <div class="row">
       <!-- Announce Damage button -->
       <div class="col-4">
-        <form action="../utility/damage_report/announce_Damage.php"><button class="btn btn-warning">Sérülés bejelentése <i class="fas fa-file-alt"></i></button></form>
+        <form action="../utility/damage_report/announce_Damage.php"><button class="btn btn-warning">Sérülés bejelentése
+            <i class="fas fa-file-alt"></i></button></form>
       </div>
       <!-- Displays a tickable when items are selected, to approve tekaout process -->
       <div class="col-4">
         <div class="form-check intactForm">
           <input class="form-check-input" type="checkbox" value="" id="intactItems">
           <label class="form-check-label" for="intactItems">
-            <h6 class="statement">Igazolom, hogy minden, amit visszahoztam sérülésmentes és kifogástalanul működik. Sérülés esetén azonnal jelezd azt a vezetőségnek.</h6>
+            <h6 class="statement">Igazolom, hogy minden, amit visszahoztam sérülésmentes és kifogástalanul működik.
+              Sérülés esetén azonnal jelezd azt a vezetőségnek.</h6>
           </label>
         </div>
       </div>
@@ -155,7 +162,7 @@ function PhparrayCookie(){
       $("#intactItems").prop("checked", false);
     }
   }
-  $(document).ready(function() {
+  $(document).ready(function () {
     $('.intactForm').css('opacity', '0');
     // Csak akkor jelenjen meg a checkbox, ha már van Go gomb is.
     $('.send').hide();
@@ -163,7 +170,7 @@ function PhparrayCookie(){
     function startTimer(duration, display) {
       var timer = duration,
         minutes, seconds;
-      setInterval(function() {
+      setInterval(function () {
         minutes = parseInt(timer / 60, 10)
         seconds = parseInt(timer % 60, 10);
 
@@ -181,7 +188,7 @@ function PhparrayCookie(){
 
 
 
-    $(document).on('click', '.result', function() {
+    $(document).on('click', '.result', function () {
       $('.intactForm').css('opacity', '1');
     });
 
@@ -191,14 +198,14 @@ function PhparrayCookie(){
 
       }
     }
-    $(document).on('click', '#intactItems', function() {
+    $(document).on('click', '#intactItems', function () {
       allowGO();
     });
     //Initiate Takeout process
-    $(document).on('click', '.send', function() {
+    $(document).on('click', '.send', function () {
       if ($("#intactItems").prop("checked")) { // ha a felhasználó elfogadta, hogy a tárgyak rendben vannak.
         var uids = []; //UID`s that will be taken out.
-        $('table > tbody  > tr > td > button ').each(function(index, tr) {
+        $('table > tbody  > tr > td > button ').each(function (index, tr) {
           console.log(this.innerText);
           uids.push(this.innerText.trim());
         });
@@ -210,12 +217,12 @@ function PhparrayCookie(){
             data: retrieveJSON,
             mode: "retrieveStaging"
           },
-          success: function(response) {
+          success: function (response) {
             //alert(response);
             if (response == '200') {
               $('#doTitle').animate({
                 'opacity': 0
-              }, 400, function() {
+              }, 400, function () {
                 $(this).html('<h2 class="text text-info" role="success">Sikeresen visszakerültek a tárgyak ! Az oldal újratölt.</h2>').animate({
                   'opacity': 1
                 }, 400);
@@ -225,19 +232,19 @@ function PhparrayCookie(){
                 $(this).html('<h2 class="text text-info" role="success">Sikeresen visszakerültek a tárgyak ! Az oldal újratölt.</h2>').animate({
                   'opacity': 0
                 }, 400);
-                setTimeout(function() {
+                setTimeout(function () {
                   $("#doTitle").text(applicationTitleShort).animate({
                     'opacity': 1
                   }, 400);
                 }, 3800);;
               });
-              setTimeout(function() {
+              setTimeout(function () {
                 location.reload();
               }, 2000);
             } else {
               $('#doTitle').animate({
                 'opacity': 0
-              }, 400, function() {
+              }, 400, function () {
                 $(this).html('<h2 class="text text-danger" role="danger">A vissszahozás során szerveroldali hiba történt.</h2>').animate({
                   'opacity': 1
                 }, 400);
@@ -247,7 +254,7 @@ function PhparrayCookie(){
                 $(this).html('<h2 class="text text-danger" role="danger">A vissszahozás során szerveroldali hiba történt.</h2>').animate({
                   'opacity': 0
                 }, 400);
-                setTimeout(function() {
+                setTimeout(function () {
                   $("#doTitle").text(applicationTitleShort).animate({
                     'opacity': 1
                   }, 400);
@@ -256,7 +263,7 @@ function PhparrayCookie(){
             }
 
           },
-          error: function(XMLHttpRequest, textStatus, errorThrown) {
+          error: function (XMLHttpRequest, textStatus, errorThrown) {
             alert("Status: " + textStatus);
             alert("Error: " + errorThrown);
           }
@@ -269,12 +276,12 @@ function PhparrayCookie(){
 
 
 
-    $('#submit').click(function() {
+    $('#submit').click(function () {
       $.ajax({
         url: "name.php",
         method: "POST",
         data: $('#add_name').serialize(),
-        success: function(data) {
+        success: function (data) {
           alert(data);
           $('#add_name')[0].reset();
         }

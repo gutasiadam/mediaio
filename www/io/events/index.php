@@ -29,7 +29,6 @@ if (!isset($_SESSION['userId'])) {
   <script src='./interaction/main.js'></script>
 
 
-  <link href='https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css' rel='stylesheet' />
   <script src="./moment/main.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="./defaultCalendarRender.js"></script>
