@@ -48,15 +48,37 @@
  }
 
  .jstree-default .jstree-node {
+
+     @media (max-width: 575px) {
+         padding-bottom: 10px;
+
+         .jstree-anchor {
+             font-size: large;
+         }
+     }
+
      padding-bottom: 5px;
+     height: auto;
+
+     .jstree-wholerow {
+         display: inline;
+     }
+
+     .jstree-icon {
+         display: inline-block;
+     }
+
+     .jstree-anchor {
+         white-space: normal;
+         word-wrap: break-word;
+         width: 90vw;
+         display: inline;
+     }
  }
 
- #takeout-container{
-        display: flex;
-        justify-content: space-between;
-        #jstree {
-            margin-left: auto;
-        }
+ #takeout-container {
+     display: flex;
+     justify-content: space-between;
  }
 
  #jstree {
@@ -64,15 +86,15 @@
      width: 55vw;
      overflow: auto;
      white-space: nowrap;
-     position: absolute;
+     position: relative;
      margin-top: 5px;
      height: calc(100vh - 360px);
+     margin-left: auto;
 
      @media (max-width: 575px) {
          margin-left: 0;
          left: 0;
          height: calc(100vh - 450px);
-         position: relative;
          font-size: large;
          width: 100%;
      }
@@ -89,7 +111,7 @@
      max-height: calc(100vh - 340px);
 
      @media (max-width: 575px) {
-         max-height: 150px;
+         max-height: 78vh;
      }
 
  }

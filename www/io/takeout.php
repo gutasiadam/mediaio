@@ -132,8 +132,7 @@ if(in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["group
   <div class="container">
     <div class="row align-items-start" id="takeout-container">
       <div class="col-4">
-        <h3 style='text-align: center; overflow: hidden'>Kiválasztva</h3>
-        <ul class="selectedItemsDisplay" id="output"></ul>
+        <a href="#sidebar" class="" data-bs-toggle="offcanvas" role="button" aria-controls="sidebar">Kiválasztva</a>
       </div>
       <div class="col-8">
         Keresés: <input type="text" id="search" style='margin-bottom: 10px'
@@ -156,8 +155,22 @@ if(in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["group
           </div> -->
         </div>
       </div>
+
       <div id="jstree">
         </div>
+      <!-- Offcanvas -->
+      <div class="offcanvas offcanvas-start" tabindex="-1" id="sidebar" aria-labelledby="sidebar-label">
+        <div class="offcanvas-header">
+          <h5 class="offcanvas-title" id="sidebar-label">Kiválasztva</h5>
+          <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body" id="sidebar-body">
+          <div class="row">
+            <div class="col-12">
+              <ul class="selectedItemsDisplay" id="output"></ul>
+            </div>
+          </div>
+      </div>
     </div>
   </div>
   </div>

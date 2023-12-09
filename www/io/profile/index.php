@@ -14,7 +14,7 @@ include("../translation.php"); ?>
 
 if (isset($_SESSION["userId"])) { ?>
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <a class="navbar-brand" href="index.php">
+    <a class="navbar-brand" href="../index.php">
       <img src="../utility/logo2.png" height="50">
     </a>
     <!-- Breadcrumb for mobilne navigation -->
