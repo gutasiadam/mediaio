@@ -3,7 +3,7 @@ session_start();
 use Mediaio\Core;
 use Mediaio\Database;
 use Mediaio\MailService;
-require __DIR__ . '/../vendor/autoload.php';
+// require __DIR__ . '/../vendor/autoload.php'; ---> CSAK AZÉRT VAN KOMMENTELVE MERT NÁLAM ENÉLKÜL MŰKÖDIK
 require_once __DIR__.'/../Core.php';
 require_once __DIR__.'/../Database.php';
 require_once __DIR__.'/../Mailer.php';
@@ -61,7 +61,7 @@ if(!isset($_SESSION['userId'])){
 	$result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
-	echo "<table width='50' align=center class="."table"."><th>Vezetéknév</th><th>Keresztnév</th><th>Felhasználónév</th><th>e-mail cím</th><th>Telefonszám</th><th>Csoportok</th>";
+	echo "<table align=center class="."table"." id="."userlist"."><th>Vezetéknév</th><th>Keresztnév</th><th>Felhasználónév</th><th>e-mail cím</th><th>Telefonszám</th><th>Csoportok</th>";
      //output data of each row
     //Displays amount of records found in leltar_master DB
     while($row = $result->fetch_assoc()) {

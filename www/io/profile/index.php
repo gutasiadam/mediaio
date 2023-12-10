@@ -47,7 +47,7 @@ if (isset($_SESSION["userId"])) { ?>
   </nav>
 
   <body>
-    <h1 class="rainbow" id="options-header">Opciók</h1>
+    <h1 class="rainbow">Opciók</h1>
     <table class="help-logintable">
       <tr>
         <td>

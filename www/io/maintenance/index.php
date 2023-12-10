@@ -10,17 +10,19 @@ require_once("./header.php");
 <html>
 <script src="../utility/_initMenu.js" crossorigin="anonymous"></script>
 <script>
-  $(document).ready(function() {
+  $(document).ready(function () {
     menuItems = importItem("../utility/menuitems.json");
     drawMenuItemsLeft("maintenance", menuItems, 2);
     drawMenuItemsRight('maintenance', menuItems, 2);
   });
 </script>
-<?php if (isset($_SESSION["userId"])) { ?> <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<?php if (isset($_SESSION["userId"])) { ?>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <a class="navbar-brand" href="index.php">
       <img src="../utility/logo2.png" height="50">
     </a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
@@ -28,7 +30,8 @@ require_once("./header.php");
       </ul>
       <ul class="navbar-nav ms-auto navbarPhP">
         <li>
-          <a class="nav-link disabled timelock" href="#"><span id="time"> 10:00 </span><?php echo ' ' . $_SESSION['UserUserName']; ?>
+          <a class="nav-link disabled timelock" href="#"><span id="time"> 10:00 </span>
+            <?php echo ' ' . $_SESSION['UserUserName']; ?>
           </a>
         </li>
       </ul>
@@ -36,39 +39,40 @@ require_once("./header.php");
         <button class="btn btn-danger my-2 my-sm-0" name='logout-submit' type="submit">Kijelentkezés</button>
       </form>
     </div>
-  </nav> <?php  } ?>
-<br>
-<h1 align=center class="rainbow">Takarítási rend, feladatok: </h1>
+  </nav>
+<?php } ?>
 
-  <div class="tableParent">
-    <div class="form-check">
-      <!--<input class="form-check-input noprint" type="checkbox" value="" id="showOnlyMyTasks_checkBox" data-toggle="toggle">
-  <label class="form-check-label noprint" for="defaultCheck1"> Csak a saját feladataimat mutasd</label>-->
-    </div>
-    <?php
-    if ((in_array("admin", $_SESSION["groups"]))) {
-      echo '<table class="maintanence-admin">
+<h1 class="rainbow">Takarítási rend, feladatok: </h1>
+
+<div class="tableParent">
+  <!-- <div class="form-check">
+    <input class="form-check-input noprint" type="checkbox" value="" id="showOnlyMyTasks_checkBox" data-toggle="toggle">
+  <label class="form-check-label noprint" for="defaultCheck1"> Csak a saját feladataimat mutasd</label>
+  </div> -->
+  <?php
+  if ((in_array("admin", $_SESSION["groups"]))) {
+    echo '<table class="maintanence-admin">
               <tr><td><button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#add_Work_Modal">Új feladat</button> 
               <input type="checkbox" id="showOldTasks" name="showOldTasks" value="true"><label id="old_tasks" for="showOldTasks">Régebbi feladatok</label></td>
               </table>';
 
-    } ?>
+  } ?>
 
-    <ul style="margin-left:5%; padding-right: 5px;">
-      <li>Szemét kiürítése</li>
-      <li>Felsöprés</li>
-      <li>Elmosogatás</li>
-      <li>Porszívózás a stúdióban</li>
-      <li>Felmosás (a tárgyalóban minimális vízzel)</li>
-      <li>Rendrakás</li>
-    </ul>
-    <div class="table-responsive">
+  <ul style="margin-left:5%; padding-right: 5px;">
+    <li>Szemét kiürítése</li>
+    <li>Felsöprés</li>
+    <li>Elmosogatás</li>
+    <li>Porszívózás a stúdióban</li>
+    <li>Felmosás (a tárgyalóban minimális vízzel)</li>
+    <li>Rendrakás</li>
+  </ul>
+  <div class="table-responsive">
     <table class="takaritasirend" id="takaritasirend">
 
 
     </table>
-    </div>
-</body>
+  </div>
+  </body>
 
 </html>
 
@@ -275,22 +279,22 @@ require_once("./header.php");
 
           result[0].forEach(element => {
             console.log(element);
-          result[0].forEach(element => {
-            console.log(element);
+            result[0].forEach(element => {
+              console.log(element);
 
-            if (element['szemely1'] == null) {
-              element['szemely1'] = "<button style='display: block; margin: auto;' class='btn btn-success' onclick=applyToWork(" + element['id'] + ")>Jelentkezés</button>"
-            } else {
+              if (element['szemely1'] == null) {
+                element['szemely1'] = "<button style='display: block; margin: auto;' class='btn btn-success' onclick=applyToWork(" + element['id'] + ")>Jelentkezés</button>"
+              } else {
 
-            }
-            if (element['szemely2'] == null) {
-              element['szemely2'] = "<button style='display: block; margin: auto;' class='btn btn-success' onclick=applyToWork(" + element['id'] + ")>Jelentkezés</button>"
-            } else {
+              }
+              if (element['szemely2'] == null) {
+                element['szemely2'] = "<button style='display: block; margin: auto;' class='btn btn-success' onclick=applyToWork(" + element['id'] + ")>Jelentkezés</button>"
+              } else {
 
-            }
+              }
 
-            $('.takaritasirend').append('<tr id=tr' + element['id'] + '><td>' + element['datum'] + '</td><td>' + element['szemely1'] + '</td><td>' + element['szemely2'] + '</td></tr>');
-          });
+              $('.takaritasirend').append('<tr id=tr' + element['id'] + '><td>' + element['datum'] + '</td><td>' + element['szemely1'] + '</td><td>' + element['szemely2'] + '</td></tr>');
+            });
             if (element['szemely1'] == null) {
               element['szemely1'] = "<button style='display: block; margin: auto;' class='btn btn-success' onclick=applyToWork(" + element['id'] + ")>Jelentkezés</button>"
             } else {

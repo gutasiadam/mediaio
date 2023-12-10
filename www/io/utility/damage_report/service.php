@@ -43,7 +43,7 @@ require_once("../header.php");
 
     window.onload = function () {
       display = document.querySelector('#time');
-      var timeUpLoc = "../utility/userLogging.php?logout-submit=y"
+      var timeUpLoc = "../../utility/userLogging.php?logout-submit=y"
       startTimer(display, timeUpLoc);
     };
   </script>

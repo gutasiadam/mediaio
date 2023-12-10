@@ -127,8 +127,7 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
 
 
 <body>
-  <br /><br />
-  <h2 class="rainbow" id="doTitle">Tárgy kivétel</h2><br />
+  <h2 class="rainbow" id="doTitle">Tárgy kivétel</h2>
   <div class="container">
     <div class="row align-items-start" id="takeout-container">
       <div class="col-4" id="selected-desktop">
@@ -149,7 +148,7 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
           <button class="btn btn-sm btn-dark col-lg-auto mb-1 text-nowrap" id="givetoAnotherPerson_Button" type="button"
             data-bs-toggle="modal" data-bs-target="#givetoAnotherPerson_Modal" style="margin-bottom: 6px">Másnak veszek
             ki</button>
-          <button href="#sidebar" class="btn btn-sm btn-secondary mb-1" id="show_selected" data-bs-toggle="offcanvas"
+          <button href="#sidebar" class="btn btn-sm btn-success mb-1" id="show_selected" data-bs-toggle="offcanvas"
             role="button" aria-controls="sidebar">Kiválasztva
             <span id="selectedCount" class="badge bg-danger">0</span>
           </button>
@@ -176,8 +175,7 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
             <div class="col-12">
               <ul class="selectedItemsDisplay" id="output-mobile"></ul>
             </div>
-            <button class="btn btn-sm btn-secondary col-lg-auto mb-1" id="takeout2BTN">Itt lenne egy takout
-              gomb...</button>
+            <button class="btn btn-sm btn-success col-lg-auto mb-1" id="takeout2BTN-mobile">Mehet</button>
           </div>
         </div>
       </div>
@@ -638,7 +636,44 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
       }, 1000);
     });
 
+    //Takout gomb a sidebaros listahoz
 
+    document.getElementById("takeout2BTN-mobile").addEventListener("click", function () {
+      if (takeOutPrepJSON.items.length == 0) {
+        displayMessageInTitle("#doTitle", "Nem választottál ki semmit!");
+        return;
+      }
+
+      console.log("Kimenet:" + JSON.stringify(takeOutPrepJSON));
+      $.ajax({
+        url: "./utility/takeout_administrator.php",
+        //url:"./utility/dummy.php",
+        method: "POST",
+        data: {
+          takeoutData: takeOutPrepJSON,
+          takeoutAsUser: $('#givetoAnotherPerson_UserName').val()
+        },
+        success: function (response) {
+          if (response == '200') {
+            displayMessageInTitle("#doTitle", "Sikeres kivétel! \nAz oldal hamarosan újratölt");
+            $('#jstree').jstree(true).settings.core.data = d;
+            //Fa újratöltése
+            setTimeout(() => {
+              $('#jstree').jstree().refresh();
+            }, 2000);
+            setTimeout(() => {
+              window.location.href = window.location.href
+            }, 1000);
+          } else {
+            //console.log(response);
+            displayMessageInTitle("#doTitle", "Hiba történt.");
+          }
+
+        }
+      });
+    });
+
+    //Main takeout gomb
     document.getElementById("takeout2BTN").addEventListener("click", function () {
       if (takeOutPrepJSON.items.length == 0) {
         displayMessageInTitle("#doTitle", "Nem választottál ki semmit!");
@@ -673,6 +708,7 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
         }
       });
     });
+
     $('#submit').click(function () {
       $.ajax({
         url: "name.php",

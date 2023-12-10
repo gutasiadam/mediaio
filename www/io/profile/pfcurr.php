@@ -66,9 +66,6 @@ if (isset($_SESSION['userId'])) {
             };
           </script>
         </form>
-        <a class="nav-link my-2 my-sm-0" href="./help.php">
-          <i class="fas fa-question-circle fa-lg"></i>
-        </a>
       </div>
     </nav>
   <?php } ?>
@@ -88,6 +85,7 @@ if (isset($_SESSION['userId'])) {
             $result = Database::runQuery($sql);
             echo '<h3 class="panel-title">' . $_SESSION['firstName'] . ', ' . $result->num_rows . ' tárgy van most nálad:</h3>
         </div>';
+            echo '<div class="panel-body" id="pf-curr-items">';
             $imodal = -1;
             $resultArray = [];
             while ($row = $result->fetch_assoc()) {
@@ -95,7 +93,7 @@ if (isset($_SESSION['userId'])) {
               $rowItem = $row["Nev"];
               echo '
               <div class="row">
-              <div class="col-4">
+              <div class="col" id="item-name">
                <h2>' . $row["Nev"] . '</h2>
                <p>' . $row["UID"];
               if ($row['Status'] == '2') {
@@ -105,7 +103,7 @@ if (isset($_SESSION['userId'])) {
 
               if ($row['Status'] != '2') {
                 echo '
-             <div class="col-2"><button class="btn btn-success " id="bringback' . $imodal . '" data-bs-toggle="modal" data-bs-target="#b' . $imodal . '">Visszahoztam</button></div>
+             <div class="col"><button class="btn btn-success " id="bringback' . $imodal . '" data-bs-toggle="modal" data-bs-target="#b' . $imodal . '">Visszahoztam</button></div>
              
              ';
                 echo '
@@ -113,19 +111,18 @@ if (isset($_SESSION['userId'])) {
             <div class="modal-dialog" role="document">
               <div class="modal-content">
                 <div class="modal-header">
-                  <h5 class="modal-title" id="exampleModalLabel">' . $row["Nev"] . ' Visszahozása</h5>
+                  <h4 class="modal-title" id="exampleModalLabel">' . $row["Nev"] . ' visszahozása</h4>
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
+            <div class="modal-body">
               <input type="hidden" id="retrieveItem_' . $imodal . '" name="retrieveItem" value="' . $row["Nev"] . '"/> 
               <input type="hidden" name="User" value="' . $TKI . '"/>
               <div class="form-check">
-              <input class="form-check-input intactItems" type="checkbox" value="" id="intactItems' . $imodal . '">
+                <input class="form-check-input intactItems" type="checkbox" value="" id="intactItems' . $imodal . '">
               </div>
               <h6></h6>
               <h6 id="emailHelp" class="form-text text-muted">A kipipálással igazolom, hogy amit visszahoztam sérülésmentes, és kifogástalanul működik. Sérülés esetén azonnal jelezd azt a vezetőségnek.</h6>
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">❌</button>
-                  <button type="submit" id="' . $imodal . '" onClick="reply_click(this.id)" class="btn go_btn btn-success disabled">☑</button>
+                  <button type="submit" id="' . $imodal . '" onClick="reply_click(this.id)" class="btn go_btn btn-success disabled"><i class="fas fa-solid fa-check"></i> Visszahozás</button>
                   <a href="../utility/damage_report/announce_Damage.php" class="btn go_btn btn-warning">Problémát jelentek be</a>
                   
                   <p class="sysResponse"> </p>
@@ -147,6 +144,7 @@ if (isset($_SESSION['userId'])) {
            </div>
           </div>
          </div>
+        </div>
         </div>';
             $connect = null;
             ?>

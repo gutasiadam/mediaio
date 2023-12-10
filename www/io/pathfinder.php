@@ -62,8 +62,7 @@ if(isset($_SESSION['UserUserName'])){ //If user is logged in
 
 <body>  
   <div class="container">
-  <br />
-  <h1 align="center" class="rainbow">Tárgy kölcsönzési története</h1>
+  <h1 class="rainbow">Tárgy kölcsönzési története</h1>
 
   <!-- Item search table -->
   <table id="itemSearch">

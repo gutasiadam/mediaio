@@ -201,16 +201,91 @@
          #show_selected {
              display: block;
          }
+
+         #takeout2BTN {
+             display: none;
+         }
      }
 
  }
 
+ /* Retrieve.php */
 
- #dynamic_field td {
-     font-size: xx-large;
-     margin: 0 auto;
-     vertical-align: middle;
+ #retrieve-container {
+
+     width: 100%;
+     overflow-x: auto;
+
+     #submit-retrieve {
+         display: flex;
+         flex-direction: column;
+         flex-wrap: wrap;
+         justify-content: center;
+         align-items: center;
+
+         .statement {
+             width: 60vw;
+         }
+
+         #if_intact {
+             align-items: center;
+             justify-content: center;
+         }
+
+         .btn {
+             margin-left: 15px;
+         }
+     }
+
+     #retrieve-row {
+         width: 60vw;
+         margin-left: auto;
+         margin-right: auto;
+
+         @media (max-width: 990px) {
+             width: 100%;
+             margin: 0;
+         }
+     }
+
+
+     #dynamic_field td {
+         font-size: xx-large;
+         margin: 0 auto;
+         vertical-align: middle;
+
+         .btn {
+             text-align: left;
+             width: 100%;
+             color: white;
+         }
+     }
+
+     #items-to-retrieve {
+         font-size: xx-large;
+         margin: 0 auto;
+         vertical-align: middle;
+
+         /*          tr {
+             display: flex;
+             flex-direction: row;
+             flex-wrap: nowrap;
+             justify-content: flex-end;
+             align-items: flex-end;
+         }
+ */
+         .btn {
+             text-align: right;
+             width: 100%;
+         }
+     }
+
+     @media (max-width: 990px) {
+         height: calc(100vh - 160px);
+     }
  }
+
+
 
  .btn\ btn-primary {
      color: white;
@@ -364,7 +439,6 @@
  }
 
  .maintanence-admin tbody tr td input#showOldTasks {
-     transform: scale(1.5);
      margin-left: 5px;
      margin-right: 5px;
  }
@@ -439,6 +513,23 @@
      tbody tr td form button {
          width: 100%;
          box-sizing: border-box;
+     }
+ }
+
+ #chpass {
+     width: 300px;
+ }
+
+
+ #user-check {
+     display: block;
+     position: absolute;
+     overflow: auto;
+     height: 85vh;
+
+     .event td div {
+         max-height: 100px;
+         overflow: auto;
      }
  }
 
@@ -1046,11 +1137,10 @@
      justify-content: center;
      align-items: center;
      font-size: calc(2rem + 1vw);
- }
+     margin-bottom: 15px;
+     margin-top: 15px;
 
- .rainbow#options-header {
-     padding-top: 10px;
-     padding-bottom: 10px;
+     @media (max-width: 575px) {}
  }
 
  .szoveg {
@@ -1222,6 +1312,55 @@
          margin-left: -10px;
      }
 
+ }
+
+ #pf-curr-items {
+     display: flex;
+     position: relative;
+     flex-direction: column;
+     align-items: center;
+     margin-top: 10px;
+     margin-bottom: 10px;
+
+     .row {
+         width: 100%;
+     }
+
+     .col#item-name {
+         text-overflow: ellipsis;
+         text-align: right;
+     }
+
+     .modal-header {
+         min-height: 100px;
+         white-space: normal;
+         overflow: hidden;
+         text-overflow: ellipsis;
+
+         .modal-title {
+             height: auto;
+             width: 80%;
+         }
+     }
+ }
+
+
+ #userlist {
+     display: block;
+     position: absolute;
+     overflow: auto;
+     white-space: nowrap;
+     height: 85vh;
+ }
+
+ #documents {
+     width: 30%;
+     text-align: center;
+     margin: 0 auto;
+
+     @media (max-width: 990px) {
+         width: 60%;
+     }
  }
 
 

@@ -69,34 +69,30 @@ function PhparrayCookie()
 <?php } ?>
 
 <body>
-  <div class="container">
-    <br /><br />
-    <h2 class="rainbow" align="center" id="doTitle">Visszahozás</h2><br />
-
-
+  <div class="container" id="retrieve-container">
+    <h2 class="rainbow" id="doTitle">Visszahozás</h2>
     <br>
     <div class="row">
-      <!-- Announce Damage button -->
-      <div class="col-4">
-        <form action="../utility/damage_report/announce_Damage.php"><button class="btn btn-warning">Sérülés bejelentése
-            <i class="fas fa-file-alt"></i></button></form>
-      </div>
       <!-- Displays a tickable when items are selected, to approve tekaout process -->
-      <div class="col-4">
-        <div class="form-check intactForm">
+      <div class="col " id="submit-retrieve">
+
+        <div class="form-check intactForm" id="if_intact">
           <input class="form-check-input" type="checkbox" value="" id="intactItems">
           <label class="form-check-label" for="intactItems">
             <h6 class="statement">Igazolom, hogy minden, amit visszahoztam sérülésmentes és kifogástalanul működik.
               Sérülés esetén azonnal jelezd azt a vezetőségnek.</h6>
           </label>
+          <!-- Send button holder -->
+          <button class="send btn btn-success">
+            <i class="fas fa-check-square fa-4x"></i>
+          </button>
         </div>
-      </div>
-
-      <!-- Send button holder -->
-      <div class="col-4">
-        <button class="send btn btn-success">
-          <i class="fas fa-check-square fa-4x"></i>
-        </button>
+        <!-- Announce Damage button -->
+        <div>
+          <form action="../utility/damage_report/announce_Damage.php"><button class="btn btn-warning">Sérülés
+              bejelentése
+              <i class="fas fa-file-alt"></i></button></form>
+        </div>
       </div>
     </div>
 
@@ -106,49 +102,59 @@ function PhparrayCookie()
     </table>
 
 
-  </div>
-  </div>
-  <div class="row">
-    <!-- THIS TABLE HOLDS THE TWO CHILDS - selectable and selected-->
-    <!-- Selectable items -->
-    <div class="col-6">
-      <?php
-      //Get the items that are currently by the user
-      //Todo: Moves this function to the itemManager.php
-      $TKI = $_SESSION['UserUserName'];
-      $conn = Database::runQuery_mysqli();
-      $sql = ("SELECT * FROM `leltar` WHERE `RentBy` = '$TKI' AND Status=0");
-      $result = mysqli_query($conn, $sql);
-      $conn->close();
-      $n = 0;
-      while ($row = $result->fetch_assoc()) {
-        //var_dump($row);
-        $n++;
-        echo '<div class="result dynamic-field"><button id="' . $row['UID'] . '" class="btn btn-dark" onclick="' . "prepare(this.id,'" . $row['Nev'] . "'" . ');' . '"' . '>' . $row['Nev'] . ' [' . $row['UID'] . ']' . ' <i class="fas fa-angle-double-right"></i></button></div>';
-        //echo '<div class="result dynamic-field"><button id="'.$row['UID'].'" class="btn btn-dark" onclick="'."prepare(this.id,'".$row['Nev']." ".$row['UID']."'".');'.'"'.'>'.$row['Nev'].' ('.$row['UID'].')'.' <i class="fas fa-angle-double-right"></i></button></div>';
-      }
-      if ($n == 0) {
-        echo '<div class="result dynamic-field text"> // Jelenleg nincs nálad egy tárgy sem</div>';
-      }
-      ?>
-    </div>
-    <div class="col-6">
-      <table class="table table-bordered table-dark dynamic-table " style="line-height: 10px;" id="dynamic_field">
-        <tr>
-          <div style="text-align:center;" class="text-primary"><strong></hr></strong></div>
-        </tr>
-      </table>
-    </div>
-  </div>
 
+
+    <div class="row" id="retrieve-row">
+      <!-- THIS TABLE HOLDS THE TWO CHILDS - selectable and selected-->
+      <!-- Selectable items -->
+      <div class="col-6" id="items-to-retrieve">
+        <table class="table table-bordered table-dark dynamic-table">
+          <?php
+          //Get the items that are currently by the user
+          //Todo: Moves this function to the itemManager.php
+          $TKI = $_SESSION['UserUserName'];
+          $conn = Database::runQuery_mysqli();
+          $sql = ("SELECT * FROM `leltar` WHERE `RentBy` = '$TKI' AND Status=0");
+          $result = mysqli_query($conn, $sql);
+          $conn->close();
+          $n = 0;
+          while ($row = $result->fetch_assoc()) {
+            //var_dump($row);
+            $n++;
+            echo '<tr id="' . $row['UID'] . '"><td class="result dynamic-field"><button id="' . $row['UID'] . '" class="btn btn-dark" onclick="' . "prepare(this.id,'" . $row['Nev'] . "'" . ');' . '"' . '>' . $row['Nev'] . ' [' . $row['UID'] . ']' . ' <i class="fas fa-angle-double-right"></i></button></td></tr>';
+            //echo '<div class="result dynamic-field"><button id="' . $row['UID'] . '" class="btn btn-dark" onclick="' . "prepare(this.id,'" . $row['Nev'] . "'" . ');' . '"' . '>' . $row['Nev'] . ' [' . $row['UID'] . ']' . ' <i class="fas fa-angle-double-right"></i></button></div>';
+          }
+          if ($n == 0) {
+            echo '<div class="result dynamic-field text"> // Jelenleg nincs nálad egy tárgy sem</div>';
+          }
+          ?>
+        </table>
+      </div>
+      <div class="col-6">
+        <table class="table table-bordered dynamic-table " style="line-height: 10px;" id="dynamic_field">
+          <tr>
+            <div style="text-align:center;" class="text-primary"><strong></hr></strong></div>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+  </div>
   </div>
 </body>
 
 </html>
 
 <script>
+
+  //Preventing double click zoom
+  document.addEventListener('dblclick', function (event) {
+    event.preventDefault();
+  }, { passive: false });
+
+
   function prepare(id, txt) {
-    $('#dynamic_field').append('<tr id="prep-' + id + '"><td class="dynamic-field"><button id="prep-' + id + '" class="btn btn-dark" onclick="unstage(this.id);"><i class="fas fa-angle-double-left"></i> ' + txt + '</button></td></tr>');
+    $('#dynamic_field').append('<tr class="bg-success" id="prep-' + id + '"><td class="dynamic-field"><button id="prep-' + id + '" class="btn btn-succes" onclick="unstage(this.id);"><i class="fas fa-angle-double-left"></i> ' + txt + '</button></td></tr>');
     $('#' + id).hide();
   }
 
@@ -157,13 +163,13 @@ function PhparrayCookie()
     id = id.replace("prep-", "");
     $('#' + id).show();
     if ($('#dynamic_field tr').length == 1) {
-      $('.intactForm').css('opacity', '0');
+      $('.intactForm').css('display', 'none');
       $('.send').hide();
       $("#intactItems").prop("checked", false);
     }
   }
   $(document).ready(function () {
-    $('.intactForm').css('opacity', '0');
+    $('.intactForm').css('display', 'none');
     // Csak akkor jelenjen meg a checkbox, ha már van Go gomb is.
     $('.send').hide();
 
@@ -189,7 +195,7 @@ function PhparrayCookie()
 
 
     $(document).on('click', '.result', function () {
-      $('.intactForm').css('opacity', '1');
+      $('.intactForm').css('display', 'flex');
     });
 
     function allowGO() {
