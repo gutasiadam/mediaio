@@ -175,7 +175,7 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
             <div class="col-12">
               <ul class="selectedItemsDisplay" id="output-mobile"></ul>
             </div>
-            <button class="btn btn-sm btn-success col-lg-auto mb-1" id="takeout2BTN-mobile">Mehet</button>
+            <button class="btn btn-sm btn-success col-lg-auto mb-1" data-bs-dismiss="offcanvas" id="takeout2BTN-mobile">Mehet</button>
           </div>
         </div>
       </div>
@@ -575,6 +575,7 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
           "font-weight": "normal !important"
         });
         $("#jstree ul li:nth-child(" + a + ") a").removeClass("jstree-search");
+        deselect_node(a);
       }
 
     }
