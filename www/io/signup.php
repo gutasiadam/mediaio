@@ -3,7 +3,7 @@
         #date_default_timezone_set("Europe/Budapest"); 
         echo '<nav class="navbar navbar-expand-lg navbar-dark bg-dark>
         <a class="navbar-brand" href="#">Arpad Media IO</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
         
@@ -36,7 +36,6 @@
 
 <body>
 
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <div id="signupdata" align=center> 
@@ -53,7 +52,7 @@
                     }else if ($_GET['error'] == 'UserTaken'){
                         echo '<p class="registererror">Username already exists. Sorry.</p>';}}
             ?>
-            <table class="logintable">
+            <table class="signuptable">
                 <tr><td><div class="form-group">
                 <label for="lastName">Vezetéknév</label> <br> <input class="form-control mb-2 mr-sm-2" width=50% type="text" name="lastName" placeholder="Vezetéknév" required></div></td></tr>
                 <tr><td><div class="form-group">
@@ -89,19 +88,3 @@ $( document ).ready(function() {
   $(".spinner-border").hide();
 });
 </script>
-<style>
-    .registererror{
-        font-size: 20px;
-        color: red;
-    }
-    .success{
-        font-size: 20px;
-        color: green;
-        background-color: #669999;
-    }
-
-    table{
-      vertical-align: middle;
-    text-align: center;
-    }
-</style>

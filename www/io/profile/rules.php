@@ -8,9 +8,6 @@ if(!isset($_SESSION['userId'])){
 <head>
 <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-	  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
-  <script src="https://kit.fontawesome.com/2c66dc83e7.js" crossorigin="anonymous"></script>
 </head>
 <title>Arpad Media IO - Dokumentumok</title>
 
@@ -18,9 +15,11 @@ if(!isset($_SESSION['userId'])){
   <a class="navbar-brand" href="index.php">
     <img src="../utility/logo2.png" height="50">
   </a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
+  <!-- Breadcrumb for mobilne navigation -->
+  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto navbarUl">
       <script>
@@ -30,7 +29,7 @@ if(!isset($_SESSION['userId'])){
         });
       </script>
     </ul>
-    <ul class="navbar-nav navbarPhP">
+    <ul class="navbar-nav ms-auto navbarPhP">
       <li>
         <a class="nav-link disabled timelock" href="#"><span id="time"> 10:00 </span><?php echo ' '.$_SESSION['UserUserName'];?>
         </a>
@@ -46,13 +45,10 @@ if(!isset($_SESSION['userId'])){
         };
       </script>
     </form>
-    <a class="nav-link my-2 my-sm-0" href="./help.php">
-      <i class="fas fa-question-circle fa-lg"></i>
-    </a>
   </div>
 </nav> <?php  } ?>
-    <h2 class="rainbow" align="center" style="margin-top:50px;" id="doTitle">Dokumentumok</h2><br />
-    <table class="logintable">
+    <h2 class="rainbow" id="doTitle">Dokumentumok</h2>
+    <table class="logintable" id="documents">
     <?php
 
 if ($handle = opendir('../data/documents/')) {
@@ -62,7 +58,7 @@ if ($handle = opendir('../data/documents/')) {
     while (false !== ($entry = readdir($handle))) {
         if((($entry)!='.') and (($entry)!='..')){
         ?>
-        <tr><td><a target="_blank" href='../data/documents/<?php echo "$entry\n";?>'><button class="btn btn-light"> <?php echo "$entry\n";?></button></a></td></tr>
+        <tr><td><a target="_blank" href='../data/documents/<?php echo "$entry\n";?>'><button class="btn btn-secondary mb-2 w-100"> <?php echo "$entry\n";?></button></a></td></tr>
        <?php
         }
     }
@@ -70,12 +66,3 @@ if ($handle = opendir('../data/documents/')) {
 }
 ?>
 </table>
-
-<style>
-    .logintable button {
-        font-size: 1.75rem;
-        min-width: 400px;
-        margin-top: 20px;
-    }
-</style>
-

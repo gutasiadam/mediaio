@@ -1,29 +1,30 @@
 //Draw menu:
 console.log("_initMenu file called, loading...");
 // Begin by displaying spinner
-      //Import menu items
-      var menuItems = null;
-      function importItem(fileLoc) {
-        var varName = null;
-        $.ajax({
-          'async': false,
-          'global': false,
-          'url': fileLoc,
-          'dataType': "json",
-          'success': function(data) {
-            varName = data;
-          }});
-        return varName;
-      };
-      
-function startTimer(display, timeUpLoc,minutes=10) {
+//Import menu items
+var menuItems = null;
+function importItem(fileLoc) {
+  var varName = null;
+  $.ajax({
+    'async': false,
+    'global': false,
+    'url': fileLoc,
+    'dataType': "json",
+    'success': function (data) {
+      varName = data;
+    }
+  });
+  return varName;
+};
+
+function startTimer(display, timeUpLoc, minutes = 10) {
   //Self correcting timer, for auto logout
-  var start = Date.now()/1000;//in seconds
-    var duration = start+(60*minutes+1); //Auto-logout after minutes
-    var timer = duration, minutes, seconds;
-    console.log("Timer start with" + duration);
+  var start = Date.now() / 1000;//in seconds
+  var duration = start + (60 * minutes + 1); //Auto-logout after minutes
+  var timer = duration, minutes, seconds;
+  console.log("Timer start with" + duration);
   setInterval(function () {
-    var secondsLeft=duration-Date.now()/1000;
+    var secondsLeft = duration - Date.now() / 1000;
 
     minutes = parseInt(secondsLeft / 60, 10)
     seconds = parseInt(secondsLeft % 60, 10);
@@ -55,39 +56,39 @@ function startTimer(display, timeUpLoc,minutes=10) {
   }, 1000);
 };
 
-      //Loop trough Menu left side
-      //jumpupfolderstruct: ha almappában van, és feljebb kell ugrani.
-      function drawMenuItemsLeft(activeName, menuItems, jumpupFolderStruct = 1) {
-        tmpJumpupFolderStruct=jumpupFolderStruct
-        for (let i = 0; i < menuItems.menu.left.length; i++) {
-          if (menuItems.menu.left[i].hasOwnProperty('target') === false) {
-            // Add target field if not defined
-            menuItems.menu.left[i].target = "_self";
-          }
+//Loop trough Menu left side
+//jumpupfolderstruct: ha almappában van, és feljebb kell ugrani.
+function drawMenuItemsLeft(activeName, menuItems, jumpupFolderStruct = 1) {
+  tmpJumpupFolderStruct = jumpupFolderStruct
+  for (let i = 0; i < menuItems.menu.left.length; i++) {
+    if (menuItems.menu.left[i].hasOwnProperty('target') === false) {
+      // Add target field if not defined
+      menuItems.menu.left[i].target = "_self";
+    }
 
 
-        //Handle external links
-        if(menuItems.menu.left[i].hasOwnProperty('external')){
-          if(menuItems.menu.left[i].external){
-            jumpupFolderStruct=1
-          }
-        }
-      
-          // Draw item on top side
-          if (menuItems.menu.left[i].name == activeName) {
-            $('.navbarUl').append('<li class="nav-item active imported"><a class="nav-link" target="' + menuItems.menu.left[i].target + '" href="' + ("../").repeat(jumpupFolderStruct - 1) + menuItems.menu.left[i].href + '"><i class="' + menuItems.menu.left[i].icon + '"></i></a></li>');
-          } else {
-            $('.navbarUl').append('<li class="nav-item imported"><a class="nav-link" target="' + menuItems.menu.left[i].target + '" href="' + ("../").repeat(jumpupFolderStruct - 1) + menuItems.menu.left[i].href + '"><i class="' + menuItems.menu.left[i].icon + '"></i></a></li>');
-          }
-          //Reset folder jumping for upcoming links
-          jumpupFolderStruct=tmpJumpupFolderStruct
-        }
-
+    //Handle external links
+    if (menuItems.menu.left[i].hasOwnProperty('external')) {
+      if (menuItems.menu.left[i].external) {
+        jumpupFolderStruct = 1
       }
-      
+    }
+
+    // Draw item on top side
+    if (menuItems.menu.left[i].name == activeName) {
+      $('.navbarUl').append('<li class="nav-item imported"><a class="nav-link active" target="' + menuItems.menu.left[i].target + '" href="' + ("../").repeat(jumpupFolderStruct - 1) + menuItems.menu.left[i].href + '"><div class="nav-icon"><i class="' + menuItems.menu.left[i].icon + '"></i></div><span class="nav-sandwich">' + menuItems.menu.left[i].displayName + '</span></a></li>');
+    } else {
+      $('.navbarUl').append('<li class="nav-item imported"><a class="nav-link" target="' + menuItems.menu.left[i].target + '" href="' + ("../").repeat(jumpupFolderStruct - 1) + menuItems.menu.left[i].href + '"><div class="nav-icon"><i class="' + menuItems.menu.left[i].icon + '"></i></div><span class="nav-sandwich">' + menuItems.menu.left[i].displayName + '</span></a></li>');
+    }
+    //Reset folder jumping for upcoming links
+    jumpupFolderStruct = tmpJumpupFolderStruct
+  }
+
+}
+
 
 function drawMenuItemsRight(activeName, menuItems, jumpupFolderStruct = 1) {
-  tmpJumpupFolderStruct=jumpupFolderStruct
+  tmpJumpupFolderStruct = jumpupFolderStruct
   console.log("drawMenuItemsRight called.")
   if (menuItems && menuItems.menu && menuItems.menu.right) {
     for (let i = 0; i < menuItems.menu.right.length; i++) {
@@ -96,9 +97,9 @@ function drawMenuItemsRight(activeName, menuItems, jumpupFolderStruct = 1) {
       }
 
       //Handle external links
-      if(menuItems.menu.right[i].hasOwnProperty('external')){
-        if(menuItems.menu.right[i].external){
-          jumpupFolderStruct=1
+      if (menuItems.menu.right[i].hasOwnProperty('external')) {
+        if (menuItems.menu.right[i].external) {
+          jumpupFolderStruct = 1
         }
       }
 
@@ -110,7 +111,7 @@ function drawMenuItemsRight(activeName, menuItems, jumpupFolderStruct = 1) {
         $('.menuRight').append('<a class="nav-link my-2 my-sm-0" target="' + menuItems.menu.right[i].target + '" href="' + ("../").repeat(jumpupFolderStruct - 1) + menuItems.menu.right[i].href + '"><i class="' + menuItems.menu.right[i].icon + '"></i></a>');
       }
       //Reset folder jumping for upcoming links
-      jumpupFolderStruct=tmpJumpupFolderStruct
+      jumpupFolderStruct = tmpJumpupFolderStruct
     }
 
 
@@ -120,22 +121,22 @@ function drawMenuItemsRight(activeName, menuItems, jumpupFolderStruct = 1) {
 }
 
 
-    function drawIndexTable(menuItems,jumpupFolderStruct=1){
+function drawIndexTable(menuItems, jumpupFolderStruct = 1) {
 
-        console.log("Drawing Main Page table");
-        if (menuItems){
-            for (i = 0; i < menuItems.indexTable.length; i++) {
-                //console.log(i,menuItems.indexTable[i])
-                if(i%2==0){
-                    $('.mainRow'+Math.round((i+1)/2)).append(`<div class="col-6 col-sm-2"><a class="nav-link ab"  href="${(".").repeat(jumpupFolderStruct)+menuItems.indexTable[i].href}"><i class="${menuItems.indexTable[i].icon}"></i><br><h5>${menuItems.indexTable[i].displayName}</h5></a></div>`);
-                    //$('.mainRow'+Math.round(i/2)).append('<div class="col-6 col-sm-2"><a class="nav-link ab" href="./takeout.php"><i class="fas fa-upload fa-3x"></i><br><h5>Debug</h5></a></div>');
-                }else{
-                    $('.mainRow'+Math.round((i+1)/2)).append(`<div class="col-6 col-sm-2 offset-md-1"><a class="nav-link ab" href="${(".").repeat(jumpupFolderStruct)+menuItems.indexTable[i].href}"><i class="${menuItems.indexTable[i].icon}"></i><br><h5>${menuItems.indexTable[i].displayName}</h5></a></div>`);
-                    //$('.mainRow'+Math.round(i/2)).append('<div class="col-6 col-sm-2"><a class="nav-link ab" href="./takeout.php"><i class="fas fa-upload fa-3x"></i><br><h5>Debug</h5></a></div>');
-                }
-              console.log(menuItems.indexTable[i].displayName);
-            }
-        }
+  console.log("Drawing Main Page table");
+  if (menuItems) {
+    for (i = 0; i < menuItems.indexTable.length; i++) {
+      //console.log(i,menuItems.indexTable[i])
+      if (i % 2 == 0) {
+        $('.mainRow' + Math.round((i + 1) / 2)).append(`<div class="col-6 col-sm-2 menuTable"><a class="nav-link ab"  href="${(".").repeat(jumpupFolderStruct) + menuItems.indexTable[i].href}"><i class="${menuItems.indexTable[i].icon}"></i><br><h5>${menuItems.indexTable[i].displayName}</h5></a></div>`);
+        //$('.mainRow'+Math.round(i/2)).append('<div class="col-6 col-sm-2"><a class="nav-link ab" href="./takeout.php"><i class="fas fa-upload fa-3x"></i><br><h5>Debug</h5></a></div>');
+      } else {
+        $('.mainRow' + Math.round((i + 1) / 2)).append(`<div class="col-6 col-sm-2 menuTable offset-md-1"><a class="nav-link ab" href="${(".").repeat(jumpupFolderStruct) + menuItems.indexTable[i].href}"><i class="${menuItems.indexTable[i].icon}"></i><br><h5>${menuItems.indexTable[i].displayName}</h5></a></div>`);
+        //$('.mainRow'+Math.round(i/2)).append('<div class="col-6 col-sm-2"><a class="nav-link ab" href="./takeout.php"><i class="fas fa-upload fa-3x"></i><br><h5>Debug</h5></a></div>');
+      }
+      console.log(menuItems.indexTable[i].displayName);
     }
+  }
+}
 
-    console.log("_initMenu loaded.")
+console.log("_initMenu loaded.")

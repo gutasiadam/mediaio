@@ -31,11 +31,14 @@ if(!isset($_SESSION['userId'])){
   }else{  echo '<script src="./adminCalendarRender.js"></script>';}
 ?>
   <!-- HOZZÁADÁS MODAL -->
+
+
+  <link href='../style/events.css' rel='stylesheet'/>
   </head>
 
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
 					<a class="navbar-brand" href="index.php">Arpad Media IO</a>
-					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+					<button class="navbar-toggler" type="button" data-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 					  <span class="navbar-toggler-icon"></span>
 					</button>
 				  
@@ -80,9 +83,7 @@ if(!isset($_SESSION['userId'])){
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLabel">Esemény hozzáadása</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         <h6>Esemény hozzáadása <span id="addEventInterval"></span> időben</h6>
@@ -105,7 +106,7 @@ if(!isset($_SESSION['userId'])){
         szándékodat. <u>(megerősítés után már nem tudod törölni az eseményt.)</u></h6>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Mégsem</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Mégsem</button>
         <input type="submit" class="btn btn-primary" value="Hozzáadás" ></button>
         <input type="hidden" id="addEventStartVal"></input>
         <input type="hidden" id="addEventEndVal"></input>
@@ -121,9 +122,7 @@ if(!isset($_SESSION['userId'])){
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLabel">Opcíók</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         <form id="sendDelEvent">
@@ -139,7 +138,7 @@ if(!isset($_SESSION['userId'])){
       </div>
       <div class="modal-footer">
       <span id="deleteEventName"></span>
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Mégsem</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Mégsem</button>
       </div>
     </div>
   </div>
@@ -164,52 +163,6 @@ if(!isset($_SESSION['userId'])){
 </div>
   </body>
 </html>
-<style>
-.sideHelp {
-  height: 100%; /* 100% Full-height */
-  width: 0; /* 0 width - change this with JavaScript */
-  position: fixed; /* Stay in place */
-  z-index: 1; /* Stay on top */
-  top: 0; /* Stay at the top */
-  left: 0;
-  background-color: #222; /* Black*/
-  overflow-x: hidden; /* Disable horizontal scroll */
-  padding-top: 60px; /* Place content 60px from the top */
-  transition: 0.5s; /* 0.5 second transition effect to slide in the sidenav */
-  padding-left: 10px;
-}
-
-.closebtn{
-  color:white;
-  transition: .8s ease-in-out;
-  display: block;
-}
-.closebtn:hover{
-  color:red;
-  transform: rotateX(45deg);
-  transition: 0.5s;
-  -webkit-transform:rotateX(45deg);
-   -moz-transform:rotateX(45deg);
-   -o-transform:rotateX(45deg); 
-}
-#calendar{
-  margin-left: 2%;
-  width: 90%;
-}
-
-#deleteEventName{
-  position: relative;
-  color: #dbdbdb;
-  text-align: left;
-  font-size: 10;
-  align:right;
-}
-
-#exampleModalLabel{
-  position: absolute;
-  font-size: 30;
-}
-</style>
 
  <script>
 function openNav() {
