@@ -4,75 +4,79 @@ include("header.php");
 include("../translation.php"); ?>
 <script src="../utility/_initMenu.js" crossorigin="anonymous"></script>
 
-    <html>
-<script> $( document ).ready(function() {
-              menuItems = importItem("../utility/menuitems.json");
-              drawMenuItemsLeft("profile",menuItems,2);
-              drawMenuItemsRight('profile',menuItems,2);
-            });</script>
-    <?php
-        
- if (isset($_SESSION["userId"])) { ?> 
- <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-  <a class="navbar-brand" href="index.php">
-    <img src="../utility/logo2.png" height="50">
-  </a>
-  <!-- Breadcrumb for mobilne navigation -->
-  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+<html>
+<script> $(document).ready(function () {
+    menuItems = importItem("../utility/menuitems.json");
+    drawMenuItemsLeft("profile", menuItems, 2);
+    drawMenuItemsRight('profile', menuItems, 2);
+  });</script>
+<?php
+
+if (isset($_SESSION["userId"])) { ?>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="../index.php">
+      <img src="../utility/logo2.png" height="50">
+    </a>
+    <!-- Breadcrumb for mobilne navigation -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
-    
-  <div class="collapse navbar-collapse" id="navbarSupportedContent">
-    <ul class="navbar-nav mr-auto navbarUl">
-    </ul>
-    <ul class="navbar-nav ms-auto navbarPhP">
-      <li>
-        <a class="nav-link disabled timelock" href="#"><span id="time"> 10:00 </span><?php echo ' '.$_SESSION['UserUserName'];?>
-        </a>
-      </li>
-    </ul>
-    <form method='post' class="form-inline my-2 my-lg-0" action=../utility/userLogging.php>
-      <button class="btn btn-danger my-2 my-sm-0" name='logout-submit' type="submit">Kijelentkezés</button>
-      <script type="text/javascript">
-        window.onload = function () {
-          display = document.querySelector('#time');
-          var timeUpLoc="../utility/userLogging.php?logout-submit=y"
-          startTimer(display, timeUpLoc);
-        };
-      </script>
-    </form>
-  </div>
-</nav>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto navbarUl">
+      </ul>
+      <ul class="navbar-nav ms-auto navbarPhP">
+        <li>
+          <a class="nav-link disabled timelock" href="#"><span id="time"> 10:00 </span>
+            <?php echo ' ' . $_SESSION['UserUserName']; ?>
+          </a>
+        </li>
+      </ul>
+      <form method='post' class="form-inline my-2 my-lg-0" action=../utility/userLogging.php>
+        <button class="btn btn-danger my-2 my-sm-0" name='logout-submit' type="submit">Kijelentkezés</button>
+        <script type="text/javascript">
+          window.onload = function () {
+            display = document.querySelector('#time');
+            var timeUpLoc = "../utility/userLogging.php?logout-submit=y"
+            startTimer(display, timeUpLoc);
+          };
+        </script>
+      </form>
+    </div>
+  </nav>
 
   <body>
-    <h1 align=center class="rainbow">Opciók</h1>
+    <h1 class="rainbow">Opciók</h1>
     <table class="help-logintable">
       <tr>
         <td>
-          <form action="pfcurr.php"><button class="btn btn-dark">Mutasd a nálam levő tárgyakat <i
+          <form action="pfcurr.php"><button class="btn btn-dark w-100">Mutasd a nálam levő tárgyakat <i
                 class="fas fa-project-diagram"></i></button></form>
         </td>
       </tr>
       <tr>
         <td>
-          <form action="chPwd.php"><button class="btn btn-warning">Jelszócsere <i class="fas fa-key"></i></button></form>
+          <form action="chPwd.php"><button class="btn btn-warning w-100">Jelszócsere <i class="fas fa-key"></i></button>
+          </form>
         </td>
       </tr>
       <tr>
         <td>
-          <form action="userlist.php"><button class="btn btn-dark">Elérhetőségek megtekintése <i
+          <form action="userlist.php"><button class="btn btn-dark w-100">Elérhetőségek megtekintése <i
                 class="fas fa-address-book"></i></i></button></form>
         </td>
       </tr>
       <tr>
         <td>
-          <form action="rules.php"><button class="btn btn-secondary">Dokumentumok <i
+          <form action="rules.php"><button class="btn btn-secondary w-100">Dokumentumok <i
                 class="fas fa-folder-open"></i></i></button></form>
         </td>
       </tr>
       <tr>
         <td>
-          <form action="../utility/damage_report/announce_Damage.php"><button class="btn btn-warning">Sérülés bejelentése
+          <form action="../utility/damage_report/announce_Damage.php"><button class="btn btn-warning w-100">Sérülés
+              bejelentése
               <i class="fas fa-file-alt"></i></button></form>
         </td>
       </tr>
@@ -89,14 +93,14 @@ include("../translation.php"); ?>
       }
       if (in_array("system", $_SESSION["groups"]) or in_array("teacher", $_SESSION["groups"])) { //SYSADMIN OR TEACHER
         echo '
-                    <tr><td><form action="../budget/"><button class="btn btn-info">Költségvetés <i class="fas fa-coins"></i></button></form></td></tr>
-					          <tr><td><form action="points.php"><button class="btn btn-success">Pontszámok <i class="fas fa-calculator"></i></button></form> </td></tr>';
-                    }
-                    if(in_array("system", $_SESSION["groups"])){
-                      echo '
-                      <tr><td><form action="roles.php"><button class="btn btn-danger">Engedélyek módosítása <i class="fas fa-radiation"></i></button></form></td></tr>
-                      <tr><td><form action="../utility/loginPageSettings.php"><button class="btn btn-danger">Motd/Belépések korlátozása <i class="fas fa-user-shield"></i></button></form></td></tr>
-                      <tr><td><form action="../utility/refetchData.php"><button class="btn btn-success disabled">Adattáblák frissítése - Frissíts a kivétel oldal betöltésével! <i class="fas fa-sync"></i></i></button></form></td></tr>';
+                    <tr><td><form action="../budget/"><button class="btn btn-info w-100">Költségvetés <i class="fas fa-coins"></i></button></form></td></tr>
+					          <tr><td><form action="points.php"><button class="btn btn-success w-100">Pontszámok <i class="fas fa-calculator"></i></button></form> </td></tr>';
+      }
+      if (in_array("system", $_SESSION["groups"])) {
+        echo '
+                      <tr><td><form action="roles.php"><button class="btn btn-danger w-100">Engedélyek módosítása <i class="fas fa-radiation"></i></button></form></td></tr>
+                      <tr><td><form action="../utility/loginPageSettings.php"><button class="btn btn-danger w-100">Motd/Belépések korlátozása <i class="fas fa-user-shield"></i></button></form></td></tr>
+                      <tr><td><form action="../utility/refetchData.php"><button class="btn btn-success disabled w-100">Adattáblák frissítése - Frissíts a kivétel oldal betöltésével! <i class="fas fa-sync"></i></i></button></form></td></tr>';
       } ?>
     </table>
     <?php

@@ -47,8 +47,8 @@ if(!isset($_SESSION['userId'])){
     </form>
   </div>
 </nav> <?php  } ?>
-    <h2 class="rainbow" align="center" style="margin-top:50px;" id="doTitle">Dokumentumok</h2><br />
-    <table class="logintable">
+    <h2 class="rainbow" id="doTitle">Dokumentumok</h2>
+    <table class="logintable" id="documents">
     <?php
 
 if ($handle = opendir('../data/documents/')) {
@@ -58,7 +58,7 @@ if ($handle = opendir('../data/documents/')) {
     while (false !== ($entry = readdir($handle))) {
         if((($entry)!='.') and (($entry)!='..')){
         ?>
-        <tr><td><a target="_blank" href='../data/documents/<?php echo "$entry\n";?>'><button class="btn btn-light"> <?php echo "$entry\n";?></button></a></td></tr>
+        <tr><td><a target="_blank" href='../data/documents/<?php echo "$entry\n";?>'><button class="btn btn-secondary mb-2 w-100"> <?php echo "$entry\n";?></button></a></td></tr>
        <?php
         }
     }
@@ -66,12 +66,3 @@ if ($handle = opendir('../data/documents/')) {
 }
 ?>
 </table>
-
-<style>
-    .logintable button {
-        font-size: 1.75rem;
-        min-width: 400px;
-        margin-top: 20px;
-    }
-</style>
-

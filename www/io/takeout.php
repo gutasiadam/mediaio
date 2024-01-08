@@ -23,22 +23,25 @@ $SESSuserName = $_SESSION['UserUserName'];
 error_reporting(E_ALL ^ E_NOTICE);
 ?>
 
+
 <script src="utility/jstree.js"></script>
 <link href='main.css' rel='stylesheet' />
 <link href="utility/themes/default/style.min.css" rel="stylesheet" />
 <html>
 <title>MediaIo - takeout</title>
-<?php if (isset($_SESSION["userId"])) { ?> <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<?php if (isset($_SESSION["userId"])) { ?>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <a class="navbar-brand" href="index.php">
       <img src="./utility/logo2.png" height="50">
     </a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav mr-auto navbarUl">
         <script>
-          $(document).ready(function() {
+          $(document).ready(function () {
             menuItems = importItem("./utility/menuitems.json");
             drawMenuItemsLeft('takeout', menuItems);
           });
@@ -46,14 +49,16 @@ error_reporting(E_ALL ^ E_NOTICE);
       </ul>
       <ul class="navbar-nav ms-auto navbarPhP">
         <li>
-          <a class="nav-link disabled timelock" href="#"><span id="time"> 30:00 </span><?php echo ' ' . $_SESSION['UserUserName']; ?>
+          <a class="nav-link disabled timelock" href="#"><span id="time"> 30:00 </span>
+            <?php echo ' ' . $_SESSION['UserUserName']; ?>
           </a>
         </li>
       </ul>
       <form method='post' class="form-inline my-2 my-lg-0" action=utility/userLogging.php>
-        <button class="btn btn-danger my-2 my-sm-0 logout-button" name='logout-submit' type="submit">Kijelentkezés</button>
+        <button id="logoutBtn" class="btn btn-danger my-2 my-sm-0 logout-button" name='logout-submit'
+          type="submit">Kijelentkezés</button>
         <script type="text/javascript">
-          window.onload = function() {
+          window.onload = function () {
             display = document.querySelector('#time');
             var timeUpLoc = "utility/userLogging.php?logout-submit=y"
             startTimer(display, timeUpLoc, 30);
@@ -61,18 +66,19 @@ error_reporting(E_ALL ^ E_NOTICE);
         </script>
       </form>
     </div>
-  </nav> <?php  }
-        //Limit GivetoAnotherperson modal to admin users only
-        if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["groups"])) {
-          ?>
+  </nav>
+<?php }
+//Limit GivetoAnotherperson modal to admin users only
+if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["groups"])) {
+  ?>
   <!-- GivetoAnotherperson Modal -->
-  <div class="modal fade" id="givetoAnotherPerson_Modal" tabindex="-1" role="dialog" aria-labelledby="givetoAnotherPerson_Modal_Label" aria-hidden="true">
+  <div class="modal fade" id="givetoAnotherPerson_Modal" tabindex="-1" role="dialog"
+    aria-labelledby="givetoAnotherPerson_Modal_Label" aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="givetoAnotherPerson_Modal_Label">Eszköz kivétele más helyett</h5>
-          <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
           </button>
         </div>
         <div class="modal-body">
@@ -94,9 +100,10 @@ error_reporting(E_ALL ^ E_NOTICE);
   </div>
   </div>
   <!-- End of GivetoAnotherperson Modal -->
-<?php  } ?>
+<?php } ?>
 <!-- Presets Modal -->
-<div class="modal fade" id="presets_Modal" tabindex="-1" role="dialog" aria-labelledby="presets_ModalLabel" aria-hidden="true">
+<div class="modal fade" id="presets_Modal" tabindex="-1" role="dialog" aria-labelledby="presets_ModalLabel"
+  aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -119,35 +126,61 @@ error_reporting(E_ALL ^ E_NOTICE);
 <!-- End of Presets Modal -->
 
 
+
 <body>
-  <br /><br />
-  <h2 class="rainbow" align="center" id="doTitle">Tárgy kivétel</h2><br />
+  <h2 class="rainbow" id="doTitle">Tárgy kivétel</h2>
   <div class="container">
-    <div class="row align-items-start">
-      <div class="col-4">
-        <h3 style='text-align: center'>Kiválasztva</h3>
-        <ul class="selectedItemsDisplay" id="output"></ul>
+    <div class="row align-items-start" id="takeout-container">
+      <div class="col-4" id="selected-desktop">
+        <h3>Kiválasztva:</h3>
+        <ul class="selectedItemsDisplay" id="output-desktop"></ul>
       </div>
-      <div class="col-8">
-        Keresés: <input type="text" id="search" style='margin-bottom: 10px' placeholder="Kezdd el ide írni, mit vinnél el.." autocomplete="off" />
-        <div class="row optionsButtons d-flex flex-row">
+      <div class="col">
+        Keresés: <input type="text" id="search" style='margin-bottom: 10px'
+          placeholder="Kezdd el ide írni, mit vinnél el.." autocomplete="off" />
+        <div class="row optionsButtons" id="takeout-option-buttons">
           <!-- <button class="btn btn-warning col-2 mx-1" id="clear" style='margin-bottom: 6px'>Törlés</button> -->
-          <button class="btn btn-sm btn-danger col-sm-auto mx-1 mb-1 text-nowrap" id="clear" style='margin-bottom: 6px' onclick="deselect_all()">Összes törlése</button>
-          <button class="btn btn-sm btn-success col-sm-auto mx-1 mb-1" id="takeout2BTN" style='margin-bottom: 6px'>Mehet</button>
-          <button class="btn btn-sm btn-info col-sm-auto mx-1 mb-1" onclick="showPresetsModal()" style='margin-bottom:6px'>Presetek</button>
-          <button class="btn btn-sm btn-dark col-sm-auto mx-1 mb-1 text-nowrap" id="givetoAnotherPerson_Button" type="button" data-bs-toggle="modal" data-bs-target="#givetoAnotherPerson_Modal" style="margin-bottom: 6px">Másnak veszek ki</button>
+          <button class="btn btn-sm btn-danger col-lg-auto mb-1 text-nowrap" id="clear" style='margin-bottom: 6px'
+            onclick="deselect_all()">Összes törlése</button>
+          <button class="btn btn-sm btn-success col-lg-auto mb-1" id="takeout2BTN"
+            style='margin-bottom: 6px'>Mehet</button>
+          <button class="btn btn-sm btn-info col-lg-auto mb-1" onclick="showPresetsModal()"
+            style='margin-bottom:6px'>Presetek</button>
+          <button class="btn btn-sm btn-dark col-lg-auto mb-1 text-nowrap" id="givetoAnotherPerson_Button" type="button"
+            data-bs-toggle="modal" data-bs-target="#givetoAnotherPerson_Modal" style="margin-bottom: 6px">Másnak veszek
+            ki</button>
+          <button href="#sidebar" class="btn btn-sm btn-success mb-1" id="show_selected" data-bs-toggle="offcanvas"
+            role="button" aria-controls="sidebar">Kiválasztva
+            <span id="selectedCount" class="badge bg-danger">0</span>
+          </button>
+
           <!-- Belső használatra kivétel - későbbi release -->
           <!-- <div class="form-check form-switch col-2">
             <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
             <label class="form-check-label text-nowrap" for="flexSwitchCheckDefault">Csak használatra</label>
           </div> -->
         </div>
-
         <div id="jstree">
         </div>
       </div>
+
+
+      <!-- Offcanvas -->
+      <div class="offcanvas offcanvas-start" tabindex="-1" id="sidebar" aria-labelledby="sidebar-label">
+        <div class="offcanvas-header">
+          <h4 class="offcanvas-title" id="sidebar-label">Kiválasztva</h4>
+          <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body" id="sidebar-body">
+          <div class="row">
+            <div class="col-12">
+              <ul class="selectedItemsDisplay" id="output-mobile"></ul>
+            </div>
+            <button class="btn btn-sm btn-success col-lg-auto mb-1" data-bs-dismiss="offcanvas" id="takeout2BTN-mobile">Mehet</button>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
   </div>
 </body>
 
@@ -157,13 +190,20 @@ error_reporting(E_ALL ^ E_NOTICE);
 
 </html>
 <script>
+  //Selected items badge counter
+  var badge = document.getElementById("selectedCount");
+
+  //Preventing double click zoom
+  document.addEventListener('dblclick', function (event) {
+    event.preventDefault();
+  }, { passive: false });
+
   function reloadSavedSelections() {
     //Try re-selectiong items that are saved in the takeOutItems cookie.
     var selecteditems = getCookie("selectedItems").split(',');
     console.log("items that are reloading are :" + selecteditems)
     selecteditems.forEach(element => {
-      if(!$('#jstree').jstree().get_node(element).state.disabled)
-        $('#jstree').jstree().select_node(element);
+      $('#jstree').jstree().select_node(element);
     });
   }
 
@@ -177,7 +217,7 @@ error_reporting(E_ALL ^ E_NOTICE);
       data: {
         mode: "getPresets"
       },
-      success: function(response) {
+      success: function (response) {
 
 
         //Convert rerponse to JSON
@@ -212,7 +252,7 @@ error_reporting(E_ALL ^ E_NOTICE);
     baseText = $(selector).text();
     $(selector).animate({
       'opacity': 0
-    }, 400, function() {
+    }, 400, function () {
       $(this).html('<h2 class="text text-success" role="alert">' + message + '</h2>').animate({
         'opacity': 1
       }, 400);
@@ -222,7 +262,7 @@ error_reporting(E_ALL ^ E_NOTICE);
       $(this).html('<h2 class="text text-success" role="alert">' + message + '</h2>').animate({
         'opacity': 0
       }, 400);
-      setTimeout(function() {
+      setTimeout(function () {
         $(selector).text(baseText).animate({
           'opacity': 1
         }, 400);
@@ -237,7 +277,7 @@ error_reporting(E_ALL ^ E_NOTICE);
     var xobj = new XMLHttpRequest();
     xobj.overrideMimeType("application/json");
     xobj.open('GET', './data/takeOutItems.json', false); // Replace 'my_data' with the path to your file
-    xobj.onreadystatechange = function() {
+    xobj.onreadystatechange = function () {
       if (xobj.readyState == 4 && xobj.status == "200") {
         // Required use of an anonymous callback as .open will NOT return a value but simply returns undefined in asynchronous mode
         callback(xobj.responseText);
@@ -265,7 +305,7 @@ error_reporting(E_ALL ^ E_NOTICE);
     delete obj[oldKey];
   }
 
-  loadJSON(function(response) {
+  loadJSON(function (response) {
     // Parse JSON string into object
     console.log("[loadJSON] - done");
   });
@@ -316,7 +356,17 @@ error_reporting(E_ALL ^ E_NOTICE);
   }
 
   //Invoked when JSTree is ready
-  $('#jstree').bind('ready.jstree', function(e, data) {});
+  $('#jstree').bind('ready.jstree', function (e, data) { });
+
+
+  //Invoked after JStree is loaded
+  $('#jstree').bind('loaded.jstree', function (e, data) {
+    console.log("Loaded!")
+
+    setTimeout(function () {
+      reloadSavedSelections()
+    }, 300);
+  });
 
 
   //Invoked after JStree is loaded
@@ -343,7 +393,7 @@ error_reporting(E_ALL ^ E_NOTICE);
     }
   });
 
-  $('#search').on("keyup change", function() {
+  $('#search').on("keyup change", function () {
     $('#jstree').jstree(true).search($(this).val())
     colorTakenItems();
 
@@ -360,6 +410,8 @@ error_reporting(E_ALL ^ E_NOTICE);
     takeOutPrepJSON['items'] = [];
 
     decideGiveToAnotherPerson_visibility();
+    parseInt(badge.textContent = 0);
+    updateSelectionCookie();
   }
 
   //Deselect a node.
@@ -368,7 +420,7 @@ error_reporting(E_ALL ^ E_NOTICE);
     var nodeUid = $('#jstree').jstree().get_node(ID).original.uid;
     //Deselect the node
     $('#jstree').jstree().deselect_node(ID);
-    var tmp_filtered = $.grep(takeOutPrepJSON['items'], function(e) {
+    var tmp_filtered = $.grep(takeOutPrepJSON['items'], function (e) {
       return e.id != ID;
     });
     takeOutPrepJSON['items'] = tmp_filtered;
@@ -427,7 +479,7 @@ error_reporting(E_ALL ^ E_NOTICE);
   };
 
   //Add items to the selection
-  $('#jstree').on("changed.jstree", function(e, data) {
+  $('#jstree').on("changed.jstree", function (e, data) {
     if (data.action == "select_node") {
       itemArr = {};
       itemArr.id = data.node.id;
@@ -447,11 +499,15 @@ error_reporting(E_ALL ^ E_NOTICE);
       //Run selection
 
       $('#jstree').jstree().select_node(selectionArray);
+      parseInt(badge.textContent++);
 
       updateSelectionCookie();
     } else if (data.action == "deselect_node") {
       //Deselecting node should NOT affects the relatedItems.
       deselect_node(data.node.id);
+
+      //Update badge counter
+      badge.textContent--;
 
       updateSelectionCookie();
     } else if (data.action == "deselect_all") {
@@ -480,25 +536,30 @@ error_reporting(E_ALL ^ E_NOTICE);
    */
   function decideGiveToAnotherPerson_visibility() {
     if (containsOnlyStudioItems() && <?php echo (in_array('system', $_SESSION['groups']) || in_array('admin', $_SESSION['groups'])) ? 'true' : 'false' ?>) {
-      $(`#givetoAnotherPerson`).css('visibility', 'visible')
-      $(`#givetoAnotherPerson_Button`).css('visibility', 'visible')
+      $(`#givetoAnotherPerson`).css('display', 'block')
+      $(`#givetoAnotherPerson_Button`).css('display', 'block')
     } else {
-      $(`#givetoAnotherPerson`).css('visibility', 'hidden')
-      $(`#givetoAnotherPerson_Button`).css('visibility', 'hidden')
+      $(`#givetoAnotherPerson`).css('display', 'none')
+      $(`#givetoAnotherPerson_Button`).css('display', 'none')
     }
   }
 
-  $('#jstree').on('changed.jstree', function(e, data) {
+  $('#jstree').on('changed.jstree', function (e, data) {
     var objects = data.instance.get_selected(true)
-    var leaves = $.grep(objects, function(o) {
+    var leaves = $.grep(objects, function (o) {
       return data.instance.is_leaf(o)
     })
-    var list = $('#output')
+    var list;
+    if (window.innerWidth < 575) { // Decide if mobile or desktop
+      list = $('#output-mobile')
+    } else {
+      list = $('#output-desktop')
+    }
     list.empty()
-    $.each(leaves, function(i, o) {
+    $.each(leaves, function (i, o) {
       iName = o.text;
       //console.log(o);
-      toAdd = o.text + '<button class="btn btn-danger removeSelection" onclick="deselect_node(' + o.id + ')" id="deselectBtn_' + i + '">X</button>';
+      toAdd = '<span class="selected_name">' + o.text + '</span><button class="btn btn-danger removeSelection" onclick="deselect_node(' + o.id + ')" id="deselectBtn_' + i + '">X</button>';
       //console.log(toAdd);
       $('<li/>').html(toAdd).appendTo(list);
     })
@@ -528,6 +589,7 @@ error_reporting(E_ALL ^ E_NOTICE);
           "font-weight": "normal !important"
         });
         $("#jstree ul li:nth-child(" + a + ") a").removeClass("jstree-search");
+        deselect_node(a);
       }
 
     }
@@ -568,7 +630,7 @@ error_reporting(E_ALL ^ E_NOTICE);
       data: {
         mode: "getUsers"
       },
-      success: function(response) {
+      success: function (response) {
         //alert(response);
 
         //Convert rerponse to JSON
@@ -583,14 +645,15 @@ error_reporting(E_ALL ^ E_NOTICE);
       }
     });
 
-    $("#toTop").click(function() {
+    $("#toTop").click(function () {
       $("html, body").animate({
         scrollTop: 0
       }, 1000);
     });
 
+    //Takout gomb a sidebaros listahoz
 
-    document.getElementById("takeout2BTN").addEventListener("click", function() {
+    document.getElementById("takeout2BTN-mobile").addEventListener("click", function () {
       if (takeOutPrepJSON.items.length == 0) {
         displayMessageInTitle("#doTitle", "Nem választottál ki semmit!");
         return;
@@ -605,7 +668,7 @@ error_reporting(E_ALL ^ E_NOTICE);
           takeoutData: takeOutPrepJSON,
           takeoutAsUser: $('#givetoAnotherPerson_UserName').val()
         },
-        success: function(response) {
+        success: function (response) {
           if (response == '200') {
             displayMessageInTitle("#doTitle", "Sikeres kivétel! \nAz oldal hamarosan újratölt");
             $('#jstree').jstree(true).settings.core.data = d;
@@ -624,7 +687,44 @@ error_reporting(E_ALL ^ E_NOTICE);
         }
       });
     });
-    $('#submit').click(function() {
+
+    //Main takeout gomb
+    document.getElementById("takeout2BTN").addEventListener("click", function () {
+      if (takeOutPrepJSON.items.length == 0) {
+        displayMessageInTitle("#doTitle", "Nem választottál ki semmit!");
+        return;
+      }
+
+      console.log("Kimenet:" + JSON.stringify(takeOutPrepJSON));
+      $.ajax({
+        url: "./utility/takeout_administrator.php",
+        //url:"./utility/dummy.php",
+        method: "POST",
+        data: {
+          takeoutData: takeOutPrepJSON,
+          takeoutAsUser: $('#givetoAnotherPerson_UserName').val()
+        },
+        success: function (response) {
+          if (response == '200') {
+            displayMessageInTitle("#doTitle", "Sikeres kivétel! \nAz oldal hamarosan újratölt");
+            $('#jstree').jstree(true).settings.core.data = d;
+            //Fa újratöltése
+            setTimeout(() => {
+              $('#jstree').jstree().refresh();
+            }, 2000);
+            setTimeout(() => {
+              window.location.href = window.location.href
+            }, 1000);
+          } else {
+            //console.log(response);
+            displayMessageInTitle("#doTitle", "Hiba történt.");
+          }
+
+        }
+      });
+    });
+
+    $('#submit').click(function () {
       $.ajax({
         url: "name.php",
         method: "POST",

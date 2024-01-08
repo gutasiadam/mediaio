@@ -21,17 +21,19 @@ if (!isset($_SESSION['userId'])) {
 </head>
 <title>Elérhetőségek</title>
 
-<?php if (isset($_SESSION["userId"])) { ?> <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<?php if (isset($_SESSION["userId"])) { ?>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <a class="navbar-brand" href="index.php">
       <img src="../utility/logo2.png" height="50">
     </a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav mr-auto navbarUl">
         <script>
-          $(document).ready(function() {
+          $(document).ready(function () {
             menuItems = importItem("../utility/menuitems.json");
             drawMenuItemsLeft('profile', menuItems, 2);
           });
@@ -39,14 +41,15 @@ if (!isset($_SESSION['userId'])) {
       </ul>
       <ul class="navbar-nav ms-auto navbarPhP">
         <li>
-          <a class="nav-link disabled timelock" href="#"><span id="time"> 10:00 </span><?php echo ' ' . $_SESSION['UserUserName']; ?>
+          <a class="nav-link disabled timelock" href="#"><span id="time"> 10:00 </span>
+            <?php echo ' ' . $_SESSION['UserUserName']; ?>
           </a>
         </li>
       </ul>
       <form method='post' class="form-inline my-2 my-lg-0" action=../utility/userLogging.php>
         <button class="btn btn-danger my-2 my-sm-0" name='logout-submit' type="submit">Kijelentkezés</button>
         <script type="text/javascript">
-          window.onload = function() {
+          window.onload = function () {
             display = document.querySelector('#time');
             var timeUpLoc = "../utility/userLogging.php?logout-submit=y"
             startTimer(display, timeUpLoc);
@@ -54,7 +57,8 @@ if (!isset($_SESSION['userId'])) {
         </script>
       </form>
     </div>
-  </nav> <?php  } ?>
+  </nav>
+<?php } ?>
 
 
 <?php
@@ -64,7 +68,7 @@ $sql = "SELECT takelog.Date, takelog.User, takelog.Event, takelog.Items FROM `ta
 $connection = Database::runQuery_mysqli();
 $result = $connection->query($sql);
 if ($result->num_rows > 0) {
-  echo "<table width='50' align=center class=" . "table" . "><th>Dátum</th><th>felhasználónév</th><th>Eszköz</th><th>Esemény</th><th>JSON</th>";
+  echo "<table id="."user-check"." class=" . "table" . "><th>Dátum</th><th>Felhasználónév</th><th>Eszköz</th><th>Esemény</th><th>JSON</th>";
   $recCount = 0;
   $itemsString = '';
   while ($row = $result->fetch_assoc()) {
@@ -77,8 +81,8 @@ if ($result->num_rows > 0) {
       $itemsString .= $item['name'] . ";  ";
     }
 
-    echo "<tr id=event" . $recCount . "><td>" . $row["Date"] . "</td><td>" . $row["User"] . "</td><td style='line-height: 200%; font-size: 18px;'>" . $itemsString . "</td><td>" . $row["Event"] . "</td><td style='line-height: 200%; font-size: 18px;'>" . $row["Items"] . "</td>
-        <td><button class='btn btn-success' onclick='acceptEvent(" . $recCount . ")'><i class='fas fa-check success'></i></button></br>";
+    echo "<tr class="."event"." id=event" . $recCount . "><td>" . $row["Date"] . "</td><td>" . $row["User"] . "</td><td><div>" . $itemsString . "</div></td><td>" . $row["Event"] . "</td><td><div>" . $row["Items"] . "</div></td>
+        <td><button class='btn btn-success' onclick='acceptEvent(" . $recCount . ")'><i class='fas fa-solid fa-check'></i></button></br>";
     if ($row['Event'] == 'OUT') {
       //declineEvent
       echo "<button class='btn btn-danger' style='padding: 7px 15px; margin-top:4px' onclick='declineEvent(" . $recCount . ")'><i class='fas fa-times danger'></i></button></td>";
@@ -120,7 +124,7 @@ echo "</table>";
         date: date,
         user: user
       }, //value true means event is approved.
-      success: function(response) {
+      success: function (response) {
         if (response == 200) {
           //Remove event from the table.
           $('#event' + n).fadeOut();
@@ -129,7 +133,7 @@ echo "</table>";
           alert(response);
         }
       },
-      error: function(XMLHttpRequest, textStatus, errorThrown) {
+      error: function (XMLHttpRequest, textStatus, errorThrown) {
         alert("Status: " + textStatus);
         alert("Error: " + errorThrown);
       }
@@ -163,7 +167,7 @@ echo "</table>";
         date: date,
         user: user
       }, //event declined.
-      success: function(response) {
+      success: function (response) {
         //alert(response)
         if (response == 200) {
           //Remove event from the table.
@@ -173,7 +177,7 @@ echo "</table>";
           alert(response);
         }
       },
-      error: function(XMLHttpRequest, textStatus, errorThrown) {
+      error: function (XMLHttpRequest, textStatus, errorThrown) {
         alert("Status: " + textStatus);
         alert("Error: " + errorThrown);
       }

@@ -62,11 +62,10 @@ if(isset($_SESSION['UserUserName'])){ //If user is logged in
 
 <body>  
   <div class="container">
-  <br />
-  <h1 align="center" class="rainbow">Tárgy kölcsönzési története</h1>
+  <h1 class="rainbow">Tárgy kölcsönzési története</h1>
 
   <!-- Item search table -->
-  <table id="itemSearch" align="left">
+  <table id="itemSearch">
     <tr><form action="./pathfinder.php" method="GET" autocomplete="off">
       <td><input id="id_itemNameAdd" type="text" name="pfItem" class="form-control mb-2 mr-sm-2" placeholder='<?php echo $applicationSearchField;?>'></div></td>
       <td><button type="submit" name="add" id="add" class="btn mediaBlue mb-2 mr-sm-2" ><?php echo $button_Find;?></button><span id='sendQueryButtonLoc'></span></td>

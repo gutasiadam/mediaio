@@ -134,7 +134,7 @@ error_reporting(E_ERROR | E_PARSE);
       });
     </script>
   <?php } else { ?>
-    <h1 align=center class="rainbow mt-3">Árpád Média IO</h1>
+    <h1 class="rainbow">Árpád Média IO</h1>
     <div class="row justify-content-center mainRow1 ab"
       style="text-align: center; width:100%; max-width: 1000px; margin: 0 auto;"></div><br>
     <div class="row justify-content-center mainRow2 ab"
