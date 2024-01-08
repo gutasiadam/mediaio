@@ -83,9 +83,12 @@ if (isset($_SESSION["userId"])) { ?>
       <?php
       if (in_array("admin", $_SESSION["groups"])) {
         echo '
-                    <tr><td><form action="../utility/damage_report/service.php"><button class="btn btn-warning w-100">Szervíz <i class="fas fa-wrench"></i></i></button></form></td></tr>
-                    <tr><td><form action="usercheck.php"><button class="btn btn-success w-100">UserCheck <i class="fas fa-user-check"></i></button></form></td></tr>
-                    <tr><td><form action="stats.php"><button class="btn btn-dark w-100">Áttekintés <i class="fas fa-chart-pie"></i></i></button></form></td></tr>
+                    <tr><td><form action="../utility/damage_report/service.php"><button class="btn btn-warning position-relative">Szervíz <i class="fas fa-wrench"></i></i>  <span id="serviceItemCount" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                    0<span class="visually-hidden">unread messages</span></button></form></td></tr>
+                    <tr><td><form action="usercheck.php"><button class="btn btn-success position-relative">UserCheck <i class="fas fa-user-check"></i>  <span id="usercheckItemCount" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                    0
+                    <spanclass="visually-hidden">unread messages</span></button></form></td></tr>
+                    <tr><td><form action="stats.php"><button class="btn btn-dark">Áttekintés <i class="fas fa-chart-pie"></i></i></button></form></td></tr>
                     ';
       }
       if (in_array("system", $_SESSION["groups"]) or in_array("teacher", $_SESSION["groups"])) { //SYSADMIN OR TEACHER
@@ -109,3 +112,22 @@ if (isset($_SESSION["userId"])) { ?>
 ?>
 
 </html>
+
+<script>
+  //Make a Jquery call to the ItemManager.php to get the number of items in the service
+  $.ajax({
+    url: "../ItemManager.php",
+    type: "POST",
+    data: {
+      mode: "getProfileItemCounts"
+    },
+    success: function (data) {
+      var dataArray = data.split(",");
+      //Set the service item count
+      document.getElementById("serviceItemCount").innerHTML = dataArray[0];
+      //Set the user check item count
+      document.getElementById("usercheckItemCount").innerHTML = dataArray[1];
+    }
+  });
+  
+</script>

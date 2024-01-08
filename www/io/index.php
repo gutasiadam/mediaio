@@ -64,11 +64,11 @@ error_reporting(E_ERROR | E_PARSE);
     <form class="login" action="utility/userLogging.php" method="post" autocomplete="off">
       <fieldset>
         <legend id="zsoka" class="legend text"> MediaIO </legend>
-        <div class="login-input">
-          <input type="text" name="useremail" placeholder="Felhasználónév/E-mail" required />
+        <div class="login-input mb-3">
+          <input type="text" class="form-control" name="useremail" id="usernameInput" placeholder="Felhasználónév/E-mail" required />
         </div>
-        <div class="login-input">
-          <input id="password" type="password" name="pwd" placeholder="Jelszó" required />
+        <div class="login-input mb-3">
+          <input id="password" class="form-control" type="password" name="pwd" placeholder="Jelszó" required />
         </div>
         <button class="btn btn-dark" type="submit" name="login-submit">
           <i class="fa fa-long-arrow-right"></i>

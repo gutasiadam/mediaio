@@ -55,7 +55,7 @@ error_reporting(E_ALL ^ E_NOTICE);
         </li>
       </ul>
       <form method='post' class="form-inline my-2 my-lg-0" action=utility/userLogging.php>
-        <button class="btn btn-danger my-2 my-sm-0 logout-button" name='logout-submit'
+        <button id="logoutBtn" class="btn btn-danger my-2 my-sm-0 logout-button" name='logout-submit'
           type="submit">Kijelentkezés</button>
         <script type="text/javascript">
           window.onload = function () {
@@ -124,6 +124,7 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
 </div>
 </div>
 <!-- End of Presets Modal -->
+
 
 
 <body>
@@ -337,6 +338,10 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
       }
     }
 
+    setTimeout(function() {
+      reloadSavedSelections()
+    }, 300);
+
 
 
     d[i].originalName = d[i].text;
@@ -361,6 +366,14 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
     setTimeout(function () {
       reloadSavedSelections()
     }, 300);
+  });
+
+
+  //Invoked after JStree is loaded
+  $('#jstree').bind('loaded.jstree', function(e, data) {
+    console.log("Loaded!")
+
+
   });
 
   $('#jstree').jstree({
@@ -398,6 +411,7 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
 
     decideGiveToAnotherPerson_visibility();
     parseInt(badge.textContent = 0);
+    updateSelectionCookie();
   }
 
   //Deselect a node.
@@ -593,14 +607,14 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
     return true;
   }
 
-  $(document).ready(function () {
+  $(document).ready(function() {
     //Color taken items
-    setTimeout(function () {
+    setTimeout(function() {
       colorTakenItems();
     }, 500);
 
     //Back to top button
-    $(window).scroll(function () {
+    $(window).scroll(function() {
       if ($(this).scrollTop()) {
         $('#toTop').fadeIn();
       } else {
@@ -715,7 +729,7 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
         url: "name.php",
         method: "POST",
         data: $('#add_name').serialize(),
-        success: function (data) {
+        success: function(data) {
           //alert(data);
           $('#add_name')[0].reset();
         }
@@ -739,7 +753,7 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
   // dbItem remover tool - Prevents an item to be added twice to the list
   function arrayRemove(arr, value) {
 
-    return arr.filter(function (ele) {
+    return arr.filter(function(ele) {
       return ele != value;
     });
 

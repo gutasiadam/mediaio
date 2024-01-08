@@ -27,16 +27,9 @@ if (!isset($_SESSION['userId'])) {
   <script src='./daygrid/main.js'></script>
   <script src='./timegrid/main.js'></script>
   <script src='./interaction/main.js'></script>
-
-
   <script src="./moment/main.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="./defaultCalendarRender.js"></script>
-  <?php
-  // if(($_SESSION['role']==1)){
-  //   echo '<script src="./defaultCalendarRender.js"></script>';
-  // }else{  echo '<script src="./adminCalendarRender.js"></script>';}
-  ?>
   <!-- HOZZÁADÁS MODAL -->
 </head>
 <script>

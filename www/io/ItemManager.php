@@ -339,7 +339,7 @@ class itemDataManager{
         $sql= $sql." ORDER BY ".$_GET['orderByField']." ".$_GET['order'];
         //echo $sql;
         return Database::runQuery($sql);
-    }
+}
     /** Generates JSON data for takeout page, showing available and unavailable items. */
     static function generateTakeoutJSON(){
       $mysqli = Database::runQuery_mysqli();
@@ -426,6 +426,29 @@ class itemDataManager{
       $result=json_encode($rows);
       return $result;
 
+    }
+
+    static function getToBeUserCheckedCount(){
+      $sql = "SELECT COUNT(*) FROM takelog WHERE Acknowledged=0";
+      //Get a new database connection
+      $connection=Database::runQuery_mysqli();
+      $stmt = $connection->prepare($sql);
+      $stmt->execute();
+      $result = $stmt->get_result();
+      $row = $result->fetch_assoc();
+      return $row['COUNT(*)'];
+    }
+
+    static function getServiceItemCount(){
+      $sql = "SELECT COUNT(*) FROM leltar WHERE RentBy='Service'";
+      //Get a new database connection
+      $connection=Database::runQuery_mysqli();
+      $stmt = $connection->prepare($sql);
+      $stmt->execute();
+      $result = $stmt->get_result();
+      $row = $result->fetch_assoc();
+      return $row['COUNT(*)'];
+    
     }
 
 }
@@ -518,6 +541,13 @@ if(isset($_POST['mode'])){
     echo userManager::getPresets();
     //echo $_POST['value'] ;
     //Header set.
+    exit();
+  }
+
+  if($_POST['mode']=='getProfileItemCounts'){
+    echo itemDataManager::getServiceItemCount();
+    echo ",";
+    echo itemDataManager::getToBeUserCheckedCount();
     exit();
   }
   

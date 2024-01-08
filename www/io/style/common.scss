@@ -358,7 +358,12 @@ input {
     font-size: 16px;
 }
 
-input[type=text] {
+ input[type=text] {
+     background-color: #f1f1f1;
+     width: 100%;
+ }
+
+ input[type=password] {
     background-color: #f1f1f1;
     width: 100%;
 }
@@ -1481,13 +1486,18 @@ nav .navbarPhP {
     margin-bottom: 10px;
 }
 
-.successtable2 {
-    z-index: 999;
-    width: 80%;
-    margin: 0 auto;
-    margin-top: 60px;
-    color: white;
-}
+ .successtable2 {
+     z-index: 999;
+     width: 80%;
+     margin: 0 auto;
+     margin-top: 60px;
+     color: white;
+ }
+
+ #logoutBtn {
+     margin-left: 10px;
+     margin-right: 20px;
+ }
 
 .ab a {
     border-style: 1px solid #3b3b3b;
