@@ -81,7 +81,7 @@ if ($result->num_rows > 0) {
       $itemsString .= $item['name'] . ";  ";
     }
 
-    echo "<tr class="."event"." id=event" . $recCount . "><td>" . $row["Date"] . "</td><td>" . $row["User"] . "</td><td><div>" . $itemsString . "</div></td><td>" . $row["Event"] . "</td><td><div>" . $row["Items"] . "</div></td>
+    echo "<tr class="."event"." id=event" . $recCount . "><td>" . $row["Date"] . "</td><td>" . $row["User"] . "</td><td>" . $itemsString . "</td><td>" . $row["Event"] . "</td><td>" . $row["Items"] . "</td>
         <td><button class='btn btn-success' onclick='acceptEvent(" . $recCount . ")'><i class='fas fa-solid fa-check'></i></button></br>";
     if ($row['Event'] == 'OUT') {
       //declineEvent

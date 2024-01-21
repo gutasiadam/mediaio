@@ -25,6 +25,7 @@ button.mediaBlue {
     }
 }
 
+
 .jstree-hidden {
     display: none;
 }
@@ -358,12 +359,12 @@ input {
     font-size: 16px;
 }
 
- input[type=text] {
-     background-color: #f1f1f1;
-     width: 100%;
- }
+input[type=text] {
+    background-color: #f1f1f1;
+    width: 100%;
+}
 
- input[type=password] {
+input[type=password] {
     background-color: #f1f1f1;
     width: 100%;
 }
@@ -386,13 +387,17 @@ input[type=submit] {
     justify-content: center;
     align-items: flex-start;
 
-    tbody tr td {
-        align-items: start;
+    tbody tr {
+        td {
+            vertical-align: top;
+        }
     }
 }
 
 .autocomplete-items {
     position: relative;
+    height: 30vh;
+    overflow: auto;
     border: 1px solid #d4d4d4;
     border-bottom: none;
     border-top: none;
@@ -400,6 +405,7 @@ input[type=submit] {
     top: 100%;
     left: 0;
     right: 0;
+
 }
 
 .autocomplete-items div {
@@ -534,13 +540,26 @@ label#old_tasks {
 
 #user-check {
     display: block;
-    position: absolute;
     overflow: auto;
+    white-space: nowrap;
+    width: 95vw;
     height: 85vh;
+    max-width: fit-content;
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, 0%);
 
-    .event td div {
-        max-height: 100px;
+    .event td {
+        position: relative;
+        white-space: normal;
+        width: 20vw;
+        min-width: 100px;
         overflow: auto;
+
+    }
+
+    @media (max-width: 990px) {
+        white-space: normal;
     }
 }
 
@@ -568,7 +587,8 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding-top: 30px;
+    padding-top: 20px;
+    white-space: normal;
 }
 
 .timeline *,
@@ -998,6 +1018,25 @@ body {
 
     100% {
         top: -15px;
+    }
+}
+
+#stat-table {
+    display: block;
+    overflow: auto;
+    white-space: nowrap;
+
+    width: 95vw;
+    height: calc(100vh - 350px);
+    max-width: fit-content;
+
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, 0%);
+
+    @media (max-width: 990px) {
+        white-space: normal;
+
     }
 }
 
@@ -1486,18 +1525,18 @@ nav .navbarPhP {
     margin-bottom: 10px;
 }
 
- .successtable2 {
-     z-index: 999;
-     width: 80%;
-     margin: 0 auto;
-     margin-top: 60px;
-     color: white;
- }
+.successtable2 {
+    z-index: 999;
+    width: 80%;
+    margin: 0 auto;
+    margin-top: 60px;
+    color: white;
+}
 
- #logoutBtn {
-     margin-left: 10px;
-     margin-right: 20px;
- }
+#logoutBtn {
+    margin-left: 10px;
+    margin-right: 20px;
+}
 
 .ab a {
     border-style: 1px solid #3b3b3b;
@@ -1527,4 +1566,24 @@ nav .navbarPhP {
     background-color: #ededed;
     border-radius: 50px;
     box-shadow: 10px 6px 50px grey;
+}
+
+
+#damage_report {
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    div.row{
+        width: 800px;
+        justify-content: center;
+        margin-bottom: 10px;
+        .col#submit{
+            display: grid;
+            justify-content: center; 
+        }
+
+        @media (max-width: 990px) {
+            width: 80vw;
+        }
+    }
 }

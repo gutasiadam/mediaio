@@ -63,42 +63,45 @@ if (in_array("admin", $_SESSION["groups"]) or in_array("teacher", $_SESSION["gro
   ?>
 
   <body>
-    <h1 align=center>Statisztika</h1>
-    <table>
-      <tr>
-        <td>
+    <h1 class="rainbow">Statisztika</h1>
+    <div class="container text-center">
+      <div class="row justify-content-center">
+        <div class="col">
           <h2>
             <?php echo $row_cnt3 ?>/<span class="text text-success">
               <?php echo $row_cnt4 ?>
             </span> tárgy van benn.
           </h2>
-          <h6>(
+          <h6>
+            (
             <?php echo number_format((float) (($row_cnt4 / $row_cnt3) * 100), 2, '.', ''); ?>%)
           </h6>
-        </td>
-      </tr>
-      <tr>
-        <td>
+
+        </div>
+      </div>
+      <div class="row justify-content-center">
+        <h6>
           <?php echo $row_cnt5 ?> felhasználó regisztrálva.
-        </td>
-      </tr>
-    </table>
-    </br>
-    <h3 align=left>A hét eseményei</h1>
-      <table class="table table-bordered">
+        </h6>
+      </div>
+    </div>
+
+    <h3 class="panel-title">A hét eseményei</h1>
+
+      <table class="table table-bordered" id="stat-table">
         <?php
 
         $connectionObject = Database::runQuery_mysqli();
         $query = "SELECT * FROM takelog WHERE Date >= DATE_SUB(CURRENT_DATE(), INTERVAL 7 DAY) ORDER BY Date DESC;";
         // echo $query;
         $result = mysqli_query($connectionObject, $query);
-        echo '<tr><th>Dátum</th><th>Felhasználó</th><th>Tárgy</th><th>Esemény</th><th>✔?</th><th>Usercheckelte:</th></tr>';
+        echo '<tr><th>Dátum</th><th>Felhasználó</th><th>Tárgy</th><th>Esemény</th><th>Ellenőrizte</th></tr>';
         foreach ($result as $row) {
-          $ackcol = "?";
+          $ackcolby = "";
           if ($row['Acknowledged'] == "1") {
-            $ackcol = "✔";
+            $ackcolby = $row['ACKBY'];
           } else {
-            $ackcol = "❌";
+            $ackcolby = "<b>Jóváhagyásra vár</b>";
           }
 
           $event = "?";
@@ -120,11 +123,11 @@ if (in_array("admin", $_SESSION["groups"]) or in_array("teacher", $_SESSION["gro
           $row['Items'] = $items;
           //If event is OUT, TR is red, else its green
           if ($row['Event'] == "OUT") {
-            echo '<tr class="table-danger"><td>' . $row['Date'] . '</td><td>' . $row['User'] . '</td><td>' . $row['Items'] . '</td><td>' . $event . '</td><td>' . $ackcol . '</td><td>' . $row['ACKBY'] . '</td></tr>';
+            echo '<tr class="table-danger"><td>' . $row['Date'] . '</td><td>' . $row['User'] . '</td><td>' . $row['Items'] . '</td><td>' . $event . '</td><td>' . $ackcolby . '</td></tr>';
           } else if ($row['Event'] == "IN") {
-            echo '<tr class="table-success"><td>' . $row['Date'] . '</td><td>' . $row['User'] . '</td><td>' . $row['Items'] . '</td><td>' . $event . '</td><td>' . $ackcol . '</td><td>' . $row['ACKBY'] . '</td></tr>';
+            echo '<tr class="table-success"><td>' . $row['Date'] . '</td><td>' . $row['User'] . '</td><td>' . $row['Items'] . '</td><td>' . $event . '</td><td>' . $ackcolby . '</td></tr>';
           } else {
-            echo '<tr><td>' . $row['Date'] . '</td><td>' . $row['User'] . '</td><td>' . $row['Items'] . '</td><td>' . $event . '</td><td>' . $ackcol . '</td><td>' . $row['ACKBY'] . '</td></tr>';
+            echo '<tr><td>' . $row['Date'] . '</td><td>' . $row['User'] . '</td><td>' . $row['Items'] . '</td><td>' . $event . '</td><td>' . $ackcolby . '</td></tr>';
           }
 
 

@@ -74,17 +74,14 @@ if (isset($_SESSION['UserUserName'])) { //If user is logged in
           <form action="./pathfinder.php" method="GET" autocomplete="off">
             <td><input id="id_itemNameAdd" type="text" name="pfItem" class="form-control mb-2 mr-sm-2"
                 placeholder='<?php echo $applicationSearchField; ?>'>
-    </div>
-    </td>
-    <td><button type="submit" name="add" id="add" class="btn mediaBlue mb-2 mr-sm-2">
-        <?php echo $button_Find; ?>
-      </button><span id='sendQueryButtonLoc'></span></td>
-    </form>
-    </tr>
-    </table>
-    <div class="table-responsive">
-      <table class="table table-bordered" class="dynamic_marked" id="dynamic_field">
-    </div>
+            </td>
+
+            <td><button type="submit" name="add" id="add" class="btn mediaBlue mb-2 mr-sm-2">
+                <?php echo $button_Find; ?>
+              </button><span id='sendQueryButtonLoc'></span></td>
+          </form>
+        </tr>
+      </table>
     </div>
 
     <!-- Timeline panel code -->
@@ -103,43 +100,49 @@ if (isset($_SESSION['UserUserName'])) { //If user is logged in
             $TKI = $TKI[0];
             $query = "SELECT * FROM `takelog` WHERE JSON_CONTAINS(Items, " . "'" . "{" . '"name" : "' . $TKI . '"}' . "'" . ") ORDER BY `Date` DESC";
             $result = mysqli_query($connectionObject, $query);
-            echo '<h3 class="panel-title">Tárgy útvonala - ' . $TKI . '</h3>
-        </div>
-        <div class="panel-body">
-          <table class="table table-bordered">
-          <tr><th>Dátum</th><th>Felhasználó</th><th>Tárgy</th><th>Esemény</th><th>✔?</th><th>Usercheckelte:</th></tr>';
+            echo '<h3 class="panel-title"><b>' . $TKI . '</b></h3>
+            </div>';
+            // Start of panel body
+            echo '
+            <div class="panel-body">
+            <table class="table table-bordered" id="stat-table">
+            <tr><th>Dátum</th><th>Felhasználó</th><th>Esemény</th><th>Ellenőrizte</th></tr>';
             foreach ($result as $row) {
-              if ($row["Acknowledged"] == 0) {
-                echo '<div class="timeline__item left">
-              <div class="timeline__content service">
-               <h2>' . $row["Date"] . ' (' . $row["User"] . ')</h2>
-               <h6>Jóváhagyásra vár.</h6></div></div>';
+              $ackcolby = "";
+              if ($row['Acknowledged'] == "1") {
+                $ackcolby = $row['ACKBY'];
               } else {
-                if ($row["Event"] == "OUT") {
-                  echo '<div class="timeline__item right">
-              <div class="timeline__content out">
-               <h2>' . $row["Date"] . ' (' . $row["User"] . ')</h2>';
-                }
-                if ($row["Event"] == "IN") {
-                  echo '<div class="timeline__item left">
-              <div class="timeline__content in">
-               <h2>' . $row["Date"] . ' (' . $row["User"] . ')</h2>';
-                }
-                if ($row["Event"] == "SERVICE") {
-                  echo '<div class="timeline__item right">
-              <div class="timeline__content service">
-               <h2>' . $row["Date"] . ' (' . $row["User"] . ')</h2>
-               <h6>Szervizelés</h6>';
-                }
-                if ($row["ACKBY"] != NULL)
-                  echo '<h6 style="color: grey;">✔: ' . $row["ACKBY"] . '</h6>';
-                echo '</div></div>';
+                $ackcolby = "<b>Jóváhagyásra vár</b>";
               }
 
+              $event = "?";
+              if ($row['Event'] == "SERVICE") {
+                $event = "🔧";
+              } else {
+                $event = $row['Event'];
+              }
+              //Make row['Items'] JSON's name field unordered list
+              $items = json_decode($row['Items'], true);
+              $items = array_column($items, 'name');
+              //TODO: concatenate UID to the name
+              $items2 = json_decode($row['Items'], true);
+              $items2 = array_column($items2, 'UID');
+
+
+
+              $items = "<ul><li>" . implode("</li><li>", $items) . "</li></ul>";
+              $row['Items'] = $items;
+              //If event is OUT, TR is red, else its green
+              if ($row['Event'] == "OUT") {
+                echo '<tr class="table-danger"><td>' . $row['Date'] . '</td><td>' . $row['User'] . '</td><td>' . $event . '</td><td>' . $ackcolby . '</td></tr>';
+              } else if ($row['Event'] == "IN") {
+                echo '<tr class="table-success"><td>' . $row['Date'] . '</td><td>' . $row['User'] . '</td><td>' . $event . '</td><td>' . $ackcolby . '</td></tr>';
+              } else {
+                echo '<tr class="table-warning"><td>' . $row['Date'] . '</td><td>' . $row['User'] . '</td><td>' . $event . '</td><td>' . $ackcolby . '</td></tr>';
+              }
+
+
             }
-            echo '
-           </table>
-        </div>';
           }
           $connect = null;
           ?>
