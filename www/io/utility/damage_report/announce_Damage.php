@@ -196,6 +196,8 @@ $TKI = $_SESSION['UserUserName'];
   //When the dropdown selector changes, send a request to the server to get the user's data
   $(document).ready(function () {
 
+    getItemForSelectedUser();
+
     $('input[type=file]').on('change', function () {
 
       var uploadedImagesCount = 0;

@@ -16,30 +16,15 @@ if (isset($_SESSION['UserUserName'])) { //If user is logged in
   <html>
 
   <head>
-    <link rel="stylesheet" href="utility/pathfinder.css" />
     <title>PathFinder</title>
   </head>
   <script src="utility/jquery.js"></script>
 
   <!-- If user is logged in -->
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <a class="navbar-brand" href="index.php"><img src="./utility/logo2.png" height="50"></a>
-
-    <!-- Load Menu and Index table Icons and links -->
-    <script type="text/javascript">
-      window.onload = function () {
-
-        menuItems = importItem("./utility/menuitems.json");
-        drawMenuItemsLeft('pathfinder', menuItems);
-
-        drawMenuItemsRight('pathfinder', menuItems);
-        drawIndexTable(menuItems, 0);
-
-        display = document.querySelector('#time');
-        var timeUpLoc = "utility/userLogging.php?logout-submit=y"
-        startTimer(display, timeUpLoc);
-      };
-    </script>
+    <a class="navbar-brand" href="index.php">
+      <img src="./utility/logo2.png" height="50">
+    </a>
 
     <!-- Mobile Navigation - Additional toggle button -->
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
@@ -50,6 +35,12 @@ if (isset($_SESSION['UserUserName'])) { //If user is logged in
     <!-- Main Navigation -->
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav mr-auto navbarUl">
+        <script>
+          $(document).ready(function () {
+            menuItems = importItem("./utility/menuitems.json");
+            drawMenuItemsLeft('pathfinder', menuItems);
+          });
+        </script>
       </ul>
       <ul class="navbar-nav ms-auto navbarPhP">
         <li>
@@ -59,7 +50,15 @@ if (isset($_SESSION['UserUserName'])) { //If user is logged in
         </li>
       </ul>
       <form method='post' class="form-inline my-2 my-lg-0" action=utility/userLogging.php>
-        <button class="btn btn-danger my-2 my-sm-0" name='logout-submit' type="submit">Kijelentkezés</button>
+        <button id="logoutBtn" class="btn btn-danger my-2 my-sm-0 logout-button" name='logout-submit'
+          type="submit">Kijelentkezés</button>
+        <script type="text/javascript">
+          window.onload = function () {
+            display = document.querySelector('#time');
+            var timeUpLoc = "utility/userLogging.php?logout-submit=y"
+            startTimer(display, timeUpLoc);
+          };
+        </script>
       </form>
     </div>
   </nav>
@@ -67,22 +66,24 @@ if (isset($_SESSION['UserUserName'])) { //If user is logged in
   <body>
     <div class="container">
       <h1 class="rainbow">Tárgy kölcsönzési története</h1>
-
-      <!-- Item search table -->
-      <table id="itemSearch">
-        <tr>
-          <form action="./pathfinder.php" method="GET" autocomplete="off">
-            <td><input id="id_itemNameAdd" type="text" name="pfItem" class="form-control mb-2 mr-sm-2"
-                placeholder='<?php echo $applicationSearchField; ?>'>
-            </td>
-
-            <td><button type="submit" name="add" id="add" class="btn mediaBlue mb-2 mr-sm-2">
-                <?php echo $button_Find; ?>
-              </button><span id='sendQueryButtonLoc'></span></td>
-          </form>
-        </tr>
-      </table>
     </div>
+    <!-- Item search table -->
+    <form action="./pathfinder.php" method="GET" autocomplete="off">
+      <div class="container" id="itemSearch">
+        <div class="row justify-content-center">
+          <div class="col">
+            <input id="id_itemNameAdd" type="text" name="pfItem" class="form-control mb-2 mr-sm-2"
+              placeholder='<?php echo $applicationSearchField; ?>'>
+          </div>
+          <div class="col-3">
+            <button type="submit" name="add" id="add" class="btn mediaBlue mb-2 mr-sm-2">
+              <?php echo $button_Find; ?>
+            </button><span id='sendQueryButtonLoc'></span>
+          </div>
+        </div>
+      </div>
+    </form>
+
 
     <!-- Timeline panel code -->
     <div class="form-group">
@@ -255,7 +256,7 @@ if (isset($_SESSION['UserUserName'])) { //If user is logged in
           addActive(x);
         } else if (e.keyCode == 13) {
           /*If the ENTER key is pressed, prevent the form from being submitted,*/
-          e.preventDefault();
+          /*e.preventDefault(); */
           if (currentFocus > -1) {
             /*and simulate a click on the "active" item:*/
             if (x) x[currentFocus].click();

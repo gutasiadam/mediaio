@@ -9,12 +9,10 @@ if (isset($_SESSION['userId'])) { ?>
       <a class="navbar-brand" href="index.php">
         <img src="../utility/logo2.png" height="50">
       </a>
-      <!-- Breadcrumb for mobilne navigation -->
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
         aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
-
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto navbarUl">
           <script>
@@ -32,7 +30,8 @@ if (isset($_SESSION['userId'])) { ?>
           </li>
         </ul>
         <form method='post' class="form-inline my-2 my-lg-0" action=../utility/userLogging.php>
-          <button class="btn btn-danger my-2 my-sm-0" name='logout-submit' type="submit">Kijelentkezés</button>
+          <button id="logoutBtn" class="btn btn-danger my-2 my-sm-0 logout-button" name='logout-submit'
+            type="submit">Kijelentkezés</button>
           <script type="text/javascript">
             window.onload = function () {
               display = document.querySelector('#time');

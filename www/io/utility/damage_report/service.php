@@ -74,7 +74,15 @@ require_once("../header.php");
         </li>
       </ul>
       <form method='post' class="form-inline my-2 my-lg-0" action=../../utility/userLogging.php>
-        <button class="btn btn-danger my-2 my-sm-0" name='logout-submit' type="submit">Kijelentkezés</button>
+        <button id="logoutBtn" class="btn btn-danger my-2 my-sm-0 logout-button" name='logout-submit'
+          type="submit">Kijelentkezés</button>
+        <script type="text/javascript">
+          window.onload = function () {
+            display = document.querySelector('#time');
+            var timeUpLoc = "../../utility/userLogging.php?logout-submit=y"
+            startTimer(display, timeUpLoc);
+          };
+        </script>
       </form>
     </div>
   </nav>

@@ -47,7 +47,8 @@ if (!isset($_SESSION['userId'])) {
         </li>
       </ul>
       <form method='post' class="form-inline my-2 my-lg-0" action=../utility/userLogging.php>
-        <button class="btn btn-danger my-2 my-sm-0" name='logout-submit' type="submit">Kijelentkezés</button>
+        <button id="logoutBtn" class="btn btn-danger my-2 my-sm-0 logout-button" name='logout-submit'
+          type="submit">Kijelentkezés</button>
         <script type="text/javascript">
           window.onload = function () {
             display = document.querySelector('#time');
@@ -70,8 +71,9 @@ $result = $connection->query($sql);
 if ($result->num_rows > 0) {
   echo "<table id="."user-check"." class=" . "table" . "><th>Dátum</th><th>Felhasználónév</th><th>Eszköz</th><th>Esemény</th><th>JSON</th>";
   $recCount = 0;
-  $itemsString = '';
+  
   while ($row = $result->fetch_assoc()) {
+    $itemsString = '';
     $recCount += 1;
     //store row[Items] json obejct as php array.
     $items = json_decode($row['Items'], true);
@@ -93,7 +95,7 @@ if ($result->num_rows > 0) {
     }
   }
 } else {
-  echo '// Jelenleg semmi sem vár elfogadásra.';
+  echo '<h3 class="nothing_here">Jelenleg semmi nem vár elfogadásra!</h3>';
 }
 echo "</table>";
 
@@ -128,6 +130,9 @@ echo "</table>";
         if (response == 200) {
           //Remove event from the table.
           $('#event' + n).fadeOut();
+          setTimeout(function () {
+            location.reload();
+          }, 500);
         } else {
           console.log("Backend error.");
           alert(response);
@@ -172,6 +177,7 @@ echo "</table>";
         if (response == 200) {
           //Remove event from the table.
           $('#event' + n).fadeOut();
+          location.reload();
         } else {
           console.log("Backend error.");
           alert(response);

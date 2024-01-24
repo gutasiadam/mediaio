@@ -34,12 +34,10 @@ if (isset($_SESSION['userId'])) {
       <a class="navbar-brand" href="index.php">
         <img src="../utility/logo2.png" height="50">
       </a>
-      <!-- Breadcrumb for mobilne navigation -->
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
         aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
-
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto navbarUl">
           <script>
@@ -57,11 +55,12 @@ if (isset($_SESSION['userId'])) {
           </li>
         </ul>
         <form method='post' class="form-inline my-2 my-lg-0" action=../utility/userLogging.php>
-          <button class="btn btn-danger my-2 my-sm-0" name='logout-submit' type="submit">Kijelentkezés</button>
+          <button id="logoutBtn" class="btn btn-danger my-2 my-sm-0 logout-button" name='logout-submit'
+            type="submit">Kijelentkezés</button>
           <script type="text/javascript">
             window.onload = function () {
               display = document.querySelector('#time');
-              var timeUpLoc = "/../utility/userLogging.php?logout-submit=y"
+              var timeUpLoc = "../utility/userLogging.php?logout-submit=y"
               startTimer(display, timeUpLoc);
             };
           </script>
@@ -83,8 +82,12 @@ if (isset($_SESSION['userId'])) {
             $sql = "SELECT * FROM `leltar` WHERE `RentBy` = '" . $TKI . "'";
 
             $result = Database::runQuery($sql);
-            echo '<h3 class="panel-title">' . $_SESSION['firstName'] . ', ' . $result->num_rows . ' tárgy van most nálad:</h3>
-        </div>';
+            if ($result->num_rows == 0) {
+              echo '<h3 class="nothing_here">' . $_SESSION['firstName'] . ', nincs nálad tárgy!</h3>';
+            } else {
+              echo '<h1 class="panel-title" style="margin-bottom: 25px">' . $_SESSION['firstName'] . ', ' . $result->num_rows . ' tárgy van most nálad:</h1>
+              </div>';
+            }
             echo '<div class="panel-body" id="pf-curr-items">';
             $imodal = -1;
             $resultArray = [];
@@ -94,7 +97,7 @@ if (isset($_SESSION['userId'])) {
               echo '
               <div class="row">
               <div class="col" id="item-name">
-               <h2>' . $row["Nev"] . '</h2>
+               <h3>' . $row["Nev"] . '</h3>
                <p>' . $row["UID"];
               if ($row['Status'] == '2') {
                 echo ' <span class="text-warning">Jóváhagyásra vár.</span>';
@@ -135,9 +138,6 @@ if (isset($_SESSION['userId'])) {
               }
               $imodal++;
               echo '</div>';
-            }
-            if ($imodal == -1) {
-              echo '// Jelenleg nincs nálad egy tárgy sem ';
             }
             echo '
            </div>

@@ -5,11 +5,6 @@ include("../translation.php"); ?>
 <script src="../utility/_initMenu.js" crossorigin="anonymous"></script>
 
 <html>
-<script> $(document).ready(function () {
-    menuItems = importItem("../utility/menuitems.json");
-    drawMenuItemsLeft("profile", menuItems, 2);
-    drawMenuItemsRight('profile', menuItems, 2);
-  });</script>
 <?php
 
 if (isset($_SESSION["userId"])) { ?>
@@ -17,14 +12,18 @@ if (isset($_SESSION["userId"])) { ?>
     <a class="navbar-brand" href="../index.php">
       <img src="../utility/logo2.png" height="50">
     </a>
-    <!-- Breadcrumb for mobilne navigation -->
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
       aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
-
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav mr-auto navbarUl">
+        <script>
+          $(document).ready(function () {
+            menuItems = importItem("../utility/menuitems.json");
+            drawMenuItemsLeft('profile', menuItems, 2);
+          });
+        </script>
       </ul>
       <ul class="navbar-nav ms-auto navbarPhP">
         <li>
@@ -34,7 +33,8 @@ if (isset($_SESSION["userId"])) { ?>
         </li>
       </ul>
       <form method='post' class="form-inline my-2 my-lg-0" action=../utility/userLogging.php>
-        <button class="btn btn-danger my-2 my-sm-0" name='logout-submit' type="submit">Kijelentkezés</button>
+        <button id="logoutBtn" class="btn btn-danger my-2 my-sm-0 logout-button" name='logout-submit'
+          type="submit">Kijelentkezés</button>
         <script type="text/javascript">
           window.onload = function () {
             display = document.querySelector('#time');
@@ -52,7 +52,7 @@ if (isset($_SESSION["userId"])) { ?>
       <tr>
         <td>
           <form action="pfcurr.php"><button class="btn btn-dark w-100">Mutasd a nálam levő tárgyakat <i
-                class="fas fa-project-diagram"></i></button></form>
+                class="fas fa-box-open"></i></button></form>
         </td>
       </tr>
       <tr>
@@ -83,7 +83,7 @@ if (isset($_SESSION["userId"])) { ?>
       <?php
       if (in_array("admin", $_SESSION["groups"])) {
         echo '
-                    <tr><td><form action="../utility/damage_report/service.php"><button class="btn btn-warning position-relative w-100">Szervíz <i class="fas fa-wrench"></i></i>  <span id="serviceItemCount" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                    <tr><td><form action="../utility/damage_report/service.php"><button class="btn btn-warning position-relative w-100">Szerviz <i class="fas fa-wrench"></i></i>  <span id="serviceItemCount" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                     0<span class="visually-hidden">unread messages</span></button></form></td></tr>
                     <tr><td><form action="usercheck.php"><button class="btn btn-success position-relative w-100">UserCheck <i class="fas fa-user-check"></i>  <span id="usercheckItemCount" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                     0
@@ -129,5 +129,5 @@ if (isset($_SESSION["userId"])) { ?>
       document.getElementById("usercheckItemCount").innerHTML = dataArray[1];
     }
   });
-  
+
 </script>

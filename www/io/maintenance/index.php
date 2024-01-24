@@ -9,16 +9,10 @@ require_once("./header.php");
 ?>
 <html>
 <script src="../utility/_initMenu.js" crossorigin="anonymous"></script>
-<script>
-  $(document).ready(function () {
-    menuItems = importItem("../utility/menuitems.json");
-    drawMenuItemsLeft("maintenance", menuItems, 2);
-    drawMenuItemsRight('maintenance', menuItems, 2);
-  });
-</script>
+
 <?php if (isset($_SESSION["userId"])) { ?>
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <a class="navbar-brand" href="index.php">
+    <a class="navbar-brand" href="../index.php">
       <img src="../utility/logo2.png" height="50">
     </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
@@ -27,6 +21,13 @@ require_once("./header.php");
     </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav mr-auto navbarUl">
+        <script>
+          $(document).ready(function () {
+            menuItems = importItem("../utility/menuitems.json");
+            drawMenuItemsLeft('maintenance', menuItems, 2);
+            drawMenuItemsRight('maintenance', menuItems, 2);
+          });
+        </script>
       </ul>
       <ul class="navbar-nav ms-auto navbarPhP">
         <li>
@@ -36,7 +37,15 @@ require_once("./header.php");
         </li>
       </ul>
       <form method='post' class="form-inline my-2 my-lg-0" action=../utility/userLogging.php>
-        <button class="btn btn-danger my-2 my-sm-0" name='logout-submit' type="submit">Kijelentkezés</button>
+        <button id="logoutBtn" class="btn btn-danger my-2 my-sm-0 logout-button" name='logout-submit'
+          type="submit">Kijelentkezés</button>
+        <script type="text/javascript">
+          window.onload = function () {
+            display = document.querySelector('#time');
+            var timeUpLoc = "../utility/userLogging.php?logout-submit=y"
+            startTimer(display, timeUpLoc);
+          };
+        </script>
       </form>
     </div>
   </nav>
@@ -231,7 +240,7 @@ require_once("./header.php");
         if (result[0] == "Admin") {
           $('.takaritasirend').append('<tr><th>Dátum</th><th>1. Személy</th><th>Státusz</th><th>2. Személy</th><th>Státusz</th><th>Eszközök</th></tr>');
           result[1].forEach(element => {
-            //console.log(element);
+            console.log(element);
 
             switch (element['szemely1_Status']) {
               case 'Y':
@@ -279,31 +288,12 @@ require_once("./header.php");
 
           result[0].forEach(element => {
             console.log(element);
-            result[0].forEach(element => {
-              console.log(element);
 
-              if (element['szemely1'] == null) {
-                element['szemely1'] = "<button style='display: block; margin: auto;' class='btn btn-success' onclick=applyToWork(" + element['id'] + ")>Jelentkezés</button>"
-              } else {
-
-              }
-              if (element['szemely2'] == null) {
-                element['szemely2'] = "<button style='display: block; margin: auto;' class='btn btn-success' onclick=applyToWork(" + element['id'] + ")>Jelentkezés</button>"
-              } else {
-
-              }
-
-              $('.takaritasirend').append('<tr id=tr' + element['id'] + '><td>' + element['datum'] + '</td><td>' + element['szemely1'] + '</td><td>' + element['szemely2'] + '</td></tr>');
-            });
             if (element['szemely1'] == null) {
               element['szemely1'] = "<button style='display: block; margin: auto;' class='btn btn-success' onclick=applyToWork(" + element['id'] + ")>Jelentkezés</button>"
-            } else {
-
             }
             if (element['szemely2'] == null) {
               element['szemely2'] = "<button style='display: block; margin: auto;' class='btn btn-success' onclick=applyToWork(" + element['id'] + ")>Jelentkezés</button>"
-            } else {
-
             }
 
             $('.takaritasirend').append('<tr id=tr' + element['id'] + '><td>' + element['datum'] + '</td><td>' + element['szemely1'] + '</td><td>' + element['szemely2'] + '</td></tr>');

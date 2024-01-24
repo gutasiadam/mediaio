@@ -121,6 +121,25 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
     </div>
   </div>
 </div>
+<div class="modal fade" id="clear_Modal" tabindex="-1" role="dialog" aria-labelledby="clear_ModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Összes törlése</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <a>Biztosan ki akarsz törölni mindent?</a>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-danger col-lg-auto mb-1" id="clear" data-bs-dismiss="modal"
+          onclick="deselect_all()">Összes törlése</button>
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Mégse</button>
+      </div>
+    </div>
+  </div>
+</div>
 </div>
 </div>
 <!-- End of Presets Modal -->
@@ -141,11 +160,13 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
         <div class="row optionsButtons" id="takeout-option-buttons">
           <!-- <button class="btn btn-warning col-2 mx-1" id="clear" style='margin-bottom: 6px'>Törlés</button> -->
           <button class="btn btn-sm btn-danger col-lg-auto mb-1 text-nowrap" id="clear" style='margin-bottom: 6px'
-            onclick="deselect_all()">Összes törlése</button>
+            onclick="showClearModal()">Összes törlése</button>
           <button class="btn btn-sm btn-success col-lg-auto mb-1" id="takeout2BTN"
             style='margin-bottom: 6px'>Mehet</button>
           <button class="btn btn-sm btn-info col-lg-auto mb-1" onclick="showPresetsModal()"
             style='margin-bottom:6px'>Presetek</button>
+
+          <!-- GivetoAnotherperson button -->
           <button class="btn btn-sm btn-dark col-lg-auto mb-1 text-nowrap" id="givetoAnotherPerson_Button" type="button"
             data-bs-toggle="modal" data-bs-target="#givetoAnotherPerson_Modal" style="margin-bottom: 6px">Másnak veszek
             ki</button>
@@ -153,6 +174,22 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
             role="button" aria-controls="sidebar">Kiválasztva
             <span id="selectedCount" class="badge bg-danger">0</span>
           </button>
+
+          <div class="form-check" style="width: fit-content" id="unavailable_checkbox">
+            <input class="form-check-input" type="checkbox" value="" id="show_unavailable" checked>
+            <label class="form-check-label" for="flexCheckDefault">
+              Nem elérhetőek
+            </label>
+          </div>
+
+          <!-- TODO!!! -->
+          <!-- <select class="form-select col-lg-auto mb-1" style='margin-bottom:6px; width: fit-content'
+            aria-label="Filter">
+            <option selected>Szűrés</option>
+            <option value="1">Médiás</option>
+            <option value="2">Stúdiós</option>
+            <option value="3">Event</option>
+          </select> -->
 
           <!-- Belső használatra kivétel - későbbi release -->
           <!-- <div class="form-check form-switch col-2">
@@ -176,7 +213,8 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
             <div class="col-12">
               <ul class="selectedItemsDisplay" id="output-mobile"></ul>
             </div>
-            <button class="btn btn-sm btn-success col-lg-auto mb-1" data-bs-dismiss="offcanvas" id="takeout2BTN-mobile">Mehet</button>
+            <button class="btn btn-sm btn-success col-lg-auto mb-1" data-bs-dismiss="offcanvas"
+              id="takeout2BTN-mobile">Mehet</button>
           </div>
         </div>
       </div>
@@ -193,18 +231,44 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
   //Selected items badge counter
   var badge = document.getElementById("selectedCount");
 
+  //Hiding desktop checked list till no item selected
+  var badge_obserber = new MutationObserver(function (mutations) {
+    mutations.forEach(function (mutation) {
+      var selectedDesktop = document.getElementById("output-desktop");
+      console.log('Badge content:', badge.innerHTML);
+      if (badge.innerHTML !== "0" && window.innerWidth > 575) {
+        selectedDesktop.style.display = "block";
+      } else {
+        selectedDesktop.style.display = "none";
+      }
+    });
+  });
+
+  badge_obserber.observe(badge, { childList: true });
+
   //Preventing double click zoom
   document.addEventListener('dblclick', function (event) {
     event.preventDefault();
   }, { passive: false });
 
+
   function reloadSavedSelections() {
     //Try re-selectiong items that are saved in the takeOutItems cookie.
-    var selecteditems = getCookie("selectedItems").split(',');
-    console.log("items that are reloading are :" + selecteditems)
+    var selecteditems = getCookie("selectedItems").split(',')
+
+    if (selecteditems[0] === "") {
+      badge.textContent = 0;
+      console.log("No items to reload");
+    } else {
+      badge.textContent = selecteditems.length;
+    }
     selecteditems.forEach(element => {
       $('#jstree').jstree().select_node(element);
     });
+  }
+
+  function showClearModal() {
+    $('#clear_Modal').modal('show');
   }
 
   function showPresetsModal() {
@@ -338,7 +402,7 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
       }
     }
 
-    setTimeout(function() {
+    setTimeout(function () {
       reloadSavedSelections()
     }, 300);
 
@@ -370,7 +434,7 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
 
 
   //Invoked after JStree is loaded
-  $('#jstree').bind('loaded.jstree', function(e, data) {
+  $('#jstree').bind('loaded.jstree', function (e, data) {
     console.log("Loaded!")
 
 
@@ -499,7 +563,7 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
       //Run selection
 
       $('#jstree').jstree().select_node(selectionArray);
-      parseInt(badge.textContent++);
+      badge.textContent++;
 
       updateSelectionCookie();
     } else if (data.action == "deselect_node") {
@@ -607,14 +671,14 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
     return true;
   }
 
-  $(document).ready(function() {
+  $(document).ready(function () {
     //Color taken items
-    setTimeout(function() {
+    setTimeout(function () {
       colorTakenItems();
     }, 500);
 
     //Back to top button
-    $(window).scroll(function() {
+    $(window).scroll(function () {
       if ($(this).scrollTop()) {
         $('#toTop').fadeIn();
       } else {
@@ -729,7 +793,7 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
         url: "name.php",
         method: "POST",
         data: $('#add_name').serialize(),
-        success: function(data) {
+        success: function (data) {
           //alert(data);
           $('#add_name')[0].reset();
         }
@@ -753,9 +817,47 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
   // dbItem remover tool - Prevents an item to be added twice to the list
   function arrayRemove(arr, value) {
 
-    return arr.filter(function(ele) {
+    return arr.filter(function (ele) {
       return ele != value;
     });
 
   }
+
+
+
+
+  // Filtering
+
+  //Showing only available items
+
+  $('#show_unavailable').change(function () {
+    $(".UI_loading").fadeIn("fast");
+
+    if ($(this).is(':checked')) {
+      console.log("Checked");
+      for (a = 1; a <= d.length; a++) {
+        if ($('#jstree').jstree().is_disabled(a) == true) {
+          $("#jstree ul li:nth-child(" + a + ") a").attr('takeout', 'true');
+          $("#jstree ul li:nth-child(" + a + ")").css({
+            "display": "block",
+          });
+          $("#jstree ul li:nth-child(" + a + ") a").removeClass("jstree-search");
+          deselect_node(a);
+        }
+      }
+
+    } else {
+      console.log("Unchecked");
+      for (a = 1; a <= d.length; a++) {
+        if ($('#jstree').jstree().is_disabled(a) == true) {
+          $("#jstree ul li:nth-child(" + a + ") a").attr('takeout', 'true');
+          $("#jstree ul li:nth-child(" + a + ")").css({
+            "display": "none",
+          });
+          $("#jstree ul li:nth-child(" + a + ") a").removeClass("jstree-search");
+          deselect_node(a);
+        }
+      }
+    }
+  });
 </script>

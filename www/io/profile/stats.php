@@ -33,7 +33,8 @@ if (in_array("admin", $_SESSION["groups"]) or in_array("teacher", $_SESSION["gro
           </li>
         </ul>
         <form method='post' class="form-inline my-2 my-lg-0" action=../utility/userLogging.php>
-          <button class="btn btn-danger my-2 my-sm-0" name='logout-submit' type="submit">Kijelentkezés</button>
+          <button id="logoutBtn" class="btn btn-danger my-2 my-sm-0 logout-button" name='logout-submit'
+            type="submit">Kijelentkezés</button>
           <script type="text/javascript">
             window.onload = function () {
               display = document.querySelector('#time');
@@ -127,7 +128,7 @@ if (in_array("admin", $_SESSION["groups"]) or in_array("teacher", $_SESSION["gro
           } else if ($row['Event'] == "IN") {
             echo '<tr class="table-success"><td>' . $row['Date'] . '</td><td>' . $row['User'] . '</td><td>' . $row['Items'] . '</td><td>' . $event . '</td><td>' . $ackcolby . '</td></tr>';
           } else {
-            echo '<tr><td>' . $row['Date'] . '</td><td>' . $row['User'] . '</td><td>' . $row['Items'] . '</td><td>' . $event . '</td><td>' . $ackcolby . '</td></tr>';
+            echo '<tr class="table-warning"><td>' . $row['Date'] . '</td><td>' . $row['User'] . '</td><td>' . $row['Items'] . '</td><td>' . $event . '</td><td>' . $ackcolby . '</td></tr>';
           }
 
 

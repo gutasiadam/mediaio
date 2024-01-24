@@ -43,6 +43,12 @@ function PhparrayCookie()
     </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav mr-auto navbarUl">
+        <script>
+          $(document).ready(function () {
+            menuItems = importItem("./utility/menuitems.json");
+            drawMenuItemsLeft('retrieve', menuItems);
+          });
+        </script>
       </ul>
       <ul class="navbar-nav ms-auto navbarPhP">
         <li>
@@ -52,15 +58,13 @@ function PhparrayCookie()
         </li>
       </ul>
       <form method='post' class="form-inline my-2 my-lg-0" action=utility/userLogging.php>
-        <button class="btn btn-danger my-2 my-sm-0" name='logout-submit' type="submit">Kijelentkezés</button>
+        <button id="logoutBtn" class="btn btn-danger my-2 my-sm-0 logout-button" name='logout-submit'
+          type="submit">Kijelentkezés</button>
         <script type="text/javascript">
           window.onload = function () {
             display = document.querySelector('#time');
             var timeUpLoc = "utility/userLogging.php?logout-submit=y"
             startTimer(display, timeUpLoc);
-
-            menuItems = importItem("./utility/menuitems.json");
-            drawMenuItemsLeft('retrieve', menuItems);
           };
         </script>
       </form>
@@ -97,47 +101,42 @@ function PhparrayCookie()
     </div>
 
 
-    <table class="table table-bordered livearray" id="liveSelArrayResult">
-      <td></td>
-    </table>
-
-
-
-
-    <div class="row" id="retrieve-row">
-      <!-- THIS TABLE HOLDS THE TWO CHILDS - selectable and selected-->
-      <!-- Selectable items -->
+    <!-- THIS TABLE HOLDS THE TWO CHILDS - selectable and selected-->
+    <!-- Selectable items -->
+    <?php
+    echo '<div class="row" id="retrieve-row">
+      
       <div class="col-6" id="items-to-retrieve">
-        <table class="table table-bordered table-dark dynamic-table">
-          <?php
-          //Get the items that are currently by the user
-          //Todo: Moves this function to the itemManager.php
-          $TKI = $_SESSION['UserUserName'];
-          $conn = Database::runQuery_mysqli();
-          $sql = ("SELECT * FROM `leltar` WHERE `RentBy` = '$TKI' AND Status=0");
-          $result = mysqli_query($conn, $sql);
-          $conn->close();
-          $n = 0;
-          while ($row = $result->fetch_assoc()) {
-            //var_dump($row);
-            $n++;
-            echo '<tr id="' . $row['UID'] . '"><td class="result dynamic-field"><button id="' . $row['UID'] . '" class="btn btn-dark" onclick="' . "prepare(this.id,'" . $row['Nev'] . "'" . ');' . '"' . '>' . $row['Nev'] . ' [' . $row['UID'] . ']' . ' <i class="fas fa-angle-double-right"></i></button></td></tr>';
-            //echo '<div class="result dynamic-field"><button id="' . $row['UID'] . '" class="btn btn-dark" onclick="' . "prepare(this.id,'" . $row['Nev'] . "'" . ');' . '"' . '>' . $row['Nev'] . ' [' . $row['UID'] . ']' . ' <i class="fas fa-angle-double-right"></i></button></div>';
-          }
-          if ($n == 0) {
-            echo '<div class="result dynamic-field text"> // Jelenleg nincs nálad egy tárgy sem</div>';
-          }
-          ?>
-        </table>
-      </div>
-      <div class="col-6">
-        <table class="table table-bordered dynamic-table " style="line-height: 10px;" id="dynamic_field">
-          <tr>
-            <div style="text-align:center;" class="text-primary"><strong></hr></strong></div>
-          </tr>
-        </table>
-      </div>
+        <table class="table table-bordered table-dark dynamic-table">';
+
+    //Get the items that are currently by the user
+    //Todo: Moves this function to the itemManager.php
+    $TKI = $_SESSION['UserUserName'];
+    $conn = Database::runQuery_mysqli();
+    $sql = ("SELECT * FROM `leltar` WHERE `RentBy` = '$TKI' AND Status=0");
+    $result = mysqli_query($conn, $sql);
+    $conn->close();
+    $n = 0;
+    while ($row = $result->fetch_assoc()) {
+      //var_dump($row);
+      $n++;
+      echo '<tr id="' . $row['UID'] . '"><td class="result dynamic-field"><button id="' . $row['UID'] . '" class="btn btn-dark" onclick="' . "prepare(this.id,'" . $row['Nev'] . "'" . ');' . '"' . '>' . $row['Nev'] . ' [' . $row['UID'] . ']' . ' <i class="fas fa-angle-double-right"></i></button></td></tr>';
+      //echo '<div class="result dynamic-field"><button id="' . $row['UID'] . '" class="btn btn-dark" onclick="' . "prepare(this.id,'" . $row['Nev'] . "'" . ');' . '"' . '>' . $row['Nev'] . ' [' . $row['UID'] . ']' . ' <i class="fas fa-angle-double-right"></i></button></div>';
+    }
+    echo '</table>';
+    echo '</div>';
+    if ($n == 0) {
+      echo '<h3 class="nothing_here">Jelenleg nincs nálad egy tárgy sem!</h3>';
+    }
+    ?>
+    <div class="col-6">
+      <table class="table table-bordered dynamic-table " style="line-height: 10px;" id="dynamic_field">
+        <tr>
+          <div style="text-align:center;" class="text-primary"><strong></hr></strong></div>
+        </tr>
+      </table>
     </div>
+  </div>
 
   </div>
   </div>
@@ -211,11 +210,12 @@ function PhparrayCookie()
     $(document).on('click', '.send', function () {
       if ($("#intactItems").prop("checked")) { // ha a felhasználó elfogadta, hogy a tárgyak rendben vannak.
         var uids = []; //UID`s that will be taken out.
-        $('table > tbody  > tr > td > button ').each(function (index, tr) {
+        $('#dynamic_field > tbody  > tr > td > button ').each(function (index, tr) {
           console.log(this.innerText);
           uids.push(this.innerText.trim());
         });
         retrieveJSON = JSON.stringify(uids);
+        console.log(retrieveJSON);
         $.ajax({
           method: 'POST',
           url: './ItemManager.php',
