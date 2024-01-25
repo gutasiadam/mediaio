@@ -45,53 +45,64 @@ class EventManager{
     } else {
       //print "Események:\n";
       foreach ($events as $event) {
+         //var_dump($event->start->date);     
+         $start = $event->start->dateTime;
+         $end = $event->end->dateTime;
+
+         //Egésznapos esemény
+        if(empty($start)) {
+                $start = new DateTime($event->start->date);
+
+                //Convert to RFC3339 format for JS Calendar
+                $start = $start->format(DateTime::RFC3339);
+                $end = new DateTime($event->end->date);
+                $end = $end->format(DateTime::RFC3339);
+        }
         $data[] = array(
           'id'   => $event->id,
           'title'   => $event->getSummary(),
-          'start'   => $event->start->dateTime,
-          'end'   => $event->end->dateTime,
+          'start'   => $start,
+          'end'   => $end,
           'backgroundColor' => "#0e6ab5",
           'textColor' => "#ffffff",
           'borderColor' => "#ffffff"
         );
-        $start = $event->start->dateTime;
-        if (empty($start)) {
-          $start = $event->start->date;
-        }
-        //echo $event->getSummary()." ".$event->start->date." ".$event->description."\n";
-        //printf("%s (%s) - %s\n\n", $event->getSummary(), $start ,$event->getDescription());
       }
+
     //Vezetőségi naptár
     if((in_array("admin", $_SESSION["groups"]))){
-        $calendarId = 'hq37buvra0ju1sci457sk66pfk@group.calendar.google.com'; // Vez naptár
-        $optParams = array(
-        'maxResults' => 200,
-        'orderBy' => 'startTime',
-        'singleEvents' => true,
-        'timeMin' => $oneYearAgo->format(DateTime::RFC3339)
-        );
-    $results = $service->events->listEvents($calendarId, $optParams);
-    $events = $results->getItems();
-          foreach ($events as $event) {
-        $data[] = array(
-          'id'   => $event->id,
-          'title'   => $event->getSummary(),
-          'start'   => $event->start->dateTime,
-          'end'   => $event->end->dateTime,
-          'backgroundColor' => "#20295E",
-          'textColor' => "#ffffff",
-          'borderColor' => "#ffffff"
-        );
-        $start = $event->start->dateTime;
-        if (empty($start)) {
-          $start = $event->start->date;
-        }
+      $calendarId = 'hq37buvra0ju1sci457sk66pfk@group.calendar.google.com'; // Vez naptár
+      $optParams = array(
+      'maxResults' => 200,
+      'orderBy' => 'startTime',
+      'singleEvents' => true,
+      'timeMin' => $oneYearAgo->format(DateTime::RFC3339)
+      );
+  $results = $service->events->listEvents($calendarId, $optParams);
+  $events = $results->getItems();
+        foreach ($events as $event) {
+       //var_dump($event->start->date);     
+       $start = $event->start->dateTime;
+       $end = $event->end->dateTime;
+      if(empty($start)) {
+              $start = new DateTime($event->start->date);
+              $start = $start->format(DateTime::RFC3339);
+              $end = new DateTime($event->end->date);
+              $end = $end->format(DateTime::RFC3339);
       }
+      $data[] = array(
+        'id'   => $event->id,
+        'title'   => $event->getSummary(),
+        'start'   => $start,
+        'end'   => $end,
+        'backgroundColor' => "#0e6ab5",
+        'textColor' => "#ffffff",
+        'borderColor' => "#ffffff"
+      );
     }
+  }
     }
-
-
-    
+  
     // $query = "SELECT * FROM events ORDER BY id";
     // $result = Database::runQuery($query);
     // foreach($result as $row){
