@@ -114,7 +114,6 @@ echo "</table>";
     } else {
       mode = 'takeOutApproval';
     }
-
     console.log(items);
     $.ajax({
       method: 'POST',

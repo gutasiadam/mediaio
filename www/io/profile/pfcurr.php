@@ -167,6 +167,8 @@ if (isset($_SESSION['userId'])) {
 
 ?>
 <script>
+
+  var single_click = true;
   //Visszahozás ellenőrzése a handlernél
   function retrieve(i) { // i=> item
     console.log("Begin retrieve by handler");
@@ -181,7 +183,7 @@ if (isset($_SESSION['userId'])) {
         if (response == 200) {
           $('.sysResponse').append('Sikeres művelet! Az oldal hamarosan újratölt.');
         }
-        setTimeout(function () { location.reload(); }, 1500);
+        setTimeout(function () { location.reload(); }, 100);
 
       },
       error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -195,12 +197,13 @@ if (isset($_SESSION['userId'])) {
   {
     retrieveItem = document.getElementById('retrieveItem_' + (clicked_id)).value
     //alert(retrieveItem);
-    if ($('.intactItems').is(":checked")) {
+    if ($('.intactItems').is(":checked") && single_click == true) {
       retrieve(retrieveItem);// AJAXos visszahozás megkezdése
-    } else {
+    } else if (single_click == true) {
       alert('Ha probléma akad a tárggyal, jelezd azt a vezetőségnek!');
       //$( ".intactItems" ).effect( "shake" );
     }
+    single_click = false;
 
   }
   $(document).on('click', '.intactItems', function () { // Submit gomb engedélyezése, ha az Intact form ki lett pipálva.

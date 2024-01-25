@@ -51,13 +51,9 @@ if (isset($_SESSION["userId"])) { ?>
     <table class="help-logintable">
       <tr>
         <td>
-          <form action="pfcurr.php"><button class="btn btn-dark w-100">Mutasd a nálam levő tárgyakat <i
-                class="fas fa-box-open"></i></button></form>
-        </td>
-      </tr>
-      <tr>
-        <td>
-          <form action="chPwd.php"><button class="btn btn-warning w-100">Jelszócsere <i class="fas fa-key"></i></button>
+          <form action="pfcurr.php"><button class="btn btn-dark position-relative w-100">Mutasd a nálam levő tárgyakat <i
+                class="fas fa-box-open"></i><span id="userItemCount"
+                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span></button>
           </form>
         </td>
       </tr>
@@ -69,7 +65,7 @@ if (isset($_SESSION["userId"])) { ?>
       </tr>
       <tr>
         <td>
-          <form action="rules.php"><button class="btn btn-secondary w-100">Dokumentumok <i
+          <form action="rules.php"><button class="btn btn-dark w-100">Dokumentumok <i
                 class="fas fa-folder-open"></i></i></button></form>
         </td>
       </tr>
@@ -80,6 +76,12 @@ if (isset($_SESSION["userId"])) { ?>
               <i class="fas fa-file-alt"></i></button></form>
         </td>
       </tr>
+      <tr>
+        <td>
+          <form action="chPwd.php"><button class="btn btn-warning w-100">Jelszócsere <i class="fas fa-key"></i></button>
+          </form>
+        </td>
+      </tr>
       <?php
       if (in_array("admin", $_SESSION["groups"])) {
         echo '
@@ -87,7 +89,7 @@ if (isset($_SESSION["userId"])) { ?>
                     0<span class="visually-hidden">unread messages</span></button></form></td></tr>
                     <tr><td><form action="usercheck.php"><button class="btn btn-success position-relative w-100">UserCheck <i class="fas fa-user-check"></i>  <span id="usercheckItemCount" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                     0
-                    <spanclass="visually-hidden">unread messages</span></button></form></td></tr>
+                    <span class="visually-hidden">unread messages</span></button></form></td></tr>
                     <tr><td><form action="stats.php"><button class="btn btn-dark w-100">Áttekintés <i class="fas fa-chart-pie"></i></i></button></form></td></tr>
                     ';
       }
@@ -115,19 +117,27 @@ if (isset($_SESSION["userId"])) { ?>
 
 <script>
   //Make a Jquery call to the ItemManager.php to get the number of items in the service
+
+  var userData = "<?php echo $_POST['user']; ?>";
   $.ajax({
     url: "../ItemManager.php",
     type: "POST",
     data: {
-      mode: "getProfileItemCounts"
+      mode: "getProfileItemCounts",
+      user: userData
     },
     success: function (data) {
       var dataArray = data.split(",");
+      console.log(dataArray);
+      //Set the user item count
+      document.getElementById("userItemCount").innerHTML = dataArray[2];
       //Set the service item count
       document.getElementById("serviceItemCount").innerHTML = dataArray[0];
       //Set the user check item count
       document.getElementById("usercheckItemCount").innerHTML = dataArray[1];
+      
     }
+
   });
 
 </script>

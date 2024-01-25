@@ -548,6 +548,9 @@ if(isset($_POST['mode'])){
     echo itemDataManager::getServiceItemCount();
     echo ",";
     echo itemDataManager::getToBeUserCheckedCount();
+    echo ",";
+    echo "42"; //TODO: Implement this.
+    //echo itemDataManager::listUserItems($_SESSION['UserUserName']);
     exit();
   }
   

@@ -83,7 +83,7 @@ require_once("./header.php");
   </div>
   </body>
 
-</html>
+
 
 
 <div class="modal" tabindex="-1" role="dialog" id="add_Work_Modal" data-backdrop="false">
@@ -112,6 +112,27 @@ require_once("./header.php");
     </div>
   </div>
 </div>
+
+<div class="modal fade" id="delete_Modal" tabindex="-1" role="dialog" aria-labelledby="delete_ModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Időpont törlése</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <a>Biztosan ki szeretnéd törölni?</a>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-danger col-lg-auto mb-1" id="clear" data-bs-dismiss="modal">Törlés</button>
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Mégse</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 
 
 <script>
@@ -279,7 +300,7 @@ require_once("./header.php");
 
 
             $('.takaritasirend').append('<tr id=tr' + element['id'] + '><td>' + element['datum'] + '</td><td>' + element['szemely1'] + '</td><td>' +
-              SZ1Status + '</td><td>' + element['szemely2'] + '</td><td>' + SZ2Status + '</td><td><button class="btn btn-warning" onclick=modifyStatus(' + element['id'] + ')>Módosít</button> <button class="btn btn-success" onclick=applyToWork(' + element['id'] + ')>Jelentkezem</button> <button class="btn btn-danger" onclick=deleteWork(' + element['id'] + ')>Törlés</button></td></tr>');
+              SZ1Status + '</td><td>' + element['szemely2'] + '</td><td>' + SZ2Status + '</td><td><button class="btn btn-warning" onclick=modifyStatus(' + element['id'] + ')>Módosít</button> <button class="btn btn-success" onclick=applyToWork(' + element['id'] + ')>Jelentkezem</button> <button class="btn btn-danger" onclick=show_deleteWork(' + element['id'] + ')>Törlés</button></td></tr>');
             if (element['szemely1'] != null) { $('#tr' + element['id']).find("td:eq(1)").append(' <button class="btn btn-danger" style="margin-left: 10px; margin-right: 5px;" onclick=deleteUserFromWork(' + element['id'] + ',1)>X</button>') }
             if (element['szemely2'] != null) { $('#tr' + element['id']).find("td:eq(3)").append(' <button class="btn btn-danger" style="margin-left: 10px; margin-right: 5px;" onclick=deleteUserFromWork(' + element['id'] + ',2)>X</button>') }
           });
@@ -303,5 +324,12 @@ require_once("./header.php");
     });
   }
 
+  function show_deleteWork(ID) {
+    $('#delete_Modal').modal('show');
+    $('#clear').attr('onclick', 'deleteWork(' + ID + ')');
+  }
+
 
 </script>
+
+</html>
