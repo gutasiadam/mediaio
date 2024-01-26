@@ -178,7 +178,7 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
           <div class="form-check" style="width: fit-content" id="unavailable_checkbox">
             <input class="form-check-input" type="checkbox" value="" id="show_unavailable" checked>
             <label class="form-check-label" for="flexCheckDefault">
-              Nem elérhetőek
+              Nem elérhető tárgyak mutatása
             </label>
           </div>
 
@@ -548,6 +548,7 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
       itemArr = {};
       itemArr.id = data.node.id;
       itemArr.name = data.node.original.originalName;
+      itemArr.uid = data.node.original.uid;
       takeOutPrepJSON.items.push(itemArr);
       selectionArray = [];
       objects = JSON.parse($('#jstree').jstree().get_node(data.node.id).original.activeRelatedItems);

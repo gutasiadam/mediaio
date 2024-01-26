@@ -160,7 +160,7 @@ echo "</table>";
     } else {
       mode = 'takeOutApproval';
     }
-    console.log(items);
+    //alert(items.stringify());
     $.ajax({
       method: 'POST',
       url: '../ItemManager.php',

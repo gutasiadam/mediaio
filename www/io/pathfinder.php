@@ -96,12 +96,19 @@ if (isset($_SESSION['UserUserName'])) { //If user is logged in
             $TKI = $_GET['pfItem'];
             //find all occurences of '-' and split by the last occurence using regex
             $TKI = preg_split('/ -/', $TKI);
+            $itemName=$TKI[0];
+            
+            //If only UID of the item was given
+            if(sizeof($TKI)==1){
+              $itemUID =  str_replace(' ', '', $TKI[0]);
+            }else{
+              $itemUID =  str_replace(' ', '', $TKI[1]);
+            }
+            
+            $query = "SELECT * FROM `takelog` WHERE JSON_CONTAINS(Items, " . "'" . "{" . '"uid" : "' . $itemUID . '"}' . "'" . ") ORDER BY `Date` DESC";
 
-            //Get the Name of the item
-            $TKI = $TKI[0];
-            $query = "SELECT * FROM `takelog` WHERE JSON_CONTAINS(Items, " . "'" . "{" . '"name" : "' . $TKI . '"}' . "'" . ") ORDER BY `Date` DESC";
             $result = mysqli_query($connectionObject, $query);
-            echo '<h3 class="panel-title"><b>' . $TKI . '</b></h3>
+            echo '<h3 class="panel-title"><b>' . $itemName . '</b></h3>
             </div>';
             // Start of panel body
             echo '

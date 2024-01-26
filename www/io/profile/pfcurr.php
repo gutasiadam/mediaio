@@ -89,7 +89,7 @@ if (isset($_SESSION['userId'])) {
               </div>';
             }
             echo '<div class="panel-body" id="pf-curr-items">';
-            $imodal = -1;
+            $imodal = 0;
             $resultArray = [];
             while ($row = $result->fetch_assoc()) {
               array_push($resultArray, $row);
@@ -97,8 +97,8 @@ if (isset($_SESSION['userId'])) {
               echo '
               <div class="row">
               <div class="col" id="item-name">
-               <h3>' . $row["Nev"] . '</h3>
-               <p>' . $row["UID"];
+               <h3 class="item-name">' . $row["Nev"] . '</h3>
+               <p class="item-uid">' . $row["UID"];
               if ($row['Status'] == '2') {
                 echo ' <span class="text-warning">Jóváhagyásra vár.</span>';
               }
@@ -114,7 +114,7 @@ if (isset($_SESSION['userId'])) {
             <div class="modal-dialog" role="document">
               <div class="modal-content">
                 <div class="modal-header">
-                  <h4 class="modal-title" id="exampleModalLabel">' . $row["Nev"] . ' visszahozása</h4>
+                  <h4 class="modal-title" id="exampleModalLabel">' . $row["Nev"].' - '.$row['UID'] . ' visszahozása</h4>
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
             <div class="modal-body">
@@ -125,7 +125,7 @@ if (isset($_SESSION['userId'])) {
               </div>
               <h6></h6>
               <h6 id="emailHelp" class="form-text text-muted">A kipipálással igazolom, hogy amit visszahoztam sérülésmentes, és kifogástalanul működik. Sérülés esetén azonnal jelezd azt a vezetőségnek.</h6>
-                  <button type="submit" id="' . $imodal . '" onClick="reply_click(this.id)" class="btn go_btn btn-success disabled"><i class="fas fa-solid fa-check"></i> Visszahozás</button>
+                  <button type="submit" id="' . $imodal . '" onClick="reply_click('."'".$row["Nev"]."','".$row["UID"]."'".')" class="btn go_btn btn-success disabled"><i class="fas fa-solid fa-check"></i> Visszahozás</button>
                   <a href="../utility/damage_report/announce_Damage.php" class="btn go_btn btn-warning">Problémát jelentek be</a>
                   
                   <p class="sysResponse"> </p>
@@ -170,15 +170,15 @@ if (isset($_SESSION['userId'])) {
 
   var single_click = true;
   //Visszahozás ellenőrzése a handlernél
-  function retrieve(i) { // i=> item
+
+  //I: Item object with UID and name
+  function retrieve(i) {
     console.log("Begin retrieve by handler");
-    retrieveItem_list = [i];
-    retrieveJSON = JSON.stringify(retrieveItem_list);
-    console.log(retrieveJSON);
+    retrieveItem_list = [i]; //required for itemManager's multiple item handling (arrays)
     $.ajax({
       method: 'POST',
       url: '../ItemManager.php',
-      data: { data: retrieveJSON, mode: "retrieveStaging" },
+      data: { data: JSON.stringify(retrieveItem_list), mode: "retrieveStaging" }, //JSON stringify converts the JSON to PHP-readable format.
       success: function (response) {
         if (response == 200) {
           $('.sysResponse').append('Sikeres művelet! Az oldal hamarosan újratölt.');
@@ -193,12 +193,13 @@ if (isset($_SESSION['userId'])) {
     });
   };
 
-  function reply_click(clicked_id) //Begyűjti a tárgy nevét, amit vissza akar a felhasználó hozni.
+  function reply_click(clicked_name, clicked_uid) //Begyűjti a tárgy nevét, amit vissza akar a felhasználó hozni.
   {
-    retrieveItem = document.getElementById('retrieveItem_' + (clicked_id)).value
+    item={'name':clicked_name,'uid':clicked_uid};
+    //retrieveItem = document.getElementById('retrieveItem_' + (clicked_id)).value
     //alert(retrieveItem);
     if ($('.intactItems').is(":checked") && single_click == true) {
-      retrieve(retrieveItem);// AJAXos visszahozás megkezdése
+      retrieve(item);// AJAXos visszahozás megkezdése
     } else if (single_click == true) {
       alert('Ha probléma akad a tárggyal, jelezd azt a vezetőségnek!');
       //$( ".intactItems" ).effect( "shake" );

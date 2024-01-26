@@ -120,7 +120,7 @@ function PhparrayCookie()
     while ($row = $result->fetch_assoc()) {
       //var_dump($row);
       $n++;
-      echo '<tr id="' . $row['UID'] . '"><td class="result dynamic-field"><button id="' . $row['UID'] . '" class="btn btn-dark" onclick="' . "prepare(this.id,'" . $row['Nev'] . "'" . ');' . '"' . '>' . $row['Nev'] . ' [' . $row['UID'] . ']' . ' <i class="fas fa-angle-double-right"></i></button></td></tr>';
+      echo '<tr id="' . $row['UID'] . '"><td class="result dynamic-field"><button id="' . $row['UID'] . '" class="btn btn-dark" onclick="' . "prepare(this.id,'" . $row['UID'] . "'" . ",'".$row['Nev']."');" . '"' . '>' . $row['Nev'] . ' [' . $row['UID'] . ']' . ' <i class="fas fa-angle-double-right"></i></button></td></tr>';
       //echo '<div class="result dynamic-field"><button id="' . $row['UID'] . '" class="btn btn-dark" onclick="' . "prepare(this.id,'" . $row['Nev'] . "'" . ');' . '"' . '>' . $row['Nev'] . ' [' . $row['UID'] . ']' . ' <i class="fas fa-angle-double-right"></i></button></div>';
     }
     echo '</table>';
@@ -152,8 +152,8 @@ function PhparrayCookie()
   }, { passive: false });
 
 
-  function prepare(id, txt) {
-    $('#dynamic_field').append('<tr class="bg-success" id="prep-' + id + '"><td class="dynamic-field"><button id="prep-' + id + '" class="btn btn-succes" onclick="unstage(this.id);"><i class="fas fa-angle-double-left"></i> ' + txt + '</button></td></tr>');
+  function prepare(id, uid, name) {
+    $('#dynamic_field').append('<tr class="bg-success" id="prep-' + id + '"><td class="dynamic-field"><button id="prep-' + id + '" class="btn btn-succes" onclick="unstage(this.id);"><i class="fas fa-angle-double-left"></i> ' + name +' ['+uid +']'+ '</button></td></tr>');
     $('#' + id).hide();
   }
 
@@ -209,13 +209,18 @@ function PhparrayCookie()
     //Initiate Takeout process
     $(document).on('click', '.send', function () {
       if ($("#intactItems").prop("checked")) { // ha a felhasználó elfogadta, hogy a tárgyak rendben vannak.
-        var uids = []; //UID`s that will be taken out.
+        var items = []; //Items that will be retreievd.
         $('#dynamic_field > tbody  > tr > td > button ').each(function (index, tr) {
           console.log(this.innerText);
-          uids.push(this.innerText.trim());
+          items.push(
+            {'uid':this.innerText.split('[')[1].slice(0, -1),
+            'name':this.innerText.split('[')[0].trim()}
+            );
+  
         });
-        retrieveJSON = JSON.stringify(uids);
-        console.log(retrieveJSON);
+        //console.log(items);
+        retrieveJSON = JSON.stringify(items);
+        //console.log(retrieveJSON);
         $.ajax({
           method: 'POST',
           url: './ItemManager.php',

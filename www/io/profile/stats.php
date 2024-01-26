@@ -111,12 +111,14 @@ if (in_array("admin", $_SESSION["groups"]) or in_array("teacher", $_SESSION["gro
           } else {
             $event = $row['Event'];
           }
-          //Make row['Items'] JSON's name field unordered list
+
+  
+          
           $items = json_decode($row['Items'], true);
           $items = array_column($items, 'name');
           //TODO: concatenate UID to the name
           $items2 = json_decode($row['Items'], true);
-          $items2 = array_column($items2, 'UID');
+          $items2 = array_column($items2, 'uid');
 
 
 
