@@ -578,7 +578,6 @@ if (isset($_POST['mode'])) {
     echo itemDataManager::getToBeUserCheckedCount();
     echo ",";
     echo itemDataManager::getUserItemCount();
-    //echo itemDataManager::listUserItems($_SESSION['UserUserName']);
     exit();
   }
 }

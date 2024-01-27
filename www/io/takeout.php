@@ -27,6 +27,7 @@ error_reporting(E_ALL ^ E_NOTICE);
 <script src="utility/jstree.js"></script>
 <link href='main.css' rel='stylesheet' />
 <link href="utility/themes/default/style.min.css" rel="stylesheet" />
+<script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 <html>
 <title>MediaIo - takeout</title>
 <?php if (isset($_SESSION["userId"])) { ?>
@@ -101,6 +102,7 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
   </div>
   <!-- End of GivetoAnotherperson Modal -->
 <?php } ?>
+
 <!-- Presets Modal -->
 <div class="modal fade" id="presets_Modal" tabindex="-1" role="dialog" aria-labelledby="presets_ModalLabel"
   aria-hidden="true">
@@ -121,6 +123,8 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
     </div>
   </div>
 </div>
+<!-- End of Presets Modal -->
+
 <div class="modal fade" id="clear_Modal" tabindex="-1" role="dialog" aria-labelledby="clear_ModalLabel"
   aria-hidden="true">
   <div class="modal-dialog" role="document">
@@ -140,13 +144,41 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
     </div>
   </div>
 </div>
+
+<div class="modal fade" id="scanner_Modal" tabindex="-1" role="dialog" aria-labelledby="scanner_ModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Szkenner</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" onclick="stopCamera()"
+          aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div id="reader" width="600px"></div>
+        <!-- Toasts -->
+        <div class="toast align-items-center" id="scan_toast" role="alert" aria-live="assertive" aria-atomic="true"
+          style="z-index: 99; display:none;">
+          <div class="d-flex">
+            <div class="toast-body" id="scan_result">
+            </div>
+            <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <!--         <input type="checkbox" class="btn-check btn-light" id="btncheck1" autocomplete="off" wfd-id="id0"
+          onclick="startTorch()">
+        <label class="btn btn-outline-primary" for="btncheck1"><i class="fas fa-lightbulb"></i></label> -->
+        <button type="button" class="btn btn-success" onclick="stopCamera()" data-bs-dismiss="modal">Kész</button>
+      </div>
+    </div>
+  </div>
 </div>
-</div>
-<!-- End of Presets Modal -->
 
 
 
-<body>
+<body style="user-select: none;">
   <h2 class="rainbow" id="doTitle">Tárgy kivétel</h2>
   <div class="container">
     <div class="row align-items-start" id="takeout-container">
@@ -165,6 +197,8 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
             style='margin-bottom: 6px'>Mehet</button>
           <button class="btn btn-sm btn-info col-lg-auto mb-1" onclick="showPresetsModal()"
             style='margin-bottom:6px'>Presetek</button>
+          <button type="button" class="btn btn-sm btn-secondary col-lg-auto mb-1" onclick="showScannerModal()"
+            style='margin-bottom:6px'>Szkenner <i class="fas fa-qrcode"></i></button>
 
           <!-- GivetoAnotherperson button -->
           <button class="btn btn-sm btn-dark col-lg-auto mb-1 text-nowrap" id="givetoAnotherPerson_Button" type="button"
@@ -178,7 +212,7 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
           <div class="form-check" style="width: fit-content" id="unavailable_checkbox">
             <input class="form-check-input" type="checkbox" value="" id="show_unavailable" checked>
             <label class="form-check-label" for="flexCheckDefault">
-              Nem elérhető tárgyak mutatása
+              Csak elérhető tárgyak
             </label>
           </div>
 
@@ -563,6 +597,7 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
       }
       //Run selection
 
+      console.log("selected:" + selectionArray);
       $('#jstree').jstree().select_node(selectionArray);
       badge.textContent++;
 
@@ -656,8 +691,18 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
         $("#jstree ul li:nth-child(" + a + ") a").removeClass("jstree-search");
         deselect_node(a);
       }
-
     }
+  }
+
+  function hideUnavailableItems() {
+    for (a = 1; a <= d.length; a++) {
+        if ($('#jstree').jstree().is_disabled(a) == true) {
+          $("#jstree ul li:nth-child(" + a + ")").css({
+            "display": "none",
+          });
+          $("#jstree ul li:nth-child(" + a + ") a").removeClass("jstree-search");
+        }
+      }
   }
 
   function containsOnlyStudioItems() {
@@ -676,6 +721,7 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
     //Color taken items
     setTimeout(function () {
       colorTakenItems();
+      hideUnavailableItems();
     }, 500);
 
     //Back to top button
@@ -686,7 +732,6 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
         $('#toTop').fadeOut();
       }
     });
-
 
     //get Users
     $.ajax({
@@ -824,7 +869,110 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
 
   }
 
+  //Scanner
 
+
+  //Creating Qr reader
+  const QrReader = new Html5Qrcode("reader");
+  let QrReaderStarted = false;
+
+  //Qr reader settings
+  const qrconstraints = {
+    facingMode: "environment"
+  };
+  const qrConfig = {
+    fps: 10,
+    qrbox: {
+      width: 150,
+      height: 150
+    },
+    showTorchButtonIfSupported: true
+  };
+  const qrOnSuccess = (decodedText, decodedResult) => {
+    console.log(`Code matched = ${decodedText}`, decodedResult);
+
+    const toastLiveExample = document.getElementById('scan_toast');
+    const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample);
+
+
+    selectionArray = [];
+    for (j = 1; j <= d.length; j++) {
+      if ($('#jstree').jstree().get_node(j).original.uid == decodedText & $('#jstree').jstree().get_node(j).state.disabled == false) {
+        document.getElementById("scan_result").innerHTML = "<b style='color: green;'>" + decodedText + "</b>";
+        toastLiveExample.style.display = "block";
+        toastBootstrap.show();
+        selectionArray.push(j);
+      }
+      if ($('#jstree').jstree().get_node(j).original.uid == decodedText & $('#jstree').jstree().get_node(j).state.disabled == true) {
+        document.getElementById("scan_result").innerHTML = "<b style='color: red;'>Ez az eszköz nem elérhető!</b>";
+        console.log("Not available!");
+        toastLiveExample.style.display = "block";
+        toastBootstrap.show();
+      }
+    }
+    $('#jstree').jstree().select_node(selectionArray);
+  };
+
+  // Methods: start / stop
+  const startScanner = () => {
+    if (!QrReaderStarted) {
+      QrReader.start(
+        qrconstraints,
+        qrConfig,
+        qrOnSuccess,
+      ).catch(console.error);
+      QrReaderStarted = true;
+      console.log("Reader started!");
+    }
+    else {
+      QrReader.resume();
+      console.log("Unpaused!");
+    }
+  };
+
+  const stopScanner = () => {
+    QrReader.pause();
+  };
+
+  // Start scanner on button click
+
+  function showScannerModal() {
+    $('#scanner_Modal').modal('show');
+    startScanner();
+  }
+
+
+  function stopCamera() {
+    console.log("Pausing camera");
+    stopScanner();
+  }
+
+  function isTorchSupported() {
+    let settings = QrReader.getRunningTrackSettings();
+    console.log(settings);
+    console.log("torch" in settings);
+  }
+
+  function startTorch() {
+    if (document.getElementById("btncheck1").checked == true) {
+      let constraints = {
+        "torch": true,
+        "advanced": [{ "torch": true }]
+      };
+      QrReader.applyVideoConstraints(constraints);
+      let settings = QrReader.getRunningTrackSettings();
+
+      if (settings.torch === true) {
+        console.log("Torch enabled");
+        // Torch was indeed enabled, succeess.
+      } else {
+        console.log("Torch not enabled");
+        // Failure.
+        // Failed to set torch, why?
+      }
+    } else {
+    }
+  }
 
 
   // Filtering
@@ -838,9 +986,8 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
       console.log("Checked");
       for (a = 1; a <= d.length; a++) {
         if ($('#jstree').jstree().is_disabled(a) == true) {
-          $("#jstree ul li:nth-child(" + a + ") a").attr('takeout', 'true');
           $("#jstree ul li:nth-child(" + a + ")").css({
-            "display": "block",
+            "display": "none",
           });
           $("#jstree ul li:nth-child(" + a + ") a").removeClass("jstree-search");
           deselect_node(a);
@@ -851,9 +998,8 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
       console.log("Unchecked");
       for (a = 1; a <= d.length; a++) {
         if ($('#jstree').jstree().is_disabled(a) == true) {
-          $("#jstree ul li:nth-child(" + a + ") a").attr('takeout', 'true');
           $("#jstree ul li:nth-child(" + a + ")").css({
-            "display": "none",
+            "display": "block",
           });
           $("#jstree ul li:nth-child(" + a + ") a").removeClass("jstree-search");
           deselect_node(a);
