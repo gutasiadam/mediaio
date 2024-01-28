@@ -277,7 +277,7 @@ require_once("./header.php");
                 SZ1Status = '<select name="szemelyStatus"><option value="Y">OK</option><option value="N">Nem végezte el</option><option value="B">Beteg</option><option value="E" selected>Egyéb</option></select>'
                 break;
               default:
-                SZ1Status = '❓';
+                SZ1Status = '';
                 break;
             }
             switch (element['szemely2_Status']) {
@@ -294,15 +294,23 @@ require_once("./header.php");
                 SZ2Status = '<select name="szemelyStatus"><option value="Y">OK</option><option value="N">Nem végezte el</option><option value="B">Beteg</option><option value="E" selected>Egyéb</option></select>'
                 break;
               default:
-                SZ2Status = '❓';
+                SZ2Status = '';
                 break;
             }
-
-
+            let szem1 = true;
+            let szem2 = true;
+            if (element['szemely1'] == null) {
+              element['szemely1'] = "<i>Nincs jelentkező</i>";
+              szem1 = false;
+            }
+            if (element['szemely2'] == null) {
+              element['szemely2'] = "<i>Nincs jelentkező</i>";
+              szem2 = false;
+            }
             $('.takaritasirend').append('<tr id=tr' + element['id'] + '><td>' + element['datum'] + '</td><td>' + element['szemely1'] + '</td><td>' +
               SZ1Status + '</td><td>' + element['szemely2'] + '</td><td>' + SZ2Status + '</td><td><button class="btn btn-warning" onclick=modifyStatus(' + element['id'] + ')>Módosít</button> <button class="btn btn-success" onclick=applyToWork(' + element['id'] + ')>Jelentkezem</button> <button class="btn btn-danger" onclick=show_deleteWork(' + element['id'] + ')>Törlés</button></td></tr>');
-            if (element['szemely1'] != null) { $('#tr' + element['id']).find("td:eq(1)").append(' <button class="btn btn-danger" style="margin-left: 10px; margin-right: 5px;" onclick=deleteUserFromWork(' + element['id'] + ',1)>X</button>') }
-            if (element['szemely2'] != null) { $('#tr' + element['id']).find("td:eq(3)").append(' <button class="btn btn-danger" style="margin-left: 10px; margin-right: 5px;" onclick=deleteUserFromWork(' + element['id'] + ',2)>X</button>') }
+            if (szem1 == true) { $('#tr' + element['id']).find("td:eq(1)").append(' <button class="btn btn-danger" style="margin-left: 10px; margin-right: 5px;" onclick=deleteUserFromWork(' + element['id'] + ',1)>X</button>') }
+            if (szem2 == true) { $('#tr' + element['id']).find("td:eq(3)").append(' <button class="btn btn-danger" style="margin-left: 10px; margin-right: 5px;" onclick=deleteUserFromWork(' + element['id'] + ',2)>X</button>') }
           });
         } else {
           $('.takaritasirend').append('<tr><th>Dátum</th><th>1. Személy</th><th>2. Személy</th></tr>');

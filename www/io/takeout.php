@@ -125,6 +125,7 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
 </div>
 <!-- End of Presets Modal -->
 
+<!-- Clear Modal -->
 <div class="modal fade" id="clear_Modal" tabindex="-1" role="dialog" aria-labelledby="clear_ModalLabel"
   aria-hidden="true">
   <div class="modal-dialog" role="document">
@@ -144,7 +145,9 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
     </div>
   </div>
 </div>
+<!-- End of Clear Modal -->
 
+<!-- Scanner Modal -->
 <div class="modal fade" id="scanner_Modal" tabindex="-1" role="dialog" aria-labelledby="scanner_ModalLabel"
   aria-hidden="true">
   <div class="modal-dialog" role="document">
@@ -175,6 +178,7 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
     </div>
   </div>
 </div>
+<!-- End of Scanner Modal -->
 
 
 
@@ -189,12 +193,15 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
       <div class="col">
         Keresés: <input type="text" id="search" style='margin-bottom: 10px'
           placeholder="Kezdd el ide írni, mit vinnél el.." autocomplete="off" />
-        <div class="row optionsButtons" id="takeout-option-buttons">
-          <!-- <button class="btn btn-warning col-2 mx-1" id="clear" style='margin-bottom: 6px'>Törlés</button> -->
-          <button class="btn btn-sm btn-danger col-lg-auto mb-1 text-nowrap" id="clear" style='margin-bottom: 6px'
-            onclick="showClearModal()">Összes törlése</button>
+        <div class="row" id="takeout-option-buttons">
+          <button href="#sidebar" class="btn btn-sm btn-success mb-1" id="show_selected" data-bs-toggle="offcanvas"
+            role="button" aria-controls="sidebar">Kiválasztva
+            <span id="selectedCount" class="badge bg-danger">0</span>
+          </button>
           <button class="btn btn-sm btn-success col-lg-auto mb-1" id="takeout2BTN"
             style='margin-bottom: 6px'>Mehet</button>
+          <button class="btn btn-sm btn-danger col-lg-auto mb-1 text-nowrap" id="clear" style='margin-bottom: 6px'
+            onclick="showClearModal()">Összes törlése</button>
           <button class="btn btn-sm btn-info col-lg-auto mb-1" onclick="showPresetsModal()"
             style='margin-bottom:6px'>Presetek</button>
           <button type="button" class="btn btn-sm btn-secondary col-lg-auto mb-1" onclick="showScannerModal()"
@@ -204,10 +211,6 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
           <button class="btn btn-sm btn-dark col-lg-auto mb-1 text-nowrap" id="givetoAnotherPerson_Button" type="button"
             data-bs-toggle="modal" data-bs-target="#givetoAnotherPerson_Modal" style="margin-bottom: 6px">Másnak veszek
             ki</button>
-          <button href="#sidebar" class="btn btn-sm btn-success mb-1" id="show_selected" data-bs-toggle="offcanvas"
-            role="button" aria-controls="sidebar">Kiválasztva
-            <span id="selectedCount" class="badge bg-danger">0</span>
-          </button>
 
           <div class="form-check" style="width: fit-content" id="unavailable_checkbox">
             <input class="form-check-input" type="checkbox" value="" id="show_unavailable" checked>
@@ -461,9 +464,9 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
   $('#jstree').bind('loaded.jstree', function (e, data) {
     console.log("Loaded!")
 
-    setTimeout(function () {
-      reloadSavedSelections()
-    }, 300);
+    /*     setTimeout(function () {
+          reloadSavedSelections()
+        }, 300); */
   });
 
 
@@ -696,13 +699,13 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
 
   function hideUnavailableItems() {
     for (a = 1; a <= d.length; a++) {
-        if ($('#jstree').jstree().is_disabled(a) == true) {
-          $("#jstree ul li:nth-child(" + a + ")").css({
-            "display": "none",
-          });
-          $("#jstree ul li:nth-child(" + a + ") a").removeClass("jstree-search");
-        }
+      if ($('#jstree').jstree().is_disabled(a) == true) {
+        $("#jstree ul li:nth-child(" + a + ")").css({
+          "display": "none",
+        });
+        $("#jstree ul li:nth-child(" + a + ") a").removeClass("jstree-search");
       }
+    }
   }
 
   function containsOnlyStudioItems() {
@@ -718,14 +721,13 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
   }
 
   $(document).ready(function () {
-    //Color taken items
+    //Color and hide taken items
     setTimeout(function () {
       colorTakenItems();
-      hideUnavailableItems();
     }, 500);
 
     //Back to top button
-    $(window).scroll(function () {
+    $('#jstree').scroll(function () {
       if ($(this).scrollTop()) {
         $('#toTop').fadeIn();
       } else {
@@ -756,9 +758,9 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
     });
 
     $("#toTop").click(function () {
-      $("html, body").animate({
+      $("#jstree").animate({
         scrollTop: 0
-      }, 1000);
+      }, 700);
     });
 
     //Takout gomb a sidebaros listahoz

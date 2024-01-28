@@ -196,7 +196,7 @@ button.mediaBlue {
 
     .btn {
         position: relative;
-        width: max-content;
+       /*  width: max-content; */
     }
 
     #show_selected {
@@ -212,11 +212,10 @@ button.mediaBlue {
     margin-left: 0;
 
     @media (max-width: 575px) {
-        flex-direction: column;
         align-items: center;
-
+        gap: 1%;
         .btn {
-            width: 100%;
+            width: 49.5%;
         }
 
         #show_selected {

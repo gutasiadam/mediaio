@@ -51,7 +51,7 @@ if (isset($_SESSION["userId"])) { ?>
     <table class="help-logintable">
       <tr>
         <td>
-          <form action="pfcurr.php"><button class="btn btn-dark position-relative w-100">Mutasd a nálam levő tárgyakat <i
+          <form action="pfcurr.php"><button class="btn btn-dark position-relative w-100">Nálam levő tárgyak <i
                 class="fas fa-box-open"></i><span id="userItemCount"
                 class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span></button>
           </form>
@@ -59,7 +59,7 @@ if (isset($_SESSION["userId"])) { ?>
       </tr>
       <tr>
         <td>
-          <form action="userlist.php"><button class="btn btn-dark w-100">Elérhetőségek megtekintése <i
+          <form action="userlist.php"><button class="btn btn-dark w-100">Elérhetőségek <i
                 class="fas fa-address-book"></i></i></button></form>
         </td>
       </tr>
@@ -87,10 +87,10 @@ if (isset($_SESSION["userId"])) { ?>
         echo '
                     <tr><td><form action="../utility/damage_report/service.php"><button class="btn btn-warning position-relative w-100">Szerviz <i class="fas fa-wrench"></i></i>  <span id="serviceItemCount" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                     0<span class="visually-hidden">unread messages</span></button></form></td></tr>
-                    <tr><td><form action="usercheck.php"><button class="btn btn-success position-relative w-100">UserCheck <i class="fas fa-user-check"></i>  <span id="usercheckItemCount" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                    <tr><td><form action="usercheck.php"><button class="btn btn-success position-relative w-100">Jóváhagyás <i class="fas fa-user-check"></i>  <span id="usercheckItemCount" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                     0
                     <span class="visually-hidden">unread messages</span></button></form></td></tr>
-                    <tr><td><form action="stats.php"><button class="btn btn-dark w-100">Áttekintés <i class="fas fa-chart-pie"></i></i></button></form></td></tr>
+                    <tr><td><form action="stats.php"><button class="btn btn-dark w-100">Statisztika <i class="fas fa-chart-pie"></i></i></button></form></td></tr>
                     ';
       }
       if (in_array("system", $_SESSION["groups"]) or in_array("teacher", $_SESSION["groups"])) { //SYSADMIN OR TEACHER

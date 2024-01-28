@@ -30,6 +30,7 @@ function PhparrayCookie()
   var goStatus = 0;
 
 </script>
+<script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 
 <html>
 <?php if (isset($_SESSION["userId"])) { ?>
@@ -72,6 +73,39 @@ function PhparrayCookie()
   </nav>
 <?php } ?>
 
+<!-- Scanner Modal -->
+<div class="modal fade" id="scanner_Modal" tabindex="-1" role="dialog" aria-labelledby="scanner_ModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Szkenner</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" onclick="stopCamera()"
+          aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div id="reader" width="600px"></div>
+        <!-- Toasts -->
+        <div class="toast align-items-center" id="scan_toast" role="alert" aria-live="assertive" aria-atomic="true"
+          style="z-index: 99; display:none;">
+          <div class="d-flex">
+            <div class="toast-body" id="scan_result">
+            </div>
+            <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <!--         <input type="checkbox" class="btn-check btn-light" id="btncheck1" autocomplete="off" wfd-id="id0"
+          onclick="startTorch()">
+        <label class="btn btn-outline-primary" for="btncheck1"><i class="fas fa-lightbulb"></i></label> -->
+        <button type="button" class="btn btn-success" onclick="stopCamera()" data-bs-dismiss="modal">Kész</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- End of Scanner Modal -->
+
 <body>
   <div class="container" id="retrieve-container">
     <h2 class="rainbow" id="doTitle">Visszahozás</h2>
@@ -92,10 +126,16 @@ function PhparrayCookie()
           </button>
         </div>
         <!-- Announce Damage button -->
-        <div>
-          <form action="../utility/damage_report/announce_Damage.php"><button class="btn btn-warning">Sérülés
-              bejelentése
-              <i class="fas fa-file-alt"></i></button></form>
+        <div class="row">
+          <div class="col">
+            <form action="../utility/damage_report/announce_Damage.php"><button class="btn btn-warning">Sérülés
+                bejelentése
+                <i class="fas fa-file-alt"></i></button></form>
+          </div>
+          <div class="col">
+            <button type="button" class="btn btn-secondary" onclick="showScannerModal()"
+              style='margin-bottom:6px'>Szkenner <i class="fas fa-qrcode"></i></button>
+          </div>
         </div>
       </div>
     </div>
@@ -107,7 +147,7 @@ function PhparrayCookie()
     echo '<div class="row" id="retrieve-row">
       
       <div class="col-6" id="items-to-retrieve">
-        <table class="table table-bordered table-dark dynamic-table">';
+        <table class="table table-bordered table-dark dynamic-table" id="retrieve_items">';
 
     //Get the items that are currently by the user
     //Todo: Moves this function to the itemManager.php
@@ -120,7 +160,7 @@ function PhparrayCookie()
     while ($row = $result->fetch_assoc()) {
       //var_dump($row);
       $n++;
-      echo '<tr id="' . $row['UID'] . '"><td class="result dynamic-field"><button id="' . $row['UID'] . '" class="btn btn-dark" onclick="' . "prepare(this.id,'" . $row['UID'] . "'" . ",'".$row['Nev']."');" . '"' . '>' . $row['Nev'] . ' [' . $row['UID'] . ']' . ' <i class="fas fa-angle-double-right"></i></button></td></tr>';
+      echo '<tr id="' . $row['UID'] . '"><td class="result dynamic-field"><button id="' . $row['UID'] . '" class="btn btn-dark" onclick="' . "prepare(this.id,'" . $row['UID'] . "'" . ",'" . $row['Nev'] . "');" . '"' . '>' . $row['Nev'] . ' [' . $row['UID'] . ']' . ' <i class="fas fa-angle-double-right"></i></button></td></tr>';
       //echo '<div class="result dynamic-field"><button id="' . $row['UID'] . '" class="btn btn-dark" onclick="' . "prepare(this.id,'" . $row['Nev'] . "'" . ');' . '"' . '>' . $row['Nev'] . ' [' . $row['UID'] . ']' . ' <i class="fas fa-angle-double-right"></i></button></div>';
     }
     echo '</table>';
@@ -153,8 +193,21 @@ function PhparrayCookie()
 
 
   function prepare(id, uid, name) {
-    $('#dynamic_field').append('<tr class="bg-success" id="prep-' + id + '"><td class="dynamic-field"><button id="prep-' + id + '" class="btn btn-succes" onclick="unstage(this.id);"><i class="fas fa-angle-double-left"></i> ' + name +' ['+uid +']'+ '</button></td></tr>');
-    $('#' + id).hide();
+    let useritems = <?php echo $n ?>;
+    let itemFound = false
+    for (j = 0; j < useritems; j++) {
+      let InthelistId = $('#dynamic_field').find('tr').eq(j).attr('id');
+      if (InthelistId && uid == $('#dynamic_field').find('tr').eq(j).attr('id').slice(5)) {
+        itemFound = true;
+        console.log("Item already in the list!");
+        return 'alreadyInList';
+      }
+    }
+    if (itemFound == false) {
+      $('#dynamic_field').append('<tr class="bg-success" id="prep-' + id + '"><td class="dynamic-field"><button id="prep-' + id + '" class="btn btn-succes" onclick="unstage(this.id);"><i class="fas fa-angle-double-left"></i> ' + name + ' [' + uid + ']' + '</button></td></tr>');
+      $('#' + id).hide();
+      $('.intactForm').css('display', 'flex');
+    }
   }
 
   function unstage(id) {
@@ -193,9 +246,9 @@ function PhparrayCookie()
 
 
 
-    $(document).on('click', '.result', function () {
-      $('.intactForm').css('display', 'flex');
-    });
+    /*     $(document).on('click', '.result', function () {
+          $('.intactForm').css('display', 'flex');
+        }); */
 
     function allowGO() {
       if ($('#intactItems').is(":checked")) {
@@ -213,10 +266,12 @@ function PhparrayCookie()
         $('#dynamic_field > tbody  > tr > td > button ').each(function (index, tr) {
           console.log(this.innerText);
           items.push(
-            {'uid':this.innerText.split('[')[1].slice(0, -1),
-            'name':this.innerText.split('[')[0].trim()}
-            );
-  
+            {
+              'uid': this.innerText.split('[')[1].slice(0, -1),
+              'name': this.innerText.split('[')[0].trim()
+            }
+          );
+
         });
         //console.log(items);
         retrieveJSON = JSON.stringify(items);
@@ -269,6 +324,7 @@ function PhparrayCookie()
                   $("#doTitle").text(applicationTitleShort).animate({
                     'opacity': 1
                   }, 400);
+                  location.reload();
                 }, 3800);;
               });
             }
@@ -300,6 +356,136 @@ function PhparrayCookie()
     });
 
   });
+
+
+  //Scanner
+
+  //Toast
+  const toastLiveExample = document.getElementById('scan_toast');
+  const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample);
+
+  let toastOverwriteAllowed = true;
+
+  function showToast(message, color) {
+    if (toastOverwriteAllowed) {
+      toastOverwriteAllowed = false;
+      document.getElementById("scan_result").innerHTML = "<b style='color: " + color + ";'>" + message + "</b>";
+      toastLiveExample.style.display = "block";
+      toastBootstrap.show();
+
+      // Allow toast to be overwritten after 5 seconds
+      setTimeout(() => {
+        toastOverwriteAllowed = true;
+      }, 2000);
+    }
+  }
+
+
+  //Creating Qr reader
+  const QrReader = new Html5Qrcode("reader");
+  let QrReaderStarted = false;
+
+  //Qr reader settings
+  const qrconstraints = {
+    facingMode: "environment"
+  };
+  const qrConfig = {
+    fps: 10,
+    qrbox: {
+      width: 150,
+      height: 150
+    },
+    showTorchButtonIfSupported: true
+  };
+  const qrOnSuccess = (decodedText, decodedResult) => {
+    console.log(`Code matched = ${decodedText}`, decodedResult);
+
+    //Check if the scanned item is in the list
+    let useritems = <?php echo $n ?>;
+    let itemFound = false
+    for (j = 0; j < useritems; j++) {
+      if (decodedText == $('#retrieve_items').find('tr').eq(j).attr('id')) {
+
+        if (prepare(decodedText, decodedText, $('#retrieve_items').find('tr').eq(j).find('td').text().slice(0, -10)) == 'alreadyInList') {
+          showToast(decodedText + " - már visszaadtad!", "red");
+          console.log("Not available!");
+          itemFound = true;
+          return;
+        }
+        showToast(decodedText, "green");
+        itemFound = true;
+        return;
+      }
+
+    }
+
+    if (itemFound == false) {
+      document.getElementById("scan_result").innerHTML = "<b style='color: red;'>Ez az eszköz nincs nálad!</b>";
+      console.log("Not available!");
+      toastLiveExample.style.display = "block";
+      toastBootstrap.show();
+    }
+  };
+  // Methods: start / stop
+  const startScanner = () => {
+    if (!QrReaderStarted) {
+      QrReader.start(
+        qrconstraints,
+        qrConfig,
+        qrOnSuccess,
+      ).catch(console.error);
+      QrReaderStarted = true;
+      console.log("Reader started!");
+    }
+    else {
+      QrReader.resume();
+      console.log("Unpaused!");
+    }
+  };
+
+  const stopScanner = () => {
+    QrReader.pause();
+  };
+
+  // Start scanner on button click
+
+  function showScannerModal() {
+    $('#scanner_Modal').modal('show');
+    startScanner();
+  }
+
+
+  function stopCamera() {
+    console.log("Pausing camera");
+    stopScanner();
+  }
+
+  function isTorchSupported() {
+    let settings = QrReader.getRunningTrackSettings();
+    console.log(settings);
+    console.log("torch" in settings);
+  }
+
+  function startTorch() {
+    if (document.getElementById("btncheck1").checked == true) {
+      let constraints = {
+        "torch": true,
+        "advanced": [{ "torch": true }]
+      };
+      QrReader.applyVideoConstraints(constraints);
+      let settings = QrReader.getRunningTrackSettings();
+
+      if (settings.torch === true) {
+        console.log("Torch enabled");
+        // Torch was indeed enabled, succeess.
+      } else {
+        console.log("Torch not enabled");
+        // Failure.
+        // Failed to set torch, why?
+      }
+    } else {
+    }
+  }
 </script>
 
 <?php //Message handler
