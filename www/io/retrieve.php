@@ -96,6 +96,7 @@ function PhparrayCookie()
         </div>
       </div>
       <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="zoom_btn" onclick="zoomCamera()">Zoom: 2x</button>
         <!--         <input type="checkbox" class="btn-check btn-light" id="btncheck1" autocomplete="off" wfd-id="id0"
           onclick="startTorch()">
         <label class="btn btn-outline-primary" for="btncheck1"><i class="fas fa-lightbulb"></i></label> -->
@@ -391,7 +392,7 @@ function PhparrayCookie()
   const qrConfig = {
     fps: 10,
     qrbox: {
-      width: 150,
+      width: 200,
       height: 150
     },
     showTorchButtonIfSupported: true
@@ -457,6 +458,41 @@ function PhparrayCookie()
   function stopCamera() {
     console.log("Pausing camera");
     stopScanner();
+  }
+
+  function zoomCamera() {
+    let settings = QrReader.getRunningTrackSettings();
+    if ("zoom" in settings == false) {
+      console.log("Zoom not available");
+      document.getElementById('zoom_btn').setAttribute('disabled', true);
+      document.getElementById("scan_result").innerHTML = "<b style='color: red;'>A zoom funkció a kamerádon nem elérhető!</b>";
+      toastLiveExample.style.display = "block";
+      toastBootstrap.show();
+      return;
+    }
+    let currentZoom = settings.zoom;
+    let nextzoom;
+    switch (currentZoom) {
+      case 1:
+        nextzoom = 2;
+        console.log("Zooming 2x");
+        break;
+      case 2:
+        nextzoom = 1;
+        console.log("Zooming 1x");
+        break;
+      default:
+        nextzoom = 1;
+        break;
+    }
+
+    let constraints = {
+      "zoom": nextzoom,
+      "advanced": [{ "zoom": nextzoom }]
+    };
+    QrReader.applyVideoConstraints(constraints);
+    console.log("Zoomed");
+    document.getElementById('zoom_btn').innerHTML = "Zoom: " + currentZoom + "x";
   }
 
   function isTorchSupported() {

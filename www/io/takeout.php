@@ -103,86 +103,88 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
   <!-- End of GivetoAnotherperson Modal -->
 <?php } ?>
 
-<!-- Presets Modal -->
-<div class="modal fade" id="presets_Modal" tabindex="-1" role="dialog" aria-labelledby="presets_ModalLabel"
-  aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Elérhető presetek</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <div id="presetsLoading" class="spinner-grow text-info" role="status"></div>
-        <div id="presetsContainer"></div>
+<body style="user-select: none;">
+  <!-- Presets Modal -->
+  <div class="modal fade" id="presets_Modal" tabindex="-1" role="dialog" aria-labelledby="presets_ModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Elérhető presetek</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div id="presetsLoading" class="spinner-grow text-info" role="status"></div>
+          <div id="presetsContainer"></div>
 
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
-      </div>
-    </div>
-  </div>
-</div>
-<!-- End of Presets Modal -->
-
-<!-- Clear Modal -->
-<div class="modal fade" id="clear_Modal" tabindex="-1" role="dialog" aria-labelledby="clear_ModalLabel"
-  aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Összes törlése</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <a>Biztosan ki akarsz törölni mindent?</a>
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-danger col-lg-auto mb-1" id="clear" data-bs-dismiss="modal"
-          onclick="deselect_all()">Összes törlése</button>
-        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Mégse</button>
-      </div>
-    </div>
-  </div>
-</div>
-<!-- End of Clear Modal -->
-
-<!-- Scanner Modal -->
-<div class="modal fade" id="scanner_Modal" tabindex="-1" role="dialog" aria-labelledby="scanner_ModalLabel"
-  aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Szkenner</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" onclick="stopCamera()"
-          aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <div id="reader" width="600px"></div>
-        <!-- Toasts -->
-        <div class="toast align-items-center" id="scan_toast" role="alert" aria-live="assertive" aria-atomic="true"
-          style="z-index: 99; display:none;">
-          <div class="d-flex">
-            <div class="toast-body" id="scan_result">
-            </div>
-            <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
         </div>
       </div>
-      <div class="modal-footer">
-        <!--         <input type="checkbox" class="btn-check btn-light" id="btncheck1" autocomplete="off" wfd-id="id0"
-          onclick="startTorch()">
-        <label class="btn btn-outline-primary" for="btncheck1"><i class="fas fa-lightbulb"></i></label> -->
-        <button type="button" class="btn btn-success" onclick="stopCamera()" data-bs-dismiss="modal">Kész</button>
+    </div>
+  </div>
+  <!-- End of Presets Modal -->
+
+  <!-- Clear Modal -->
+  <div class="modal fade" id="clear_Modal" tabindex="-1" role="dialog" aria-labelledby="clear_ModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Összes törlése</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <a>Biztosan ki akarsz törölni mindent?</a>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-danger col-lg-auto mb-1" id="clear" data-bs-dismiss="modal"
+            onclick="deselect_all()">Összes törlése</button>
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Mégse</button>
+        </div>
       </div>
     </div>
   </div>
-</div>
-<!-- End of Scanner Modal -->
+  <!-- End of Clear Modal -->
+
+  <!-- Scanner Modal -->
+  <div class="modal fade" id="scanner_Modal" tabindex="-1" role="dialog" aria-labelledby="scanner_ModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Szkenner</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" onclick="stopCamera()"
+            aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div id="reader" width="600px"></div>
+          <!-- Toasts -->
+          <div class="toast align-items-center" id="scan_toast" role="alert" aria-live="assertive" aria-atomic="true"
+            style="z-index: 99; display:none;">
+            <div class="d-flex">
+              <div class="toast-body" id="scan_result">
+              </div>
+              <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="zoom_btn" onclick="zoomCamera()">Zoom: 2x</button>
+          <!-- <input type="checkbox" class="btn-check btn-light" id="btncheck1" autocomplete="off" wfd-id="id0"
+          onclick="startTorch()">
+        <label class="btn btn-outline-primary" for="btncheck1"><i class="fas fa-lightbulb"></i></label> -->
+          <button type="button" class="btn btn-success" onclick="stopCamera()" data-bs-dismiss="modal">Kész</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- End of Scanner Modal -->
 
 
 
-<body style="user-select: none;">
+
   <h2 class="rainbow" id="doTitle">Tárgy kivétel</h2>
   <div class="container">
     <div class="row align-items-start" id="takeout-container">
@@ -873,6 +875,17 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
 
   //Scanner
 
+  const toastLiveExample = document.getElementById('scan_toast');
+  const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample);
+
+  //let toastOverwriteAllowed = true;
+
+  function showToast(message, color) {
+    document.getElementById("scan_result").innerHTML = "<b style='color: " + color + ";'>" + message + "</b>";
+    toastLiveExample.style.display = "block";
+    toastBootstrap.show();
+  }
+
 
   //Creating Qr reader
   const QrReader = new Html5Qrcode("reader");
@@ -885,31 +898,22 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
   const qrConfig = {
     fps: 10,
     qrbox: {
-      width: 150,
+      width: 200,
       height: 150
     },
     showTorchButtonIfSupported: true
   };
   const qrOnSuccess = (decodedText, decodedResult) => {
     console.log(`Code matched = ${decodedText}`, decodedResult);
-
-    const toastLiveExample = document.getElementById('scan_toast');
-    const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample);
-
-
     selectionArray = [];
     for (j = 1; j <= d.length; j++) {
-      if ($('#jstree').jstree().get_node(j).original.uid == decodedText & $('#jstree').jstree().get_node(j).state.disabled == false) {
-        document.getElementById("scan_result").innerHTML = "<b style='color: green;'>" + decodedText + "</b>";
-        toastLiveExample.style.display = "block";
-        toastBootstrap.show();
+      if ($('#jstree').jstree().get_node(j).original.uid == decodedText && $('#jstree').jstree().get_node(j).state.disabled == false) {
+        showToast(decodedText, "green");
         selectionArray.push(j);
       }
-      if ($('#jstree').jstree().get_node(j).original.uid == decodedText & $('#jstree').jstree().get_node(j).state.disabled == true) {
-        document.getElementById("scan_result").innerHTML = "<b style='color: red;'>Ez az eszköz nem elérhető!</b>";
+      if ($('#jstree').jstree().get_node(j).original.uid == decodedText && $('#jstree').jstree().get_node(j).state.disabled == true) {
+        showToast("Ez az eszköz nem elérhető!", "red");
         console.log("Not available!");
-        toastLiveExample.style.display = "block";
-        toastBootstrap.show();
       }
     }
     $('#jstree').jstree().select_node(selectionArray);
@@ -953,6 +957,41 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
     let settings = QrReader.getRunningTrackSettings();
     console.log(settings);
     console.log("torch" in settings);
+  }
+
+  function zoomCamera() {
+    let settings = QrReader.getRunningTrackSettings();
+    if ("zoom" in settings == false) {
+      console.log("Zoom not available");
+      document.getElementById('zoom_btn').setAttribute('disabled', true);
+      document.getElementById("scan_result").innerHTML = "<b style='color: red;'>A zoom funkció a kamerádon nem elérhető!</b>";
+      toastLiveExample.style.display = "block";
+      toastBootstrap.show();
+      return;
+    }
+    let currentZoom = settings.zoom;
+    let nextzoom;
+    switch (currentZoom) {
+      case 1:
+        nextzoom = 2;
+        console.log("Zooming 2x");
+        break;
+      case 2:
+        nextzoom = 1;
+        console.log("Zooming 1x");
+        break;
+      default:
+        nextzoom = 1;
+        break;
+    }
+
+    let constraints = {
+      "zoom": nextzoom,
+      "advanced": [{ "zoom": nextzoom }]
+    };
+    QrReader.applyVideoConstraints(constraints);
+    console.log("Zoomed");
+    document.getElementById('zoom_btn').innerHTML = "Zoom: " + currentZoom + "x";
   }
 
   function startTorch() {
