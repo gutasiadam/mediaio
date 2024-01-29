@@ -195,7 +195,6 @@ class retrieveManager
     date_default_timezone_set('Europe/Budapest');
     $currDate = date("Y/m/d H:i:s");
     $data = json_decode(stripslashes($_POST['data']), true);
-    var_dump($data);
     $dataArray = array();
     $countOfRec = 0;
 

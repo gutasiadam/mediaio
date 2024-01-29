@@ -284,7 +284,6 @@ function PhparrayCookie()
             mode: "retrieveStaging"
           },
           success: function (response) {
-            //alert(response);
             if (response == '200') {
               $('#doTitle').animate({
                 'opacity': 0
