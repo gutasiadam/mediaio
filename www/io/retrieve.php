@@ -265,12 +265,16 @@ function PhparrayCookie()
         var items = []; //Items that will be retreievd.
         $('#dynamic_field > tbody  > tr > td > button ').each(function (index, tr) {
           console.log(this.innerText);
-          items.push(
-            {
-              'uid': this.innerText.split('[')[1].slice(0, -1),
-              'name': this.innerText.split('[')[0].trim()
-            }
-          );
+          
+          newItem={
+            'uid': this.innerText.split('[')[1].slice(0, -1),
+            'name': this.innerText.split('[')[0].trim()
+          }
+
+          //push only if items are not already in the list
+          
+          items.indexOf(newItem) === -1 ? items.push(newItem) : console.log("This item already exists");
+
 
         });
         //console.log(items);

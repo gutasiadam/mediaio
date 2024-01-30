@@ -100,7 +100,7 @@ error_reporting(E_ERROR | E_PARSE);
         <a href="./profile/lostPwd.php">
           <h6>Elfelejtett jelszó?</h6>
         </a>
-        <p class="Footer">Code by <a href="https://github.com/gutasiadam">Adam Gutasi</a></p>
+        <p class="Footer">Made With 💙 by <a href="https://github.com/gutasiadam/mediaio">Árpád Média</a></p>
       </div>
     </footer>
     </div>

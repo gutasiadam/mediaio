@@ -291,8 +291,13 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
 
   function reloadSavedSelections() {
     //Try re-selectiong items that are saved in the takeOutItems cookie.
-    var selecteditems = getCookie("selectedItems").split(',')
 
+
+    var selecteditems = getCookie("selectedItems")
+    if(!selecteditems){
+      return;
+    }
+    selecteditems = selecteditems.split(",");
     if (selecteditems[0] === "") {
       badge.textContent = 0;
       console.log("No items to reload");
@@ -849,7 +854,7 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
     });
   });
 
-  function loadFile(filePath) {
+/*  function loadFile(filePath) {
     var result = null;
     var xmlhttp = new XMLHttpRequest();
     xmlhttp.open("GET", filePath, false);
@@ -861,7 +866,7 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
 
   }
 
-  var dbItems = (loadFile("./utility/DB_Elements.txt"));
+  var dbItems = (loadFile("./utility/DB_Elements.txt"));*/
   // dbItem remover tool - Prevents an item to be added twice to the list
   function arrayRemove(arr, value) {
 
