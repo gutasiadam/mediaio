@@ -80,14 +80,14 @@ function PhparrayCookie()
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLabel">Szkenner</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" onclick="stopCamera()"
+        <button type="button" class="btn-close" data-bs-dismiss="modal" onclick="pauseCamera()"
           aria-label="Close"></button>
       </div>
       <div class="modal-body">
         <div id="reader" width="600px"></div>
         <!-- Toasts -->
         <div class="toast align-items-center" id="scan_toast" role="alert" aria-live="assertive" aria-atomic="true"
-          style="z-index: 99; display:none;">
+          style="z-index: 9; display:none;">
           <div class="d-flex">
             <div class="toast-body" id="scan_result">
             </div>
@@ -95,12 +95,19 @@ function PhparrayCookie()
           </div>
         </div>
       </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" id="zoom_btn" onclick="zoomCamera()">Zoom: 2x</button>
+      <div class="modal-footer" id="scanner_footer">
+        <div class="dropdown dropup">
+          <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown"
+            aria-expanded="true">
+            Kamerák
+          </button>
+          <ul class="dropdown-menu" id="av_cams"></ul>
+        </div>
+
         <!--         <input type="checkbox" class="btn-check btn-light" id="btncheck1" autocomplete="off" wfd-id="id0"
           onclick="startTorch()">
         <label class="btn btn-outline-primary" for="btncheck1"><i class="fas fa-lightbulb"></i></label> -->
-        <button type="button" class="btn btn-success" onclick="stopCamera()" data-bs-dismiss="modal">Kész</button>
+        <button type="button" class="btn btn-success" onclick="pauseCamera()" data-bs-dismiss="modal">Kész</button>
       </div>
     </div>
   </div>
@@ -194,21 +201,9 @@ function PhparrayCookie()
 
 
   function prepare(id, uid, name) {
-    let useritems = <?php echo $n ?>;
-    let itemFound = false
-    for (j = 0; j < useritems; j++) {
-      let InthelistId = $('#dynamic_field').find('tr').eq(j).attr('id');
-      if (InthelistId && uid == $('#dynamic_field').find('tr').eq(j).attr('id').slice(5)) {
-        itemFound = true;
-        console.log("Item already in the list!");
-        return 'alreadyInList';
-      }
-    }
-    if (itemFound == false) {
-      $('#dynamic_field').append('<tr class="bg-success" id="prep-' + id + '"><td class="dynamic-field"><button id="prep-' + id + '" class="btn btn-succes" onclick="unstage(this.id);"><i class="fas fa-angle-double-left"></i> ' + name + ' [' + uid + ']' + '</button></td></tr>');
-      $('#' + id).hide();
-      $('.intactForm').css('display', 'flex');
-    }
+    $('#dynamic_field').append('<tr class="bg-success" id="prep-' + id + '"><td class="dynamic-field"><button id="prep-' + id + '" class="btn btn-succes" onclick="unstage(this.id);"><i class="fas fa-angle-double-left"></i> ' + name + ' [' + uid + ']' + '</button></td></tr>');
+    $('#' + id).hide();
+    $('.intactForm').css('display', 'flex');
   }
 
   function unstage(id) {
@@ -266,14 +261,14 @@ function PhparrayCookie()
         var items = []; //Items that will be retreievd.
         $('#dynamic_field > tbody  > tr > td > button ').each(function (index, tr) {
           console.log(this.innerText);
-          
-          newItem={
+
+          newItem = {
             'uid': this.innerText.split('[')[1].slice(0, -1),
             'name': this.innerText.split('[')[0].trim()
           }
 
           //push only if items are not already in the list
-          
+
           items.indexOf(newItem) === -1 ? items.push(newItem) : console.log("This item already exists");
 
 
@@ -363,6 +358,13 @@ function PhparrayCookie()
 
 
   //Scanner
+  let macroCam;
+
+  window.addEventListener("orientationchange", function () {
+    stopScanner().then((ignore) => {
+      startScanner(macroCam.id);
+    });
+  })
 
   //Toast
   const toastLiveExample = document.getElementById('scan_toast');
@@ -377,10 +379,10 @@ function PhparrayCookie()
       toastLiveExample.style.display = "block";
       toastBootstrap.show();
 
-      // Allow toast to be overwritten after 5 seconds
+      // Allow toast to be overwritten after 2 seconds
       setTimeout(() => {
         toastOverwriteAllowed = true;
-      }, 2000);
+      }, 1000);
     }
   }
 
@@ -399,7 +401,8 @@ function PhparrayCookie()
       width: 200,
       height: 150
     },
-    showTorchButtonIfSupported: true
+    showTorchButtonIfSupported: true,
+    showZoomSliderIfSupported: true
   };
   const qrOnSuccess = (decodedText, decodedResult) => {
     console.log(`Code matched = ${decodedText}`, decodedResult);
@@ -409,71 +412,128 @@ function PhparrayCookie()
     let itemFound = false
     for (j = 0; j < useritems; j++) {
       if (decodedText == $('#retrieve_items').find('tr').eq(j).attr('id')) {
-
-        if (prepare(decodedText, decodedText, $('#retrieve_items').find('tr').eq(j).find('td').text().slice(0, -10)) == 'alreadyInList') {
+        //Check if the item is already in the list
+        if ($('#retrieve_items').find('tr').eq(j).css('display') == 'none') {
           showToast(decodedText + " - már visszaadtad!", "red");
           console.log("Not available!");
           itemFound = true;
           return;
+        } else {
+          $('#retrieve_items').find('tr').eq(j).find('button').click();
+          console.log("Prepared!");
+          showToast(decodedText, "green");
+          itemFound = true;
+          return;
         }
-        showToast(decodedText, "green");
-        itemFound = true;
-        return;
       }
-
     }
-
     if (itemFound == false) {
-      document.getElementById("scan_result").innerHTML = "<b style='color: red;'>Ez az eszköz nincs nálad!</b>";
+      showToast("Ez az eszköz nincs nálad!", "red");
       console.log("Not available!");
-      toastLiveExample.style.display = "block";
-      toastBootstrap.show();
     }
   };
+
   // Methods: start / stop
-  const startScanner = () => {
-    if (!QrReaderStarted) {
-      QrReader.start(
+  const startScanner = (camera) => {
+
+    if (!QrReaderStarted && camera != null) {
+      console.log("Reader started! - with macroCam");
+      QrReaderStarted = true;
+      return QrReader.start(
+        camera,
+        qrConfig,
+        qrOnSuccess,
+      ).then().catch(console.error);
+    }
+    else if (!QrReaderStarted && camera == null) {
+      QrReaderStarted = true;
+      console.log("Reader started! - environment");
+      return QrReader.start(
         qrconstraints,
         qrConfig,
         qrOnSuccess,
-      ).catch(console.error);
-      QrReaderStarted = true;
-      console.log("Reader started!");
+      ).then().catch(console.error);
     }
-    else {
+    else if (camera == null) {
       QrReader.resume();
       console.log("Unpaused!");
     }
   };
 
-  const stopScanner = () => {
+  const pauseScanner = () => {
     QrReader.pause();
   };
 
+  const stopScanner = () => {
+    return QrReader.stop().then(ignore => {
+      QrReaderStarted = false;
+      console.log("Reader stopped!");
+    }).catch(err => {
+      console.log("Error while stopping: " + err);
+    });
+  };
+
   // Start scanner on button click
+  let available_cams;
 
   function showScannerModal() {
-    $('#scanner_Modal').modal('show');
-    startScanner();
+
+    if (QrReaderStarted) {
+      startScanner(null);
+      $('#scanner_Modal').modal('show');
+    }
+    else {
+      Html5Qrcode.getCameras().then(devices => {
+        available_cams = devices;
+        for (i = 0; i < available_cams.length; i++) {
+          if (available_cams[i].label.toLowerCase().includes("dual") == false) {
+
+            $('#av_cams').append('<li><a class="dropdown-item" href="#" onclick="switchCamera(\'' + available_cams[i].id + '\');">' + available_cams[i].label + '</a></li>');
+          }
+        }
+
+        $('#scanner_Modal').modal('show');
+        macroCam = available_cams.find(cam => cam.label.toLowerCase().includes("ultra wide"));
+
+        if (macroCam) {
+          console.log("Macro camera found: " + macroCam.label);
+          startScanner(macroCam.id).then((ignore) => {
+            settings = QrReader.getRunningTrackSettings();
+            // If zoom available, display button
+            if ("zoom" in settings == true) {
+              console.log("Zoom available");
+              $('#scanner_footer').prepend('<button type="button" class="btn btn-info" id="zoom_btn" onclick="zoomCamera()">Zoom: 2x</button>');
+            }
+          });
+        } else {
+          console.log("No telephoto camera found, starting default camera");
+          startScanner(null);
+        }
+      });
+    }
+  }
+  //Switching camera
+  function switchCamera(nextCamId) {
+    //Waiting for scanner to stop
+    stopScanner().then((ignore) => {
+      let nextCam = available_cams.find(cam => cam.id === nextCamId); // Finding the next ID
+      if (nextCam) {
+        console.log("Switching camera to: " + nextCam.label);
+        startScanner(nextCam.id); // Starting the scanner again
+      } else {
+        console.log("Camera not found: " + nextCamId);
+      }
+    });
   }
 
-
-  function stopCamera() {
+  //Pausing the camera
+  function pauseCamera() {
     console.log("Pausing camera");
-    stopScanner();
+    pauseScanner();
   }
 
   function zoomCamera() {
-    let settings = QrReader.getRunningTrackSettings();
-    if ("zoom" in settings == false) {
-      console.log("Zoom not available");
-      document.getElementById('zoom_btn').setAttribute('disabled', true);
-      document.getElementById("scan_result").innerHTML = "<b style='color: red;'>A zoom funkció a kamerádon nem elérhető!</b>";
-      toastLiveExample.style.display = "block";
-      toastBootstrap.show();
-      return;
-    }
+    let settings = QrReader.getRunningTrackSettings(); // Get current settings
     let currentZoom = settings.zoom;
     let nextzoom;
     switch (currentZoom) {

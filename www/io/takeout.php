@@ -155,7 +155,7 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="exampleModalLabel">Szkenner</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" onclick="stopCamera()"
+          <button type="button" class="btn-close" data-bs-dismiss="modal" onclick="pauseCamera()"
             aria-label="Close"></button>
         </div>
         <div class="modal-body">
@@ -170,12 +170,18 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
             </div>
           </div>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" id="zoom_btn" onclick="zoomCamera()">Zoom: 2x</button>
+        <div class="modal-footer" id="scanner_footer">
+          <div class="dropdown dropup">
+            <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown"
+              aria-expanded="true">
+              Kamerák
+            </button>
+            <ul class="dropdown-menu" id="av_cams"></ul>
+          </div>
           <!-- <input type="checkbox" class="btn-check btn-light" id="btncheck1" autocomplete="off" wfd-id="id0"
           onclick="startTorch()">
         <label class="btn btn-outline-primary" for="btncheck1"><i class="fas fa-lightbulb"></i></label> -->
-          <button type="button" class="btn btn-success" onclick="stopCamera()" data-bs-dismiss="modal">Kész</button>
+          <button type="button" class="btn btn-success" onclick="pauseCamera()" data-bs-dismiss="modal">Kész</button>
         </div>
       </div>
     </div>
@@ -296,7 +302,7 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
 
 
     var selecteditems = getCookie("selectedItems")
-    if(!selecteditems){
+    if (!selecteditems) {
       return;
     }
     selecteditems = selecteditems.split(",");
@@ -856,19 +862,19 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
     });
   });
 
-/*  function loadFile(filePath) {
-    var result = null;
-    var xmlhttp = new XMLHttpRequest();
-    xmlhttp.open("GET", filePath, false);
-    xmlhttp.send();
-    if (xmlhttp.status == 200) {
-      result = xmlhttp.responseText;
+  /*  function loadFile(filePath) {
+      var result = null;
+      var xmlhttp = new XMLHttpRequest();
+      xmlhttp.open("GET", filePath, false);
+      xmlhttp.send();
+      if (xmlhttp.status == 200) {
+        result = xmlhttp.responseText;
+      }
+      return result.split("\n");
+  
     }
-    return result.split("\n");
-
-  }
-
-  var dbItems = (loadFile("./utility/DB_Elements.txt"));*/
+  
+    var dbItems = (loadFile("./utility/DB_Elements.txt"));*/
   // dbItem remover tool - Prevents an item to be added twice to the list
   function arrayRemove(arr, value) {
 
@@ -879,6 +885,13 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
   }
 
   //Scanner
+  let macroCam;
+
+  window.addEventListener("orientationchange", function () {
+    stopScanner().then((ignore) => {
+      startScanner(macroCam.id);
+    });
+  })
 
   const toastLiveExample = document.getElementById('scan_toast');
   const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample);
@@ -925,55 +938,105 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
   };
 
   // Methods: start / stop
-  const startScanner = () => {
-    if (!QrReaderStarted) {
-      QrReader.start(
+  const startScanner = (camera) => {
+
+    if (!QrReaderStarted && camera != null) {
+      console.log("Reader started! - with macroCam");
+      QrReaderStarted = true;
+      return QrReader.start(
+        camera,
+        qrConfig,
+        qrOnSuccess,
+      ).then().catch(console.error);
+    }
+    else if (!QrReaderStarted && camera == null) {
+      QrReaderStarted = true;
+      console.log("Reader started! - environment");
+      return QrReader.start(
         qrconstraints,
         qrConfig,
         qrOnSuccess,
-      ).catch(console.error);
-      QrReaderStarted = true;
-      console.log("Reader started!");
+      ).then().catch(console.error);
     }
-    else {
+    else if (camera == null) {
       QrReader.resume();
       console.log("Unpaused!");
     }
   };
 
-  const stopScanner = () => {
+  const pauseScanner = () => {
     QrReader.pause();
+  };
+
+  const stopScanner = () => {
+    return QrReader.stop().then(ignore => {
+      QrReaderStarted = false;
+      console.log("Reader stopped!");
+    }).catch(err => {
+      console.log("Error while stopping: " + err);
+    });
   };
 
   // Start scanner on button click
 
+  let available_cams;
+
   function showScannerModal() {
-    $('#scanner_Modal').modal('show');
-    startScanner();
+
+    if (QrReaderStarted) {
+      startScanner(null);
+      $('#scanner_Modal').modal('show');
+    }
+    else {
+      Html5Qrcode.getCameras().then(devices => {
+        available_cams = devices;
+        for (i = 0; i < available_cams.length; i++) {
+          if (available_cams[i].label.toLowerCase().includes("dual") == false) {
+
+            $('#av_cams').append('<li><a class="dropdown-item" href="#" onclick="switchCamera(\'' + available_cams[i].id + '\');">' + available_cams[i].label + '</a></li>');
+          }
+        }
+        $('#scanner_Modal').modal('show');
+        macroCam = available_cams.find(cam => cam.label.toLowerCase().includes("ultra wide"));
+
+        if (macroCam) {
+          console.log("Macro camera found: " + macroCam.label);
+          startScanner(macroCam.id).then((ignore) => {
+            settings = QrReader.getRunningTrackSettings();
+            // If zoom available, display button
+            if ("zoom" in settings == true) {
+              console.log("Zoom available");
+              $('#scanner_footer').prepend('<button type="button" class="btn btn-info" id="zoom_btn" onclick="zoomCamera()">Zoom: 2x</button>');
+            }
+          });
+        } else {
+          console.log("No telephoto camera found, starting default camera");
+          startScanner(null);
+        }
+      });
+    }
+  }
+
+  function switchCamera(nextCamId) {
+    stopScanner().then((ignore) => {
+      let nextCam = available_cams.find(cam => cam.id === nextCamId);
+      if (nextCam) {
+        console.log("Switching camera to: " + nextCam.label);
+        startScanner(nextCam.id);
+      } else {
+        console.log("Camera not found: " + nextCamId);
+      }
+    });
   }
 
 
-  function stopCamera() {
+  function pauseCamera() {
     console.log("Pausing camera");
-    stopScanner();
-  }
-
-  function isTorchSupported() {
-    let settings = QrReader.getRunningTrackSettings();
-    console.log(settings);
-    console.log("torch" in settings);
+    pauseScanner();
   }
 
   function zoomCamera() {
     let settings = QrReader.getRunningTrackSettings();
-    if ("zoom" in settings == false) {
-      console.log("Zoom not available");
-      document.getElementById('zoom_btn').setAttribute('disabled', true);
-      document.getElementById("scan_result").innerHTML = "<b style='color: red;'>A zoom funkció a kamerádon nem elérhető!</b>";
-      toastLiveExample.style.display = "block";
-      toastBootstrap.show();
-      return;
-    }
     let currentZoom = settings.zoom;
     let nextzoom;
     switch (currentZoom) {
@@ -997,6 +1060,12 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
     QrReader.applyVideoConstraints(constraints);
     console.log("Zoomed");
     document.getElementById('zoom_btn').innerHTML = "Zoom: " + currentZoom + "x";
+  }
+
+  function isTorchSupported() {
+    let settings = QrReader.getRunningTrackSettings();
+    console.log(settings);
+    console.log("torch" in settings);
   }
 
   function startTorch() {
