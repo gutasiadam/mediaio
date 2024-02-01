@@ -76,15 +76,6 @@ button.mediaBlue {
     justify-content: space-between;
     flex-direction: row;
 
-    div#unavailable_checkbox {
-        display: flex;
-        align-items: center;
-
-        #show_unavailable {
-            margin-right: 5px;
-        }
-    }
-
     #selected-desktop #output-desktop {
         display: none;
     }
@@ -196,12 +187,41 @@ button.mediaBlue {
 
     .btn {
         position: relative;
-       /*  width: max-content; */
+        /*  width: max-content; */
     }
 
     #show_selected {
         width: 100%;
         display: none;
+    }
+
+    #unavailable_checkbox {
+        padding-left: 0;
+        padding-right: 0;
+
+        .btn-outline-secondary:active,
+        .btn-outline-secondary:hover {
+            color: #6c757d !important;
+            background-color: #fff !important;
+            border-color: #6c757d !important;
+        }
+
+        .btn:focus,
+        .btn:hover {
+            text-decoration: none !important;
+        }
+
+        label:active,
+        label:focus,
+        label:hover,
+        label:visited {
+            box-shadow: unset !important;
+            outline: 0 !important;
+        }
+
+        label {
+            width: 100%;
+        }
     }
 
     display: flex;
@@ -214,6 +234,7 @@ button.mediaBlue {
     @media (max-width: 575px) {
         align-items: center;
         gap: 1%;
+
         .btn {
             width: 49.5%;
         }
@@ -224,6 +245,14 @@ button.mediaBlue {
 
         #takeout2BTN {
             display: none;
+        }
+
+        #unavailable_checkbox {
+            width: 49.5%;
+
+            label {
+                width: 100%;
+            }
         }
     }
 
@@ -415,7 +444,7 @@ input[type=submit] {
         }
     }
 
-    @media (max-width: 650px) {
+    @media (max-width: 990px) {
         display: block;
         max-height: 65dvh;
     }
@@ -1033,6 +1062,7 @@ table {
 
     .row {
         width: fit-content;
+
         .col {
             display: flex;
             align-items: center;

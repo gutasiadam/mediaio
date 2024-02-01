@@ -27,7 +27,6 @@ error_reporting(E_ALL ^ E_NOTICE);
 <script src="utility/jstree.js"></script>
 <link href='main.css' rel='stylesheet' />
 <link href="utility/themes/default/style.min.css" rel="stylesheet" />
-<script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 <html>
 <title>MediaIo - takeout</title>
 <?php if (isset($_SESSION["userId"])) { ?>
@@ -220,11 +219,10 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
             data-bs-toggle="modal" data-bs-target="#givetoAnotherPerson_Modal" style="margin-bottom: 6px">Másnak veszek
             ki</button>
 
-          <div class="form-check" style="width: fit-content" id="unavailable_checkbox">
-            <input class="form-check-input" type="checkbox" value="" id="show_unavailable" checked>
-            <label class="form-check-label" for="flexCheckDefault">
-              Csak elérhető tárgyak
-            </label>
+          <div id="unavailable_checkbox">
+            <input type="checkbox" class="btn-check" checked="" id="show_unavailable" autocomplete="off">
+            <label class="btn btn-sm btn-outline-secondary col-lg-auto mb-1 text-nowrap" for="show_unavailable">Csak
+              elérhető tárgyak</label><br>
           </div>
 
           <!-- TODO!!! -->
@@ -265,6 +263,8 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
       </div>
     </div>
   </div>
+  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+  <script src="utility/qr_scanner/io_qr_scanner.js" type="text/javascript"></script>
 </body>
 
 
@@ -309,10 +309,9 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
     if (selecteditems[0] === "") {
       badge.textContent = 0;
       console.log("No items to reload");
-    } else {
-      badge.textContent = selecteditems.length;
     }
     selecteditems.forEach(element => {
+      console.log("Reloading item: " + element);
       $('#jstree').jstree().select_node(element);
     });
   }
@@ -452,12 +451,6 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
       }
     }
 
-    setTimeout(function () {
-      reloadSavedSelections()
-    }, 300);
-
-
-
     d[i].originalName = d[i].text;
     d[i].childFlag = false;
     d[i].activeRelatedItems = d[i].relatedItems;
@@ -475,19 +468,32 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
 
   //Invoked after JStree is loaded
   $('#jstree').bind('loaded.jstree', function (e, data) {
-    console.log("Loaded!")
-
-    /*     setTimeout(function () {
-          reloadSavedSelections()
-        }, 300); */
-  });
+    console.log("JSTREE Loaded!")
 
 
-  //Invoked after JStree is loaded
-  $('#jstree').bind('loaded.jstree', function (e, data) {
-    console.log("Loaded!")
 
-
+    setTimeout(function () {
+      for (a = 1; a <= d.length; a++) {
+        if ($('#jstree').jstree().is_disabled(a) == true) {
+          $("#jstree ul li:nth-child(" + a + ")").css({
+            "display": "none",
+          });
+          $("#jstree ul li:nth-child(" + a + ") a").removeClass("jstree-search");
+        }
+        if ($('#jstree').jstree().get_node(a).original.Status == '2' || $('#jstree').jstree().get_node(a).original.Status == '0') {
+          $("#jstree ul li:nth-child(" + a + ") a").attr('takeout', 'true');
+          $("#jstree ul li:nth-child(" + a + ") a").css({
+            "font-size": "17px",
+            "color": "#ebcc83",
+            "text-decoration": "line-through !important",
+            "font-weight": "normal !important"
+          });
+          $("#jstree ul li:nth-child(" + a + ") a").removeClass("jstree-search");
+          deselect_node(a);
+        }
+      }
+      reloadSavedSelections()
+    }, 300);
   });
 
   $('#jstree').jstree({
@@ -507,11 +513,15 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
     }
   });
 
+  var searchTimeout;
   $('#search').on("keyup change", function () {
-    $('#jstree').jstree(true).search($(this).val())
-    colorTakenItems();
-
-
+    var v = $(this).val();
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(function () {
+      $('#jstree').jstree(true).search(v)
+      console.log("searching for: " + v);
+    }, 100);
+    //colorTakenItems();
   })
 
   //JSON Object of selectted Items:
@@ -734,10 +744,6 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
   }
 
   $(document).ready(function () {
-    //Color and hide taken items
-    setTimeout(function () {
-      colorTakenItems();
-    }, 500);
 
     //Back to top button
     $('#jstree').scroll(function () {
@@ -885,209 +891,24 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
   }
 
   //Scanner
-  let macroCam;
 
-  window.addEventListener("orientationchange", function () {
-    stopScanner().then((ignore) => {
-      startScanner(macroCam.id);
-    });
-  })
-
-  const toastLiveExample = document.getElementById('scan_toast');
-  const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample);
-
-  //let toastOverwriteAllowed = true;
-
-  function showToast(message, color) {
-    document.getElementById("scan_result").innerHTML = "<b style='color: " + color + ";'>" + message + "</b>";
-    toastLiveExample.style.display = "block";
-    toastBootstrap.show();
-  }
-
-
-  //Creating Qr reader
-  const QrReader = new Html5Qrcode("reader");
-  let QrReaderStarted = false;
-
-  //Qr reader settings
-  const qrconstraints = {
-    facingMode: "environment"
-  };
-  const qrConfig = {
-    fps: 10,
-    qrbox: {
-      width: 200,
-      height: 150
-    },
-    showTorchButtonIfSupported: true
-  };
   const qrOnSuccess = (decodedText, decodedResult) => {
     console.log(`Code matched = ${decodedText}`, decodedResult);
     selectionArray = [];
     for (j = 1; j <= d.length; j++) {
       if ($('#jstree').jstree().get_node(j).original.uid == decodedText && $('#jstree').jstree().get_node(j).state.disabled == false) {
         showToast(decodedText, "green");
+        scan_succes_sfx.play();
         selectionArray.push(j);
       }
       if ($('#jstree').jstree().get_node(j).original.uid == decodedText && $('#jstree').jstree().get_node(j).state.disabled == true) {
         showToast("Ez az eszköz nem elérhető!", "red");
+        scan_fail_sfx.play();
         console.log("Not available!");
       }
     }
     $('#jstree').jstree().select_node(selectionArray);
   };
-
-  // Methods: start / stop
-  const startScanner = (camera) => {
-
-    if (!QrReaderStarted && camera != null) {
-      console.log("Reader started! - with macroCam");
-      QrReaderStarted = true;
-      return QrReader.start(
-        camera,
-        qrConfig,
-        qrOnSuccess,
-      ).then().catch(console.error);
-    }
-    else if (!QrReaderStarted && camera == null) {
-      QrReaderStarted = true;
-      console.log("Reader started! - environment");
-      return QrReader.start(
-        qrconstraints,
-        qrConfig,
-        qrOnSuccess,
-      ).then().catch(console.error);
-    }
-    else if (camera == null) {
-      QrReader.resume();
-      console.log("Unpaused!");
-    }
-  };
-
-  const pauseScanner = () => {
-    QrReader.pause();
-  };
-
-  const stopScanner = () => {
-    return QrReader.stop().then(ignore => {
-      QrReaderStarted = false;
-      console.log("Reader stopped!");
-    }).catch(err => {
-      console.log("Error while stopping: " + err);
-    });
-  };
-
-  // Start scanner on button click
-
-  let available_cams;
-
-  function showScannerModal() {
-
-    if (QrReaderStarted) {
-      startScanner(null);
-      $('#scanner_Modal').modal('show');
-    }
-    else {
-      Html5Qrcode.getCameras().then(devices => {
-        available_cams = devices;
-        for (i = 0; i < available_cams.length; i++) {
-          if (available_cams[i].label.toLowerCase().includes("dual") == false) {
-
-            $('#av_cams').append('<li><a class="dropdown-item" href="#" onclick="switchCamera(\'' + available_cams[i].id + '\');">' + available_cams[i].label + '</a></li>');
-          }
-        }
-        $('#scanner_Modal').modal('show');
-        macroCam = available_cams.find(cam => cam.label.toLowerCase().includes("ultra wide"));
-
-        if (macroCam) {
-          console.log("Macro camera found: " + macroCam.label);
-          startScanner(macroCam.id).then((ignore) => {
-            settings = QrReader.getRunningTrackSettings();
-            // If zoom available, display button
-            if ("zoom" in settings == true) {
-              console.log("Zoom available");
-              $('#scanner_footer').prepend('<button type="button" class="btn btn-info" id="zoom_btn" onclick="zoomCamera()">Zoom: 2x</button>');
-            }
-          });
-        } else {
-          console.log("No telephoto camera found, starting default camera");
-          startScanner(null);
-        }
-      });
-    }
-  }
-
-  function switchCamera(nextCamId) {
-    stopScanner().then((ignore) => {
-      let nextCam = available_cams.find(cam => cam.id === nextCamId);
-      if (nextCam) {
-        console.log("Switching camera to: " + nextCam.label);
-        startScanner(nextCam.id);
-      } else {
-        console.log("Camera not found: " + nextCamId);
-      }
-    });
-  }
-
-
-  function pauseCamera() {
-    console.log("Pausing camera");
-    pauseScanner();
-  }
-
-  function zoomCamera() {
-    let settings = QrReader.getRunningTrackSettings();
-    let currentZoom = settings.zoom;
-    let nextzoom;
-    switch (currentZoom) {
-      case 1:
-        nextzoom = 2;
-        console.log("Zooming 2x");
-        break;
-      case 2:
-        nextzoom = 1;
-        console.log("Zooming 1x");
-        break;
-      default:
-        nextzoom = 1;
-        break;
-    }
-
-    let constraints = {
-      "zoom": nextzoom,
-      "advanced": [{ "zoom": nextzoom }]
-    };
-    QrReader.applyVideoConstraints(constraints);
-    console.log("Zoomed");
-    document.getElementById('zoom_btn').innerHTML = "Zoom: " + currentZoom + "x";
-  }
-
-  function isTorchSupported() {
-    let settings = QrReader.getRunningTrackSettings();
-    console.log(settings);
-    console.log("torch" in settings);
-  }
-
-  function startTorch() {
-    if (document.getElementById("btncheck1").checked == true) {
-      let constraints = {
-        "torch": true,
-        "advanced": [{ "torch": true }]
-      };
-      QrReader.applyVideoConstraints(constraints);
-      let settings = QrReader.getRunningTrackSettings();
-
-      if (settings.torch === true) {
-        console.log("Torch enabled");
-        // Torch was indeed enabled, succeess.
-      } else {
-        console.log("Torch not enabled");
-        // Failure.
-        // Failed to set torch, why?
-      }
-    } else {
-    }
-  }
 
 
   // Filtering
