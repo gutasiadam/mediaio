@@ -8,6 +8,20 @@
     box-sizing: border-box;
 }
 
+
+.indexToasts {
+    @media (min-width: 1151px) {
+        right: 0;
+        top: 80px;
+    }
+
+    @media (max-width: 1150px) {
+        left: 50%;
+        transform: translateX(-50%);
+        bottom: 0;
+    }
+}
+
 /* AMBlue Button */
 button.mediaBlue {
     background-color: var(--media-blue);
@@ -195,34 +209,25 @@ button.mediaBlue {
         display: none;
     }
 
-    #unavailable_checkbox {
-        padding-left: 0;
-        padding-right: 0;
-
-        .btn-outline-secondary:active,
-        .btn-outline-secondary:hover {
-            color: #6c757d !important;
-            background-color: #fff !important;
-            border-color: #6c757d !important;
-        }
-
-        .btn:focus,
-        .btn:hover {
-            text-decoration: none !important;
-        }
-
-        label:active,
-        label:focus,
-        label:hover,
-        label:visited {
-            box-shadow: unset !important;
-            outline: 0 !important;
-        }
-
-        label {
-            width: 100%;
-        }
+    .btn-secondary:active,
+    .btn-secondary:hover {
+        color: #fff !important;
+        background-color: #6c757d !important;
+        border-color: #6c757d !important;
     }
+
+    .btn-outline-secondary:active,
+    .btn-outline-secondary:hover {
+        color: #6c757d !important;
+        background-color: #fff !important;
+        border-color: #6c757d !important;
+    }
+
+    .btn:focus,
+    .btn:hover {
+        text-decoration: none !important;
+    }
+
 
     display: flex;
     flex-direction:row;
@@ -247,13 +252,6 @@ button.mediaBlue {
             display: none;
         }
 
-        #unavailable_checkbox {
-            width: 49.5%;
-
-            label {
-                width: 100%;
-            }
-        }
     }
 
 }
@@ -290,10 +288,56 @@ button.mediaBlue {
             justify-content: center;
         }
 
+    }
+
+    #retrieve-option-buttons {
         .btn {
-            margin-left: 15px;
+            margin-bottom: 6px;
+        }
+        .btn-secondary:active,
+        .btn-secondary:hover {
+            color: #fff !important;
+            background-color: #6c757d !important;
+            border-color: #6c757d !important;
+        }
+
+        .btn-outline-secondary:active,
+        .btn-outline-secondary:hover {
+            color: #6c757d !important;
+            background-color: #fff !important;
+            border-color: #6c757d !important;
+        }
+
+        .btn:focus,
+        .btn:hover {
+            text-decoration: none !important;
+        }
+
+        display: flex;
+        flex-direction:row;
+        gap: 5px;
+        row-gap: 2px;
+        width: 100%;
+        margin-left: 0;
+
+        @media (max-width: 575px) {
+            align-items: center;
+            gap: 1%;
+
+            form {
+                button {
+                    width: 100% !important; 
+                }
+            }
+
+            .btn {
+                width: 49.5%;
+            }
+
         }
     }
+
+
 
     #retrieve-row {
         width: 60vw;
@@ -339,9 +383,11 @@ button.mediaBlue {
     }
 
     @media (max-width: 990px) {
-        height: calc(100vh - 160px);
+        height: calc(100dvh - 90px);
     }
 }
+
+
 
 
 

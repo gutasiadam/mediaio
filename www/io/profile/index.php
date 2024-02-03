@@ -71,7 +71,7 @@ if (isset($_SESSION["userId"])) { ?>
       </tr>
       <tr>
         <td>
-          <form action="../utility/damage_report/announce_Damage.php"><button class="btn btn-warning w-100">Sérülés
+          <form action="../utility/damage_report/announce_Damage.php"><button class="btn btn-danger w-100">Sérülés
               bejelentése
               <i class="fas fa-file-alt"></i></button></form>
         </td>

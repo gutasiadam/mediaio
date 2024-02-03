@@ -117,35 +117,15 @@ function PhparrayCookie()
 <body>
   <div class="container" id="retrieve-container">
     <h2 class="rainbow" id="doTitle">Visszahozás</h2>
-    <br>
-    <div class="row">
-      <!-- Displays a tickable when items are selected, to approve tekaout process -->
-      <div class="col " id="submit-retrieve">
 
-        <div class="form-check intactForm" id="if_intact">
-          <input class="form-check-input" type="checkbox" value="" id="intactItems">
-          <label class="form-check-label" for="intactItems">
-            <h6 class="statement">Igazolom, hogy minden, amit visszahoztam sérülésmentes és kifogástalanul működik.
-              Sérülés esetén azonnal jelezd azt a vezetőségnek.</h6>
-          </label>
-          <!-- Send button holder -->
-          <button class="send btn btn-success">
-            <i class="fas fa-check-square fa-4x"></i>
-          </button>
-        </div>
-        <!-- Announce Damage button -->
-        <div class="row">
-          <div class="col">
-            <form action="../utility/damage_report/announce_Damage.php"><button class="btn btn-warning">Sérülés
-                bejelentése
-                <i class="fas fa-file-alt"></i></button></form>
-          </div>
-          <div class="col">
-            <button type="button" class="btn btn-secondary" onclick="showScannerModal()"
-              style='margin-bottom:6px'>Szkenner <i class="fas fa-qrcode"></i></button>
-          </div>
-        </div>
-      </div>
+    <!-- Announce Damage button -->
+    <div class="row" id="retrieve-option-buttons">
+      <button class="btn btn-danger" onclick="AnnounceDamage()">Sérülés bejelentése <i
+          class="fas fa-file-alt"></i></button>
+      <button type="button" class="btn btn-warning" onclick="showScannerModal()">Szkenner <i
+          class="fas fa-qrcode"></i></button>
+      <button type="button" class="btn btn-outline-secondary" id="manual_Retrieve"
+        onclick="manualRetrieve()">Visszahozás kézzel</button>
     </div>
 
 
@@ -168,7 +148,7 @@ function PhparrayCookie()
     while ($row = $result->fetch_assoc()) {
       //var_dump($row);
       $n++;
-      echo '<tr id="' . $row['UID'] . '"><td class="result dynamic-field"><button id="' . $row['UID'] . '" class="btn btn-dark" onclick="' . "prepare(this.id,'" . $row['UID'] . "'" . ",'" . $row['Nev'] . "');" . '"' . '>' . $row['Nev'] . ' [' . $row['UID'] . ']' . ' <i class="fas fa-angle-double-right"></i></button></td></tr>';
+      echo '<tr id="' . $row['UID'] . '"><td class="result dynamic-field"><button disabled="true" id="' . $row['UID'] . '" class="btn btn-dark" onclick="' . "prepare(this.id,'" . $row['UID'] . "'" . ",'" . $row['Nev'] . "');" . '"' . '>' . $row['Nev'] . ' [' . $row['UID'] . ']' . ' <i class="fas fa-angle-double-right"></i></button></td></tr>';
       //echo '<div class="result dynamic-field"><button id="' . $row['UID'] . '" class="btn btn-dark" onclick="' . "prepare(this.id,'" . $row['Nev'] . "'" . ');' . '"' . '>' . $row['Nev'] . ' [' . $row['UID'] . ']' . ' <i class="fas fa-angle-double-right"></i></button></div>';
     }
     echo '</table>';
@@ -184,6 +164,24 @@ function PhparrayCookie()
         </tr>
       </table>
     </div>
+
+
+
+  </div>
+  <div class="row" id="submit-retrieve">
+    <!-- Displays a tickable when items are selected, to approve tekaout process -->
+
+    <div class="form-check intactForm" id="if_intact">
+      <input class="form-check-input" type="checkbox" value="" id="intactItems">
+      <label class="form-check-label" for="intactItems">
+        <h6 class="statement">Igazolom, hogy minden, amit visszahoztam sérülésmentes és kifogástalanul működik.
+          Sérülés esetén azonnal jelezd azt a vezetőségnek.</h6>
+      </label>
+      <!-- Send button holder -->
+      <button class="send btn btn-success">
+        <i class="fas fa-check-square fa-4x"></i>
+      </button>
+    </div>
   </div>
 
   </div>
@@ -198,6 +196,10 @@ function PhparrayCookie()
   document.addEventListener('dblclick', function (event) {
     event.preventDefault();
   }, { passive: false });
+
+  function AnnounceDamage() {
+    window.location.href = "../utility/damage_report/announce_Damage.php";
+  }
 
 
   function prepare(id, uid, name) {
@@ -357,6 +359,30 @@ function PhparrayCookie()
   });
 
 
+  function manualRetrieve() {
+    $(".UI_loading").fadeIn("fast");
+    let useritems = <?php echo $n ?>;
+
+
+    if ($('#manual_Retrieve').hasClass('btn-outline-secondary')) {
+      console.log("Checked");
+      for (j = 0; j < useritems; j++) {
+        $('#retrieve_items').find('tr').eq(j).find('button').prop('disabled', false);
+      }
+      $('#manual_Retrieve').removeClass('btn-outline-secondary');
+      $('#manual_Retrieve').addClass('btn-secondary');
+
+    } else {
+      console.log("Unchecked");
+      for (j = 0; j < useritems; j++) {
+        $('#retrieve_items').find('tr').eq(j).find('button').prop('disabled', true);
+      }
+      $('#manual_Retrieve').removeClass('btn-secondary');
+      $('#manual_Retrieve').addClass('btn-outline-secondary');
+    }
+  }
+
+
   //Scanner
 
   const qrOnSuccess = (decodedText, decodedResult) => {
@@ -375,7 +401,8 @@ function PhparrayCookie()
           itemFound = true;
           return;
         } else {
-          $('#retrieve_items').find('tr').eq(j).find('button').click();
+          showToast(decodedText, "green");
+          prepare(decodedText, decodedText, $('#retrieve_items').find('tr').eq(j).find('button').text().split('[')[0].trim());
           console.log("Prepared!");
           showToast(decodedText, "green");
           scan_succes_sfx.play();

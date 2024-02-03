@@ -7,65 +7,70 @@ error_reporting(E_ERROR | E_PARSE);
 
 ?>
 <!DOCTYPE html>
-<?php if (isset($_SESSION["userId"])) { ?> 
+<?php if (isset($_SESSION["userId"])) { ?>
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-  <a class="navbar-brand" href="index.php">
-    <img src="./utility/logo2.png" height="50">
-  </a>
+    <a class="navbar-brand" href="index.php">
+      <img src="./utility/logo2.png" height="50">
+    </a>
 
-  <!-- Load Menu and Index table Icons and links -->
-  <script type="text/javascript">
-        window.onload = function () {
+    <!-- Load Menu and Index table Icons and links -->
+    <script type="text/javascript">
+      window.onload = function () {
 
-          menuItems = importItem("./utility/menuitems.json");
-          drawMenuItemsLeft('index', menuItems);
+        menuItems = importItem("./utility/menuitems.json");
+        drawMenuItemsLeft('index', menuItems);
 
-          drawMenuItemsRight('index', menuItems);
-          drawIndexTable(menuItems, 0);
+        drawMenuItemsRight('index', menuItems);
+        drawIndexTable(menuItems, 0);
 
-          display = document.querySelector('#time');
-          var timeUpLoc="utility/userLogging.php?logout-submit=y"
-          startTimer(display, timeUpLoc);
-        };
-  </script>
+        display = document.querySelector('#time');
+        var timeUpLoc = "utility/userLogging.php?logout-submit=y"
+        startTimer(display, timeUpLoc);
+      };
+    </script>
 
-  <!-- Mobile Navigation - Additional toggle button -->
-  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <!-- Mobile Navigation - Additional toggle button -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
-  </button>
+    </button>
 
-  <!-- Main Navigation -->
-  <div class="collapse navbar-collapse" id="navbarSupportedContent">
-    <ul class="navbar-nav mr-auto navbarUl">
-    </ul>
-    <ul class="navbar-nav ms-auto navbarPhP">
+    <!-- Main Navigation -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto navbarUl">
+      </ul>
+      <ul class="navbar-nav ms-auto navbarPhP">
 
-      <!-- Timeout timer -->
-      <li><a class="nav-link disabled timelock" href="#"><span id="time"> 10:00 </span>
-        <?php echo ' '.$_SESSION['UserUserName'];?>
-      </a></li>
-    </ul>
+        <!-- Timeout timer -->
+        <li><a class="nav-link disabled timelock" href="#"><span id="time"> 10:00 </span>
+            <?php echo ' ' . $_SESSION['UserUserName']; ?>
+          </a></li>
+      </ul>
 
-    <!-- User logout button -->
-    <form method='post' class="form-inline my-2 my-lg-0" action=utility/userLogging.php>
-      <button class="btn btn-danger my-2 my-sm-0" id="logoutBtn" name='logout-submit' type="submit">Kijelentkezés</button>
-    </form>
+      <!-- User logout button -->
+      <form method='post' class="form-inline my-2 my-lg-0" action=utility/userLogging.php>
+        <button class="btn btn-danger my-2 my-sm-0" id="logoutBtn" name='logout-submit'
+          type="submit">Kijelentkezés</button>
+      </form>
 
-  </div>
-</nav> <?php  } ?>
+    </div>
+  </nav>
+<?php } ?>
 
-<body><?php
+<body>
+  <?php
 
-    //If the user is not logged in, display the login form
+  //If the user is not logged in, display the login form
+  
+  if (!isset($_SESSION["userId"])) { ?>
 
-    if (!isset($_SESSION["userId"])) { ?>
-    
     <!-- Login form -->
     <form class="login" action="utility/userLogging.php" method="post" autocomplete="off">
       <fieldset>
         <legend id="zsoka" class="legend text"> MediaIO </legend>
         <div class="login-input mb-3">
-          <input type="text" class="form-control" name="useremail" id="usernameInput" placeholder="Felhasználónév/E-mail" required />
+          <input type="text" class="form-control" name="useremail" id="usernameInput" placeholder="Felhasználónév/E-mail"
+            required />
         </div>
         <div class="login-input mb-3">
           <input id="password" class="form-control" type="password" name="pwd" placeholder="Jelszó" required />
@@ -144,13 +149,61 @@ error_reporting(E_ERROR | E_PARSE);
     <div class="row justify-content-center mainRow4 ab"
       style="text-align: center; width:100%; max-width: 1000px; margin: 0 auto;"></div>
     <br>
+
+    <div class="toast-container position-absolute p-3 indexToasts">
+      <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" id="service_toast">
+        <div class="toast-header">
+          <img src="./utility/logo.png" height="30">
+          <strong class="me-auto">  Üdv újra,
+            <?php echo $_SESSION['UserUserName']; ?>!
+          </strong>
+          <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+          <p class="toast-text" id="usercheckItemCount">Nincs elfogadásra váró esemény!</p>
+          <div class="mt-2 pt-2 border-top" id="service_toast_footer">
+          </div>
+        </div>
+      </div>
+    </div>
     <script type="text/javascript">
       $(document).ready(function () {
         drawMenuItemsRight('index', menuItems);
         drawIndexTable(menuItems, 0);
       });
+      if (<?php echo in_array("admin", $_SESSION["groups"]) ?>) {
+        var userData = "<?php echo $_POST['user']; ?>";
+        $.ajax({
+          url: "../ItemManager.php",
+          type: "POST",
+          data: {
+            mode: "getProfileItemCounts",
+            user: userData
+          },
+          success: function (data) {
+            var dataArray = data.split(",");
+            console.log(dataArray);
+            //Set the user item count
+            //document.getElementById("userItemCount").innerHTML = dataArray[2];
+            //Set the usercheck count
+            if (dataArray[1] > 0) {
+              document.getElementById("usercheckItemCount").innerHTML = dataArray[1] + " esemény vár elfogadásra!";
+              let form = document.createElement('form');
+              form.action = "../profile/usercheck.php";
+              form.style = "width: fit-content; display: inline-block;";
+              form.innerHTML = '<button type="submit" class="btn btn-primary btn-sm">Vigyél oda!</button>';
+              document.getElementById("service_toast_footer").prepend(form);
+            }
+            //Set the service item count
+            //document.getElementById("serviceItemCount").innerHTML = dataArray[0];
 
+          }
 
+        });
+        const toastLiveExample = document.getElementById('service_toast');
+        const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample, { delay: 8000 });
+        toastBootstrap.show();
+      }
     </script>
   <?php }
   //GET változók kezelése

@@ -211,7 +211,7 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
             onclick="showClearModal()">Összes törlése</button>
           <button class="btn btn-sm btn-info col-lg-auto mb-1" onclick="showPresetsModal()"
             style='margin-bottom:6px'>Presetek</button>
-          <button type="button" class="btn btn-sm btn-secondary col-lg-auto mb-1" onclick="showScannerModal()"
+          <button type="button" class="btn btn-sm btn-warning col-lg-auto mb-1" onclick="showScannerModal()"
             style='margin-bottom:6px'>Szkenner <i class="fas fa-qrcode"></i></button>
 
           <!-- GivetoAnotherperson button -->
@@ -219,11 +219,10 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
             data-bs-toggle="modal" data-bs-target="#givetoAnotherPerson_Modal" style="margin-bottom: 6px">Másnak veszek
             ki</button>
 
-          <div id="unavailable_checkbox">
-            <input type="checkbox" class="btn-check" checked="" id="show_unavailable" autocomplete="off">
-            <label class="btn btn-sm btn-outline-secondary col-lg-auto mb-1 text-nowrap" for="show_unavailable">Csak
-              elérhető tárgyak</label><br>
-          </div>
+          <button class="btn btn-sm btn-secondary col-lg-auto mb-1 text-nowrap" id="show_unavailable" type="button" onclick="ShowUnavailable()"
+            style="margin-bottom: 6px">Csak elérhető tárgyak</button>
+
+
 
           <!-- TODO!!! -->
           <!-- <select class="form-select col-lg-auto mb-1" style='margin-bottom:6px; width: fit-content'
@@ -810,6 +809,7 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
             setTimeout(() => {
               window.location.href = window.location.href
             }, 1000);
+            deselect_all();
           } else {
             //console.log(response);
             displayMessageInTitle("#doTitle", "Hiba történt.");
@@ -846,6 +846,7 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
             setTimeout(() => {
               window.location.href = window.location.href
             }, 1000);
+            deselect_all();
           } else {
             //console.log(response);
             displayMessageInTitle("#doTitle", "Hiba történt.");
@@ -915,10 +916,10 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
 
   //Showing only available items
 
-  $('#show_unavailable').change(function () {
+  function ShowUnavailable() {
     $(".UI_loading").fadeIn("fast");
 
-    if ($(this).is(':checked')) {
+    if ($('#show_unavailable').hasClass('btn-outline-secondary')) {
       console.log("Checked");
       for (a = 1; a <= d.length; a++) {
         if ($('#jstree').jstree().is_disabled(a) == true) {
@@ -929,6 +930,8 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
           deselect_node(a);
         }
       }
+      $('#show_unavailable').removeClass('btn-outline-secondary');
+      $('#show_unavailable').addClass('btn-secondary');
 
     } else {
       console.log("Unchecked");
@@ -941,6 +944,8 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
           deselect_node(a);
         }
       }
+      $('#show_unavailable').removeClass('btn-secondary');
+      $('#show_unavailable').addClass('btn-outline-secondary');
     }
-  });
+  };
 </script>

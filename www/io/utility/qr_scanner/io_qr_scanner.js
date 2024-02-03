@@ -45,7 +45,7 @@ const qrConfig = {
 const startScanner = (camera) => {
 
    if (!QrReaderStarted && camera != null) {
-      console.log("Reader started! - with macroCam");
+      console.log("Reader started! - with specific camera: " + camera);
       QrReaderStarted = true;
       return QrReader.start(
          camera,
