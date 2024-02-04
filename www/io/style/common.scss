@@ -196,6 +196,13 @@ button.mediaBlue {
     }
 }
 
+#presetsContainer{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    flex-direction: row;
+}
+
 
 #takeout-option-buttons {
 
@@ -236,13 +243,16 @@ button.mediaBlue {
     width: 100%;
     margin-left: 0;
 
-    @media (max-width: 575px) {
+    @media (max-width: 990px){
         align-items: center;
         gap: 1%;
 
         .btn {
             width: 49.5%;
         }
+    }
+
+    @media (max-width: 575px) { 
 
         #show_selected {
             display: block;
@@ -262,6 +272,29 @@ button.mediaBlue {
     width: 80%;
     margin-left: auto;
     margin-right: auto;
+
+}
+
+#scanner_footer {
+
+    .btn-dark:active,
+    .btn-dark:hover {
+        color: #fff !important;
+        background-color: var(--bs-dark) !important;
+        border-color: var(--bs-dark) !important;
+    }
+
+    .btn-outline-dark:active,
+    .btn-outline-dark:hover {
+        color: var(--bs-dark) !important;
+        background-color: #fff !important;
+        border-color: var(--bs-dark) !important;
+    }
+
+    .btn:focus,
+    .btn:hover {
+        text-decoration: none !important;
+    }
 
 }
 
@@ -293,7 +326,9 @@ button.mediaBlue {
     #retrieve-option-buttons {
         .btn {
             margin-bottom: 6px;
+            width: fit-content;
         }
+
         .btn-secondary:active,
         .btn-secondary:hover {
             color: #fff !important;
@@ -319,16 +354,11 @@ button.mediaBlue {
         row-gap: 2px;
         width: 100%;
         margin-left: 0;
+        justify-content: center;
 
         @media (max-width: 575px) {
             align-items: center;
             gap: 1%;
-
-            form {
-                button {
-                    width: 100% !important; 
-                }
-            }
 
             .btn {
                 width: 49.5%;

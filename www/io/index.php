@@ -155,7 +155,7 @@ error_reporting(E_ERROR | E_PARSE);
         <div class="toast-header">
           <img src="./utility/logo.png" height="30">
           <strong class="me-auto">  Üdv újra,
-            <?php echo $_SESSION['UserUserName']; ?>!
+            <?php echo $_SESSION['firstName']; ?>!
           </strong>
           <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
         </div>

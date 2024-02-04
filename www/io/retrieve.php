@@ -83,7 +83,7 @@ function PhparrayCookie()
         <button type="button" class="btn-close" data-bs-dismiss="modal" onclick="pauseCamera()"
           aria-label="Close"></button>
       </div>
-      <div class="modal-body">
+      <div class="modal-body" id="scanner_body">
         <div id="reader" width="600px"></div>
         <!-- Toasts -->
         <div class="toast align-items-center" id="scan_toast" role="alert" aria-live="assertive" aria-atomic="true"
@@ -96,6 +96,10 @@ function PhparrayCookie()
         </div>
       </div>
       <div class="modal-footer" id="scanner_footer">
+        <button type="button" class="btn btn-outline-dark" id="ext_scanner" onclick="ExternalScan()">Külső
+          olvasó</button>
+        <button type="button" class="btn btn-info" id="zoom_btn" onclick="zoomCamera()">Zoom: 2x</button>
+        <button type="button" class="btn btn-info" id="torch_btn" onclick="startTorch()">Vaku</button>
         <div class="dropdown dropup">
           <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown"
             aria-expanded="true">

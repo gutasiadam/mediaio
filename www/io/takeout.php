@@ -157,7 +157,7 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
           <button type="button" class="btn-close" data-bs-dismiss="modal" onclick="pauseCamera()"
             aria-label="Close"></button>
         </div>
-        <div class="modal-body">
+        <div class="modal-body" id="scanner_body">
           <div id="reader" width="600px"></div>
           <!-- Toasts -->
           <div class="toast align-items-center" id="scan_toast" role="alert" aria-live="assertive" aria-atomic="true"
@@ -170,6 +170,9 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
           </div>
         </div>
         <div class="modal-footer" id="scanner_footer">
+          <button type="button" class="btn btn-outline-dark" id="ext_scanner" onclick="ExternalScan()">Külső olvasó</button>
+          <button type="button" class="btn btn-info" id="zoom_btn" onclick="zoomCamera()">Zoom: 2x</button>
+          <button type="button" class="btn btn-info" id="torch_btn" onclick="startTorch()">Vaku</button>
           <div class="dropdown dropup">
             <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown"
               aria-expanded="true">
@@ -219,8 +222,8 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
             data-bs-toggle="modal" data-bs-target="#givetoAnotherPerson_Modal" style="margin-bottom: 6px">Másnak veszek
             ki</button>
 
-          <button class="btn btn-sm btn-secondary col-lg-auto mb-1 text-nowrap" id="show_unavailable" type="button" onclick="ShowUnavailable()"
-            style="margin-bottom: 6px">Csak elérhető tárgyak</button>
+          <button class="btn btn-sm btn-secondary col-lg-auto mb-1 text-nowrap" id="show_unavailable" type="button"
+            onclick="ShowUnavailable()" style="margin-bottom: 6px">Csak elérhető tárgyak</button>
 
 
 
@@ -279,7 +282,7 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
   var badge_obserber = new MutationObserver(function (mutations) {
     mutations.forEach(function (mutation) {
       var selectedDesktop = document.getElementById("output-desktop");
-      console.log('Badge content:', badge.innerHTML);
+      /* console.log('Badge content:', badge.innerHTML); */
       if (badge.innerHTML !== "0" && window.innerWidth > 575) {
         selectedDesktop.style.display = "block";
       } else {
@@ -345,7 +348,7 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
           console.log(presets[i]);
           takeoutPresets.push(presets[i]);
           $("#presetsContainer").append('<button class="btn mediaBlue position-relative" id="presetButton' + i + '" onclick="addItems(' + i + ')">' + presets[i].Name +
-            '<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">99+<span class="visually-hidden">unread messages</span></span></button></br></br>');
+            '<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">99+<span class="visually-hidden">unread messages</span></span></button>');
           //Hide preset badges
         }
 
@@ -896,19 +899,27 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
   const qrOnSuccess = (decodedText, decodedResult) => {
     console.log(`Code matched = ${decodedText}`, decodedResult);
     selectionArray = [];
+    var ItemFound = false;
     for (j = 1; j <= d.length; j++) {
       if ($('#jstree').jstree().get_node(j).original.uid == decodedText && $('#jstree').jstree().get_node(j).state.disabled == false) {
         showToast(decodedText, "green");
         scan_succes_sfx.play();
         selectionArray.push(j);
+        ItemFound = true;
       }
       if ($('#jstree').jstree().get_node(j).original.uid == decodedText && $('#jstree').jstree().get_node(j).state.disabled == true) {
         showToast("Ez az eszköz nem elérhető!", "red");
         scan_fail_sfx.play();
         console.log("Not available!");
+        ItemFound = true;
       }
     }
-    $('#jstree').jstree().select_node(selectionArray);
+    if (ItemFound == true) {
+      $('#jstree').jstree().select_node(selectionArray);
+    } else {
+      showToast("Nem található ilyen eszköz!", "red");
+      scan_fail_sfx.play();
+    }
   };
 
 
