@@ -196,7 +196,7 @@ button.mediaBlue {
     }
 }
 
-#presetsContainer{
+#presetsContainer {
     display: flex;
     flex-wrap: wrap;
     gap: 5px;
@@ -243,7 +243,7 @@ button.mediaBlue {
     width: 100%;
     margin-left: 0;
 
-    @media (max-width: 990px){
+    @media (max-width: 990px) {
         align-items: center;
         gap: 1%;
 
@@ -252,7 +252,7 @@ button.mediaBlue {
         }
     }
 
-    @media (max-width: 575px) { 
+    @media (max-width: 575px) {
 
         #show_selected {
             display: block;
@@ -306,21 +306,16 @@ button.mediaBlue {
     overflow-x: auto;
 
     #submit-retrieve {
-        display: flex;
-        flex-direction: column;
-        flex-wrap: wrap;
-        justify-content: center;
         align-items: center;
-
-        .statement {
-            width: 60vw;
+        justify-content: center;
+        #intact {
+            width: 70dvw;
+            max-width: 400px;
         }
 
-        #if_intact {
-            align-items: center;
-            justify-content: center;
+        #send_retrieve {
+            width: 100px;
         }
-
     }
 
     #retrieve-option-buttons {

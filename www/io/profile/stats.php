@@ -96,7 +96,7 @@ if (in_array("admin", $_SESSION["groups"]) or in_array("teacher", $_SESSION["gro
         $query = "SELECT * FROM takelog WHERE Date >= DATE_SUB(CURRENT_DATE(), INTERVAL 7 DAY) ORDER BY Date DESC;";
         // echo $query;
         $result = mysqli_query($connectionObject, $query);
-        echo '<tr><th>Dátum</th><th>Felhasználó</th><th>Tárgy</th><th>Esemény</th><th>Ellenőrizte</th></tr>';
+        echo '<tr><th>Dátum</th><th>Felhasználó</th><th id="toggle_uids" style="cursor: pointer">Tárgy (név)</th><th>Esemény</th><th>Ellenőrizte</th></tr>';
         foreach ($result as $row) {
           $ackcolby = "";
           if ($row['Acknowledged'] == "1") {
@@ -112,8 +112,8 @@ if (in_array("admin", $_SESSION["groups"]) or in_array("teacher", $_SESSION["gro
             $event = $row['Event'];
           }
 
-  
-          
+
+
           $items = json_decode($row['Items'], true);
           $items = array_column($items, 'name');
           //TODO: concatenate UID to the name
@@ -122,15 +122,17 @@ if (in_array("admin", $_SESSION["groups"]) or in_array("teacher", $_SESSION["gro
 
 
 
-          $items = "<ul><li>" . implode("</li><li>", $items) . "</li></ul>";
+          $items = "<ul id='names'><li>" . implode("</li><li>", $items) . "</li></ul>";
+          $items2 = "<ul id='uids'><li>" . implode("</li><li>", $items2) . "</li></ul>";
+          $row['ItemUIDs'] = $items2;
           $row['Items'] = $items;
           //If event is OUT, TR is red, else its green
           if ($row['Event'] == "OUT") {
-            echo '<tr class="table-danger"><td>' . $row['Date'] . '</td><td>' . $row['User'] . '</td><td>' . $row['Items'] . '</td><td>' . $event . '</td><td>' . $ackcolby . '</td></tr>';
+            echo '<tr class="table-danger"><td>' . $row['Date'] . '</td><td>' . $row['User'] . '</td><td>' . $row['Items'] . '' . $row['ItemUIDs'] . '</td><td>' . $event . '</td><td>' . $ackcolby . '</td></tr>';
           } else if ($row['Event'] == "IN") {
-            echo '<tr class="table-success"><td>' . $row['Date'] . '</td><td>' . $row['User'] . '</td><td>' . $row['Items'] . '</td><td>' . $event . '</td><td>' . $ackcolby . '</td></tr>';
+            echo '<tr class="table-success"><td>' . $row['Date'] . '</td><td>' . $row['User'] . '</td><td>' . $row['Items'] . '' . $row['ItemUIDs'] . '</td><td>' . $event . '</td><td>' . $ackcolby . '</td></tr>';
           } else {
-            echo '<tr class="table-warning"><td>' . $row['Date'] . '</td><td>' . $row['User'] . '</td><td>' . $row['Items'] . '</td><td>' . $event . '</td><td>' . $ackcolby . '</td></tr>';
+            echo '<tr class="table-warning"><td>' . $row['Date'] . '</td><td>' . $row['User'] . '</td><td>' . $row['Items'] . '' . $row['ItemUIDs'] . '</td><td>' . $event . '</td><td>' . $ackcolby . '</td></tr>';
           }
 
 
@@ -142,3 +144,37 @@ if (in_array("admin", $_SESSION["groups"]) or in_array("teacher", $_SESSION["gro
 <?php } else {
   echo "<h2 class='text text-danger'>Nincs jogosultságod az oldal megtekintéséhez.</h2>";
 } ?>
+
+
+<script>
+  $(document).ready(function () {
+    var length = $('#stat-table').find('tr').length;
+    for (i = 0; i < length; i++) {
+      $('#stat-table').find('tr').eq(i).find('#uids').hide();
+    }
+  });
+
+  document.getElementById('toggle_uids').addEventListener('click', function () {
+    UIDshown = !UIDshown;
+    showUIDs();
+  });
+
+  var UIDshown = false;
+
+  function showUIDs() {
+    var length = $('#stat-table').find('tr').length;
+    if (UIDshown) {
+      for (i = 0; i < length; i++) {
+        $('#stat-table').find('tr').eq(i).find('#uids').show();
+        $('#stat-table').find('tr').eq(i).find('#names').hide();
+      }
+      document.getElementById('toggle_uids').innerHTML = "Tárgy (UID)";
+    } else {
+      for (i = 0; i < length; i++) {
+        $('#stat-table').find('tr').eq(i).find('#uids').hide();
+        $('#stat-table').find('tr').eq(i).find('#names').show();
+      }
+      document.getElementById('toggle_uids').innerHTML = "Tárgy (név)";
+    }
+  }
+</script>

@@ -174,27 +174,36 @@ function PhparrayCookie()
   </div>
   <div class="row" id="submit-retrieve">
     <!-- Displays a tickable when items are selected, to approve tekaout process -->
-
-    <div class="form-check intactForm" id="if_intact">
-      <input class="form-check-input" type="checkbox" value="" id="intactItems">
-      <label class="form-check-label" for="intactItems">
-        <h6 class="statement">Igazolom, hogy minden, amit visszahoztam sérülésmentes és kifogástalanul működik.
-          Sérülés esetén azonnal jelezd azt a vezetőségnek.</h6>
-      </label>
-      <!-- Send button holder -->
+    <div class="col" id="intact">
+      <div class="form-check intactForm" id="if_intact">
+        <input class="form-check-input" type="checkbox" value="" id="intactItems">
+        <label class="form-check-label" for="intactItems">
+          <h6 class="statement">Igazolom, hogy minden, amit visszahoztam sérülésmentes és kifogástalanul működik.
+            Sérülés esetén azonnal jelezd azt a vezetőségnek.</h6>
+        </label>
+      </div>
+    </div>
+    <!-- Send button holder -->
+    <div class="" id="send_retrieve">
       <button class="send btn btn-success">
         <i class="fas fa-check-square fa-4x"></i>
       </button>
     </div>
   </div>
 
-  </div>
-  </div>
+  <div id='toTop'><i class="fas fa-chevron-down"></i></div>
 </body>
 
 </html>
 
 <script>
+
+  $("#toTop").click(function () {
+    $("#retrieve-container").animate({
+      scrollTop: $("#retrieve-container")[0].scrollHeight
+    }, 700);
+    $('#toTop').fadeOut();
+  });
 
   //Preventing double click zoom
   document.addEventListener('dblclick', function (event) {
@@ -209,7 +218,8 @@ function PhparrayCookie()
   function prepare(id, uid, name) {
     $('#dynamic_field').append('<tr class="bg-success" id="prep-' + id + '"><td class="dynamic-field"><button id="prep-' + id + '" class="btn btn-succes" onclick="unstage(this.id);"><i class="fas fa-angle-double-left"></i> ' + name + ' [' + uid + ']' + '</button></td></tr>');
     $('#' + id).hide();
-    $('.intactForm').css('display', 'flex');
+    $('.intactForm').css('display', 'block');
+    $('#toTop').fadeIn();
   }
 
   function unstage(id) {
@@ -220,6 +230,7 @@ function PhparrayCookie()
       $('.intactForm').css('display', 'none');
       $('.send').hide();
       $("#intactItems").prop("checked", false);
+      $('#toTop').fadeOut();
     }
   }
   $(document).ready(function () {
@@ -263,6 +274,9 @@ function PhparrayCookie()
     });
     //Initiate Takeout process
     $(document).on('click', '.send', function () {
+      $("#retrieve-container").animate({
+        scrollTop: 0
+      }, 500);
       if ($("#intactItems").prop("checked")) { // ha a felhasználó elfogadta, hogy a tárgyak rendben vannak.
         var items = []; //Items that will be retreievd.
         $('#dynamic_field > tbody  > tr > td > button ').each(function (index, tr) {
