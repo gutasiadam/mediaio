@@ -69,7 +69,7 @@ error_reporting(E_ERROR | E_PARSE);
       <fieldset>
         <legend id="zsoka" class="legend text"> MediaIO </legend>
         <div class="login-input mb-3">
-          <input type="text" class="form-control" name="useremail" id="usernameInput" placeholder="Felhasználónév/E-mail"
+          <input type="text" class="form-control" name="useremail" id="usernameInput" placeholder="Felhasználónév"
             required />
         </div>
         <div class="login-input mb-3">
@@ -147,6 +147,8 @@ error_reporting(E_ERROR | E_PARSE);
     <div class="row justify-content-center mainRow3 ab"
       style="text-align: center; width:100%; max-width: 1000px; margin: 0 auto;"></div><br>
     <div class="row justify-content-center mainRow4 ab"
+      style="text-align: center; width:100%; max-width: 1000px; margin: 0 auto;"></div><br>
+    <div class="row justify-content-center mainRow5 ab"
       style="text-align: center; width:100%; max-width: 1000px; margin: 0 auto;"></div>
     <br>
 

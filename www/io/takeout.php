@@ -25,7 +25,6 @@ error_reporting(E_ALL ^ E_NOTICE);
 
 
 <script src="utility/jstree.js"></script>
-<link href='main.css' rel='stylesheet' />
 <link href="utility/themes/default/style.min.css" rel="stylesheet" />
 <html>
 <title>MediaIo - takeout</title>
@@ -170,7 +169,8 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
           </div>
         </div>
         <div class="modal-footer" id="scanner_footer">
-          <button type="button" class="btn btn-outline-dark" id="ext_scanner" onclick="ExternalScan()">Külső olvasó</button>
+          <button type="button" class="btn btn-outline-dark" id="ext_scanner" onclick="ExternalScan()">Külső
+            olvasó</button>
           <button type="button" class="btn btn-info" id="zoom_btn" onclick="zoomCamera()">Zoom: 2x</button>
           <button type="button" class="btn btn-info" id="torch_btn" onclick="startTorch()">Vaku</button>
           <div class="dropdown dropup">
@@ -322,6 +322,7 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
     $('#clear_Modal').modal('show');
   }
 
+  var presetStates = [];
   function showPresetsModal() {
     $('#presets_Modal').modal('show');
 
@@ -350,6 +351,7 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
           $("#presetsContainer").append('<button class="btn mediaBlue position-relative" id="presetButton' + i + '" onclick="addItems(' + i + ')">' + presets[i].Name +
             '<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">99+<span class="visually-hidden">unread messages</span></span></button>');
           //Hide preset badges
+          presetStates.push(false);
         }
 
         for (var i = 0; i < takeoutPresets.length; i++) {
@@ -555,52 +557,81 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
   //Add Preset Items to the selection
   //ID: takeout preset ID
   function addItems(id) {
-    var alreadyTakenCount = 0;
-    selectionArray = [];
-    takenArray = [];
-    addArray = JSON.parse(takeoutPresets[id].Items).items;
-    addArray.forEach(element => {
-      for (j = 1; j <= d.length; j++) {
-        if ($('#jstree').jstree().get_node(j).original.uid == element & $('#jstree').jstree().get_node(j).state.disabled == false) {
-          selectionArray.push(j);
-        } else if ($('#jstree').jstree().get_node(j).original.uid == element & $('#jstree').jstree().get_node(j).state.disabled == true) {
-          takenArray.push($('#jstree').jstree().get_node(j));
-          alreadyTakenCount++;
+    if (presetStates[id] == false) {
+      var alreadyTakenCount = 0;
+      selectionArray = [];
+      takenArray = [];
+      addArray = JSON.parse(takeoutPresets[id].Items).items;
+      addArray.forEach(element => {
+        for (j = 1; j <= d.length; j++) {
+          if ($('#jstree').jstree().get_node(j).original.uid == element & $('#jstree').jstree().get_node(j).state.disabled == false) {
+            selectionArray.push(j);
+          } else if ($('#jstree').jstree().get_node(j).original.uid == element & $('#jstree').jstree().get_node(j).state.disabled == true) {
+            takenArray.push($('#jstree').jstree().get_node(j));
+            alreadyTakenCount++;
+          }
         }
+        $('#jstree').jstree().select_node(selectionArray);
+
+      })
+      console.log(takenArray);
+
+      //Update badge to display how many items are already taken
+      $('#presetButton' + id + ' span')[0].innerHTML = (() => {
+        if (alreadyTakenCount > 0) {
+          return alreadyTakenCount;
+        } else {
+          return '';
+        }
+      })();
+
+      //Id the presetscontainer alredy has a list of taken items, remove it.
+      $('#presetsContainer ul').html('');
+
+      //If a h4 already exists, remove it.
+      if ($('#presetsContainer h6').length > 0) {
+        $('#presetsContainer h6').remove();
       }
-      $('#jstree').jstree().select_node(selectionArray);
-    })
-    console.log(takenArray);
 
-    //Update badge to display how many items are already taken
-    $('#presetButton' + id + ' span')[0].innerHTML = (() => {
-      if (alreadyTakenCount > 0) {
-        return alreadyTakenCount;
-      } else {
-        return '';
+      //Inside the presetscontainer, create an unordered list of the taken items
+      var takenItemsTitle = $('<h6>Az általad választott presetből a következő tárgyak már ki vannak véve:</h6>');
+      var takenItemsList = $('<ul></ul>');
+      takenArray.forEach(element => {
+        takenItemsList.append('<li>' + element.original.uid + ' - ' + element.original.originalName + '</li>');
+      });
+      if (takenArray.length > 0) {
+        $('#presetsContainer').append(takenItemsTitle);
+        $('#presetsContainer').append(takenItemsList);
       }
-    })();
+      presetStates[id] = true;
+      button = '#presetButton' + id;
+      $(button).removeClass('mediaBlue');
+      $(button).addClass('btn-outline-success');
+    } else {
+      console.log("Deselecting preset " + id);
+      selectionArray = [];
+      takenArray = [];
+      addArray = JSON.parse(takeoutPresets[id].Items).items;
+      addArray.forEach(element => {
+        for (j = 1; j <= d.length; j++) {
+          if ($('#jstree').jstree().get_node(j).original.uid == element & $('#jstree').jstree().get_node(j).state.disabled == false) {
+            selectionArray.push(j);
+            break;
+          } else if ($('#jstree').jstree().get_node(j).original.uid == element & $('#jstree').jstree().get_node(j).state.disabled == true) {
+            takenArray.push($('#jstree').jstree().get_node(j));
+            break;
+          }
+        }
+        $('#jstree').jstree().deselect_node(selectionArray);
 
-    //Id the presetscontainer alredy has a list of taken items, remove it.
-    $('#presetsContainer ul').html('');
-
-    //If a h4 already exists, remove it.
-    if ($('#presetsContainer h6').length > 0) {
-      $('#presetsContainer h6').remove();
+      })
+      console.log(takenArray);
+      $('#presetButton' + id + ' span')[0].innerHTML = '';
+      presetStates[id] = false;
+      button = '#presetButton' + id;
+      $(button).removeClass('btn-outline-success');
+      $(button).addClass('mediaBlue');
     }
-
-    //Inside the presetscontainer, create an unordered list of the taken items
-    var takenItemsTitle = $('<h6>Az általad választott presetből a következő tárgyak már ki vannak véve:</h6>');
-    var takenItemsList = $('<ul></ul>');
-    takenArray.forEach(element => {
-      takenItemsList.append('<li>' + element.original.uid + ' - ' + element.original.originalName + '</li>');
-    });
-    if (takenArray.length > 0) {
-      $('#presetsContainer').append(takenItemsTitle);
-      $('#presetsContainer').append(takenItemsList);
-    }
-
-
 
   };
 
