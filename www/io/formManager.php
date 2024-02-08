@@ -13,7 +13,7 @@ class formManager
   static function createNewForm()
   {
     if (in_array("admin", $_SESSION['groups'])) { //Auto accept 
-      $sql = "INSERT INTO forms VALUES(NULL,NULL,'e',NULL,NULL);";
+      $sql = "INSERT INTO forms VALUES(NULL,NULL,'2',NULL,NULL);";
       $connection = Database::runQuery_mysqli();
       $connection->query($sql);
       $id = $connection->insert_id;
@@ -26,7 +26,7 @@ class formManager
   static function getEditingPhaseForms()
   {
     if (in_array("admin", $_SESSION['groups'])) { //Auto accept 
-      $sql = "SELECT * FROM forms WHERE Status='e'";
+      $sql = "SELECT * FROM forms WHERE Status='2'";
       $connection = Database::runQuery_mysqli();
       $result = $connection->query($sql);
       $connection->close();
@@ -138,7 +138,35 @@ class formManager
       echo 200;
     }
   }
+
+  static function submitAnswer($uid, $id, $answers)
+  {
+    $sql = "INSERT INTO `formanswers` (`ID`, `FormID`, `userID`, `UserAnswers`) VALUES (NULL,'" . $id . "','" . $uid . "','" . $answers . "');";
+    $connection = Database::runQuery_mysqli();
+    $connection->query($sql);
+    $connection->close();
+    echo 200;
+    exit();
+  }
+
+  static function getFormAnswers($id)
+  {
+    if (in_array("admin", $_SESSION['groups'])) {
+      $sql = "SELECT * FROM formanswers WHERE FormID=" . $id . ";";
+      $connection = Database::runQuery_mysqli();
+      $result = $connection->query($sql);
+      $connection->close();
+      $answers = array();
+      while ($row = $result->fetch_assoc()) {
+        $answers[] = $row;
+      }
+      echo json_encode($answers);
+      exit();
+    }
+  }
 }
+
+
 
 if (isset($_POST['mode'])) {
 
@@ -202,6 +230,19 @@ if (isset($_POST['mode'])) {
     exit();
   }
 
+  if ($_POST['mode'] == 'submitAnswer') {
+    echo formManager::submitAnswer($_POST['uid'], $_POST['id'], $_POST['answers']);
+    //echo $_POST['value'] ;
+    //Header set.
+    exit();
+  }
+
+  if ($_POST['mode'] == 'getFormAnswers') {
+    echo formManager::getFormAnswers($_POST['id']);
+    //echo $_POST['value'] ;
+    //Header set.
+    exit();
+  }
 }
 
 ?>

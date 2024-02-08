@@ -5,8 +5,16 @@ include("../translation.php"); ?>
 <html>
 
 <h2 class="rainbow" id="form_name"></h2>
-<div class="container" id="form-body">
+<div class="container" id="form-container">
+   <div class="row form-control" id="form-body">
 
+   </div>
+
+   <div class="row">
+      <div class="col" id="submit">
+         <button class='btn btn-lg btn-success' type='submit' name='submit' onclick="submitAnswer()">Leadás</button>
+      </div>
+   </div>
 </div>
 
 
@@ -44,194 +52,109 @@ include("../translation.php"); ?>
 
                //Add settings, where possible
                console.log("Id: " + elementId + " Type: " + elementType + " Settings: " + elementSettings);
+               formContainer.appendChild(generateElement(elementType, elementId, elementSettings));
 
-               if (elementType == "email") {
-                  console.log("Ez egy email");
-                  var emildiv = document.createElement("div");
-                  emildiv.classList.add("mb-3");
-
-                  var label = document.createElement("label");
-                  if (elementSettings == "") {
-                     label.innerHTML = "Email cím:";
-                  } else {
-                     label.innerHTML = elementSettings;
-                  }
-                  label.for = elementId;
-                  emildiv.appendChild(label);
-
-                  var input = document.createElement("input");
-                  input.type = "email";
-                  input.classList.add("form-control");
-                  input.id = elementId;
-                  input.placeholder = "name@example.com";
-                  emildiv.appendChild(input);
-                  console.log(emildiv);
-
-                  formContainer.appendChild(emildiv);
-               }
-
-               if (elementType == "date") {
-                  console.log("Ez egy dátum");
-                  var dateDiv = document.createElement("div");
-                  dateDiv.classList.add("mb-3");
-
-                  var label = document.createElement("label");
-                  if (elementSettings == "") {
-                     label.innerHTML = "Dátum:";
-                  } else {
-                     label.innerHTML = elementSettings;
-                  }
-                  label.for = elementId;
-                  dateDiv.appendChild(label);
-
-                  var input = document.createElement("input");
-                  input.type = "date";
-                  input.classList.add("form-control");
-                  input.id = elementId;
-                  dateDiv.appendChild(input);
-                  console.log(dateDiv);
-
-                  formContainer.appendChild(dateDiv);
-               }
-
-               if (elementType == "shortText") {
-                  console.log("Ez egy rövid szöveg");
-                  var textDiv = document.createElement("div");
-                  textDiv.classList.add("mb-3");
-
-                  var label = document.createElement("label");
-                  if (elementSettings == "") {
-                     label.innerHTML = "Rövid válasz:";
-                  } else {
-                     label.innerHTML = elementSettings;
-                  }
-                  label.for = elementId;
-                  textDiv.appendChild(label);
-
-                  var input = document.createElement("input");
-                  input.type = "text";
-                  input.classList.add("form-control");
-                  input.id = elementId;
-                  input.placeholder = "Írja be a szöveget";
-                  textDiv.appendChild(input);
-                  console.log(textDiv);
-
-                  formContainer.appendChild(textDiv);
-               }
-
-               if (elementType == "Feleletválasztós") {
-                  console.log("Ez egy feleletválasztós");
-                  var radioGroup = document.createElement("div");
-                  radioGroup.classList.add("mb-3");
-
-                  var label = document.createElement("label");
-                  if (elementSettings == "") {
-                     label.innerHTML = "Válasszon:";
-                  } else {
-                     label.innerHTML = elementSettings;
-                  }
-                  radioGroup.appendChild(label);
-
-                  var input = document.createElement("input");
-                  input.type = "radio";
-                  input.id = elementId + "1";
-                  input.name = elementId;
-                  radioGroup.appendChild(input);
-
-                  var label = document.createElement("label");
-                  label.innerHTML = "Igen";
-                  label.for = elementId + "1";
-                  radioGroup.appendChild(label);
-
-                  var input = document.createElement("input");
-                  input.type = "radio";
-                  input.id = elementId + "2";
-                  input.name = elementId;
-                  radioGroup.appendChild(input);
-
-                  var label = document.createElement("label");
-                  label.innerHTML = "Nem";
-                  label.for = elementId + "2";
-                  radioGroup.appendChild(label);
-
-                  formContainer.appendChild(radioGroup);
-               }
-
-               if (elementType == "Hosszú szöveg") {
-                  console.log("Ez egy hosszú szöveg");
-                  var longText = document.createElement("div");
-                  longText.classList.add("mb-3");
-
-                  var label = document.createElement("label");
-                  if (elementSettings == "") {
-                     label.innerHTML = "Szöveg:";
-                  } else {
-                     label.innerHTML = elementSettings;
-                  }
-                  label.for = elementId;
-                  longText.appendChild(label);
-
-                  var input = document.createElement("textarea");
-                  input.classList.add("form-control");
-                  input.id = elementId;
-                  input.placeholder = "Írja be a szöveget";
-                  longText.appendChild(input);
-                  console.log(longText);
-
-                  formContainer.appendChild(longText);
-               }
-
-
-               if (elementType == "Szakaszcím") {
-                  console.log("Ez egy szakaszcím");
-
-                  var section = document.createElement("h3");
-                  section.innerHTML = elementSettings;
-                  section.id = elementId;
-
-                  formContainer.appendChild(section);
-                  /*                   var accordion = document.createElement("div");
-                                    accordion.classList.add("accordion");
-                                    accordion.classList.add("accordion-flush");
-                                    accordion.id = "Szakaszcím"; */
-
-
-                  /*                   formContainer.appendChild(accordion);
-                                    console.log(accordion); */
-
-               }
-               /*                if (elementType == "Szakasz bekezdés") {
-                                 console.log("Ez egy szakasz bekezdés");
-                                 var sectionText = document.createElement("p");
-               
-                                 sectionText.innerHTML = elementSettings;
-                                 sectionText.id = elementId;
-               
-                                 formContainer.appendChild(sectionText);
-                              } */
-               if (elementType == "Lineáris skála") {
-                  console.log("Ez egy lineáris skála");
-                  var linearScale = document.createElement("div");
-                  linearScale.classList.add("form-group");
-                  linearScale.id = elementId;
-
-                  var label = document.createElement("label");
-                  label.innerHTML = elementSettings;
-                  linearScale.appendChild(label);
-
-                  var input = document.createElement("input");
-                  input.type = "range";
-                  input.classList.add("form-range");
-                  input.min = "0";
-                  input.max = "5";
-                  input.step = "1";
-                  input.id = elementId;
-                  linearScale.appendChild(input);
-
-                  formContainer.appendChild(linearScale);
-               }
             }
          }
       })
    });
+
+
+
+   function generateElement(type, id, settings) {
+      var div = document.createElement("div");
+      div.id = type + "-" + id;
+      div.classList.add("mb-3");
+
+      var question = document.createElement("label");
+      question.for = id;
+      if (settings == "") {
+         question.innerHTML = "Kérdés";
+      } else {
+         question.innerHTML = settings;
+      }
+      div.appendChild(question);
+
+      console.log("Generating element: " + type);
+
+      switch (type) {
+         case "email":
+            var input = document.createElement("input");
+            input.type = "email";
+            input.classList.add("form-control");
+            input.id = id;
+            input.placeholder = "Írja be az email címét";
+            div.appendChild(input);
+            break;
+         case "date":
+            var input = document.createElement("input");
+            input.type = "date";
+            input.classList.add("form-control");
+            input.id = id;
+            div.appendChild(input);
+            break;
+         case "shortText":
+            var input = document.createElement("input");
+            input.type = "text";
+            input.classList.add("form-control");
+            input.id = id;
+            input.placeholder = "Rövid szöveg";
+            div.appendChild(input);
+            break;
+
+         case "longText":
+            var input = document.createElement("textarea");
+            input.classList.add("form-control");
+            input.id = id;
+            input.placeholder = "Hosszú szöveg";
+            div.appendChild(input);
+            break;
+
+         case "checkbox":
+            var input = document.createElement("input");
+            input.type = "checkbox";
+            input.classList.add("form-check-input");
+            input.id = id;
+            div.appendChild(input);
+            break;
+      }
+      return div;
+   }
+
+
+   function addFormElement(type) {
+      i++;
+      console.log("Adding form element: " + type);
+      document.getElementById("editorZone").appendChild(generateElement(type, i, ""));
+   };
+
+   function submitAnswer() {
+      var form = document.getElementById("form-body");
+      var elements = form.getElementsByTagName("input");
+      var answers = [];
+      for (var i = 0; i < elements.length; i++) {
+         var element = elements[i];
+         var answer = {
+            id: element.id,
+            value: element.value
+         }
+         answers.push(answer);
+      }
+      console.log(answers);
+      console.log(JSON.stringify(answers));
+      $.ajax({
+         type: "POST",
+         url: "../formManager.php",
+         data: { mode: "submitAnswer", uid: 0, id: <?php echo $_GET['formId'] ?>, answers: JSON.stringify(answers) },
+         success: function (data) {
+            /* console.log(data); */
+            if (data == 200) {
+               window.location.href = "viewform.php";
+            } else {
+               alert("Sikertelen leadás");
+            }
+         }
+      })
+   }
+
 </script>

@@ -54,27 +54,12 @@ include("../translation.php"); ?>
       // A szerkesztés alatt levő formokat is megjelenítjük
 //TODO
     } ?>
-  <div class="container">
+  <div class="container" id="available_forms">
     <div class="row" id="admin_opt">
 
     </div>
     <div class="row">
-      <table class="table table-hover table-striped formTable">
-        <thead>
-          <tr>
-            <th scope="col">Név</th>
-            <th scope="col">Kitölthető</th>
-            <th scope="col">Művelet</th>
-            <?php if (in_array("admin", $_SESSION["groups"])) {
-              echo '<th scope="col">Elérhetőség</th>';
-            } ?>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-          </tr>
-        </tbody>
-      </table>
+
     </div>
   </div>
 
@@ -83,19 +68,8 @@ include("../translation.php"); ?>
 } else {
   echo "<h1 class='rainbow'>Árpád Média - Kitölthető kérdőívek</h1>";
   ?>
-  <div class="container">
-    <table class="table table-hover table-striped formTable">
-      <thead>
-        <tr>
-          <th scope="col">Név</th>
-          <th scope="col">Kitölthető</th>
-          <th scope="col">Művelet</th>
+  <div class="container" id="available_forms">
 
-        </tr>
-      </thead>
-      <tbody>
-      </tbody>
-    </table>
   </div>
   <?php
 }
@@ -135,6 +109,53 @@ include("../translation.php"); ?>
     window.location.href = "formanswers.php?formId=" + formId;
   }
 
+  function createCard(formId, formName, formStatus, formAccessRestrict) {
+    var card = document.createElement("div");
+    card.style = "width: 18rem;";
+    card.className = "card";
+
+    var cardBody = document.createElement("div");
+    cardBody.className = "card-body";
+
+    var cardTitle = document.createElement("h5");
+    cardTitle.className = "card-title";
+    cardTitle.innerHTML = formName;
+
+    var cardText = document.createElement("p");
+    cardText.className = "card-text";
+    cardText.innerHTML = "Kitöltési státusz: " + formStatus + "<br>" + "Biztonság " + formAccessRestrict;
+
+    var cardButton = document.createElement("button");
+    cardButton.className = "btn btn-primary";
+    cardButton.innerHTML = "Kitöltöm";
+    cardButton.onclick = function () { openForm(formId) };
+
+    cardBody.appendChild(cardTitle);
+    cardBody.appendChild(cardText);
+    cardBody.appendChild(cardButton);
+
+    if (<?php echo in_array("admin", $_SESSION["groups"]) ? "true" : "false" ?>) {
+      var editButton = document.createElement("button");
+      editButton.className = "btn btn-warning noprint";
+      editButton.innerHTML = "<i class='fas fa-highlighter fa-lg'></i> Szerkeszt";
+      editButton.onclick = function () { editForm(formId) };
+      cardBody.appendChild(editButton);
+
+      var showAnswersButton = document.createElement("button");
+      showAnswersButton.className = "btn btn-info noprint";
+      showAnswersButton.innerHTML = "<i class='fas fa-check fa-lg'></i> Válaszok";
+      showAnswersButton.onclick = function () { showFormAnswers(formId) };
+      cardBody.appendChild(showAnswersButton);
+      
+      
+    }
+
+
+    card.appendChild(cardBody);
+    console.log(card);
+    document.getElementById("available_forms").appendChild(card);
+  }
+
 
   function listRestrictedForms() {
     $.ajax({
@@ -142,28 +163,20 @@ include("../translation.php"); ?>
       method: "POST",
       data: { mode: "getRestrictedForms" }, //In the future, once we have group restrictions, this code needs to be updated.
       success: function (response) {
-        console.log(response);
+        //console.log(response);
         response = JSON.parse(response);
         console.log("restriced: " + response);
-        //Add a tr for each form to formTable
+
         response.forEach(element => {
           console.log(element);
           if (element.Name == null) { element.Name = "Névtelen"; }
           if (element.Status == 1) {
-            element.Status = "Igen";
+            element.Status = "Kitölthető";
           } else {
-            element.Status = "Nem";
+            element.Status = "Zárolt";
           }
-          $(".formTable tbody").append('<tr><td>' + element.Name + '</td><td>' + element.Status + '</td><td><a class="btn btn-primary" href="#" role="button">Kitöltöm</a></td><td></td></tr>');
-          if (element.Status != "Igen") {
-            //remove the a tag
-            $(".formTable tbody tr:last .btn").remove();
-          }
-          if (<?php echo in_array("admin", $_SESSION["groups"]) ? "true" : "false" ?>) {
-            $(".formTable tbody tr td:last").prev().append('<button class="btn btn-warning noprint mb-2 mr-sm-2" onclick=editForm(' + element.ID + ')><i class="fas fa-highlighter fa-lg"></i> Szerkeszt</button>');
-            $(".formTable tbody tr td:last").prev().append('<button class="btn btn-info noprint mb-2 mr-sm-2" onclick=showFormAnswers(' + element.ID + ')><i class="fas fa-check fa-lg"></i>Válaszok</button>');
-            $(".formTable tbody tr td:last").append(element.AccessRestrict);
-          }
+
+          createCard(element.ID, element.Name, element.Status, "Korlátozott");
         });
       }
     });
@@ -184,20 +197,11 @@ include("../translation.php"); ?>
           console.log(element);
           if (element.Name == null) { element.Name = "Névtelen"; }
           if (element.Status == 1) {
-            element.Status = "Igen";
+            element.Status = "Kitölthető";
           } else {
-            element.Status = "Nem";
+            element.Status = "Zárolt";
           }
-          $(".formTable tbody").append('<tr table-success><td>' + element.Name + '</td><td>' + element.Status + '</td><td><button class="btn btn-primary noprint mb-2 mr-sm-2" onclick="openForm(' + element.ID + ')">Kitöltöm</></td><td></td></tr>');
-          if (element.Status != "Igen") {
-            //remove the a tag
-            $(".formTable tbody tr:last .btn").remove();
-          }
-          if (<?php echo in_array("admin", $_SESSION["groups"]) ? "true" : "false" ?>) {
-            $(".formTable tbody tr td:last").prev().append('<button class="btn btn-warning noprint mb-2 mr-sm-2" onclick=editForm(' + element.ID + ')><i class="fas fa-highlighter fa-lg"></i> Szerkeszt</button>');
-            $(".formTable tbody tr td:last").prev().append('<button class="btn btn-info noprint mb-2 mr-sm-2" onclick=showFormAnswers(' + element.ID + ')><i class="fas fa-check fa-lg"></i> Válaszok</button>');
-            $(".formTable tbody tr td:last").append(element.AccessRestrict);
-          }
+          createCard(element.ID, element.Name, element.Status, "Publikus");
         });
       }
     });

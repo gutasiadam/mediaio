@@ -308,6 +308,7 @@ button.mediaBlue {
     #submit-retrieve {
         align-items: center;
         justify-content: center;
+
         #intact {
             width: 70dvw;
             max-width: 400px;
@@ -1059,7 +1060,7 @@ table {
 
     &:after {
         content: "";
-        background-image: url(http://simpleicon.com/wp-content/uploads/multy-user.png);
+        /* background-image: url(http://simpleicon.com/wp-content/uploads/multy-user.png); */
         background-size: 100px 100px;
         background-repeat: no-repeat;
         background-position: 152px -16px;
@@ -1367,4 +1368,54 @@ nav .navbarPhP {
     font-style: italic;
     display: block;
     text-align: center;
+}
+
+/* FORMS */
+
+#editorZone {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+}
+
+.form-member {
+    display: flex;
+    flex-direction: row;
+    vertical-align: middle;
+
+    .form-control {
+        margin-bottom: 5px;
+    }
+}
+
+.element-nav {
+    display: flex;
+    flex-direction: column;
+    vertical-align: middle;
+}
+
+.element-settings {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+#form-container {
+    display: flex;
+    flex-direction: column;
+    max-width: 800px;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
+
+    #submit {
+        width: 100%;
+    }
+}
+
+#form-body {
+    margin-right: 0;
+    margin-left: 0;
 }
