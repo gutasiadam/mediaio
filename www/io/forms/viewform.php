@@ -4,74 +4,109 @@ include("header.php");
 include("../translation.php"); ?>
 <html>
 
-<h2 class="rainbow" id="form_name"></h2>
-<div class="container" id="form-container">
-   <div class="row form-control" id="form-body">
+<body>
 
-   </div>
+   <div class="container" id="form-container">
+      <div class="row form-control" id="form-body">
+         <h2 class="rainbow" id="form_name"></h2>
+         <h5 id="form_header"></h5>
+      </div>
 
-   <div class="row">
-      <div class="col" id="submit">
-         <button class='btn btn-lg btn-success' type='submit' name='submit' onclick="submitAnswer()">Leadás</button>
+      <div class="row">
+         <div class="col" id="submit">
+         </div>
       </div>
    </div>
-</div>
 
-
+</body>
 <script>
    $(document).ready(function () {
-      //Load form from server
-      console.log(<?php echo $_GET['formId'] ?>);
-      $.ajax({
-         type: "POST",
-         url: "../formManager.php",
-         data: { mode: "viewForm", id: <?php echo $_GET['formId'] ?> },
-         success: function (data) {
-            console.log(data);
-            //if data is 404, redirect to index.php
-            if (data == 404) {
-               window.location.href = "index.php?invalidID";
+
+      if (<?php if (isset($_GET['success'])) {
+         echo "1";
+      } else {
+         echo "0";
+      } ?>) {
+         document.getElementById("form_name").innerHTML = "Sikeres leadás!";
+         document.getElementById("form_header").innerHTML = "Köszönjük, hogy kitöltötte a kérdőívet!";
+      } else {
+         //Load form from server
+         console.log(<?php echo $_GET['formId'] ?>);
+         $.ajax({
+            type: "POST",
+            url: "../formManager.php",
+            data: { mode: "viewForm", id: <?php echo $_GET['formId'] ?> , userIp: '<?php echo $_SERVER['REMOTE_ADDR'] ?>'},
+            success: function (data) {
+               console.log(data);
+               //if data is 404, redirect to index.php
+               if (data == 404) {
+                  window.location.href = "index.php?invalidID";
+               }
+               else if (data == 500) {
+                  window.location.href = "index.php?closedForm";
+               }
+               var form = JSON.parse(data);
+               var formElements = JSON.parse(form.Data);
+               console.log(formElements);
+               var formName = form.Name;
+               //Set form Name and header
+               document.getElementById("form_name").innerHTML = formName;
+               document.getElementById("form_header").innerHTML = form.Header;
+
+               formContainer = document.getElementById("form-body");
+
+               //Set background
+               document.body.style.backgroundImage = "url(../forms/backgrounds/" + form.Background + ")";
+               document.body.style.backgroundSize = "cover";
+               document.body.style.backgroundPosition = "center";
+               //Load form elements
+               for (var pos = 1; pos <= formElements.length; pos++) {
+                  for (var j = 0; j < formElements.length; j++) {
+                     if (formElements[j].place == pos) {
+                        var element = formElements[j];
+                     }
+                  }
+                  console.log(element);
+
+                  var elementType = element.type;
+                  var elementId = element.id;
+                  var elementPlace = element.place;
+                  var elementSettings = element.settings;
+
+
+                  //Add settings, where possible
+                  console.log("Id: " + elementId + " Place:" + elementPlace + " Type: " + elementType + " Settings: " + elementSettings);
+                  formContainer.appendChild(generateElement(elementType, elementId, elementPlace, elementSettings));
+
+               }
+
+               var submit = document.createElement("button");
+               submit.classList.add("btn", "btn-lg", "btn-success");
+               submit.innerHTML = "Leadás";
+               submit.onclick = function () { submitAnswer() };
+               document.getElementById("submit").appendChild(submit);
+
             }
-            var form = JSON.parse(data);
-            var formElements = JSON.parse(form.Data);
-            console.log(formElements);
-            var formName = form.Name;
-            //Set form Name
-            document.getElementById("form_name").innerHTML = formName;
-
-            formContainer = document.getElementById("form-body");
-            //Load form elements
-            for (var j = 0; j < formElements.length; j++) {
-               var element = formElements[j];
-               console.log(element);
-               var elementType = element.type;
-               var elementId = element.id;
-               var elementSettings = element.settings;
-
-
-
-               //Add settings, where possible
-               console.log("Id: " + elementId + " Type: " + elementType + " Settings: " + elementSettings);
-               formContainer.appendChild(generateElement(elementType, elementId, elementSettings));
-
-            }
-         }
-      })
+         })
+      };
    });
 
 
 
-   function generateElement(type, id, settings) {
+   function generateElement(type, id, place, settings) {
       var div = document.createElement("div");
       div.id = type + "-" + id;
+      div.setAttribute('data-position', place);
       div.classList.add("mb-3");
 
       var question = document.createElement("label");
       question.for = id;
-      if (settings == "") {
-         question.innerHTML = "Kérdés";
-      } else {
+      question.innerHTML = "Kérdés";
+      if (settings != "") {
          question.innerHTML = settings;
+         if (type == "checkbox" || type == "radio") {
+            question.innerHTML = JSON.parse(settings).name;
+         }
       }
       div.appendChild(question);
 
@@ -110,10 +145,36 @@ include("../translation.php"); ?>
             div.appendChild(input);
             break;
 
+         case "radio":
+            var radioHolder = document.createElement("div");
+            radioHolder.classList.add("radio-holder");
+            if (settings == "") {
+               radioHolder.append(listCheckOpt("radio", id, "", 0));
+            } else {
+               for (var i = 0; i < JSON.parse(settings).options.length; i++) {
+                  radioHolder.append(listCheckOpt("radio", id, JSON.parse(settings).options[i], i));
+               }
+            }
+            div.appendChild(radioHolder);
+            break;
+
          case "checkbox":
+            var checkboxHolder = document.createElement("div");
+            checkboxHolder.classList.add("checkbox-holder");
+            if (settings == "") {
+               checkboxHolder.append(listCheckOpt("checkbox", id, "", 0));
+            } else {
+               for (var i = 0; i < JSON.parse(settings).options.length; i++) {
+                  checkboxHolder.append(listCheckOpt("checkbox", id, JSON.parse(settings).options[i], i));
+               }
+            }
+            div.appendChild(checkboxHolder);
+            break;
+
+         case "fileUpload":
             var input = document.createElement("input");
-            input.type = "checkbox";
-            input.classList.add("form-check-input");
+            input.type = "file";
+            input.classList.add("form-control");
             input.id = id;
             div.appendChild(input);
             break;
@@ -121,6 +182,28 @@ include("../translation.php"); ?>
       return div;
    }
 
+   function listCheckOpt(type, id, settings, optionNum) {
+      var div = document.createElement("div");
+      div.classList.add("form-check");
+      div.setAttribute('data-option', optionNum);
+
+      var input = document.createElement("input");
+      input.type = type;
+      input.classList.add("form-check-input");
+      if (type == "radio") {
+         input.name = "flexRadioDefault";
+      }
+      input.id = id;
+      div.appendChild(input);
+
+      var label = document.createElement("label");
+      label.classList.add("form-check-label");
+      label.for = id;
+      label.innerHTML = settings;
+      div.appendChild(label);
+
+      return div;
+   }
 
    function addFormElement(type) {
       i++;
@@ -140,16 +223,21 @@ include("../translation.php"); ?>
          }
          answers.push(answer);
       }
-      console.log(answers);
-      console.log(JSON.stringify(answers));
+      //console.log(answers);
+      //console.log(JSON.stringify(answers));
+      var uid = <?php if ($_SESSION['userId'] != null) {
+         echo $_SESSION['userId'];
+      } else {
+         echo "0";
+      } ?>;
       $.ajax({
          type: "POST",
          url: "../formManager.php",
-         data: { mode: "submitAnswer", uid: 0, id: <?php echo $_GET['formId'] ?>, answers: JSON.stringify(answers) },
+         data: { mode: "submitAnswer", uid: uid, userIp: '<?php echo $_SERVER['REMOTE_ADDR'] ?>', id: <?php echo $_GET['formId'] ?>, answers: JSON.stringify(answers) },
          success: function (data) {
-            /* console.log(data); */
+            console.log(data);
             if (data == 200) {
-               window.location.href = "viewform.php";
+               window.location.href = "viewform.php?formId=<?php echo $_GET['formId'] ?>&success";
             } else {
                alert("Sikertelen leadás");
             }

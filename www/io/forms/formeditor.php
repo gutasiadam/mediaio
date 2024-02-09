@@ -7,7 +7,7 @@ include("../translation.php"); ?>
 
 <?php if (isset($_SESSION["userId"]) && in_array("admin", $_SESSION["groups"])) { ?>
    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-      <a class="navbar-brand" href="../index.php">
+      <a class="navbar-brand" href="./index.php">
          <img src="../utility/logo2.png" height="50">
       </a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
@@ -37,7 +37,7 @@ include("../translation.php"); ?>
                window.onload = function () {
                   display = document.querySelector('#time');
                   var timeUpLoc = "../utility/userLogging.php?logout-submit=y"
-                  startTimer(display, timeUpLoc);
+                  startTimer(display, timeUpLoc, 60);
                };
             </script>
          </form>
@@ -87,6 +87,44 @@ include("../translation.php"); ?>
    </div>
    <!-- End of Clear Modal -->
 
+   <!-- Settings Modal -->
+   <div class="modal fade" id="settings_Modal" tabindex="-1" role="dialog" aria-labelledby="settings_ModalLabel"
+      aria-hidden="true">
+      <div class="modal-dialog" role="document">
+         <div class="modal-content">
+            <div class="modal-header">
+               <h5 class="modal-title" id="exampleModalLabel">Beállítások</h5>
+               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+               <label for="cars">Form állapota:</label>
+               <select class="form-select form-select-sm" id="formState" name="formState">
+                  <option value="0">Szerkesztés alatt</option>
+                  <option value="1">Fogad válaszokat</option>
+                  <option value="2">Nem fogad válaszokat</option>
+               </select>
+               </br>
+               Csak nem szerkesztés alatt levő form esetén:
+               <select class="form-select form-select-sm" id="accessRestrict" name="accessRestrict">
+                  <option value="1">Privát</option>
+                  <option value="0">Publikus</option>
+               </select>
+               <br>
+               <label for="background_img">Háttérkép: <a href="./backgrounds/default.png">(alapértelmezett)</a></label>
+               <input type="file" class="form-control" name="fileToUpload" id="background_img" accept="image/*">
+               <button class="btn btn-success" type="submit" onclick="changeBackground()">Feltöltés</button>
+               <button class="btn btn-danger" onclick="changeBackground(true)">Törlés</button>
+            </div>
+            <div class="modal-footer">
+               <button class="btn btn-success col-lg-auto mb-1" id="save" data-bs-dismiss="modal"
+                  onclick="saveForm()">Mentés</button>
+               <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Mégse</button>
+            </div>
+         </div>
+      </div>
+   </div>
+   <!-- End of Settings Modal -->
+
    <div class="toast-container position-absolute p-3 indexToasts">
       <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" id="save_toast">
          <div class="toast-header">
@@ -96,75 +134,58 @@ include("../translation.php"); ?>
          </div>
       </div>
    </div>
-   <div>
+   <div id="form-header">
       <h2 class="rainbow" id="form_name" style="cursor: pointer;"></h2>
+      <input class="form-control" id="description"></input>
    </div>
    <div class="container">
-      <div class="row">
-         <div class="col-4">
-            <h6>Elemek</h6>
-            <div class="dropdown" id="tools">
-               <button class="btn btn-success dropdown-toggle" type="button" data-bs-toggle="dropdown"
-                  aria-expanded="false">
-                  Új hozzáadása
-               </button>
-               <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="#" onclick="addFormElement('email')"><i class="fas fa-at fa-2x"></i>
-                        E-Mail</a>
-                  </li>
-                  <li><a class="dropdown-item" href="#" onclick="addFormElement('date')"><i
-                           class="fas fa-calendar-alt fa-2x"></i> Dátum</a></li>
-                  <!--
-                  <li><a class="dropdown-item" href="#"><span draggable="false" ondragstart="drag(event)"
-                           class="date_time toolIcon clickableIcon" name="Idő"><i
-                              class="fas fa-clock fa-2x"></i></span></a></li>
-                  <li><a class="dropdown-item" href="#"> <span draggable="false" ondragstart="drag(event)"
-                           class="heading toolIcon clickableIcon" name="Szakaszcím"><i
-                              class="fas fa-heading fa-2x"></i></span></a></li>
-                  <li><a class="dropdown-item" href="#"><span draggable="false" ondragstart="drag(event)"
-                           class="paragraph toolIcon clickableIcon" name="Szakasz bekezdés"><i
-                              class="fas fa-paragraph fa-2x"></i></span></a></li> -->
-                  <li><a class="dropdown-item" href="#" onclick="addFormElement('shortText')"><i
-                           class="fas fa-grip-lines fa-2x"></i> Rövid szöveg</a></li>
-                  <li><a class="dropdown-item" href="#" onclick="addFormElement('longText')"><i
-                           class="fas fa-align-justify fa-2x"></i> Hosszú szöveg</a></li>
-                  <li><a class="dropdown-item" href="#" onclick="addFormElement('')"><span draggable="false"
-                           ondragstart="drag(event)" class="radio toolIcon clickableIcon" name="Feleletválasztós"><i
-                              class="fas fa-circle fa-2x"></i></span> Feleletválasztós</a></li>
-                  <li><a class="dropdown-item" href="#" onclick="addFormElement('checkbox')"><i
-                           class="far fa-check-square fa-2x"></i> Jelölőnégyzet</a>
-                  </li>
-                  <li><a class="dropdown-item" href="#"><span draggable="false" ondragstart="drag(event)"
-                           class="dropdown toolIcon clickableIcon" name="Legördülő lista"><i
-                              class="fas fa-arrow-circle-down fa-2x"></i></span> Legördülő lista</a></li>
-                  <li><a class="dropdown-item" href="#"><span draggable="false" ondragstart="drag(event)"
-                           class="scale toolIcon clickableIcon" name="Lineáris skála"><i
-                              class="fas fa-sort-numeric-up fa-2x"></i></span> Lineáris skála</a></li>
-               </ul>
-            </div>
-            <h6>Form - ID:
-               <?php echo $_GET['formId'] ?>
-            </h6>
-            <button class="btn btn-primary" onclick="saveForm()">Mentés</button>
-            <button class="btn btn-danger" onclick="showDeleteModal()">Törlés</button>
-            </br>
-            <label for="cars">Form állapota:</label>
-            <select class="form-select form-select-sm" id="formState" name="formState">
-               <option value="2">Szerkesztés alatt</option>
-               <option value="1">Fogad válaszokat</option>
-               <option value="0">Nem fogad válaszokat</option>
-            </select>
-            </br>
-            Csak nem szerkesztés alatt levő form esetén:
-            <select class="form-select form-select-sm" id="accessRestrict" name="accessRestrict">
-               <option value="private">Privát</option>
-               <option value="public">Publikus</option>
-            </select>
-
+      <div class="row" id="form-option-buttons">
+         <div class="dropdown" id="tools">
+            <button class="btn btn-success dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+               Új hozzáadása
+            </button>
+            <ul class="dropdown-menu">
+               <li><a class="dropdown-item" href="#" onclick="addFormElement('email')"><i class="fas fa-at fa-2x"></i>
+                     E-Mail</a>
+               </li>
+               <li><a class="dropdown-item" href="#" onclick="addFormElement('date')"><i
+                        class="fas fa-calendar-alt fa-2x"></i> Dátum</a></li>
+               <li><a class="dropdown-item" href="#" onclick="addFormElement('shortText')"><i
+                        class="fas fa-grip-lines fa-2x"></i> Rövid szöveg</a></li>
+               <li><a class="dropdown-item" href="#" onclick="addFormElement('longText')"><i
+                        class="fas fa-align-justify fa-2x"></i> Hosszú szöveg</a></li>
+               <li><a class="dropdown-item" href="#" onclick="addFormElement('radio')"><i class="fas fa-circle fa-2x"></i>
+                     Feleletválasztós</a></li>
+               <li><a class="dropdown-item" href="#" onclick="addFormElement('checkbox')"><i
+                        class="far fa-check-square fa-2x"></i> Jelölőnégyzet</a>
+               </li>
+               <li><a class="dropdown-item" href="#" onclick="addFormElement('fileUpload')"><i
+                        class="fas fa-file fa-2x"></i> Fájl feltöltés</a>
+               </li>
+               <!--
+   <li><a class="dropdown-item" href="#"><span draggable="false" ondragstart="drag(event)"
+            class="date_time toolIcon clickableIcon" name="Idő"><i
+               class="fas fa-clock fa-2x"></i></span></a></li>
+   <li><a class="dropdown-item" href="#"> <span draggable="false" ondragstart="drag(event)"
+            class="heading toolIcon clickableIcon" name="Szakaszcím"><i
+               class="fas fa-heading fa-2x"></i></span></a></li>
+   <li><a class="dropdown-item" href="#"><span draggable="false" ondragstart="drag(event)"
+            class="paragraph toolIcon clickableIcon" name="Szakasz bekezdés"><i
+               class="fas fa-paragraph fa-2x"></i></span></a></li> -->
+               <!-- <li><a class="dropdown-item" href="#"><span draggable="false" ondragstart="drag(event)"
+            class="dropdown toolIcon clickableIcon" name="Legördülő lista"><i
+               class="fas fa-arrow-circle-down fa-2x"></i></span> Legördülő lista</a></li>
+   <li><a class="dropdown-item" href="#"><span draggable="false" ondragstart="drag(event)"
+            class="scale toolIcon clickableIcon" name="Lineáris skála"><i
+               class="fas fa-sort-numeric-up fa-2x"></i></span> Lineáris skála</a></li> -->
+            </ul>
          </div>
-         <div class="col-8" id="editorZone">
+         <button class="btn btn-primary" onclick="saveForm()">Mentés</button>
+         <button class="btn btn-danger" onclick="showDeleteModal()">Törlés</button>
+         <button class="btn" onclick="showSettingsModal()"><i class="fas fa-sliders-h fa-lg"></i></button>
+      </div>
+      <div class="row" id="editorZone">
 
-         </div>
       </div>
    </div>
 
@@ -180,6 +201,10 @@ include("../translation.php"); ?>
 
    function showDeleteModal() {
       $('#delete_Modal').modal('show');
+   }
+
+   function showSettingsModal() {
+      $('#settings_Modal').modal('show');
    }
 
    var i = 0;
@@ -211,6 +236,7 @@ include("../translation.php"); ?>
             var formElements = JSON.parse(form.Data);
             var formName = form.Name;
 
+            console.log(formElements);
             //Set form state
             document.getElementById("formState").value = formStatus;
 
@@ -218,7 +244,8 @@ include("../translation.php"); ?>
             document.getElementById("accessRestrict").value = formAccess;
 
             //Set form Name
-            document.getElementById("form_name").innerHTML = formName + '&nbsp<i class="fas fa-edit fa-xs" style="color: #747b86"></i>'
+            document.getElementById("form_name").innerHTML = formName + '&nbsp<i class="fas fa-edit fa-xs" style="color: #747b86"></i>';
+            document.getElementById("description").value = form.Header;
 
             formContainer = document.getElementById("editorZone");
             //Load form elements
@@ -266,8 +293,11 @@ include("../translation.php"); ?>
       question.placeholder = "Kérdés...";
       question.classList.add("form-control");
       question.for = id;
-      if (settings != "" && type != "checkbox") {
-         question.value = settings;
+      if (settings != "") {
+            question.value = settings;
+         if (type == "checkbox" || type == "radio") {
+            question.value = JSON.parse(settings).name;
+         }
       }
       uidiv.appendChild(question);
 
@@ -310,23 +340,53 @@ include("../translation.php"); ?>
             uidiv.appendChild(input);
             break;
 
+         case "radio":
+            var radioHolder = document.createElement("div");
+            radioHolder.classList.add("radio-holder");
+            if (settings == "") {
+               radioHolder.append(listCheckOpt("radio", id, "", 0));
+            } else {
+               for (var i = 0; i < JSON.parse(settings).options.length; i++) {
+                  radioHolder.append(listCheckOpt("radio", id, JSON.parse(settings).options[i], i));
+               }
+            }
+            var addRadio = document.createElement("button");
+            addRadio.classList.add("btn", "btn-success", "btn-sm");
+            addRadio.innerHTML = "+";
+            addRadio.onclick = function () {
+               radioHolder.append(listCheckOpt("radio", id, "", i++));
+            };
+            uidiv.appendChild(radioHolder);
+            uidiv.appendChild(addRadio);
+            break;
+
          case "checkbox":
             var checkboxHolder = document.createElement("div");
-            checkboxHolder.classList.add("form-check");
-            for (var i = 0; i < settings.length; i++) {
-               checkboxHolder.prepend(listCheckboxOptions(id, settings));
-            }
+            checkboxHolder.classList.add("checkbox-holder");
             if (settings == "") {
-               checkboxHolder.prepend(listCheckboxOptions(id, ""));
+               checkboxHolder.append(listCheckOpt("checkbox", id, "", 0));
+            } else {
+               for (var i = 0; i < JSON.parse(settings).options.length; i++) {
+                  checkboxHolder.append(listCheckOpt("checkbox", id, JSON.parse(settings).options[i], i));
+               }
             }
             var addCheckbox = document.createElement("button");
             addCheckbox.classList.add("btn", "btn-success", "btn-sm");
-            addCheckbox.innerHTML = "Új opció";
+            addCheckbox.innerHTML = "+";
             addCheckbox.onclick = function () {
-                  checkboxHolder.prepend(listCheckboxOptions(id, ""));
+               checkboxHolder.append(listCheckOpt("checkbox", id, "", i++));
             };
-            checkboxHolder.appendChild(addCheckbox);
             uidiv.appendChild(checkboxHolder);
+            uidiv.appendChild(addCheckbox);
+            break;
+
+         case "fileUpload":
+            var input = document.createElement("input");
+            input.type = "file";
+            input.classList.add("form-control");
+            input.id = id;
+            input.disabled = true;
+            uidiv.appendChild(input);
             break;
 
       }
@@ -373,12 +433,13 @@ include("../translation.php"); ?>
    };
 
 
-   function listCheckboxOptions(id, settings) {
+   function listCheckOpt(type, id, settings, optionNum) {
       var div = document.createElement("div");
       div.classList.add("form-check");
+      div.setAttribute('data-option', optionNum);
 
       var input = document.createElement("input");
-      input.type = "checkbox";
+      input.type = type;
       input.classList.add("form-check-input");
       input.disabled = true;
       input.id = id;
@@ -390,28 +451,44 @@ include("../translation.php"); ?>
       label.placeholder = "Opció";
       label.value = settings;
       div.appendChild(label);
+
+      var deleteButton = document.createElement("button");
+      deleteButton.classList.add("btn", "btn-danger", "btn-sm");
+      deleteButton.innerHTML = "X";
+      deleteButton.onclick = function () {
+         div.remove();
+      };
+      div.appendChild(deleteButton);
       return div;
    }
 
-   function getCheckboxSettings(id) {
-      var maindiv = document.getElementById("checkbox-" + id);
-      var elementSettings = [];
+   function getCheckSettings(type, id) {
+      var maindiv = document.getElementById(type + "-" + id);
       var question = maindiv.querySelector("#e-settings").getElementsByTagName("input")[0].value;
-      elementSettings.push(question);
 
-      for (var i = 0; i < maindiv.querySelector("#e-settings").getElementsByTagName("div")[0].getElementsByTagName("input").length; i++) {
-         elementSettings.push(maindiv.querySelector("#e-settings"));
+
+      var checkboxOptions = [];
+      var checkbox_holder = maindiv.querySelectorAll('.' + type + '-holder input[placeholder="Opció"]');
+      for (var i = 0; i < checkbox_holder.length; i++) {
+         checkboxOptions.push(checkbox_holder[i].value);
       }
 
-      console.log("Element settings: " + elementSettings);
-      //jsonSettings = JSON.stringify(elementSettings);
-      return elementSettings;
+      var elementSettings = {
+         "name": question,
+         "options": checkboxOptions
+      };
+
+      var jsonSettings = JSON.stringify(elementSettings);
+      var jsonWithBackslashes = jsonSettings.replace(/"/g, '\\"');
+
+      console.log("Element settings: " + jsonWithBackslashes);
+      return jsonWithBackslashes;
    }
 
 
    function getElementSettings(type, id) {
-      if (type == "checkbox") {
-         return getCheckboxSettings(id);
+      if (type == "checkbox" || type == "radio") {
+         return getCheckSettings(type, id);
       }
       var maindiv = document.getElementById(type + "-" + id);
       var elementSettings = maindiv.querySelector("#e-settings").getElementsByTagName("input")[0].value;
@@ -446,6 +523,53 @@ include("../translation.php"); ?>
    }
 
 
+   function changeBackground(clear) {
+
+      if (clear) {
+         var formId = <?php echo $_GET['formId'] ?>;
+         $.ajax({
+            type: "POST",
+            url: "../formManager.php",
+            data: { mode: "changeBackground", id: formId, name: "default.png" },
+            success: function (data) {
+               console.log(data);
+            }
+         });
+         return;
+      }
+
+      var file_data = $('#background_img').prop('files')[0];
+      var formId = <?php echo $_GET['formId'] ?>;
+
+      var form_data = new FormData();
+      form_data.append('fileToUpload', file_data);
+      form_data.append('formId', formId);
+
+      $.ajax({
+         url: './upload-handler.php', // point to server-side PHP script
+         dataType: 'text', // what to expect back from the PHP script
+         cache: false,
+         contentType: false,
+         processData: false,
+         data: form_data,
+         type: 'POST',
+         success: function (response) {
+
+            console.log(response);
+            $.ajax({
+               type: "POST",
+               url: "../formManager.php",
+               data: { mode: "changeBackground", id: formId, name: response },
+               success: function (data) {
+                  console.log(data);
+               }
+            });
+         }
+      });
+
+   }
+
+
 
    // //Every 10 seconds, save the form
    // setInterval(function(){
@@ -470,7 +594,7 @@ include("../translation.php"); ?>
       for (var k = 0; k < elements.length; k++) {
          var elementType = elements[k].id.split("-")[0];
          var elementId = elements[k].id.split("-")[1];
-         var elementPlace = elements[k].getAttribute('data-position');
+         var elementPlace = k + 1;
          var elementSettings = getElementSettings(elementType, elementId);
 
 
@@ -493,11 +617,13 @@ include("../translation.php"); ?>
 
       var formState = document.getElementById("formState").value;
       var accessRestrict = document.getElementById("accessRestrict").value;
+      var formHeader = document.getElementById("description").value;
+
       //Send form to server
       $.ajax({
          type: "POST",
          url: "../formManager.php",
-         data: { form: formJson, formState: formState, accessRestrict: accessRestrict, mode: "save", id: <?php echo $_GET['formId'] ?> },
+         data: { form: formJson, formState: formState, formHeader: formHeader, accessRestrict: accessRestrict, mode: "save", id: <?php echo $_GET['formId'] ?> },
          success: function (data) {
             console.log(data);
 

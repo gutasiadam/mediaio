@@ -48,17 +48,17 @@ include("../translation.php"); ?>
 
 
 
-  <h2 class="rainbow">Kitölthető kérdőívek</h2>
+  <h2 class="rainbow">Kérdőívek</h2>
   <?php if (in_array("admin", $_SESSION["groups"])) {
 
       // A szerkesztés alatt levő formokat is megjelenítjük
 //TODO
     } ?>
-  <div class="container" id="available_forms">
+  <div class="container">
     <div class="row" id="admin_opt">
 
     </div>
-    <div class="row">
+    <div class="row" id="available_forms">
 
     </div>
   </div>
@@ -68,8 +68,10 @@ include("../translation.php"); ?>
 } else {
   echo "<h1 class='rainbow'>Árpád Média - Kitölthető kérdőívek</h1>";
   ?>
-  <div class="container" id="available_forms">
+  <div class="container">
+    <div class="row" id="available_forms">
 
+    </div>
   </div>
   <?php
 }
@@ -84,22 +86,29 @@ include("../translation.php"); ?>
 <script>
   //onload
   $(document).ready(function () {
+
+    if (<?php echo isset($_GET['invalidID']) ? "true" : "false" ?>) {
+      alert("Nem létező kérdőív");
+    }
+
+    if (<?php echo isset($_GET['closedForm']) ? "true" : "false" ?>) {
+      alert("A kérdőív lezárásra került");
+    }
     //If user is admin
     if (<?php echo in_array("admin", $_SESSION["groups"]) ? "true" : "false" ?>) {
       $("#admin_opt").append('<button class="btn btn-success noprint mb-2 mr-sm-2" onclick=createNewForm()><i class="fas fa-plus fa-lg"></i></button>');
       //Everything that happens on load, when user is admin
-      listEditingPhaseForms();
+      listForms(2, 0);
 
     }
 
     //If user is logged in
-    if (<?php echo isset($_SESSION["userId"]) ? "true" : "false" ?>) {
+    else if (<?php echo isset($_SESSION["userId"]) ? "true" : "false" ?>) {
       //Everything that happens on load, when user is logged in
-      listRestrictedForms();
-      listPublicForms();
+      listForms(1, 2);
     } else {
       //Everything that happens on load, when user is not logged in
-      listPublicForms();
+      listForms(0, 1);
     }
     //Make an ajax call to formManager.php
 
@@ -109,10 +118,18 @@ include("../translation.php"); ?>
     window.location.href = "formanswers.php?formId=" + formId;
   }
 
-  function createCard(formId, formName, formStatus, formAccessRestrict) {
+  function createCard(formId, formName, formStatus, StillEditing, formAccessRestrict, backgroundImg) {
     var card = document.createElement("div");
-    card.style = "width: 18rem;";
     card.className = "card";
+
+    var img = document.createElement("img");
+    img.className = "card-img-top";
+    img.src = backgroundImg;
+    img.height = "100";
+    if (backgroundImg == "") {
+      img.src = "https://via.placeholder.com/100";
+    }
+    card.appendChild(img);
 
     var cardBody = document.createElement("div");
     cardBody.className = "card-body";
@@ -120,100 +137,68 @@ include("../translation.php"); ?>
     var cardTitle = document.createElement("h5");
     cardTitle.className = "card-title";
     cardTitle.innerHTML = formName;
+    cardBody.appendChild(cardTitle);
+
+
 
     var cardText = document.createElement("p");
     cardText.className = "card-text";
-    cardText.innerHTML = "Kitöltési státusz: " + formStatus + "<br>" + "Biztonság " + formAccessRestrict;
+    cardText.innerHTML = formStatus;
+    cardBody.appendChild(cardText);
+
+    var ButtonHolder = document.createElement("div");
+    ButtonHolder.className = "btn-group";
+    ButtonHolder.role = "group";
+
 
     var cardButton = document.createElement("button");
     cardButton.className = "btn btn-primary";
     cardButton.innerHTML = "Kitöltöm";
+    if (formStatus == "Lezárt") {
+      cardButton.disabled = true;
+    }
     cardButton.onclick = function () { openForm(formId) };
 
-    cardBody.appendChild(cardTitle);
-    cardBody.appendChild(cardText);
-    cardBody.appendChild(cardButton);
+
+    ButtonHolder.appendChild(cardButton);
 
     if (<?php echo in_array("admin", $_SESSION["groups"]) ? "true" : "false" ?>) {
       var editButton = document.createElement("button");
       editButton.className = "btn btn-warning noprint";
       editButton.innerHTML = "<i class='fas fa-highlighter fa-lg'></i> Szerkeszt";
       editButton.onclick = function () { editForm(formId) };
-      cardBody.appendChild(editButton);
+      ButtonHolder.appendChild(editButton);
 
       var showAnswersButton = document.createElement("button");
       showAnswersButton.className = "btn btn-info noprint";
       showAnswersButton.innerHTML = "<i class='fas fa-check fa-lg'></i> Válaszok";
       showAnswersButton.onclick = function () { showFormAnswers(formId) };
-      cardBody.appendChild(showAnswersButton);
-      
-      
+      ButtonHolder.appendChild(showAnswersButton);
+
+
     }
 
-
+    cardBody.appendChild(ButtonHolder);
     card.appendChild(cardBody);
+
+    if (<?php echo in_array("admin", $_SESSION["groups"]) ? "true" : "false" ?>) {
+      var cardFooter = document.createElement("div");
+      cardFooter.className = "card-footer text-body-secondary";
+      cardFooter.innerHTML = formAccessRestrict;
+      card.appendChild(cardFooter);
+    }
+
     console.log(card);
     document.getElementById("available_forms").appendChild(card);
   }
 
 
-  function listRestrictedForms() {
-    $.ajax({
-      url: "../formManager.php",
-      method: "POST",
-      data: { mode: "getRestrictedForms" }, //In the future, once we have group restrictions, this code needs to be updated.
-      success: function (response) {
-        //console.log(response);
-        response = JSON.parse(response);
-        console.log("restriced: " + response);
-
-        response.forEach(element => {
-          console.log(element);
-          if (element.Name == null) { element.Name = "Névtelen"; }
-          if (element.Status == 1) {
-            element.Status = "Kitölthető";
-          } else {
-            element.Status = "Zárolt";
-          }
-
-          createCard(element.ID, element.Name, element.Status, "Korlátozott");
-        });
-      }
-    });
-
-  }
-
-  function listPublicForms() {
-    $.ajax({
-      url: "../formManager.php",
-      method: "POST",
-      data: { mode: "getPublicForms" }, //In the future, once we have group restrictions, this code needs to be updated.
-      success: function (response) {
-        console.log(response);
-        response = JSON.parse(response);
-        console.log("public: " + response);
-        //Add a tr for each form to formTable
-        response.forEach(element => {
-          console.log(element);
-          if (element.Name == null) { element.Name = "Névtelen"; }
-          if (element.Status == 1) {
-            element.Status = "Kitölthető";
-          } else {
-            element.Status = "Zárolt";
-          }
-          createCard(element.ID, element.Name, element.Status, "Publikus");
-        });
-      }
-    });
-  }
-
-
   //List forms that are in editing phase
-  function listEditingPhaseForms() {
+  function listForms(formAccessRestrict, formState) {
     $.ajax({
       url: "../formManager.php",
       method: "POST",
-      data: { mode: "getEditingPhaseForms" },
+      data: { mode: "listForms", accessRestrict: formAccessRestrict, formState: formState },
       success: function (response) {
 
         response = JSON.parse(response);
@@ -222,7 +207,15 @@ include("../translation.php"); ?>
         response.forEach(element => {
           console.log(element);
           if (element.Name == null) { element.Name = "Névtelen" + i; i++; }
-          $("#admin_opt").append('<button class="btn btn-warning noprint mb-2 mr-sm-2" onclick=editForm(' + element.ID + ')><i class="fas fa-highlighter fa-lg"></i> ' + element.Name + '</button>');
+          if (element.AccessRestrict == "0") { element.AccessRestrict = "Publikus"; }
+          if (element.AccessRestrict == "1") { element.AccessRestrict = "Privát"; }
+
+          if (element.Status == "0") { element.Status = "Szerkesztés alatt"; }
+          if (element.Status == "1") { element.Status = "Kitölthető"; }
+          if (element.Status == "2") { element.Status = "Lezárt"; }
+
+          var Background = "./backgrounds/" + element.Background;
+          createCard(element.ID, element.Name, element.Status, true, element.AccessRestrict, Background);
         });
       }
     });
@@ -234,7 +227,7 @@ include("../translation.php"); ?>
       method: "POST",
       data: { mode: "createNewForm" },
       success: function (response) {
-        //console.log(response);
+        console.log(response);
         window.location.href = "formeditor.php?formId=" + response;
       }
     });
