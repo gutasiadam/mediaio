@@ -13,8 +13,6 @@ include("../translation.php"); ?>
       </div>
 
       <div class="row">
-         <div class="col" id="submit">
-         </div>
       </div>
    </div>
 
@@ -35,7 +33,7 @@ include("../translation.php"); ?>
          $.ajax({
             type: "POST",
             url: "../formManager.php",
-            data: { mode: "viewForm", id: <?php echo $_GET['formId'] ?> , userIp: '<?php echo $_SERVER['REMOTE_ADDR'] ?>'},
+            data: { mode: "viewForm", id: <?php echo $_GET['formId'] ?>, userIp: '<?php echo $_SERVER['REMOTE_ADDR'] ?>' },
             success: function (data) {
                console.log(data);
                //if data is 404, redirect to index.php
@@ -51,14 +49,30 @@ include("../translation.php"); ?>
                var formName = form.Name;
                //Set form Name and header
                document.getElementById("form_name").innerHTML = formName;
-               document.getElementById("form_header").innerHTML = form.Header;
+               document.getElementById("form_header").innerHTML = form.Header.replace(/\n/g, "<br>");
 
                formContainer = document.getElementById("form-body");
 
+
                //Set background
-               document.body.style.backgroundImage = "url(../forms/backgrounds/" + form.Background + ")";
-               document.body.style.backgroundSize = "cover";
-               document.body.style.backgroundPosition = "center";
+               var style = document.createElement('style');
+               style.innerHTML = `
+               body::before {
+               content: "";
+               position: fixed;
+               top: 0;
+               right: 0;
+               bottom: 0;
+               left: 0;
+               background-image: url(../forms/backgrounds/` + form.Background + `);
+               background-size: cover;
+               background-position: center;
+               z-index: -1;
+               }`;
+               document.head.appendChild(style);
+
+
+
                //Load form elements
                for (var pos = 1; pos <= formElements.length; pos++) {
                   for (var j = 0; j < formElements.length; j++) {
@@ -84,7 +98,7 @@ include("../translation.php"); ?>
                submit.classList.add("btn", "btn-lg", "btn-success");
                submit.innerHTML = "Leadás";
                submit.onclick = function () { submitAnswer() };
-               document.getElementById("submit").appendChild(submit);
+               formContainer.appendChild(submit);
 
             }
          })
@@ -94,20 +108,20 @@ include("../translation.php"); ?>
 
 
    function generateElement(type, id, place, settings) {
+      if (settings != "") {
+         var questionSetting = JSON.parse(settings).question;
+         var isRequired = JSON.parse(settings).required;
+         var CheckOptions = JSON.parse(settings).options;
+      }
       var div = document.createElement("div");
       div.id = type + "-" + id;
       div.setAttribute('data-position', place);
-      div.classList.add("mb-3");
+      div.classList.add("mb-3", "question");
 
       var question = document.createElement("label");
       question.for = id;
       question.innerHTML = "Kérdés";
-      if (settings != "") {
-         question.innerHTML = settings;
-         if (type == "checkbox" || type == "radio") {
-            question.innerHTML = JSON.parse(settings).name;
-         }
-      }
+      question.innerHTML = questionSetting;
       div.appendChild(question);
 
       console.log("Generating element: " + type);
@@ -116,7 +130,7 @@ include("../translation.php"); ?>
          case "email":
             var input = document.createElement("input");
             input.type = "email";
-            input.classList.add("form-control");
+            input.classList.add("form-control", "userInput");
             input.id = id;
             input.placeholder = "Írja be az email címét";
             div.appendChild(input);
@@ -124,14 +138,14 @@ include("../translation.php"); ?>
          case "date":
             var input = document.createElement("input");
             input.type = "date";
-            input.classList.add("form-control");
+            input.classList.add("form-control", "userInput");
             input.id = id;
             div.appendChild(input);
             break;
          case "shortText":
             var input = document.createElement("input");
             input.type = "text";
-            input.classList.add("form-control");
+            input.classList.add("form-control", "userInput");
             input.id = id;
             input.placeholder = "Rövid szöveg";
             div.appendChild(input);
@@ -139,7 +153,7 @@ include("../translation.php"); ?>
 
          case "longText":
             var input = document.createElement("textarea");
-            input.classList.add("form-control");
+            input.classList.add("form-control", "userInput");
             input.id = id;
             input.placeholder = "Hosszú szöveg";
             div.appendChild(input);
@@ -151,8 +165,8 @@ include("../translation.php"); ?>
             if (settings == "") {
                radioHolder.append(listCheckOpt("radio", id, "", 0));
             } else {
-               for (var i = 0; i < JSON.parse(settings).options.length; i++) {
-                  radioHolder.append(listCheckOpt("radio", id, JSON.parse(settings).options[i], i));
+               for (var i = 0; i < CheckOptions.length; i++) {
+                  radioHolder.append(listCheckOpt("radio", id, CheckOptions[i], i));
                }
             }
             div.appendChild(radioHolder);
@@ -164,8 +178,8 @@ include("../translation.php"); ?>
             if (settings == "") {
                checkboxHolder.append(listCheckOpt("checkbox", id, "", 0));
             } else {
-               for (var i = 0; i < JSON.parse(settings).options.length; i++) {
-                  checkboxHolder.append(listCheckOpt("checkbox", id, JSON.parse(settings).options[i], i));
+               for (var i = 0; i < CheckOptions.length; i++) {
+                  checkboxHolder.append(listCheckOpt("checkbox", id, CheckOptions[i], i));
                }
             }
             div.appendChild(checkboxHolder);
@@ -174,7 +188,7 @@ include("../translation.php"); ?>
          case "fileUpload":
             var input = document.createElement("input");
             input.type = "file";
-            input.classList.add("form-control");
+            input.classList.add("form-control", "userInput");
             input.id = id;
             div.appendChild(input);
             break;
@@ -189,11 +203,12 @@ include("../translation.php"); ?>
 
       var input = document.createElement("input");
       input.type = type;
-      input.classList.add("form-check-input");
+      input.classList.add("form-check-input", "userInput");
       if (type == "radio") {
          input.name = "flexRadioDefault";
       }
       input.id = id;
+      input.setAttribute('data-name', settings);
       div.appendChild(input);
 
       var label = document.createElement("label");
@@ -205,23 +220,37 @@ include("../translation.php"); ?>
       return div;
    }
 
-   function addFormElement(type) {
-      i++;
-      console.log("Adding form element: " + type);
-      document.getElementById("editorZone").appendChild(generateElement(type, i, ""));
-   };
-
    function submitAnswer() {
       var form = document.getElementById("form-body");
-      var elements = form.getElementsByTagName("input");
+
+      var elements = form.getElementsByClassName("question");
+
+      console.log(elements);
       var answers = [];
       for (var i = 0; i < elements.length; i++) {
          var element = elements[i];
+
+         var elementType = element.id.split("-")[0];
+         var inputs = element.getElementsByClassName("userInput");
+
+         var value = [];
+         if (elementType == "radio" || elementType == "checkbox") {
+            for (var j = 0; j < inputs.length; j++) {
+               value.push(inputs[j].checked);
+               value.push(inputs[j].getAttribute("data-name"));
+            }
+         } else {
+            value = inputs[0].value;
+         }
+
+         value = JSON.stringify(value);
+
          var answer = {
             id: element.id,
-            value: element.value
+            value: value
          }
          answers.push(answer);
+         console.log(answer);
       }
       //console.log(answers);
       //console.log(JSON.stringify(answers));
@@ -236,7 +265,9 @@ include("../translation.php"); ?>
          data: { mode: "submitAnswer", uid: uid, userIp: '<?php echo $_SERVER['REMOTE_ADDR'] ?>', id: <?php echo $_GET['formId'] ?>, answers: JSON.stringify(answers) },
          success: function (data) {
             console.log(data);
-            if (data == 200) {
+            if (data == 500) {
+               alert("Nem megengedett karakterek a válaszban!");
+            } else if (data == 200) {
                window.location.href = "viewform.php?formId=<?php echo $_GET['formId'] ?>&success";
             } else {
                alert("Sikertelen leadás");

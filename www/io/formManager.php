@@ -24,12 +24,12 @@ class formManager
   }
 
 
-  static function listForms($accessRestrict, $formState)
+  static function listForms()
   {
     $sql = "SELECT * FROM forms WHERE AccessRestrict='0';";
-    if (isset($_SESSION['userId']) && $accessRestrict == 2) {
-      $sql = "SELECT * FROM forms WHERE Status='" . $formState . "'";
-      if (in_array("admin", $_SESSION['groups']) && $accessRestrict == 2) {
+    if (isset($_SESSION['userId'])) {
+      $sql = "SELECT * FROM forms WHERE AccessRestrict IN ('0', '2');";
+      if (in_array("admin", $_SESSION['groups'])) {
         $sql = "SELECT * FROM forms";
       }
     }
@@ -132,6 +132,11 @@ class formManager
 
   static function submitAnswer($uid, $id, $ip, $answers)
   {
+    // Prevent SQL injection
+    if (preg_match('/[<>]/', $answers)) {
+      echo 500;
+      exit();
+    }
     $sql = "INSERT INTO `formanswers` (`ID`, `FormID`, `userID`, `userIp`, `UserAnswers`) VALUES (NULL,'" . $id . "','" . $uid . "','" . $ip . "','" . $answers . "');";
     $connection = Database::runQuery_mysqli();
     $connection->query($sql);
@@ -170,10 +175,7 @@ if (isset($_POST['mode'])) {
     exit();
   }
   if ($_POST['mode'] == 'listForms') {
-    echo formManager::listForms(
-      $_POST['accessRestrict'],
-      $_POST['formState'],
-    );
+    echo formManager::listForms();
     //echo $_POST['value'] ;
     //Header set.
     exit();

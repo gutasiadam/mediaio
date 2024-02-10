@@ -156,7 +156,7 @@ error_reporting(E_ERROR | E_PARSE);
       <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" id="service_toast">
         <div class="toast-header">
           <img src="./utility/logo.png" height="30">
-          <strong class="me-auto">  Üdv újra,
+          <strong class="me-auto"> Üdv újra,
             <?php echo $_SESSION['firstName']; ?>!
           </strong>
           <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
@@ -170,42 +170,43 @@ error_reporting(E_ERROR | E_PARSE);
     </div>
     <script type="text/javascript">
       $(document).ready(function () {
-        drawMenuItemsRight('index', menuItems);
-        drawIndexTable(menuItems, 0);
-      });
-      if (<?php echo in_array("admin", $_SESSION["groups"]) ?>) {
-        var userData = "<?php echo $_POST['user']; ?>";
-        $.ajax({
-          url: "../ItemManager.php",
-          type: "POST",
-          data: {
-            mode: "getProfileItemCounts",
-            user: userData
-          },
-          success: function (data) {
-            var dataArray = data.split(",");
-            console.log(dataArray);
-            //Set the user item count
-            //document.getElementById("userItemCount").innerHTML = dataArray[2];
-            //Set the usercheck count
-            if (dataArray[1] > 0) {
-              document.getElementById("usercheckItemCount").innerHTML = dataArray[1] + " esemény vár elfogadásra!";
-              let form = document.createElement('form');
-              form.action = "../profile/usercheck.php";
-              form.style = "width: fit-content; display: inline-block;";
-              form.innerHTML = '<button type="submit" class="btn btn-primary btn-sm">Vigyél oda!</button>';
-              document.getElementById("service_toast_footer").prepend(form);
-            }
-            //Set the service item count
-            //document.getElementById("serviceItemCount").innerHTML = dataArray[0];
+        if (<?php echo (isset($_GET["login"]) && $_GET["login"] == "success") ? "true" : "false " ?>) {
+          
+          if (<?php echo in_array("admin", $_SESSION["groups"]) ?>) {
+            var userData = "<?php echo $_POST['user']; ?>";
+            $.ajax({
+              url: "../ItemManager.php",
+              type: "POST",
+              data: {
+                mode: "getProfileItemCounts",
+                user: userData
+              },
+              success: function (data) {
+                var dataArray = data.split(",");
+                console.log(dataArray);
+                //Set the user item count
+                //document.getElementById("userItemCount").innerHTML = dataArray[2];
+                //Set the usercheck count
+                if (dataArray[1] > 0) {
+                  document.getElementById("usercheckItemCount").innerHTML = dataArray[1] + " esemény vár elfogadásra!";
+                  let form = document.createElement('form');
+                  form.action = "../profile/usercheck.php";
+                  form.style = "width: fit-content; display: inline-block;";
+                  form.innerHTML = '<button type="submit" class="btn btn-primary btn-sm">Vigyél oda!</button>';
+                  document.getElementById("service_toast_footer").prepend(form);
+                }
+                //Set the service item count
+                //document.getElementById("serviceItemCount").innerHTML = dataArray[0];
 
+              }
+
+            });
+            const toastLiveExample = document.getElementById('service_toast');
+            const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample, { delay: 8000 });
+            toastBootstrap.show();
           }
-
-        });
-        const toastLiveExample = document.getElementById('service_toast');
-        const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample, { delay: 8000 });
-        toastBootstrap.show();
-      }
+        }
+      });
     </script>
   <?php }
   //GET változók kezelése

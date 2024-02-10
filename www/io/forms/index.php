@@ -46,7 +46,26 @@ include("../translation.php"); ?>
     </div>
   </nav>
 
-
+  <!-- Clear Modal -->
+  <div class="modal fade" id="delete_Modal" tabindex="-1" role="dialog" aria-labelledby="delete_ModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Törlés</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <a>Biztosan ki akarod törölni a kérdőívet?</a>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-danger col-lg-auto mb-1" id="clear" data-bs-dismiss="modal">Törlés</button>
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Mégse</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- End of Clear Modal -->
 
   <h2 class="rainbow">Kérdőívek</h2>
   <?php if (in_array("admin", $_SESSION["groups"])) {
@@ -97,31 +116,41 @@ include("../translation.php"); ?>
     //If user is admin
     if (<?php echo in_array("admin", $_SESSION["groups"]) ? "true" : "false" ?>) {
       $("#admin_opt").append('<button class="btn btn-success noprint mb-2 mr-sm-2" onclick=createNewForm()><i class="fas fa-plus fa-lg"></i></button>');
-      //Everything that happens on load, when user is admin
-      listForms(2, 0);
-
-    }
-
-    //If user is logged in
-    else if (<?php echo isset($_SESSION["userId"]) ? "true" : "false" ?>) {
-      //Everything that happens on load, when user is logged in
-      listForms(1, 2);
-    } else {
-      //Everything that happens on load, when user is not logged in
-      listForms(0, 1);
     }
     //Make an ajax call to formManager.php
+    listForms();
 
   });
 
-  function showFormAnswers(formId) {
-    window.location.href = "formanswers.php?formId=" + formId;
+  function showDeleteModal(id) {
+    $('#delete_Modal').modal('show');
+    document.getElementById("clear").onclick = function () { deleteForm(id) };
   }
 
-  function createCard(formId, formName, formStatus, StillEditing, formAccessRestrict, backgroundImg) {
+  function calculateLastEdited(lastEdited) {
+    var lastEditedDate = new Date(lastEdited);
+    var now = Date.now();
+    var differenceInMilliseconds = now - lastEditedDate;
+    var differenceInSeconds = Math.floor(differenceInMilliseconds / 1000);
+    var differenceInMinutes = Math.floor(differenceInSeconds / 60);
+    var differenceInHours = Math.floor(differenceInMinutes / 60);
+    var differenceInDays = Math.floor(differenceInHours / 24);
+
+    if (differenceInDays > 0) return differenceInDays + " napja";
+    if (differenceInHours > 0) return differenceInHours + " órája";
+    if (differenceInMinutes > 0) return differenceInMinutes + " perce";
+    if (differenceInSeconds >= 0) return "Épp most";
+  }
+
+  function createCard(formId, formName, formStatus, StillEditing, formAccessRestrict, formLastEdited, backgroundImg) {
     var card = document.createElement("div");
     card.className = "card";
-
+    if (<?php echo in_array("admin", $_SESSION["groups"]) ? "true" : "false" ?>) {
+      var cardHeader = document.createElement("div");
+      cardHeader.className = "card-header";
+      cardHeader.innerHTML = "Utolsó szerkesztés: " + calculateLastEdited(formLastEdited);
+      card.appendChild(cardHeader);
+    }
     var img = document.createElement("img");
     img.className = "card-img-top";
     img.src = backgroundImg;
@@ -147,13 +176,13 @@ include("../translation.php"); ?>
     cardBody.appendChild(cardText);
 
     var ButtonHolder = document.createElement("div");
-    ButtonHolder.className = "btn-group";
+    ButtonHolder.className = "card-option-buttons";
     ButtonHolder.role = "group";
 
 
     var cardButton = document.createElement("button");
     cardButton.className = "btn btn-primary";
-    cardButton.innerHTML = "Kitöltöm";
+    cardButton.innerHTML = "<i class='fas fa-eye'></i>";
     if (formStatus == "Lezárt") {
       cardButton.disabled = true;
     }
@@ -164,24 +193,22 @@ include("../translation.php"); ?>
 
     if (<?php echo in_array("admin", $_SESSION["groups"]) ? "true" : "false" ?>) {
       var editButton = document.createElement("button");
-      editButton.className = "btn btn-warning noprint";
-      editButton.innerHTML = "<i class='fas fa-highlighter fa-lg'></i> Szerkeszt";
+      editButton.className = "btn btn-secondary noprint";
+      editButton.innerHTML = "<i class='fas fa-pen fa-lg'></i>";
       editButton.onclick = function () { editForm(formId) };
       ButtonHolder.appendChild(editButton);
 
-      var showAnswersButton = document.createElement("button");
-      showAnswersButton.className = "btn btn-info noprint";
-      showAnswersButton.innerHTML = "<i class='fas fa-check fa-lg'></i> Válaszok";
-      showAnswersButton.onclick = function () { showFormAnswers(formId) };
-      ButtonHolder.appendChild(showAnswersButton);
-
-
+      var deleteButton = document.createElement("button");
+      deleteButton.className = "btn btn-danger noprint";
+      deleteButton.innerHTML = "<i class='fas fa-trash-alt fa-lg'></i>";
+      deleteButton.onclick = function () { showDeleteModal(formId) };
+      ButtonHolder.appendChild(deleteButton);
     }
 
     cardBody.appendChild(ButtonHolder);
     card.appendChild(cardBody);
 
-    if (<?php echo in_array("admin", $_SESSION["groups"]) ? "true" : "false" ?>) {
+    if (<?php echo isset($_SESSION["userId"]) ? "true" : "false" ?>) {
       var cardFooter = document.createElement("div");
       cardFooter.className = "card-footer text-body-secondary";
       cardFooter.innerHTML = formAccessRestrict;
@@ -192,13 +219,26 @@ include("../translation.php"); ?>
     document.getElementById("available_forms").appendChild(card);
   }
 
+  function deleteForm(id) {
+    //Send request to server
+    $.ajax({
+      type: "POST",
+      url: "../formManager.php",
+      data: { mode: "deleteForm", id: id },
+      success: function (data) {
+        //console.log(data);
+        window.location.href = "index.php";
+      }
+    });
+  }
+
 
   //List forms that are in editing phase
-  function listForms(formAccessRestrict, formState) {
+  function listForms() {
     $.ajax({
       url: "../formManager.php",
       method: "POST",
-      data: { mode: "listForms", accessRestrict: formAccessRestrict, formState: formState },
+      data: { mode: "listForms"},
       success: function (response) {
 
         response = JSON.parse(response);
@@ -209,13 +249,13 @@ include("../translation.php"); ?>
           if (element.Name == null) { element.Name = "Névtelen" + i; i++; }
           if (element.AccessRestrict == "0") { element.AccessRestrict = "Publikus"; }
           if (element.AccessRestrict == "1") { element.AccessRestrict = "Privát"; }
+          if (element.AccessRestrict == "2") { element.AccessRestrict = "Médiás"; }
 
-          if (element.Status == "0") { element.Status = "Szerkesztés alatt"; }
+          if (element.Status == "0") { element.Status = "Lezárt"; }
           if (element.Status == "1") { element.Status = "Kitölthető"; }
-          if (element.Status == "2") { element.Status = "Lezárt"; }
 
           var Background = "./backgrounds/" + element.Background;
-          createCard(element.ID, element.Name, element.Status, true, element.AccessRestrict, Background);
+          createCard(element.ID, element.Name, element.Status, true, element.AccessRestrict, element.Last_edit, Background);
         });
       }
     });

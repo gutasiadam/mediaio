@@ -99,25 +99,26 @@ include("../translation.php"); ?>
             <div class="modal-body">
                <label for="cars">Form állapota:</label>
                <select class="form-select form-select-sm" id="formState" name="formState">
-                  <option value="0">Szerkesztés alatt</option>
+                  <option value="0">Nem fogad válaszokat</option>
                   <option value="1">Fogad válaszokat</option>
-                  <option value="2">Nem fogad válaszokat</option>
                </select>
                </br>
                Csak nem szerkesztés alatt levő form esetén:
                <select class="form-select form-select-sm" id="accessRestrict" name="accessRestrict">
                   <option value="1">Privát</option>
+                  <option value="2">Médiás</option>
                   <option value="0">Publikus</option>
                </select>
                <br>
-               <label for="background_img">Háttérkép: <a href="./backgrounds/default.png">(alapértelmezett)</a></label>
+               <label for="background_img">Háttérkép: <a href="#" id="default-background" data-bs-toggle="popover"
+                     data-bs-placement="top">(alapértelmezett)</a></label>
                <input type="file" class="form-control" name="fileToUpload" id="background_img" accept="image/*">
                <button class="btn btn-success" type="submit" onclick="changeBackground()">Feltöltés</button>
                <button class="btn btn-danger" onclick="changeBackground(true)">Törlés</button>
             </div>
             <div class="modal-footer">
                <button class="btn btn-success col-lg-auto mb-1" id="save" data-bs-dismiss="modal"
-                  onclick="saveForm()">Mentés</button>
+                  onclick="saveForm(false)">Mentés</button>
                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Mégse</button>
             </div>
          </div>
@@ -134,35 +135,41 @@ include("../translation.php"); ?>
          </div>
       </div>
    </div>
-   <div id="form-header">
-      <h2 class="rainbow" id="form_name" style="cursor: pointer;"></h2>
-      <input class="form-control" id="description"></input>
-   </div>
-   <div class="container">
-      <div class="row" id="form-option-buttons">
-         <div class="dropdown" id="tools">
-            <button class="btn btn-success dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-               Új hozzáadása
-            </button>
-            <ul class="dropdown-menu">
-               <li><a class="dropdown-item" href="#" onclick="addFormElement('email')"><i class="fas fa-at fa-2x"></i>
-                     E-Mail</a>
-               </li>
-               <li><a class="dropdown-item" href="#" onclick="addFormElement('date')"><i
-                        class="fas fa-calendar-alt fa-2x"></i> Dátum</a></li>
-               <li><a class="dropdown-item" href="#" onclick="addFormElement('shortText')"><i
-                        class="fas fa-grip-lines fa-2x"></i> Rövid szöveg</a></li>
-               <li><a class="dropdown-item" href="#" onclick="addFormElement('longText')"><i
-                        class="fas fa-align-justify fa-2x"></i> Hosszú szöveg</a></li>
-               <li><a class="dropdown-item" href="#" onclick="addFormElement('radio')"><i class="fas fa-circle fa-2x"></i>
-                     Feleletválasztós</a></li>
-               <li><a class="dropdown-item" href="#" onclick="addFormElement('checkbox')"><i
-                        class="far fa-check-square fa-2x"></i> Jelölőnégyzet</a>
-               </li>
-               <li><a class="dropdown-item" href="#" onclick="addFormElement('fileUpload')"><i
-                        class="fas fa-file fa-2x"></i> Fájl feltöltés</a>
-               </li>
-               <!--
+
+
+   <div class="form">
+      <div id="form-header">
+         <h2 class="rainbow" id="form_name" style="cursor: pointer;"></h2>
+         <textarea class="form-control" id="description"></textarea>
+      </div>
+      <div class="container">
+         <div class="row" id="form-option-buttons">
+            <div class="dropdown" id="tools">
+
+               <button class="btn btn-success dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                  aria-expanded="false">
+                  Új hozzáadása
+               </button>
+               <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="#" onclick="addFormElement('email')"><i class="fas fa-at fa-2x"></i>
+                        E-Mail</a>
+                  </li>
+                  <li><a class="dropdown-item" href="#" onclick="addFormElement('date')"><i
+                           class="fas fa-calendar-alt fa-2x"></i> Dátum</a></li>
+                  <li><a class="dropdown-item" href="#" onclick="addFormElement('shortText')"><i
+                           class="fas fa-grip-lines fa-2x"></i> Rövid szöveg</a></li>
+                  <li><a class="dropdown-item" href="#" onclick="addFormElement('longText')"><i
+                           class="fas fa-align-justify fa-2x"></i> Hosszú szöveg</a></li>
+                  <li><a class="dropdown-item" href="#" onclick="addFormElement('radio')"><i
+                           class="fas fa-circle fa-2x"></i>
+                        Feleletválasztós</a></li>
+                  <li><a class="dropdown-item" href="#" onclick="addFormElement('checkbox')"><i
+                           class="far fa-check-square fa-2x"></i> Jelölőnégyzet</a>
+                  </li>
+                  <!--                   <li><a class="dropdown-item" href="#" onclick="addFormElement('fileUpload')"><i
+                           class="fas fa-file fa-2x"></i> Fájl feltöltés</a>
+                  </li> -->
+                  <!--
    <li><a class="dropdown-item" href="#"><span draggable="false" ondragstart="drag(event)"
             class="date_time toolIcon clickableIcon" name="Idő"><i
                class="fas fa-clock fa-2x"></i></span></a></li>
@@ -172,20 +179,24 @@ include("../translation.php"); ?>
    <li><a class="dropdown-item" href="#"><span draggable="false" ondragstart="drag(event)"
             class="paragraph toolIcon clickableIcon" name="Szakasz bekezdés"><i
                class="fas fa-paragraph fa-2x"></i></span></a></li> -->
-               <!-- <li><a class="dropdown-item" href="#"><span draggable="false" ondragstart="drag(event)"
+                  <!-- <li><a class="dropdown-item" href="#"><span draggable="false" ondragstart="drag(event)"
             class="dropdown toolIcon clickableIcon" name="Legördülő lista"><i
                class="fas fa-arrow-circle-down fa-2x"></i></span> Legördülő lista</a></li>
    <li><a class="dropdown-item" href="#"><span draggable="false" ondragstart="drag(event)"
             class="scale toolIcon clickableIcon" name="Lineáris skála"><i
                class="fas fa-sort-numeric-up fa-2x"></i></span> Lineáris skála</a></li> -->
-            </ul>
+               </ul>
+            </div>
+            <button class="btn btn-primary" onclick="saveForm(false)">Mentés</button>
+            <button class="btn btn-danger" onclick="showDeleteModal()"><i class='fas fa-trash-alt fa-lg'></i></button>
+            <button class="btn btn-secondary" onclick="showFormAnswers(<?php echo $_GET['formId'] ?>)"><i
+                  class='fas fa-check fa-lg'></i> Válaszok</button>
+            <button class="btn" onclick="viewForm(<?php echo $_GET['formId'] ?>)"><i class="fas fa-eye"></i></button>
+            <button class="btn" onclick="showSettingsModal()"><i class="fas fa-sliders-h fa-lg"></i></button>
          </div>
-         <button class="btn btn-primary" onclick="saveForm()">Mentés</button>
-         <button class="btn btn-danger" onclick="showDeleteModal()">Törlés</button>
-         <button class="btn" onclick="showSettingsModal()"><i class="fas fa-sliders-h fa-lg"></i></button>
-      </div>
-      <div class="row" id="editorZone">
+         <div class="row" id="editorZone">
 
+         </div>
       </div>
    </div>
 
@@ -198,6 +209,27 @@ include("../translation.php"); ?>
 
 
 <script>
+   var everythingSaved = true;
+
+
+
+   window.onbeforeunload = function () {
+      if (!everythingSaved) {
+         return "Nem mentett változtatások vannak! Biztosan továbblépsz?";
+      }
+   }
+
+   document.addEventListener('keypress', function (event) {
+      everythingSaved = false;
+   });
+
+   function viewForm(formId) {
+      window.location.href = "viewform.php?formId=" + formId;
+   }
+
+   function showFormAnswers(formId) {
+      window.location.href = "formanswers.php?formId=" + formId;
+   }
 
    function showDeleteModal() {
       $('#delete_Modal').modal('show');
@@ -205,6 +237,13 @@ include("../translation.php"); ?>
 
    function showSettingsModal() {
       $('#settings_Modal').modal('show');
+      var popoverTriggerEl = document.getElementById('default-background');
+      var popover = new bootstrap.Popover(popoverTriggerEl, {
+         content: '<img src="./backgrounds/default.jpg" width="200px" alt="Popover image">',
+         html: true,
+         trigger: 'hover',
+         placement: 'top'
+      });
    }
 
    var i = 0;
@@ -215,6 +254,7 @@ include("../translation.php"); ?>
    function save_title() {
       var title = document.getElementById("formTitle").value;
       document.getElementById("form_name").innerHTML = title + '&nbsp<i class="fas fa-edit fa-xs" style="color: #747b86"></i>';
+      everythingSaved = false;
    }
 
    $(document).ready(function () {
@@ -247,6 +287,23 @@ include("../translation.php"); ?>
             document.getElementById("form_name").innerHTML = formName + '&nbsp<i class="fas fa-edit fa-xs" style="color: #747b86"></i>';
             document.getElementById("description").value = form.Header;
 
+            //Set background
+            var style = document.createElement('style');
+            style.innerHTML = `
+               body::before {
+               content: "";
+               position: fixed;
+               top: 0;
+               right: 0;
+               bottom: 0;
+               left: 0;
+               background-image: url(../forms/backgrounds/` + form.Background + `);
+               background-size: cover;
+               background-position: center;
+               z-index: -1;
+               }`;
+            document.head.appendChild(style);
+
             formContainer = document.getElementById("editorZone");
             //Load form elements
             if (formElements == null) {
@@ -276,7 +333,23 @@ include("../translation.php"); ?>
       })
    });
 
+   function checkIdNotUsed(id) {
+      var elements = document.getElementById("editorZone").getElementsByClassName("form-member");
+      for (var j = 0; j < elements.length; j++) {
+         if (elements[j].id.split("-")[1] == id) {
+            id++;
+            checkIdNotUsed(id);
+         }
+      }
+      return id;
+   }
+
    function generateElement(type, id, place, settings) {
+      if (settings != "") {
+         var questionSetting = JSON.parse(settings).question;
+         var isRequired = JSON.parse(settings).required;
+         var CheckOptions = JSON.parse(settings).options;
+      }
       var div = document.createElement("div");
       div.classList.add("form-member");
       div.id = type + "-" + id;
@@ -293,12 +366,7 @@ include("../translation.php"); ?>
       question.placeholder = "Kérdés...";
       question.classList.add("form-control");
       question.for = id;
-      if (settings != "") {
-            question.value = settings;
-         if (type == "checkbox" || type == "radio") {
-            question.value = JSON.parse(settings).name;
-         }
-      }
+      question.value = questionSetting;
       uidiv.appendChild(question);
 
       console.log("Generating element: " + type);
@@ -309,7 +377,7 @@ include("../translation.php"); ?>
             input.type = "email";
             input.classList.add("form-control");
             input.id = id;
-            input.placeholder = "Írja be az email címét";
+            input.placeholder = "name@example.com";
             input.disabled = true;
             uidiv.appendChild(input);
             break;
@@ -342,12 +410,12 @@ include("../translation.php"); ?>
 
          case "radio":
             var radioHolder = document.createElement("div");
-            radioHolder.classList.add("radio-holder");
+            radioHolder.classList.add("select-holder");
             if (settings == "") {
                radioHolder.append(listCheckOpt("radio", id, "", 0));
             } else {
-               for (var i = 0; i < JSON.parse(settings).options.length; i++) {
-                  radioHolder.append(listCheckOpt("radio", id, JSON.parse(settings).options[i], i));
+               for (var i = 0; i < CheckOptions.length; i++) {
+                  radioHolder.append(listCheckOpt("radio", id, CheckOptions[i], i));
                }
             }
             var addRadio = document.createElement("button");
@@ -362,12 +430,12 @@ include("../translation.php"); ?>
 
          case "checkbox":
             var checkboxHolder = document.createElement("div");
-            checkboxHolder.classList.add("checkbox-holder");
+            checkboxHolder.classList.add("select-holder");
             if (settings == "") {
                checkboxHolder.append(listCheckOpt("checkbox", id, "", 0));
             } else {
-               for (var i = 0; i < JSON.parse(settings).options.length; i++) {
-                  checkboxHolder.append(listCheckOpt("checkbox", id, JSON.parse(settings).options[i], i));
+               for (var i = 0; i < CheckOptions.length; i++) {
+                  checkboxHolder.append(listCheckOpt("checkbox", id, CheckOptions[i], i));
                }
             }
             var addCheckbox = document.createElement("button");
@@ -391,6 +459,24 @@ include("../translation.php"); ?>
 
       }
 
+      var switchdiv = document.createElement("div");
+      switchdiv.classList.add("form-check", "form-switch");
+
+      var input = document.createElement("input");
+      input.type = "checkbox";
+      input.classList.add("form-check-input");
+      input.id = "flexSwitchCheckDefault";
+      input.checked = isRequired;
+      switchdiv.appendChild(input);
+
+      var label = document.createElement("label");
+      label.classList.add("form-check-label");
+      label.for = "flexSwitchCheckDefault";
+      label.innerHTML = "Kötelező";
+      switchdiv.appendChild(label);
+
+      uidiv.appendChild(switchdiv);
+
       var navdiv = document.createElement("div");
       navdiv.classList.add("element-nav");
       div.appendChild(navdiv);
@@ -404,8 +490,7 @@ include("../translation.php"); ?>
       navdiv.appendChild(moveUpButton);
 
       var deleteButton = document.createElement("button");
-      deleteButton.classList.add("btn", "btn-danger", "btn-sm");
-      deleteButton.innerHTML = "X";
+      deleteButton.classList.add("btn", "btn-close", "btn-sm");
       deleteButton.onclick = function () {
          removeElement(type, id);
       };
@@ -425,7 +510,9 @@ include("../translation.php"); ?>
 
 
    function addFormElement(type) {
+      everythingSaved = false;
       i++;
+      i = checkIdNotUsed(i);
       console.log("Adding form element: " + type);
       var place = document.getElementById("editorZone").getElementsByClassName("form-member").length + 1;
       console.log("Place: " + place);
@@ -453,8 +540,7 @@ include("../translation.php"); ?>
       div.appendChild(label);
 
       var deleteButton = document.createElement("button");
-      deleteButton.classList.add("btn", "btn-danger", "btn-sm");
-      deleteButton.innerHTML = "X";
+      deleteButton.classList.add("btn", "btn-close", "btn-sm");
       deleteButton.onclick = function () {
          div.remove();
       };
@@ -462,47 +548,44 @@ include("../translation.php"); ?>
       return div;
    }
 
-   function getCheckSettings(type, id) {
-      var maindiv = document.getElementById(type + "-" + id);
-      var question = maindiv.querySelector("#e-settings").getElementsByTagName("input")[0].value;
-
-
+   function getCheckSettings(maindiv) {
       var checkboxOptions = [];
-      var checkbox_holder = maindiv.querySelectorAll('.' + type + '-holder input[placeholder="Opció"]');
-      for (var i = 0; i < checkbox_holder.length; i++) {
-         checkboxOptions.push(checkbox_holder[i].value);
+      var checkbox_holder = maindiv.getElementsByClassName('select-holder');
+      var checkNames = checkbox_holder[0].querySelectorAll('input[type="text"]');
+      for (var i = 0; i < checkNames.length; i++) {
+         checkboxOptions.push(checkNames[i].value);
       }
-
-      var elementSettings = {
-         "name": question,
-         "options": checkboxOptions
-      };
-
-      var jsonSettings = JSON.stringify(elementSettings);
-      var jsonWithBackslashes = jsonSettings.replace(/"/g, '\\"');
-
-      console.log("Element settings: " + jsonWithBackslashes);
-      return jsonWithBackslashes;
+      return checkboxOptions;
    }
 
 
    function getElementSettings(type, id) {
-      if (type == "checkbox" || type == "radio") {
-         return getCheckSettings(type, id);
-      }
       var maindiv = document.getElementById(type + "-" + id);
-      var elementSettings = maindiv.querySelector("#e-settings").getElementsByTagName("input")[0].value;
-      console.log("Element settings: " + elementSettings);
+      var checkOptions = "";
+      if (type == "checkbox" || type == "radio") {
+         checkOptions = getCheckSettings(maindiv);
+      }
+      var elementQuestion = maindiv.querySelector("#e-settings").getElementsByTagName("input")[0].value;
+      var isRequired = maindiv.querySelector("#flexSwitchCheckDefault").checked;
+      var elementSettings = {
+         question: elementQuestion,
+         required: isRequired,
+         options: checkOptions
+      }
+
+      elementSettings = JSON.stringify(elementSettings).replace(/"/g, '\\"');
       return elementSettings;
    }
 
 
    function removeElement(type, id) {
+      everythingSaved = false;
       var element = document.getElementById(type + "-" + id);
       element.remove();
    }
 
    function moveUp(type, id) {
+      everythingSaved = false;
       var element = document.getElementById(type + "-" + id);
       element.setAttribute('data-position', parseInt(element.getAttribute('data-position')) - 1);
       var prevElement = element.previousElementSibling;
@@ -513,6 +596,7 @@ include("../translation.php"); ?>
    }
 
    function moveDown(type, id) {
+      everythingSaved = false;
       var element = document.getElementById(type + "-" + id);
       element.setAttribute('data-position', parseInt(element.getAttribute('data-position')) + 1);
       var nextElement = element.nextElementSibling;
@@ -530,11 +614,24 @@ include("../translation.php"); ?>
          $.ajax({
             type: "POST",
             url: "../formManager.php",
-            data: { mode: "changeBackground", id: formId, name: "default.png" },
+            data: { mode: "changeBackground", id: formId, name: "default.jpg" },
             success: function (data) {
                console.log(data);
             }
          });
+         /*          var form_data = new FormData();
+                  $.ajax({
+                  url: './upload-handler.php', // point to server-side PHP script
+                  dataType: 'text', // what to expect back from the PHP script
+                  cache: false,
+                  contentType: false,
+                  processData: false,
+                  data: form_data,
+                  type: 'POST',
+                  success: function (response) {
+                     console.log(response);
+                  }
+               }); */
          return;
       }
 
@@ -545,25 +642,27 @@ include("../translation.php"); ?>
       form_data.append('fileToUpload', file_data);
       form_data.append('formId', formId);
 
+      console.log(form_data);
+
       $.ajax({
          url: './upload-handler.php', // point to server-side PHP script
          dataType: 'text', // what to expect back from the PHP script
          cache: false,
          contentType: false,
          processData: false,
-         data: form_data,
+         data: { form_data: form_data, mode: "uploadBackground" },
          type: 'POST',
          success: function (response) {
 
             console.log(response);
-            $.ajax({
+            /* $.ajax({
                type: "POST",
                url: "../formManager.php",
                data: { mode: "changeBackground", id: formId, name: response },
                success: function (data) {
                   console.log(data);
                }
-            });
+            }); */
          }
       });
 
@@ -571,15 +670,18 @@ include("../translation.php"); ?>
 
 
 
-   // //Every 10 seconds, save the form
-   // setInterval(function(){
-   //     //Add growing spinner to the first h6
-   //     document.getElementById("time").innerHTML="<div class='spinner-grow text-success' role='status'></div>"
-   //     saveForm();
-   // }, 10000);
+   //Every 10 seconds, save the form
+   setInterval(function () {
+      if (everythingSaved) {
+         return;
+      }
+      //Add growing spinner to the first h6
+      //document.getElementById("time").innerHTML = "<div class='spinner-grow text-success' role='status'></div>"
+      saveForm(true);
+   }, 10000);
 
 
-   function saveForm() {
+   function saveForm(auto) {
       //Get all elements
       var formEditor = document.getElementById("editorZone");
       var elements = formEditor.getElementsByClassName("form-member");
@@ -615,9 +717,12 @@ include("../translation.php"); ?>
       var formJson = JSON.stringify(form);
       console.log(JSON.parse(formJson));
 
+      console.log("Saving header!");
       var formState = document.getElementById("formState").value;
       var accessRestrict = document.getElementById("accessRestrict").value;
       var formHeader = document.getElementById("description").value;
+
+      console.log(formHeader);
 
       //Send form to server
       $.ajax({
@@ -632,7 +737,12 @@ include("../translation.php"); ?>
 
             //If data is 200, append a span with a message after time
             if (data == 200) {
-               document.getElementById("save_status").innerHTML = "Sikeres mentés";
+               if (auto) {
+                  document.getElementById("save_status").innerHTML = "Automatikusan mentve!";
+               } else {
+                  document.getElementById("save_status").innerHTML = "Sikeres mentés";
+               }
+               everythingSaved = true;
             } else {
                document.getElementById("save_status").innerHTML = "Sikertelen mentés";
             }
