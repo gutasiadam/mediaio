@@ -116,12 +116,22 @@ include("../translation.php"); ?>
       var div = document.createElement("div");
       div.id = type + "-" + id;
       div.setAttribute('data-position', place);
+      if (isRequired) {
+         div.setAttribute('data-required', "true");
+      } else {
+         div.setAttribute('data-required', "false");
+      }
       div.classList.add("mb-3", "question");
 
       var question = document.createElement("label");
       question.for = id;
-      question.innerHTML = "Kérdés";
-      question.innerHTML = questionSetting;
+      console.log("Required: " + isRequired);
+      if (isRequired) {
+         question.innerHTML = questionSetting + "<span style='color: red;'> *</span>";
+      } else {
+         question.innerHTML = questionSetting;
+      }
+      //question.innerHTML = questionSetting;
       div.appendChild(question);
 
       console.log("Generating element: " + type);
@@ -142,6 +152,14 @@ include("../translation.php"); ?>
             input.id = id;
             div.appendChild(input);
             break;
+         case "time":
+            var input = document.createElement("input");
+            input.type = "time";
+            input.classList.add("form-control", "userInput");
+            input.id = id;
+            div.appendChild(input);
+            break;
+
          case "shortText":
             var input = document.createElement("input");
             input.type = "text";
@@ -185,6 +203,25 @@ include("../translation.php"); ?>
             div.appendChild(checkboxHolder);
             break;
 
+         case "dropdown":
+            var dropdownHolder = document.createElement("div");
+            dropdownHolder.classList.add("dropdown-holder");
+
+            var select = document.createElement("select");
+            select.classList.add("form-select", "userInput");
+            select.id = id;
+
+            if (settings == "") {
+               select.append(listDropdown(id, ""));
+            } else {
+               for (var i = 0; i < CheckOptions.length; i++) {
+                  select.append(listDropdown(id, CheckOptions[i]));
+               }
+            }
+            dropdownHolder.appendChild(select);
+            div.appendChild(dropdownHolder);
+            break;
+
          case "fileUpload":
             var input = document.createElement("input");
             input.type = "file";
@@ -195,6 +232,15 @@ include("../translation.php"); ?>
       }
       return div;
    }
+
+   function listDropdown(id, settings) {
+      var option = document.createElement("option");
+      option.value = settings;
+      option.innerHTML = settings;
+
+      return option;
+   }
+
 
    function listCheckOpt(type, id, settings, optionNum) {
       var div = document.createElement("div");
@@ -230,6 +276,14 @@ include("../translation.php"); ?>
       for (var i = 0; i < elements.length; i++) {
          var element = elements[i];
 
+         var isRequired = element.getAttribute("data-required");
+         if (isRequired == "true") {
+            var inputs = element.getElementsByClassName("userInput");
+            if (inputs[0].value == "") {
+               alert("Kérlek töltsd ki az összes kötelező mezőt!");
+               return;
+            }
+         }
          var elementType = element.id.split("-")[0];
          var inputs = element.getElementsByClassName("userInput");
 
@@ -239,7 +293,8 @@ include("../translation.php"); ?>
                value.push(inputs[j].checked);
                value.push(inputs[j].getAttribute("data-name"));
             }
-         } else {
+         }
+         else {
             value = inputs[0].value;
          }
 
@@ -252,8 +307,8 @@ include("../translation.php"); ?>
          answers.push(answer);
          console.log(answer);
       }
-      //console.log(answers);
-      //console.log(JSON.stringify(answers));
+
+      answers = JSON.stringify(answers).replace(/"/g, '\\"');
       var uid = <?php if ($_SESSION['userId'] != null) {
          echo $_SESSION['userId'];
       } else {
@@ -262,7 +317,7 @@ include("../translation.php"); ?>
       $.ajax({
          type: "POST",
          url: "../formManager.php",
-         data: { mode: "submitAnswer", uid: uid, userIp: '<?php echo $_SERVER['REMOTE_ADDR'] ?>', id: <?php echo $_GET['formId'] ?>, answers: JSON.stringify(answers) },
+         data: { mode: "submitAnswer", uid: uid, userIp: '<?php echo $_SERVER['REMOTE_ADDR'] ?>', id: <?php echo $_GET['formId'] ?>, answers: answers },
          success: function (data) {
             console.log(data);
             if (data == 500) {

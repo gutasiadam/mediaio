@@ -110,6 +110,12 @@ include("../translation.php"); ?>
                   <option value="0">Publikus</option>
                </select>
                <br>
+               <div class="form-check form-switch">
+                  <input type="checkbox" class="form-check-input" id="flexSwitchCheckDefault">
+                  <label class="form-check-label" for="flexSwitchCheckDefault">Korlátozás egy válaszra (még nem
+                     működik)</label>
+               </div>
+               <br>
                <label for="background_img">Háttérkép: <a href="#" id="default-background" data-bs-toggle="popover"
                      data-bs-placement="top">(alapértelmezett)</a></label>
                <input type="file" class="form-control" name="fileToUpload" id="background_img" accept="image/*">
@@ -152,36 +158,44 @@ include("../translation.php"); ?>
                </button>
                <ul class="dropdown-menu">
                   <li><a class="dropdown-item" href="#" onclick="addFormElement('email')"><i class="fas fa-at fa-2x"></i>
-                        E-Mail</a>
-                  </li>
-                  <li><a class="dropdown-item" href="#" onclick="addFormElement('date')"><i
-                           class="fas fa-calendar-alt fa-2x"></i> Dátum</a></li>
+                        E-Mail</a></li>
                   <li><a class="dropdown-item" href="#" onclick="addFormElement('shortText')"><i
                            class="fas fa-grip-lines fa-2x"></i> Rövid szöveg</a></li>
                   <li><a class="dropdown-item" href="#" onclick="addFormElement('longText')"><i
                            class="fas fa-align-justify fa-2x"></i> Hosszú szöveg</a></li>
+
+                  <!-- Feleletválasztós -->
+                  <li class="dropdown-divider"></li>
                   <li><a class="dropdown-item" href="#" onclick="addFormElement('radio')"><i
-                           class="fas fa-circle fa-2x"></i>
+                           class="far fa-dot-circle fa-2x"></i>
                         Feleletválasztós</a></li>
                   <li><a class="dropdown-item" href="#" onclick="addFormElement('checkbox')"><i
                            class="far fa-check-square fa-2x"></i> Jelölőnégyzet</a>
                   </li>
-                  <!--                   <li><a class="dropdown-item" href="#" onclick="addFormElement('fileUpload')"><i
+                  <li><a class="dropdown-item" href="#" onclick="addFormElement('dropdown')"><i
+                           class="fas fa-chevron-down fa-2x"></i> Legördülő lista</a></li>
+
+                  <!-- Idő -->
+                  <li class="dropdown-divider"></li>
+                  <li><a class="dropdown-item" href="#" onclick="addFormElement('date')"><i
+                           class="fas fa-calendar-alt fa-2x"></i> Dátum</a></li>
+                  <li><a class="dropdown-item" href="#" onclick="addFormElement('time')"><i class="fas fa-clock fa-2x"></i>
+                        Idő</a></li>
+
+                  <!-- Fájl -->
+                  <li class="dropdown-divider"></li>
+                  <li><a class="dropdown-item" href="#" onclick="addFormElement('fileUpload')"><i
                            class="fas fa-file fa-2x"></i> Fájl feltöltés</a>
-                  </li> -->
+                  </li>
                   <!--
-   <li><a class="dropdown-item" href="#"><span draggable="false" ondragstart="drag(event)"
-            class="date_time toolIcon clickableIcon" name="Idő"><i
-               class="fas fa-clock fa-2x"></i></span></a></li>
+   
    <li><a class="dropdown-item" href="#"> <span draggable="false" ondragstart="drag(event)"
             class="heading toolIcon clickableIcon" name="Szakaszcím"><i
                class="fas fa-heading fa-2x"></i></span></a></li>
    <li><a class="dropdown-item" href="#"><span draggable="false" ondragstart="drag(event)"
             class="paragraph toolIcon clickableIcon" name="Szakasz bekezdés"><i
                class="fas fa-paragraph fa-2x"></i></span></a></li> -->
-                  <!-- <li><a class="dropdown-item" href="#"><span draggable="false" ondragstart="drag(event)"
-            class="dropdown toolIcon clickableIcon" name="Legördülő lista"><i
-               class="fas fa-arrow-circle-down fa-2x"></i></span> Legördülő lista</a></li>
+                  <!-- 
    <li><a class="dropdown-item" href="#"><span draggable="false" ondragstart="drag(event)"
             class="scale toolIcon clickableIcon" name="Lineáris skála"><i
                class="fas fa-sort-numeric-up fa-2x"></i></span> Lineáris skála</a></li> -->
@@ -223,6 +237,16 @@ include("../translation.php"); ?>
       everythingSaved = false;
    });
 
+   document.addEventListener('DOMContentLoaded', function () {
+      var popoverTriggerEl = document.getElementById('default-background');
+      var popover = new bootstrap.Popover(popoverTriggerEl, {
+         content: '<img src="./backgrounds/default.jpg" width="200px" alt="Popover image">',
+         html: true,
+         trigger: 'hover',
+         placement: 'right'
+      });
+   });
+
    function viewForm(formId) {
       window.location.href = "viewform.php?formId=" + formId;
    }
@@ -237,13 +261,6 @@ include("../translation.php"); ?>
 
    function showSettingsModal() {
       $('#settings_Modal').modal('show');
-      var popoverTriggerEl = document.getElementById('default-background');
-      var popover = new bootstrap.Popover(popoverTriggerEl, {
-         content: '<img src="./backgrounds/default.jpg" width="200px" alt="Popover image">',
-         html: true,
-         trigger: 'hover',
-         placement: 'top'
-      });
    }
 
    var i = 0;
@@ -345,6 +362,7 @@ include("../translation.php"); ?>
    }
 
    function generateElement(type, id, place, settings) {
+      
       if (settings != "") {
          var questionSetting = JSON.parse(settings).question;
          var isRequired = JSON.parse(settings).required;
@@ -355,12 +373,14 @@ include("../translation.php"); ?>
       div.id = type + "-" + id;
       div.setAttribute('data-position', place);
       div.classList.add("mb-3");
-
+      
+      //Add settings div
       var uidiv = document.createElement("div");
       uidiv.classList.add("form-control");
       uidiv.id = "e-settings";
       div.appendChild(uidiv);
 
+      //Add question
       var question = document.createElement("input");
       question.type = "text";
       question.placeholder = "Kérdés...";
@@ -389,6 +409,16 @@ include("../translation.php"); ?>
             input.disabled = true;
             uidiv.appendChild(input);
             break;
+
+         case "time":
+            var input = document.createElement("input");
+            input.type = "time";
+            input.classList.add("form-control");
+            input.id = id;
+            input.disabled = true;
+            uidiv.appendChild(input);
+            break;
+
          case "shortText":
             var input = document.createElement("input");
             input.type = "text";
@@ -446,6 +476,26 @@ include("../translation.php"); ?>
             };
             uidiv.appendChild(checkboxHolder);
             uidiv.appendChild(addCheckbox);
+            break;
+
+         case "dropdown":
+            var dropdownHolder = document.createElement("div");
+            dropdownHolder.classList.add("select-holder");
+            if (settings == "") {
+               dropdownHolder.append(listDropdown(id, "", 0));
+            } else {
+               for (var i = 0; i < CheckOptions.length; i++) {
+                  dropdownHolder.append(listDropdown(id, CheckOptions[i], i));
+               }
+            }
+            var addDropdown = document.createElement("button");
+            addDropdown.classList.add("btn", "btn-success", "btn-sm");
+            addDropdown.innerHTML = "+";
+            addDropdown.onclick = function () {
+               dropdownHolder.append(listDropdown(id, "", i++));
+            };
+            uidiv.appendChild(dropdownHolder);
+            uidiv.appendChild(addDropdown);
             break;
 
          case "fileUpload":
@@ -520,6 +570,32 @@ include("../translation.php"); ?>
    };
 
 
+   function listDropdown(id, settings, optionNum) {
+      var div = document.createElement("div");
+      div.classList.add("form-check");
+      div.setAttribute('data-option', optionNum);
+
+      var arrow = document.createElement("i");
+      arrow.classList.add("fas", "fa-arrow-right", "fa-lg");
+      div.appendChild(arrow);
+
+      var label = document.createElement("input");
+      label.type = "text";
+      label.classList.add("form-control");
+      label.placeholder = "Opció";
+      label.value = settings;
+      div.appendChild(label);
+
+      var deleteButton = document.createElement("button");
+      deleteButton.classList.add("btn", "btn-close", "btn-sm");
+      deleteButton.onclick = function () {
+         div.remove();
+      };
+      div.appendChild(deleteButton);
+      return div;
+   }
+
+
    function listCheckOpt(type, id, settings, optionNum) {
       var div = document.createElement("div");
       div.classList.add("form-check");
@@ -562,7 +638,7 @@ include("../translation.php"); ?>
    function getElementSettings(type, id) {
       var maindiv = document.getElementById(type + "-" + id);
       var checkOptions = "";
-      if (type == "checkbox" || type == "radio") {
+      if (type == "checkbox" || type == "radio" || type == "dropdown") {
          checkOptions = getCheckSettings(maindiv);
       }
       var elementQuestion = maindiv.querySelector("#e-settings").getElementsByTagName("input")[0].value;

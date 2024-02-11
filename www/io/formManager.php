@@ -104,7 +104,7 @@ class formManager
     $connection->close();
     $row = $result->fetch_assoc();
     //If form is closed, return 500
-    if (isset($row['Status']) && $row['Status'] == 2) {
+    if (isset($row['Status']) && $row['Status'] == 0) {
       echo 500;
       exit();
     }
@@ -132,7 +132,7 @@ class formManager
 
   static function submitAnswer($uid, $id, $ip, $answers)
   {
-    // Prevent SQL injection
+    // Prevent injection
     if (preg_match('/[<>]/', $answers)) {
       echo 500;
       exit();
