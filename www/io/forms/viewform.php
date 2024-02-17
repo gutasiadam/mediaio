@@ -19,12 +19,14 @@ include("../translation.php"); ?>
 </body>
 <script>
    $(document).ready(function () {
-
+      
+      //Check if form is closed
       if (<?php if (isset($_GET['success'])) {
          echo "1";
       } else {
          echo "0";
       } ?>) {
+         //Set form Name and header if form is closed
          document.getElementById("form_name").innerHTML = "Sikeres leadás!";
          document.getElementById("form_header").innerHTML = "Köszönjük, hogy kitöltötte a kérdőívet!";
       } else {
@@ -51,6 +53,7 @@ include("../translation.php"); ?>
                document.getElementById("form_name").innerHTML = formName;
                document.getElementById("form_header").innerHTML = form.Header.replace(/\n/g, "<br>");
 
+               //Where form items are stored
                formContainer = document.getElementById("form-body");
 
 
@@ -94,6 +97,7 @@ include("../translation.php"); ?>
 
                }
 
+               //Add submit button
                var submit = document.createElement("button");
                submit.classList.add("btn", "btn-lg", "btn-success");
                submit.innerHTML = "Leadás";
@@ -107,15 +111,18 @@ include("../translation.php"); ?>
 
 
 
+   //Generate form elements (view mode)
    function generateElement(type, id, place, settings) {
       if (settings != "") {
+         //Parse settings
          var questionSetting = JSON.parse(settings).question;
          var isRequired = JSON.parse(settings).required;
          var CheckOptions = JSON.parse(settings).options;
       }
+      //Create div, which will hold the form element
       var div = document.createElement("div");
       div.id = type + "-" + id;
-      div.setAttribute('data-position', place);
+      div.setAttribute('data-position', place); //Set position
       if (isRequired) {
          div.setAttribute('data-required', "true");
       } else {
@@ -123,6 +130,7 @@ include("../translation.php"); ?>
       }
       div.classList.add("mb-3", "question");
 
+      //Create question label
       var question = document.createElement("label");
       question.for = id;
       console.log("Required: " + isRequired);
@@ -136,8 +144,10 @@ include("../translation.php"); ?>
 
       console.log("Generating element: " + type);
 
+      //Create form type
       switch (type) {
          case "email":
+            //Generate email input
             var input = document.createElement("input");
             input.type = "email";
             input.classList.add("form-control", "userInput");
@@ -146,6 +156,7 @@ include("../translation.php"); ?>
             div.appendChild(input);
             break;
          case "date":
+            //Generate date input
             var input = document.createElement("input");
             input.type = "date";
             input.classList.add("form-control", "userInput");
@@ -153,6 +164,7 @@ include("../translation.php"); ?>
             div.appendChild(input);
             break;
          case "time":
+            //Generate time input
             var input = document.createElement("input");
             input.type = "time";
             input.classList.add("form-control", "userInput");
@@ -161,6 +173,7 @@ include("../translation.php"); ?>
             break;
 
          case "shortText":
+            //Generate short text input
             var input = document.createElement("input");
             input.type = "text";
             input.classList.add("form-control", "userInput");
@@ -170,6 +183,7 @@ include("../translation.php"); ?>
             break;
 
          case "longText":
+            //Generate long text input
             var input = document.createElement("textarea");
             input.classList.add("form-control", "userInput");
             input.id = id;
@@ -178,12 +192,14 @@ include("../translation.php"); ?>
             break;
 
          case "radio":
+            //Generate radio buttons
             var radioHolder = document.createElement("div");
             radioHolder.classList.add("radio-holder");
             if (settings == "") {
-               radioHolder.append(listCheckOpt("radio", id, "", 0));
+               radioHolder.append(listCheckOpt("radio", id, "", 0)); //Add empty radio button
             } else {
                for (var i = 0; i < CheckOptions.length; i++) {
+                  //Add radio buttons
                   radioHolder.append(listCheckOpt("radio", id, CheckOptions[i], i));
                }
             }
@@ -191,6 +207,7 @@ include("../translation.php"); ?>
             break;
 
          case "checkbox":
+            //Generate checkboxes
             var checkboxHolder = document.createElement("div");
             checkboxHolder.classList.add("checkbox-holder");
             if (settings == "") {
@@ -204,9 +221,12 @@ include("../translation.php"); ?>
             break;
 
          case "dropdown":
+            //Generate dropdown
+            //Create dropdown holder
             var dropdownHolder = document.createElement("div");
             dropdownHolder.classList.add("dropdown-holder");
 
+            //Create dropdown
             var select = document.createElement("select");
             select.classList.add("form-select", "userInput");
             select.id = id;
@@ -223,6 +243,7 @@ include("../translation.php"); ?>
             break;
 
          case "fileUpload":
+            //Generate file upload
             var input = document.createElement("input");
             input.type = "file";
             input.classList.add("form-control", "userInput");
@@ -233,6 +254,7 @@ include("../translation.php"); ?>
       return div;
    }
 
+   //Generate dropdown options
    function listDropdown(id, settings) {
       var option = document.createElement("option");
       option.value = settings;
@@ -241,12 +263,14 @@ include("../translation.php"); ?>
       return option;
    }
 
-
+   //Generate radio and checkbox options
    function listCheckOpt(type, id, settings, optionNum) {
+      //Create div to hold input and label
       var div = document.createElement("div");
       div.classList.add("form-check");
       div.setAttribute('data-option', optionNum);
 
+      //Create input
       var input = document.createElement("input");
       input.type = type;
       input.classList.add("form-check-input", "userInput");
@@ -257,6 +281,7 @@ include("../translation.php"); ?>
       input.setAttribute('data-name', settings);
       div.appendChild(input);
 
+      //Create label
       var label = document.createElement("label");
       label.classList.add("form-check-label");
       label.for = id;
@@ -266,16 +291,19 @@ include("../translation.php"); ?>
       return div;
    }
 
+   //Submit form
    function submitAnswer() {
-      var form = document.getElementById("form-body");
+      var form = document.getElementById("form-body"); //Get form container
 
-      var elements = form.getElementsByClassName("question");
+      var elements = form.getElementsByClassName("question"); //Get all form elements
 
       console.log(elements);
       var answers = [];
       for (var i = 0; i < elements.length; i++) {
+         //Loop through all form elements
          var element = elements[i];
 
+         //Check if element is required
          var isRequired = element.getAttribute("data-required");
          if (isRequired == "true") {
             var inputs = element.getElementsByClassName("userInput");
@@ -288,6 +316,7 @@ include("../translation.php"); ?>
          var inputs = element.getElementsByClassName("userInput");
 
          var value = [];
+         //Get value of form element
          if (elementType == "radio" || elementType == "checkbox") {
             for (var j = 0; j < inputs.length; j++) {
                value.push(inputs[j].checked);
@@ -308,7 +337,10 @@ include("../translation.php"); ?>
          console.log(answer);
       }
 
+      //Send answers to server
       answers = JSON.stringify(answers).replace(/"/g, '\\"');
+      
+      //Set UID to 0 if user is not logged in
       var uid = <?php if ($_SESSION['userId'] != null) {
          echo $_SESSION['userId'];
       } else {
