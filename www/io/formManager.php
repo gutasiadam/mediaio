@@ -1,13 +1,13 @@
 <?php
 namespace Mediaio;
 
+require 'vendor/mk-j/php_xlsxwriter/xlsxwriter.class.php';
 require_once __DIR__ . '/Database.php';
 require_once __DIR__ . '/Core.php';
 use Mediaio\Core;
 use Mediaio\Database;
 
 session_start();
-
 class formManager
 {
   static function createNewForm()
@@ -22,7 +22,6 @@ class formManager
       exit();
     }
   }
-
 
   static function listForms()
   {
@@ -160,6 +159,30 @@ class formManager
       exit();
     }
   }
+
+  static function generateXlsx($id)
+  {
+    if (in_array("admin", $_SESSION['groups'])) {
+      $sql = "SELECT * FROM formanswers WHERE FormID=" . $id . ";";
+      $connection = Database::runQuery_mysqli();
+      $result = $connection->query($sql);
+      $connection->close();
+      $answers = array();
+      while ($row = $result->fetch_assoc()) {
+        $answers[] = $row;
+      }
+      $data = array();
+      $data[] = array('ID', 'FormID', 'userID', 'userIp', 'UserAnswers');
+      foreach ($answers as $answer) {
+        $data[] = array($answer['ID'], $answer['FormID'], $answer['userID'], $answer['userIp'], $answer['UserAnswers']);
+      }
+      $writer = new \XLSXWriter();
+      $writer->writeSheet($data);
+      $writer->writeToFile('output.xlsx');
+      echo 200;
+      exit();
+    }
+  }
 }
 
 
@@ -177,6 +200,13 @@ if (isset($_POST['mode'])) {
   if ($_POST['mode'] == 'listForms') {
     echo formManager::listForms();
     //echo $_POST['value'] ;
+    //Header set.
+    exit();
+  }
+  if ($_POST['mode'] == 'generateXlsx') {
+    echo 'ASD';
+    echo formManager::generateXlsx($_POST['id']);
+    echo $_POST['value'] ;
     //Header set.
     exit();
   }

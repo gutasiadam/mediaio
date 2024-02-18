@@ -273,6 +273,19 @@ include("../translation.php"); ?>
     });
   }
 
+  function generateXlsx() {
+    //Make an ajax call to formManager.php
+    $.ajax({
+      url: "../formManager.php",
+      method: "POST",
+      data: { mode: "generateXlsx", id: 12 },
+      success: function (response) {
+        console.log(response);
+      }
+    });
+  }
+
+
   function openForm(formId) {
     window.location.href = "viewform.php?formId=" + formId;
   }

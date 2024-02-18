@@ -220,8 +220,8 @@ class Core{
                                 try {
                                     MailService::sendContactMail('MediaIO - jelszócsere',$_SESSION['email'],'Sikeres jelszócsere!',$content);
                                     header("Location: ./profile/chPwd.php?error=none");
-                                } catch (Exception $e) {
-                                    echo "Mailer Error: " . $mail->ErrorInfo;
+                                } catch (\Exception $e) {
+                                    echo "Mailer Error: " . $e;
                                 }
                             
                         }
@@ -372,7 +372,7 @@ class Core{
             //Check if this user already exists
             $sql = "SELECT usernameUsers FROM users WHERE usernameUsers='".$postData['username']."'" /*AND pwdUsers=?*/;
             $connection=Database::runQuery_mysqli($sql); 
-            $result=mysqli_query($connectionObject,$sql);
+            $result=mysqli_query($connection,$sql);
             $resultCheck = mysqli_num_rows($result);
             if ($resultCheck > 0){
                 //Username already exists.
@@ -463,7 +463,8 @@ class Core{
 if (isset($_POST['pwdCh-submit'])){
     $postData=array('userId'=>$_SESSION['userId'],'username'=>$_SESSION['UserUserName'],'oldpwd'=>$_POST['pwd-Old'], 
     'password'=>$_POST['pwd-New'],'passwordrepeat'=>$_POST['pwd-New-Check']);
-    Core::changePassword($postData);
+    $c=new Core;
+    $c->changePassword($postData);
 }
 if (isset($_POST['pointUpdate'])){
     $postData=array('userName'=>$_POST['userName'],'adminChecked'=>false, 
@@ -486,7 +487,8 @@ if(isset($_POST['register'])){
     'passwordrepeat' => $_POST['pwd-Re'],
     'role' => "1"
     );
-    Core::registerUser($postData);
+    $core=new Core;
+    $core->registerUser($postData);
 }
  if (isset($_POST['pwdLost-submit'])){
     //createLostPassWordToken();
@@ -561,8 +563,8 @@ if(isset($_POST['register'])){
                                 try {
                                     MailService::sendContactMail('MediaIO - jelszócsere',$_POST['emailAddr'],'Sikeres jelszócsere!',$content);
                                     header("Location: ./profile/lostPwd.php?error=none");
-                                } catch (Exception $e) {
-                                    echo "Mailer Error: " . $mail->ErrorInfo;
+                                } catch (\Exception $e) {
+                                    echo "Mailer Error: " . $e;
                                 }
         }
     }

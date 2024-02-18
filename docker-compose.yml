@@ -27,7 +27,7 @@ services:
        - "./php/uploads/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini"
 
      app-data:    
-      image: php:7.3-fpm  
+      image: php:8.2-fpm  
       container_name: app-data
       volumes:  
        - ./www/:/var/www/
