@@ -1,13 +1,17 @@
 <?php
 namespace Mediaio;
 
-require 'vendor/mk-j/php_xlsxwriter/xlsxwriter.class.php';
+//require 'vendor/mk-j/php_xlsxwriter/xlsxwriter.class.php';
 require_once __DIR__ . '/Database.php';
 require_once __DIR__ . '/Core.php';
 use Mediaio\Core;
 use Mediaio\Database;
 
+error_reporting(E_ERROR | E_PARSE);
+
 session_start();
+
+
 class formManager
 {
   static function createNewForm()
@@ -55,7 +59,7 @@ class formManager
 
 
 
-      $sql = "UPDATE forms SET Name='" . $form['name'] . "',Header='".$formHeader."',Status='" . $formState . "',Data='" . json_encode($form['elements'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . "'
+      $sql = "UPDATE forms SET Name='" . $form['name'] . "',Header='" . $formHeader . "',Status='" . $formState . "',Data='" . json_encode($form['elements'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . "'
             ,Accessrestrict='" . $accessRestrict . "' WHERE ID=" . $id . ";";
       $connection = Database::runQuery_mysqli();
       $connection->query($sql);
@@ -206,7 +210,7 @@ if (isset($_POST['mode'])) {
   if ($_POST['mode'] == 'generateXlsx') {
     echo 'ASD';
     echo formManager::generateXlsx($_POST['id']);
-    echo $_POST['value'] ;
+    echo $_POST['value'];
     //Header set.
     exit();
   }

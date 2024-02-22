@@ -1,125 +1,123 @@
 <?php
 session_start();
 include "header.php";
-include("../translation.php");
 
 error_reporting(E_ERROR | E_PARSE);
 ?>
-<html>
 <link href="utility/themes/default/style.min.css" rel="stylesheet" />
 
 
-<title>MediaIo - forms</title>
-<?php if (isset($_SESSION["userId"])) { ?>
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <a class="navbar-brand" href="../index.php">
-      <img src="../utility/logo2.png" height="50">
-    </a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav mr-auto navbarUl">
-        <script>
-          $(document).ready(function () {
-            menuItems = importItem("../utility/menuitems.json");
-            drawMenuItemsLeft('forms', menuItems, 2);
-          });
-        </script>
-      </ul>
-      <ul class="navbar-nav ms-auto navbarPhP">
-        <li>
-          <a class="nav-link disabled timelock" href="#"><span id="time"> 10:00 </span>
-            <?php echo ' ' . $_SESSION['UserUserName']; ?>
-          </a>
-        </li>
-      </ul>
-      <form method='post' class="form-inline my-2 my-lg-0" action=../utility/userLogging.php>
-        <button id="logoutBtn" class="btn btn-danger my-2 my-sm-0 logout-button" name='logout-submit'
-          type="submit">Kijelentkezés</button>
-        <script type="text/javascript">
-          window.onload = function () {
-            display = document.querySelector('#time');
-            var timeUpLoc = "../utility/userLogging.php?logout-submit=y"
-            startTimer(display, timeUpLoc);
-          };
-        </script>
-      </form>
-    </div>
-  </nav>
+<body>
+  <?php if (isset($_SESSION["userId"])) { ?>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <a class="navbar-brand" href="../index.php">
+        <img src="../utility/logo2.png" height="50">
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto navbarUl">
+          <script>
+            $(document).ready(function () {
+              menuItems = importItem("../utility/menuitems.json");
+              drawMenuItemsLeft('forms', menuItems, 2);
+            });
+          </script>
+        </ul>
+        <ul class="navbar-nav ms-auto navbarPhP">
+          <li>
+            <a class="nav-link disabled timelock" href="#"><span id="time"> 10:00 </span>
+              <?php echo ' ' . $_SESSION['UserUserName']; ?>
+            </a>
+          </li>
+        </ul>
+        <form method='post' class="form-inline my-2 my-lg-0" action=../utility/userLogging.php>
+          <button id="logoutBtn" class="btn btn-danger my-2 my-sm-0 logout-button" name='logout-submit'
+            type="submit">Kijelentkezés</button>
+          <script type="text/javascript">
+            window.onload = function () {
+              display = document.querySelector('#time');
+              var timeUpLoc = "../utility/userLogging.php?logout-submit=y"
+              startTimer(display, timeUpLoc);
+            };
+          </script>
+        </form>
+      </div>
+    </nav>
 
-  <!-- Clear Modal -->
-  <div class="modal fade" id="delete_Modal" tabindex="-1" role="dialog" aria-labelledby="delete_ModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Törlés</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <a>Biztosan ki akarod törölni a kérdőívet?</a>
-        </div>
-        <div class="modal-footer">
-          <button class="btn btn-danger col-lg-auto mb-1" id="clear" data-bs-dismiss="modal">Törlés</button>
-          <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Mégse</button>
+    <!-- Clear Modal -->
+    <div class="modal fade" id="delete_Modal" tabindex="-1" role="dialog" aria-labelledby="delete_ModalLabel"
+      aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Törlés</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <a>Biztosan ki akarod törölni a kérdőívet?</a>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-danger col-lg-auto mb-1" id="clear" data-bs-dismiss="modal">Törlés</button>
+            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Mégse</button>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-  <!-- End of Clear Modal -->
+    <!-- End of Clear Modal -->
 
-  <h2 class="rainbow">Kérdőívek</h2>
-  <?php if (in_array("admin", $_SESSION["groups"])) {
+    <h2 class="rainbow">Kérdőívek</h2>
+    <?php if (in_array("admin", $_SESSION["groups"])) {
 
-      // A szerkesztés alatt levő formokat is megjelenítjük
+    // A szerkesztés alatt levő formokat is megjelenítjük
 //TODO
-    } ?>
-  <div class="container">
-    <div class="row" id="admin_opt">
+  } ?>
+    <div class="container">
+      <div class="row" id="admin_opt">
 
+      </div>
+      <div class="row" id="available_forms">
+
+      </div>
     </div>
-    <div class="row" id="available_forms">
 
+    <?php
+
+  } else {
+    echo "<h1 class='rainbow'>Árpád Média - Kitölthető kérdőívek</h1>";
+    ?>
+    <div class="container">
+      <div class="row" id="available_forms">
+
+      </div>
     </div>
-  </div>
-
-  <?php
-
-} else {
-  echo "<h1 class='rainbow'>Árpád Média - Kitölthető kérdőívek</h1>";
+    <?php
+  }
   ?>
-  <div class="container">
-    <div class="row" id="available_forms">
 
-    </div>
-  </div>
-  <?php
-}
-?>
 
-</html>
-
-<body>
 </body>
 
 
 <script>
-  //onload
+  console.log("Loading forms");
+
   $(document).ready(function () {
 
-    if (<?php echo isset($_GET['invalidID']) ? "true" : "false" ?>) {
+    <?php if (isset($_GET['invalidID'])) { ?>
       alert("Nem létező kérdőív");
-    }
+    <?php } ?>
 
-    if (<?php echo isset($_GET['closedForm']) ? "true" : "false" ?>) {
+    <?php if (isset($_GET['closedForm'])) { ?>
       alert("A kérdőív lezárásra került");
-    }
+    <?php } ?>
+
     //If user is admin
-    if (<?php echo in_array("admin", $_SESSION["groups"]) ? "true" : "false" ?>) {
+    <?php if (isset($_SESSION['userId']) && in_array("admin", $_SESSION["groups"])) { ?>
       $("#admin_opt").append('<button class="btn btn-success noprint mb-2 mr-sm-2" onclick=createNewForm()><i class="fas fa-plus fa-lg"></i></button>');
-    }
+    <?php } ?>
     //Make an ajax call to formManager.php
     listForms();
 
@@ -148,12 +146,12 @@ error_reporting(E_ERROR | E_PARSE);
   function createCard(formId, formName, formStatus, StillEditing, formAccessRestrict, formLastEdited, backgroundImg) {
     var card = document.createElement("div");
     card.className = "card";
-    if (<?php echo in_array("admin", $_SESSION["groups"]) ? "true" : "false" ?>) {
+    <?php if (isset($_SESSION['userId']) && in_array("admin", $_SESSION["groups"])) { ?>
       var cardHeader = document.createElement("div");
       cardHeader.className = "card-header";
       cardHeader.innerHTML = "Utolsó szerkesztés: " + calculateLastEdited(formLastEdited);
       card.appendChild(cardHeader);
-    }
+    <?php } ?>
     var img = document.createElement("img");
     img.className = "card-img-top";
     img.src = backgroundImg;
@@ -194,7 +192,7 @@ error_reporting(E_ERROR | E_PARSE);
 
     ButtonHolder.appendChild(cardButton);
 
-    if (<?php echo in_array("admin", $_SESSION["groups"]) ? "true" : "false" ?>) {
+    <?php if (isset($_SESSION['userId']) && in_array("admin", $_SESSION["groups"])) { ?>
       var editButton = document.createElement("button");
       editButton.className = "btn btn-secondary noprint";
       editButton.innerHTML = "<i class='fas fa-pen fa-lg'></i>";
@@ -206,17 +204,17 @@ error_reporting(E_ERROR | E_PARSE);
       deleteButton.innerHTML = "<i class='fas fa-trash-alt fa-lg'></i>";
       deleteButton.onclick = function () { showDeleteModal(formId) };
       ButtonHolder.appendChild(deleteButton);
-    }
+    <?php } ?>
 
     cardBody.appendChild(ButtonHolder);
     card.appendChild(cardBody);
 
-    if (<?php echo isset($_SESSION["userId"]) ? "true" : "false" ?>) {
+    <?php if (isset($_SESSION['userId']) && in_array("admin", $_SESSION["groups"])) { ?>
       var cardFooter = document.createElement("div");
       cardFooter.className = "card-footer text-body-secondary";
       cardFooter.innerHTML = formAccessRestrict;
       card.appendChild(cardFooter);
-    }
+    <?php } ?>
 
     console.log(card);
     document.getElementById("available_forms").appendChild(card);

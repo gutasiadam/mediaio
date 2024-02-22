@@ -64,11 +64,12 @@ include("../translation.php");
             </div>
             <button class="btn btn-secondary" onclick="showFormEdit(<?php echo $_GET['formId'] ?>)"><i
                   class='fas fa-highlighter fa-lg'></i> Szerkesztés</button>
+            <button class="btn" onclick="viewForm(<?php echo $_GET['formId'] ?>)"><i class="fas fa-eye"></i></button>
             <button class="btn" onclick="showSettingsModal()"><i class="fas fa-sliders-h fa-lg"></i></button>
          </div>
-         <div class="container" id="form-body">
+         <form class="row form-control" id="form-body">
 
-         </div>
+         </form>
       </div>
    </body>
 
@@ -98,6 +99,8 @@ include("../translation.php");
             for (var i = 0; i < answers.length; i++) {
                UserAnswers.push(answers[i]);
                var li = document.createElement("li");
+               li.classList.add("dropdown-item");
+               li.style.cursor = "pointer";
                li.innerHTML = "<a onclick='showFormAnswers(" + (answers[i].ID) + ")'>" + i + ". válasz</a>";
                dropdown.appendChild(li);
             }
@@ -143,6 +146,11 @@ include("../translation.php");
       });
 
    });
+
+   //Function to view form
+   function viewForm(formId) {
+      window.location.href = "viewform.php?formId=" + formId;
+   }
 
    function showFormAnswers(id) {
 
@@ -193,8 +201,9 @@ include("../translation.php");
    }
 
    function generateElement(type, id, place, settings, answer) {
-      answer = answer.replace(/"/g, '');
+      answer = JSON.parse(answer);
 
+      //console.log(answer);
       if (settings != "") {
          var questionSetting = JSON.parse(settings).question;
          var isRequired = JSON.parse(settings).required;
@@ -328,7 +337,13 @@ include("../translation.php");
    }
 
 
-   function listCheckOpt(type, id, settings, optionNum, selected) {
+   function listCheckOpt(type, id, settings, optionNum, answer) {
+      console.log("Answer: " + answer);
+      var labelname = answer.split(":")[0];
+      var checked = Boolean(Number(answer.split(":")[1]));
+
+      console.log("Labelname: " + labelname + " Checked: " + checked);
+
       var div = document.createElement("div");
       div.classList.add("form-check");
       div.setAttribute('data-option', optionNum);
@@ -341,14 +356,14 @@ include("../translation.php");
          input.name = "flexRadioDefault";
       }
       input.id = id;
-      input.checked = selected;
+      input.checked = checked;
       input.setAttribute('data-name', settings);
       div.appendChild(input);
 
       var label = document.createElement("label");
       label.classList.add("form-check-label");
       label.for = id;
-      label.innerHTML = settings;
+      label.innerHTML = labelname;
       div.appendChild(label);
 
       return div;

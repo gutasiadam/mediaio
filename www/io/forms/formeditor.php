@@ -115,6 +115,11 @@ include("../translation.php"); ?>
                   <label class="form-check-label" for="flexSwitchCheckDefault">Korlátozás egy válaszra (még nem
                      működik)</label>
                </div>
+               <div class="form-check form-switch">
+                  <input type="checkbox" class="form-check-input" id="flexSwitchCheckDefault">
+                  <label class="form-check-label" for="flexSwitchCheckDefault"><b>Anonymous</b> válaszadás (még nem
+                     működik)</label>
+               </div>
                <br>
                <label for="background_img">Háttérkép: <a href="#" id="default-background" data-bs-toggle="popover"
                      data-bs-placement="top">(alapértelmezett)</a></label>

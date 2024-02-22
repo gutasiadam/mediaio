@@ -7,10 +7,10 @@ include("../translation.php"); ?>
 <body>
 
    <div class="container" id="form-container">
-      <div class="row form-control" id="form-body">
+      <form class="row form-control" id="form-body">
          <h2 class="rainbow" id="form_name"></h2>
          <h5 id="form_header"></h5>
-      </div>
+      </form>
 
       <div class="row">
       </div>
@@ -19,17 +19,30 @@ include("../translation.php"); ?>
 </body>
 <script>
    $(document).ready(function () {
-      
-      //Check if form is closed
-      if (<?php if (isset($_GET['success'])) {
-         echo "1";
-      } else {
-         echo "0";
-      } ?>) {
+
+      <?php if (isset($_GET['success'])) { ?>
+
+
+         //Check if form is closed
+
          //Set form Name and header if form is closed
          document.getElementById("form_name").innerHTML = "Sikeres leadás!";
          document.getElementById("form_header").innerHTML = "Köszönjük, hogy kitöltötte a kérdőívet!";
-      } else {
+
+         var formContainer = document.getElementById("form-body");
+
+         <?php if ($_SESSION['userId'] != null && in_array("admin", $_SESSION["groups"])) { ?>
+            //Add view answers button
+            var viewAnswers = document.createElement("button");
+            viewAnswers.classList.add("btn", "btn-lg", "btn-success");
+            viewAnswers.innerHTML = "Válaszok megtekintése";
+            viewAnswers.onclick = function () {
+               window.location.href = "formanswers.php?formId=<?php echo $_GET['formId'] ?>";
+            }
+            formContainer.appendChild(viewAnswers);
+
+         <?php }
+      } else { ?>
          //Load form from server
          console.log(<?php echo $_GET['formId'] ?>);
          $.ajax({
@@ -53,6 +66,17 @@ include("../translation.php"); ?>
                document.getElementById("form_name").innerHTML = formName;
                document.getElementById("form_header").innerHTML = form.Header.replace(/\n/g, "<br>");
 
+               <?php if (isset($_SESSION['userId']) && in_array("admin", $_SESSION["groups"])) { ?>
+                  var editForm = document.createElement("button");
+                  editForm.classList.add("btn");
+                  editForm.innerHTML = '<i class="fas fa-edit fa-2x" style="color: #747b86"></i>';
+                  editForm.onclick = function () {
+                     window.location.href = "formeditor.php?formId=<?php echo $_GET['formId'] ?>";
+                  }
+                  document.getElementById("form_name").appendChild(editForm);
+
+               <?php } ?>
+
                //Where form items are stored
                formContainer = document.getElementById("form-body");
 
@@ -60,18 +84,18 @@ include("../translation.php"); ?>
                //Set background
                var style = document.createElement('style');
                style.innerHTML = `
-               body::before {
-               content: "";
-               position: fixed;
-               top: 0;
-               right: 0;
-               bottom: 0;
-               left: 0;
-               background-image: url(../forms/backgrounds/` + form.Background + `);
-               background-size: cover;
-               background-position: center;
-               z-index: -1;
-               }`;
+                                    body::before {
+                                    content: "";
+                                    position: fixed;
+                                    top: 0;
+                                    right: 0;
+                                    bottom: 0;
+                                    left: 0;
+                                    background-image: url(../forms/backgrounds/` + form.Background + `);
+                                    background-size: cover;
+                                    background-position: center;
+                                    z-index: -1;
+                                    }`;
                document.head.appendChild(style);
 
 
@@ -100,13 +124,14 @@ include("../translation.php"); ?>
                //Add submit button
                var submit = document.createElement("button");
                submit.classList.add("btn", "btn-lg", "btn-success");
+               submit.type = "submit";
                submit.innerHTML = "Leadás";
-               submit.onclick = function () { submitAnswer() };
                formContainer.appendChild(submit);
 
             }
-         })
-      };
+         });
+
+      <?php } ?>
    });
 
 
@@ -153,6 +178,9 @@ include("../translation.php"); ?>
             input.classList.add("form-control", "userInput");
             input.id = id;
             input.placeholder = "Írja be az email címét";
+            if (isRequired) {
+               input.required = true;
+            }
             div.appendChild(input);
             break;
          case "date":
@@ -161,6 +189,9 @@ include("../translation.php"); ?>
             input.type = "date";
             input.classList.add("form-control", "userInput");
             input.id = id;
+            if (isRequired) {
+               input.required = true;
+            }
             div.appendChild(input);
             break;
          case "time":
@@ -169,6 +200,9 @@ include("../translation.php"); ?>
             input.type = "time";
             input.classList.add("form-control", "userInput");
             input.id = id;
+            if (isRequired) {
+               input.required = true;
+            }
             div.appendChild(input);
             break;
 
@@ -178,6 +212,9 @@ include("../translation.php"); ?>
             input.type = "text";
             input.classList.add("form-control", "userInput");
             input.id = id;
+            if (isRequired) {
+               input.required = true;
+            }
             input.placeholder = "Rövid szöveg";
             div.appendChild(input);
             break;
@@ -188,6 +225,9 @@ include("../translation.php"); ?>
             input.classList.add("form-control", "userInput");
             input.id = id;
             input.placeholder = "Hosszú szöveg";
+            if (isRequired) {
+               input.required = true;
+            }
             div.appendChild(input);
             break;
 
@@ -265,6 +305,7 @@ include("../translation.php"); ?>
 
    //Generate radio and checkbox options
    function listCheckOpt(type, id, settings, optionNum) {
+
       //Create div to hold input and label
       var div = document.createElement("div");
       div.classList.add("form-check");
@@ -290,6 +331,13 @@ include("../translation.php"); ?>
 
       return div;
    }
+
+   var form = document.getElementById("form-body");
+
+   form.addEventListener("submit", function (event) {
+      event.preventDefault();
+      submitAnswer();
+   });
 
    //Submit form
    function submitAnswer() {
@@ -319,8 +367,12 @@ include("../translation.php"); ?>
          //Get value of form element
          if (elementType == "radio" || elementType == "checkbox") {
             for (var j = 0; j < inputs.length; j++) {
-               value.push(inputs[j].checked);
-               value.push(inputs[j].getAttribute("data-name"));
+               var checked = 0;
+               if (inputs[j].checked) {
+                  checked = 1
+               }
+               var input = inputs[j].getAttribute("data-name") + ":" + checked;
+               value.push(input);
             }
          }
          else {
@@ -339,7 +391,7 @@ include("../translation.php"); ?>
 
       //Send answers to server
       answers = JSON.stringify(answers).replace(/"/g, '\\"');
-      
+
       //Set UID to 0 if user is not logged in
       var uid = <?php if ($_SESSION['userId'] != null) {
          echo $_SESSION['userId'];
