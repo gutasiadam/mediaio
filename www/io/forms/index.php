@@ -1,7 +1,10 @@
 <?php
 session_start();
 include "header.php";
-include("../translation.php"); ?>
+include("../translation.php");
+
+error_reporting(E_ERROR | E_PARSE);
+?>
 <html>
 <link href="utility/themes/default/style.min.css" rel="stylesheet" />
 
@@ -238,7 +241,7 @@ include("../translation.php"); ?>
     $.ajax({
       url: "../formManager.php",
       method: "POST",
-      data: { mode: "listForms"},
+      data: { mode: "listForms" },
       success: function (response) {
 
         response = JSON.parse(response);

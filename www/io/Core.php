@@ -1,5 +1,6 @@
 <?php
 namespace Mediaio;
+//error_reporting(E_ERROR | E_WARNING | E_PARSE);
 require_once 'Database.php';
 require_once 'Mailer.php';
 use Mediaio\Database;
@@ -33,7 +34,6 @@ class Core{
         $sql = "SELECT * from users WHERE apikey='$apikey';";
         $result = Database::runQuery($sql);
         if($row = mysqli_fetch_assoc($result)){
-            //session_start();
             $userDataArray=array();
             $userDataArray['userId'] = $row['idUsers'];
             $userDataArray['username'] = $row['usernameUsers']; //Bevare! usernameUsers field has different name in the RESTAPI mode!
@@ -111,7 +111,6 @@ class Core{
                                 header("Location: ../index.php?error=WrongPass");
                                 exit();
                             }else if($pwdcheck == true){
-                                session_start();
                                 //check if session role json contains admin or szsadmin
                                 $role = json_decode($row['AdditionalData'], true);
                                 //var_dump($role);
@@ -175,7 +174,6 @@ class Core{
         }
     }
     function logoutUser(){
-        session_start();
         session_unset();
         session_destroy();
         header("Location: ../index.php?logout=success");

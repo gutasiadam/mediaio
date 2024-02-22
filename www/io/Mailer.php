@@ -1,8 +1,8 @@
 <?php
 
 namespace Mediaio;
-require_once __DIR__ .'/vendor/autoload.php';
-require_once __DIR__ .'/Config.php';
+//require_once __DIR__ .'/vendor/autoload.php';
+//require_once __DIR__ .'/Config.php';
 
 /*use SendinBlue\Client\Configuration;
 use SendinBlue\Client\Api\TransactionalEmailsApi;

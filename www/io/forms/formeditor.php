@@ -223,20 +223,23 @@ include("../translation.php"); ?>
 
 
 <script>
+   //Changing this variable if something is changed
    var everythingSaved = true;
 
 
-
+   //If the user tries to leave the page without saving, show a warning
    window.onbeforeunload = function () {
       if (!everythingSaved) {
          return "Nem mentett változtatások vannak! Biztosan továbblépsz?";
       }
    }
 
+   //After any keypress something is changed
    document.addEventListener('keypress', function (event) {
       everythingSaved = false;
    });
 
+   //Place popover on default background
    document.addEventListener('DOMContentLoaded', function () {
       var popoverTriggerEl = document.getElementById('default-background');
       var popover = new bootstrap.Popover(popoverTriggerEl, {
@@ -247,27 +250,33 @@ include("../translation.php"); ?>
       });
    });
 
+   //Function to view form
    function viewForm(formId) {
       window.location.href = "viewform.php?formId=" + formId;
    }
 
+   //Function to show form answers
    function showFormAnswers(formId) {
       window.location.href = "formanswers.php?formId=" + formId;
    }
 
+   //Function to show delete modal
    function showDeleteModal() {
       $('#delete_Modal').modal('show');
    }
 
+   //Function to show settings modal
    function showSettingsModal() {
       $('#settings_Modal').modal('show');
    }
 
+   //Function to show title modal
    var i = 0;
    document.getElementById("form_name").addEventListener("click", function () {
       $('#Title_Modal').modal('show');
    });
 
+   //Function to save title
    function save_title() {
       var title = document.getElementById("formTitle").value;
       document.getElementById("form_name").innerHTML = title + '&nbsp<i class="fas fa-edit fa-xs" style="color: #747b86"></i>';
@@ -328,6 +337,7 @@ include("../translation.php"); ?>
             }
             i = formElements.length;
             for (var pos = 1; pos <= formElements.length; pos++) {
+               //Find element with the same position
                for (var j = 0; j < formElements.length; j++) {
                   if (formElements[j].place == pos) {
                      var element = formElements[j];
@@ -350,6 +360,7 @@ include("../translation.php"); ?>
       })
    });
 
+   //Function to check if question id is used
    function checkIdNotUsed(id) {
       var elements = document.getElementById("editorZone").getElementsByClassName("form-member");
       for (var j = 0; j < elements.length; j++) {
@@ -362,18 +373,19 @@ include("../translation.php"); ?>
    }
 
    function generateElement(type, id, place, settings) {
-      
+      //Parse settings
       if (settings != "") {
          var questionSetting = JSON.parse(settings).question;
          var isRequired = JSON.parse(settings).required;
          var CheckOptions = JSON.parse(settings).options;
       }
+      //Create div, which will contain the element
       var div = document.createElement("div");
       div.classList.add("form-member");
       div.id = type + "-" + id;
       div.setAttribute('data-position', place);
       div.classList.add("mb-3");
-      
+
       //Add settings div
       var uidiv = document.createElement("div");
       uidiv.classList.add("form-control");
@@ -509,9 +521,11 @@ include("../translation.php"); ?>
 
       }
 
+      //Add switch for required
       var switchdiv = document.createElement("div");
       switchdiv.classList.add("form-check", "form-switch");
 
+      //Add switch
       var input = document.createElement("input");
       input.type = "checkbox";
       input.classList.add("form-check-input");
@@ -519,6 +533,7 @@ include("../translation.php"); ?>
       input.checked = isRequired;
       switchdiv.appendChild(input);
 
+      //Add label for switch
       var label = document.createElement("label");
       label.classList.add("form-check-label");
       label.for = "flexSwitchCheckDefault";
@@ -527,10 +542,12 @@ include("../translation.php"); ?>
 
       uidiv.appendChild(switchdiv);
 
+      //Add navigation buttons
       var navdiv = document.createElement("div");
       navdiv.classList.add("element-nav");
       div.appendChild(navdiv);
 
+      //Move up button
       var moveUpButton = document.createElement("button");
       moveUpButton.classList.add("btn", "btn-secondary", "btn-sm");
       moveUpButton.innerHTML = "↑";
@@ -539,6 +556,7 @@ include("../translation.php"); ?>
       };
       navdiv.appendChild(moveUpButton);
 
+      //Delete button
       var deleteButton = document.createElement("button");
       deleteButton.classList.add("btn", "btn-close", "btn-sm");
       deleteButton.onclick = function () {
@@ -546,6 +564,7 @@ include("../translation.php"); ?>
       };
       navdiv.appendChild(deleteButton);
 
+      //Move down button
       var moveDownButton = document.createElement("button");
       moveDownButton.classList.add("btn", "btn-secondary", "btn-sm");
       moveDownButton.innerHTML = "↓";
@@ -559,26 +578,31 @@ include("../translation.php"); ?>
    }
 
 
+   //Function to add a new form element
    function addFormElement(type) {
       everythingSaved = false;
       i++;
-      i = checkIdNotUsed(i);
+      i = checkIdNotUsed(i); //Check if id is used
       console.log("Adding form element: " + type);
-      var place = document.getElementById("editorZone").getElementsByClassName("form-member").length + 1;
+      var place = document.getElementById("editorZone").getElementsByClassName("form-member").length + 1; //Get the place of the new element
       console.log("Place: " + place);
-      document.getElementById("editorZone").appendChild(generateElement(type, i, place, ""));
+      document.getElementById("editorZone").appendChild(generateElement(type, i, place, "")); //Generate the element
    };
 
 
+   //Function to generate a dropdown element
    function listDropdown(id, settings, optionNum) {
+      //Create div for dropdown
       var div = document.createElement("div");
       div.classList.add("form-check");
       div.setAttribute('data-option', optionNum);
 
+      //Create arrow
       var arrow = document.createElement("i");
       arrow.classList.add("fas", "fa-arrow-right", "fa-lg");
       div.appendChild(arrow);
 
+      //Create option for dropdown
       var label = document.createElement("input");
       label.type = "text";
       label.classList.add("form-control");
@@ -586,6 +610,7 @@ include("../translation.php"); ?>
       label.value = settings;
       div.appendChild(label);
 
+      //Create delete button
       var deleteButton = document.createElement("button");
       deleteButton.classList.add("btn", "btn-close", "btn-sm");
       deleteButton.onclick = function () {
@@ -596,11 +621,14 @@ include("../translation.php"); ?>
    }
 
 
+   //Function to generate a checkbox or radio element
    function listCheckOpt(type, id, settings, optionNum) {
+      //Create div for checkbox or radio
       var div = document.createElement("div");
       div.classList.add("form-check");
       div.setAttribute('data-option', optionNum);
 
+      //Create input for checkbox or radio
       var input = document.createElement("input");
       input.type = type;
       input.classList.add("form-check-input");
@@ -608,6 +636,7 @@ include("../translation.php"); ?>
       input.id = id;
       div.appendChild(input);
 
+      //Create label for checkbox or radio
       var label = document.createElement("input");
       label.type = "text";
       label.classList.add("form-control");
@@ -615,6 +644,7 @@ include("../translation.php"); ?>
       label.value = settings;
       div.appendChild(label);
 
+      //Create delete button
       var deleteButton = document.createElement("button");
       deleteButton.classList.add("btn", "btn-close", "btn-sm");
       deleteButton.onclick = function () {
@@ -635,35 +665,44 @@ include("../translation.php"); ?>
    }
 
 
+   //Function to get element settings
    function getElementSettings(type, id) {
-      var maindiv = document.getElementById(type + "-" + id);
+      var maindiv = document.getElementById(type + "-" + id); //Get the main div of the element
       var checkOptions = "";
+      //Check if the element is a checkbox, radio or dropdown
       if (type == "checkbox" || type == "radio" || type == "dropdown") {
-         checkOptions = getCheckSettings(maindiv);
+         checkOptions = getCheckSettings(maindiv); //Get the options of the element
       }
+      //Get the question of the element
       var elementQuestion = maindiv.querySelector("#e-settings").getElementsByTagName("input")[0].value;
+      //Check if the element is required
       var isRequired = maindiv.querySelector("#flexSwitchCheckDefault").checked;
+      //Create settings object
       var elementSettings = {
          question: elementQuestion,
          required: isRequired,
          options: checkOptions
       }
-
+      //Return settings as JSON string
       elementSettings = JSON.stringify(elementSettings).replace(/"/g, '\\"');
       return elementSettings;
    }
 
 
+   //Function to remove an element
    function removeElement(type, id) {
       everythingSaved = false;
       var element = document.getElementById(type + "-" + id);
       element.remove();
    }
 
+   //Function to move an element up
    function moveUp(type, id) {
       everythingSaved = false;
       var element = document.getElementById(type + "-" + id);
+
       element.setAttribute('data-position', parseInt(element.getAttribute('data-position')) - 1);
+      //Get the previous element
       var prevElement = element.previousElementSibling;
       prevElement.setAttribute('data-position', parseInt(prevElement.getAttribute('data-position')) + 1);
       if (prevElement != null) {
@@ -671,6 +710,7 @@ include("../translation.php"); ?>
       }
    }
 
+   //Function to move an element down
    function moveDown(type, id) {
       everythingSaved = false;
       var element = document.getElementById(type + "-" + id);
@@ -682,7 +722,7 @@ include("../translation.php"); ?>
       }
    }
 
-
+   //Function to change background TODO!!!!
    function changeBackground(clear) {
 
       if (clear) {
@@ -763,19 +803,21 @@ include("../translation.php"); ?>
       var elements = formEditor.getElementsByClassName("form-member");
       var formName = document.getElementById("form_name").innerHTML.split("&nbsp")[0];
 
+      //If form name is empty, set it to "Névtelen"
       if (formName == "") {
          formName = "Névtelen";
       }
 
       console.log(elements);
       var formElements = [];
+      //Get all elements and their settings
       for (var k = 0; k < elements.length; k++) {
          var elementType = elements[k].id.split("-")[0];
          var elementId = elements[k].id.split("-")[1];
          var elementPlace = k + 1;
          var elementSettings = getElementSettings(elementType, elementId);
 
-
+         //Create element object
          var formElement = {
             "type": elementType,
             "place": elementPlace,

@@ -1,5 +1,5 @@
 <?php 
-session_start();
+//session_start();
 error_reporting(E_ERROR | E_PARSE);
 //This file is created to make translation easier. Default language is HUNAGRIAN.
 
@@ -39,5 +39,3 @@ $ftp_ip="localhost"; //Change this to your FTP server's Ip. ( only used for avai
 
 $help="Segítség";
 $help_description="Kattints az alábbi funkciók egyikére, hogy bővebb információt kapj róluk.";
-
-?>

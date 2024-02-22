@@ -1,14 +1,16 @@
 <?php
+
 namespace Mediao;
 
+session_start();
 include "translation.php";
 include "header.php";
-
-namespace Mediaio;
 
 use Mediaio\itemDataManager;
 
 require "./ItemManager.php";
+
+error_reporting(E_ERROR | E_PARSE);
 
 ?>
 <!DOCTYPE html>

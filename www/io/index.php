@@ -1,12 +1,11 @@
 <?php
-
+session_start();
 include "translation.php";
 include "header.php";
 //Suppresses error messages
 error_reporting(E_ERROR | E_PARSE);
 
 ?>
-<!DOCTYPE html>
 <?php if (isset($_SESSION["userId"])) { ?>
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <a class="navbar-brand" href="index.php">
@@ -55,14 +54,81 @@ error_reporting(E_ERROR | E_PARSE);
 
     </div>
   </nav>
-<?php } ?>
 
-<body>
-  <?php
+  <body>
 
-  //If the user is not logged in, display the login form
-  
-  if (!isset($_SESSION["userId"])) { ?>
+    <h1 class="rainbow">Árpád Média IO</h1>
+    <div class="row justify-content-center mainRow1 ab"
+      style="text-align: center; width:100%; max-width: 1000px; margin: 0 auto;"></div><br>
+    <div class="row justify-content-center mainRow2 ab"
+      style="text-align: center; width:100%; max-width: 1000px; margin: 0 auto;"></div><br>
+    <div class="row justify-content-center mainRow3 ab"
+      style="text-align: center; width:100%; max-width: 1000px; margin: 0 auto;"></div><br>
+    <div class="row justify-content-center mainRow4 ab"
+      style="text-align: center; width:100%; max-width: 1000px; margin: 0 auto;"></div><br>
+    <div class="row justify-content-center mainRow5 ab"
+      style="text-align: center; width:100%; max-width: 1000px; margin: 0 auto;"></div>
+    <br>
+
+    <div class="toast-container position-absolute p-3 indexToasts">
+      <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" id="service_toast">
+        <div class="toast-header">
+          <img src="./utility/logo.png" height="30">
+          <strong class="me-auto"> Üdv újra,
+            <?php echo $_SESSION['firstName']; ?>!
+          </strong>
+          <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+          <p class="toast-text" id="usercheckItemCount">Nincs elfogadásra váró esemény!</p>
+          <div class="mt-2 pt-2 border-top" id="service_toast_footer">
+          </div>
+        </div>
+      </div>
+    </div>
+    <script type="text/javascript">
+      $(document).ready(function () {
+        <?php if (isset($_GET["login"]) && $_GET["login"] == "success" && in_array("admin", $_SESSION["groups"])) { ?>
+          var userData = "<?php echo $_POST['user']; ?>";
+          $.ajax({
+            url: "../ItemManager.php",
+            type: "POST",
+            data: {
+              mode: "getProfileItemCounts",
+              user: userData
+            },
+            success: function (data) {
+              var dataArray = data.split(",");
+              console.log(dataArray);
+              //Set the user item count
+              //document.getElementById("userItemCount").innerHTML = dataArray[2];
+              //Set the usercheck count
+              if (dataArray[1] > 0) {
+                document.getElementById("usercheckItemCount").innerHTML = dataArray[1] + " esemény vár elfogadásra!";
+                let form = document.createElement('form');
+                form.action = "../profile/usercheck.php";
+                form.style = "width: fit-content; display: inline-block;";
+                form.innerHTML = '<button type="submit" class="btn btn-primary btn-sm">Vigyél oda!</button>';
+                document.getElementById("service_toast_footer").prepend(form);
+              }
+              //Set the service item count
+              //document.getElementById("serviceItemCount").innerHTML = dataArray[0];
+
+            }
+
+          });
+          const toastLiveExample = document.getElementById('service_toast');
+          const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample, { delay: 8000 });
+          toastBootstrap.show();
+        <?php } ?>
+
+      });
+    </script>
+  <?php }
+
+
+//If the user is not logged in, display the login form
+else { ?>
 
     <!-- Login form -->
     <form class="login" action="utility/userLogging.php" method="post" autocomplete="off">
@@ -138,135 +204,66 @@ error_reporting(E_ERROR | E_PARSE);
         $(".login").submit();
       });
     </script>
-  <?php } else { ?>
-    <h1 class="rainbow">Árpád Média IO</h1>
-    <div class="row justify-content-center mainRow1 ab"
-      style="text-align: center; width:100%; max-width: 1000px; margin: 0 auto;"></div><br>
-    <div class="row justify-content-center mainRow2 ab"
-      style="text-align: center; width:100%; max-width: 1000px; margin: 0 auto;"></div><br>
-    <div class="row justify-content-center mainRow3 ab"
-      style="text-align: center; width:100%; max-width: 1000px; margin: 0 auto;"></div><br>
-    <div class="row justify-content-center mainRow4 ab"
-      style="text-align: center; width:100%; max-width: 1000px; margin: 0 auto;"></div><br>
-    <div class="row justify-content-center mainRow5 ab"
-      style="text-align: center; width:100%; max-width: 1000px; margin: 0 auto;"></div>
-    <br>
-
-    <div class="toast-container position-absolute p-3 indexToasts">
-      <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" id="service_toast">
-        <div class="toast-header">
-          <img src="./utility/logo.png" height="30">
-          <strong class="me-auto"> Üdv újra,
-            <?php echo $_SESSION['firstName']; ?>!
-          </strong>
-          <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-        </div>
-        <div class="toast-body">
-          <p class="toast-text" id="usercheckItemCount">Nincs elfogadásra váró esemény!</p>
-          <div class="mt-2 pt-2 border-top" id="service_toast_footer">
-          </div>
-        </div>
-      </div>
-    </div>
-    <script type="text/javascript">
-      $(document).ready(function () {
-        if (<?php echo (isset($_GET["login"]) && $_GET["login"] == "success") ? "true" : "false " ?>) {
-          
-          if (<?php echo in_array("admin", $_SESSION["groups"]) ?>) {
-            var userData = "<?php echo $_POST['user']; ?>";
-            $.ajax({
-              url: "../ItemManager.php",
-              type: "POST",
-              data: {
-                mode: "getProfileItemCounts",
-                user: userData
-              },
-              success: function (data) {
-                var dataArray = data.split(",");
-                console.log(dataArray);
-                //Set the user item count
-                //document.getElementById("userItemCount").innerHTML = dataArray[2];
-                //Set the usercheck count
-                if (dataArray[1] > 0) {
-                  document.getElementById("usercheckItemCount").innerHTML = dataArray[1] + " esemény vár elfogadásra!";
-                  let form = document.createElement('form');
-                  form.action = "../profile/usercheck.php";
-                  form.style = "width: fit-content; display: inline-block;";
-                  form.innerHTML = '<button type="submit" class="btn btn-primary btn-sm">Vigyél oda!</button>';
-                  document.getElementById("service_toast_footer").prepend(form);
-                }
-                //Set the service item count
-                //document.getElementById("serviceItemCount").innerHTML = dataArray[0];
-
-              }
-
-            });
-            const toastLiveExample = document.getElementById('service_toast');
-            const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample, { delay: 8000 });
-            toastBootstrap.show();
-          }
-        }
-      });
-    </script>
   <?php }
-  //GET változók kezelése
-  
-  if ($_GET["signup"] == "success") {
-    echo '
+
+//GET változók kezelése
+
+if ($_GET["signup"] == "success") {
+  echo '
 <script>document.getElementById("errorbox").innerHTML="Sikeres regisztráció!";
               document.getElementById("errorbox").className = "alert alert-success successtable";
               $("#zsoka").fadeIn();
               setTimeout(function(){ $("#errorbox").fadeOut(); }, 6000);
               </script>';
-  }
-  if ($_GET["logout"] == "success") {
-    echo '
+}
+if ($_GET["logout"] == "success") {
+  echo '
 <script>document.getElementById("errorbox").innerHTML="Sikeres kijelentkezés!";
               document.getElementById("errorbox").className = "alert alert-success successtable";
               $("#zsoka").fadeIn();
               setTimeout(function(){ $("#errorbox").fadeOut(); }, 6000);
               </script>';
-  } // ÁTMÁSOLNI
-  if ($_GET["logout"] == "pwChange") {
-    echo '
+} // ÁTMÁSOLNI
+if ($_GET["logout"] == "pwChange") {
+  echo '
 <script>document.getElementById("errorbox").innerHTML="Sikeres jelszócsere!";
               document.getElementById("errorbox").className = "alert alert-success successtable";
               $("#zsoka").fadeIn();
               setTimeout(function(){ $("#errorbox").fadeOut(); }, 6000);
               </script>';
-  }
-  if ($_GET["error"] == "WrongPass") {
-    echo '
+}
+if ($_GET["error"] == "WrongPass") {
+  echo '
 <script>document.getElementById("errorbox").innerHTML="Helytelen jelszó!";
               document.getElementById("errorbox").className = "alert alert-danger successtable";
               $("#zsoka").fadeIn();
               setTimeout(function(){ $("#errorbox").fadeOut(); }, 6000);
               </script>';
-  }
-  if ($_GET["error"] == "NoUser") {
-    echo '
+}
+if ($_GET["error"] == "NoUser") {
+  echo '
 <script>document.getElementById("errorbox").innerHTML="Hibás felhasználónév / jelszó!";
               document.getElementById("errorbox").className = "alert alert-danger successtable";
               $("#zsoka").fadeIn();
               setTimeout(function(){ $("#errorbox").fadeOut(); }, 6000);
               </script>';
-  }
-  if ($_GET["error"] == "AccessViolation") {
-    echo '
+}
+if ($_GET["error"] == "AccessViolation") {
+  echo '
 <script>document.getElementById("errorbox").innerHTML="Ehhez a funkcióhoz be kell jelentkezned!";
               document.getElementById("errorbox").className = "alert alert-danger successtable";
               $("#zsoka").fadeIn();
               setTimeout(function(){ $("#errorbox").fadeOut(); }, 6000);
               </script>';
-  }
-  if ($_GET["error"] == "loginLimit") {
-    echo '
+}
+if ($_GET["error"] == "loginLimit") {
+  echo '
 <script>document.getElementById("errorbox").innerHTML="A belépések átmenetileg korlátozva vannak. Próbáld újra később.";
               document.getElementById("errorbox").className = "alert alert-danger successtable";
               $("#zsoka").fadeIn();
               setTimeout(function(){ $("#errorbox").fadeOut();
               window.location.href = "index.php"; }, 6000);
               </script>';
-  }
-  ?>
+}
+?>
 </body>
