@@ -107,18 +107,18 @@ include("../translation.php"); ?>
                <select class="form-select form-select-sm" id="accessRestrict" name="accessRestrict">
                   <option value="1">Privát</option>
                   <option value="2">Médiás</option>
+                  <option value="3">Csak linkkel elérhető</option>
                   <option value="0">Publikus</option>
                </select>
                <br>
                <div class="form-check form-switch">
-                  <input type="checkbox" class="form-check-input" id="flexSwitchCheckDefault">
+                  <input type="checkbox" class="form-check-input" id="flexSwitchCheckDefault" data-setting="SingleAnswer">
                   <label class="form-check-label" for="flexSwitchCheckDefault">Korlátozás egy válaszra (még nem
                      működik)</label>
                </div>
                <div class="form-check form-switch">
-                  <input type="checkbox" class="form-check-input" id="flexSwitchCheckDefault">
-                  <label class="form-check-label" for="flexSwitchCheckDefault"><b>Anonymous</b> válaszadás (még nem
-                     működik)</label>
+                  <input type="checkbox" class="form-check-input" id="flexSwitchCheckDefault" data-setting="Anonim">
+                  <label class="form-check-label" for="flexSwitchCheckDefault"><b>Anonymous</b> válaszadás</label>
                </div>
                <br>
                <label for="background_img">Háttérkép: <a href="#" id="default-background" data-bs-toggle="popover"
@@ -305,6 +305,8 @@ include("../translation.php"); ?>
             var formStatus = JSON.parse(form.Status);
             var formAccess = JSON.parse(form.AccessRestrict);
             var formElements = JSON.parse(form.Data);
+            var formAnonim = form.Anonim;
+            var formSingleAnswer = form.SingleAnswer;
             var formName = form.Name;
 
             console.log(formElements);
@@ -317,6 +319,14 @@ include("../translation.php"); ?>
             //Set form Name
             document.getElementById("form_name").innerHTML = formName + '&nbsp<i class="fas fa-edit fa-xs" style="color: #747b86"></i>';
             document.getElementById("description").value = form.Header;
+
+            //Set form settings
+            if (formAnonim == 1) {
+               document.querySelector('[data-setting="Anonim"]').checked = true;
+            }
+            if (formSingleAnswer == 1) {
+               document.querySelector('[data-setting="SingleAnswer"]').checked = true;
+            }
 
             //Set background
             var style = document.createElement('style');
@@ -838,20 +848,19 @@ include("../translation.php"); ?>
          "elements": formElements
       };
       var formJson = JSON.stringify(form);
-      console.log(JSON.parse(formJson));
 
-      console.log("Saving header!");
       var formState = document.getElementById("formState").value;
       var accessRestrict = document.getElementById("accessRestrict").value;
       var formHeader = document.getElementById("description").value;
 
-      console.log(formHeader);
+      var formAnonim = document.querySelector('[data-setting="Anonim"]').checked ? 1 : 0;
+      var formSingleAnswer = document.querySelector('[data-setting="SingleAnswer"]').checked ? 1 : 0;
 
       //Send form to server
       $.ajax({
          type: "POST",
          url: "../formManager.php",
-         data: { form: formJson, formState: formState, formHeader: formHeader, accessRestrict: accessRestrict, mode: "save", id: <?php echo $_GET['formId'] ?> },
+         data: { form: formJson, formState: formState, formHeader: formHeader, accessRestrict: accessRestrict, formAnonim: formAnonim, formSingleAnswer: formSingleAnswer, mode: "save", id: <?php echo $_GET['formId'] ?> },
          success: function (data) {
             console.log(data);
 

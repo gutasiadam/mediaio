@@ -17,7 +17,7 @@ class formManager
   static function createNewForm()
   {
     if (in_array("admin", $_SESSION['groups'])) { //Auto accept 
-      $sql = "INSERT INTO `forms`(`ID`, `Name`, `Header`, `Status`, `AccessRestrict`, `Data`) VALUES(NULL,'Névtelen','Leírás','0','1',NULL);";
+      $sql = "INSERT INTO `forms`(`ID`, `Name`, `Header`, `Status`, `Anonim`, `AccessRestrict`, `Data`) VALUES(NULL,'Névtelen','Leírás','0','0','1',NULL);";
       $connection = Database::runQuery_mysqli();
       $connection->query($sql);
       $id = $connection->insert_id;
@@ -47,7 +47,7 @@ class formManager
     exit();
   }
 
-  static function saveForm($form, $formHeader, $id, $accessRestrict, $formState)
+  static function saveForm($form, $formHeader, $id, $accessRestrict, $formAnonim, $formSingleAnswer, $formState)
   {
     if (in_array("admin", $_SESSION['groups'])) {
       //convert to json
@@ -59,7 +59,7 @@ class formManager
 
 
 
-      $sql = "UPDATE forms SET Name='" . $form['name'] . "',Header='" . $formHeader . "',Status='" . $formState . "',Data='" . json_encode($form['elements'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . "'
+      $sql = "UPDATE forms SET Name='" . $form['name'] . "',Header='" . $formHeader . "',Status='" . $formState . "',Anonim='" . $formAnonim . "',Data='" . json_encode($form['elements'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . "'
             ,Accessrestrict='" . $accessRestrict . "' WHERE ID=" . $id . ";";
       $connection = Database::runQuery_mysqli();
       $connection->query($sql);
@@ -99,7 +99,7 @@ class formManager
     }
   }
 
-  static function viewForm($form, $id, $userIp)
+  static function viewForm($form, $id)
   {
     $sql = "SELECT * FROM forms WHERE ID=" . $id . ";";
     $connection = Database::runQuery_mysqli();
@@ -220,6 +220,8 @@ if (isset($_POST['mode'])) {
       $_POST['formHeader'],
       $_POST['id'],
       $_POST['accessRestrict'],
+      $_POST['formAnonim'],
+      $_POST['formSingleAnswer'],
       $_POST['formState'],
     );
     //echo $_POST['value'] ;
@@ -242,7 +244,7 @@ if (isset($_POST['mode'])) {
   }
 
   if ($_POST['mode'] == 'viewForm') {
-    echo formManager::viewForm($_POST['form'], $_POST['id'], $_POST['userIp']);
+    echo formManager::viewForm($_POST['form'], $_POST['id']);
     //echo $_POST['value'] ;
     //Header set.
     exit();

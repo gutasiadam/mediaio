@@ -216,7 +216,7 @@ error_reporting(E_ERROR | E_PARSE);
       card.appendChild(cardFooter);
     <?php } ?>
 
-    console.log(card);
+    //console.log(card);
     document.getElementById("available_forms").appendChild(card);
   }
 
@@ -243,14 +243,15 @@ error_reporting(E_ERROR | E_PARSE);
       success: function (response) {
 
         response = JSON.parse(response);
-        console.log("editing: " + response);
+        
         i = 1;
         response.forEach(element => {
-          console.log(element);
+          //console.log(element);
           if (element.Name == null) { element.Name = "Névtelen" + i; i++; }
           if (element.AccessRestrict == "0") { element.AccessRestrict = "Publikus"; }
           if (element.AccessRestrict == "1") { element.AccessRestrict = "Privát"; }
           if (element.AccessRestrict == "2") { element.AccessRestrict = "Médiás"; }
+          if (element.AccessRestrict == "3") { element.AccessRestrict = "Csak linkkel elérhető"; }
 
           if (element.Status == "0") { element.Status = "Lezárt"; }
           if (element.Status == "1") { element.Status = "Kitölthető"; }
