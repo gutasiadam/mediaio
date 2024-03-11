@@ -51,25 +51,38 @@ include("../translation.php");
    </nav>
 
    <body>
-      <div class="form">
+      <div class="form" id="doboz">
          <h2 class="rainbow" id="form_name"></h2>
          <div class="row" id="form-option-buttons">
             <div class="dropdown" id="tools">
-               <button class="btn btn-success dropdown-toggle" type="button" data-bs-toggle="dropdown"
-                  aria-expanded="false">
-                  Válaszok
+               <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  <i class="fas fa-align-left"></i>
                </button>
                <ul class="dropdown-menu" id="answers_dropdown">
                </ul>
             </div>
-            <button class="btn btn-secondary" onclick="showFormEdit(<?php echo $_GET['formId'] ?>)"><i
-                  class='fas fa-highlighter fa-lg'></i> Szerkesztés</button>
+            <button class="btn btn-success" onclick="showTable()"><i class="fas fa-table fa-lg"></i></button>
+            <button class="btn" onclick="showFormEdit(<?php echo $_GET['formId'] ?>)"><i
+                  class='fas fa-highlighter fa-lg'></i></button>
             <button class="btn" onclick="viewForm(<?php echo $_GET['formId'] ?>)"><i class="fas fa-eye"></i></button>
-            <button class="btn" onclick="showSettingsModal()"><i class="fas fa-sliders-h fa-lg"></i></button>
-         </div>
-         <form class="row form-control" id="form-body">
 
-         </form>
+         </div>
+         <div class="justify-content-center">
+            <table class="table" id="answersTable" style="display: none">
+               <thead>
+                  <tr id="headerHolder">
+
+                  </tr>
+               </thead>
+               <tbody class="table-group-devider" id="answerHolder">
+
+               </tbody>
+            </table>
+            <form class="row form-control" id="form-body" style="display: none">
+
+            </form>
+            <br>
+         </div>
       </div>
    </body>
 
@@ -81,43 +94,31 @@ include("../translation.php");
    $(document).ready(function () {
       //Load form from server
       console.log(<?php echo $_GET['formId'] ?>);
-      $.ajax({
-         type: "POST",
-         url: "../formManager.php",
-         data: { mode: "getFormAnswers", id: <?php echo $_GET['formId'] ?> },
-         success: function (data) {
-            //console.log(data);
-            //if data is 404, redirect to index.php
-            if (data == 404) {
+      loadPage();
+   });
+
+   async function loadPage() {
+      await fetchData();
+      await fetchAnswers();
+      showTable();
+   }
+
+
+   async function fetchData() {
+      console.log("Fetching form data");
+      return new Promise(async (resolve, reject) => {
+         try {
+            const response = await $.ajax({
+               type: "POST",
+               url: "../formManager.php",
+               data: { mode: "getForm", id: <?php echo $_GET['formId'] ?> }
+            });
+
+            if (response == 404) {
                window.location.href = "index.php?invalidID";
             }
 
-            var answers = JSON.parse(data);
-            console.log("Answers:" + answers);
-            var dropdown = document.getElementById("answers_dropdown");
-
-            for (var i = 0; i < answers.length; i++) {
-               UserAnswers.push(answers[i]);
-               var li = document.createElement("li");
-               li.classList.add("dropdown-item");
-               li.style.cursor = "pointer";
-               li.innerHTML = "<a onclick='showFormAnswers(" + (answers[i].ID) + ")'>" + i + ". válasz</a>";
-               dropdown.appendChild(li);
-            }
-         }
-      });
-
-      $.ajax({
-         type: "POST",
-         url: "../formManager.php",
-         data: { mode: "getForm", id: <?php echo $_GET['formId'] ?> },
-         success: function (data) {
-            //console.log(data);
-            //if data is 404, redirect to index.php
-            if (data == 404) {
-               window.location.href = "index.php?invalidID";
-            }
-            var form = JSON.parse(data);
+            var form = JSON.parse(response);
             formElements = JSON.parse(form.Data);
             console.log(formElements);
             var formName = form.Name;
@@ -142,10 +143,74 @@ include("../translation.php");
                z-index: -1;
                }`;
             document.head.appendChild(style);
+
+            resolve();
+         } catch (error) {
+            console.error("Error:", error);
+            reject(error);
          }
       });
+   }
 
-   });
+   async function fetchAnswers() {
+      console.log("Fetching form answers");
+      return new Promise(async (resolve, reject) => {
+         try {
+            const response = await $.ajax({
+               type: "POST",
+               url: "../formManager.php",
+               data: { mode: "getFormAnswers", id: <?php echo $_GET['formId'] ?> }
+            });
+
+
+            if (response == 404) {
+               window.location.href = "index.php?invalidID";
+            }
+
+            var answers = JSON.parse(response);
+            console.log("Answers:" + answers);
+            var dropdown = document.getElementById("answers_dropdown");
+
+            for (var i = 0; i < answers.length; i++) {
+               UserAnswers.push(answers[i]);
+               var id = answers[i].ID;
+
+               var li = document.createElement("li");
+               li.classList.add("dropdown-item");
+               li.style.cursor = "pointer";
+
+               li.onclick = (function (id) {
+                  return function () {
+                     showFormAnswers(id);
+                  };
+               })(id);
+
+               li.innerHTML = (i + 1) + ". válasz</a>";
+               dropdown.appendChild(li);
+            }
+            resolve();
+         } catch (error) {
+            console.error("Error:", error);
+            reject(error);
+         }
+      });
+   }
+
+   function setButtonClass(name) {
+      var buttons = document.getElementById("form-option-buttons").getElementsByTagName("button");
+      for (var i = 0; i < buttons.length; i++) {
+         buttons[i].classList.remove("btn-success");
+      }
+
+      switch (name) {
+         case "singleAnswer":
+            buttons[0].classList.add("btn-success");
+            break;
+         case "table":
+            buttons[1].classList.add("btn-success");
+            break;
+      }
+   }
 
    //Function to view form
    function viewForm(formId) {
@@ -153,6 +218,17 @@ include("../translation.php");
    }
 
    function showFormAnswers(id) {
+
+      //Set button class
+      setButtonClass("singleAnswer");
+
+      //Set doboz max-width
+      var doboz = document.getElementById("doboz");
+      doboz.style.maxWidth = "800px";
+
+      //Set table invisible
+      var table = document.getElementById("answersTable");
+      table.style.display = "none";
 
       console.log("Showing form answers: " + id);
       var UserSubmission;
@@ -163,7 +239,7 @@ include("../translation.php");
       }
 
       var AnswerData = JSON.parse(UserSubmission.UserAnswers);
-      console.log(AnswerData);
+      //console.log(AnswerData);
 
       var formContainer = document.getElementById("form-body");
       formContainer.innerHTML = "";
@@ -188,12 +264,15 @@ include("../translation.php");
             }
          }
 
-         console.log("Element answer: " + elementAnswer);
+         //console.log("Element answer: " + elementAnswer);
          //Add settings, where possible
          //console.log("Id: " + elementId + " Place:" + elementPlace + " Type: " + elementType + " Settings: " + elementSettings);
          formContainer.appendChild(generateElement(elementType, elementId, elementPlace, elementSettings, elementAnswer));
 
       }
+
+      //Set form visible
+      formContainer.style.display = "block";
    }
 
    function showFormEdit(id) {
@@ -203,7 +282,7 @@ include("../translation.php");
    function generateElement(type, id, place, settings, answer) {
       answer = JSON.parse(answer);
 
-      //console.log(answer);
+
       if (settings != "") {
          var questionSetting = JSON.parse(settings).question;
          var isRequired = JSON.parse(settings).required;
@@ -221,7 +300,7 @@ include("../translation.php");
 
       var question = document.createElement("label");
       question.for = id;
-      //console.log("Required: " + isRequired);
+
       if (isRequired) {
          question.innerHTML = questionSetting + "<span style='color: red;'> *</span>";
       } else {
@@ -230,7 +309,7 @@ include("../translation.php");
       //question.innerHTML = questionSetting;
       div.appendChild(question);
 
-      //console.log("Generating element: " + type);
+
 
       switch (type) {
          case "email":
@@ -338,11 +417,11 @@ include("../translation.php");
 
 
    function listCheckOpt(type, id, settings, optionNum, answer) {
-      console.log("Answer: " + answer);
+      //console.log("Answer: " + answer);
       var labelname = answer.split(":")[0];
       var checked = Boolean(Number(answer.split(":")[1]));
 
-      console.log("Labelname: " + labelname + " Checked: " + checked);
+      //console.log("Labelname: " + labelname + " Checked: " + checked);
 
       var div = document.createElement("div");
       div.classList.add("form-check");
@@ -367,6 +446,110 @@ include("../translation.php");
       div.appendChild(label);
 
       return div;
+   }
+
+   function showTable() {
+
+      setButtonClass("table");
+
+      //Set doboz max-width
+      var doboz = document.getElementById("doboz");
+      doboz.style.maxWidth = "1200px";
+
+      //Empty table
+      var headerHolder = document.getElementById("headerHolder");
+      headerHolder.innerHTML = "";
+
+      var answerHolder = document.getElementById("answerHolder");
+      answerHolder.innerHTML = "";
+
+      // Set form invisible
+      var formContainer = document.getElementById("form-body");
+      formContainer.style.display = "none";
+
+      // Generate table header
+      var idTh = document.createElement("th");
+      idTh.innerHTML = "ID";
+      idTh.scope = "col";
+      headerHolder.appendChild(idTh);
+
+      for (var i = 0; i < formElements.length; i++) {
+         var th = document.createElement("th");
+
+         //Getting question name
+         var question = JSON.parse(formElements[i].settings).question;
+
+         th.innerHTML = question;
+         th.scope = "col";
+         headerHolder.appendChild(th);
+      }
+
+      // Generate table body
+
+      function createRow(UserAnswers, formElements) {
+         var tr = document.createElement("tr");
+         var AnswerData = JSON.parse(UserAnswers.UserAnswers);
+
+         var idTd = document.createElement("td");
+         idTd.innerHTML = UserAnswers.ID;
+         tr.appendChild(idTd);
+
+         for (var j = 0; j < formElements.length; j++) {
+            var td = document.createElement("td");
+            var elementAnswer = getElementAnswer(formElements[j], AnswerData);
+            td.innerHTML = elementAnswer;
+            tr.appendChild(td);
+         }
+         return tr;
+      }
+
+      function getElementAnswer(element, AnswerData) {
+         var elementType = element.type;
+         var elementId = element.id;
+         var elementAnswer;
+
+         for (var k = 0; k < AnswerData.length; k++) {
+            if (AnswerData[k].id == (elementType + "-" + elementId)) {
+               if (elementType == "checkbox" || elementType == "radio") {
+                  elementAnswer = getCheckedAnswer(AnswerData[k].value);
+                  if (elementAnswer == undefined) {
+                     elementAnswer = "<i>Nincs kiválasztva</i>";
+                  }
+               } else {
+                  elementAnswer = AnswerData[k].value;
+               }
+            }
+         }
+         return elementAnswer;
+      }
+
+      function getCheckedAnswer(value) {
+         var answer = JSON.parse(value);
+         var elementAnswer;
+
+         for (var l = 0; l < answer.length; l++) {
+            var answerOption = answer[l].split(":")[0];
+            var checked = Boolean(Number(answer[l].split(":")[1]));
+            if (checked) {
+               if (elementAnswer == undefined) {
+                  elementAnswer = answerOption;
+               } else {
+                  elementAnswer = elementAnswer + ", " + answerOption;
+               }
+            }
+         }
+         return elementAnswer;
+      }
+
+      for (var i = 0; i < UserAnswers.length; i++) {
+         var tr = createRow(UserAnswers[i], formElements);
+         answerHolder.appendChild(tr);
+      }
+
+      // Set table visible
+      var table = document.getElementById("answersTable");
+      table.style.display = "table";
+
    }
 
 </script>

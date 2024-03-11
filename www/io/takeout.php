@@ -870,6 +870,7 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
           takeoutAsUser: $('#givetoAnotherPerson_UserName').val()
         },
         success: function (response) {
+          console.log(response);
           if (response == '200') {
             displayMessageInTitle("#doTitle", "Sikeres kivétel! \nAz oldal hamarosan újratölt");
             $('#jstree').jstree(true).settings.core.data = d;

@@ -199,6 +199,12 @@ error_reporting(E_ERROR | E_PARSE);
       editButton.onclick = function () { editForm(formId) };
       ButtonHolder.appendChild(editButton);
 
+      var answersButton = document.createElement("button");
+      answersButton.className = "btn btn-secondary noprint";
+      answersButton.innerHTML = "<i class='fas fa-align-left fa-lg'></i>";
+      answersButton.onclick = function () { window.location.href = "formanswers.php?formId=" + formId };
+      ButtonHolder.appendChild(answersButton);
+
       var deleteButton = document.createElement("button");
       deleteButton.className = "btn btn-danger noprint";
       deleteButton.innerHTML = "<i class='fas fa-trash-alt fa-lg'></i>";

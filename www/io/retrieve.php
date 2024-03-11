@@ -215,11 +215,14 @@ function PhparrayCookie()
   }
 
 
-  function prepare(id, uid, name) {
+  function prepare(id, uid, name, fromCookie = false) {
     $('#dynamic_field').append('<tr class="bg-success" id="prep-' + id + '"><td class="dynamic-field"><button id="prep-' + id + '" class="btn btn-succes" onclick="unstage(this.id);"><i class="fas fa-angle-double-left"></i> ' + name + ' [' + uid + ']' + '</button></td></tr>');
     $('#' + id).hide();
     $('.intactForm').css('display', 'block');
     $('#toTop').fadeIn();
+    if (fromCookie == false) {
+      updateSelectionCookie(id, uid, name);
+    }
   }
 
   function unstage(id) {
@@ -232,7 +235,65 @@ function PhparrayCookie()
       $("#intactItems").prop("checked", false);
       $('#toTop').fadeOut();
     }
+    updateSelectionCookie(id, "", "", false);
   }
+
+  // Cookie management
+
+  function getCookie(cName) {
+    const name = cName + "=";
+    const cDecoded = decodeURIComponent(document.cookie); //to be careful
+    const cArr = cDecoded.split('; ');
+    let res;
+    cArr.forEach(val => {
+      if (val.indexOf(name) === 0) res = val.substring(name.length);
+    })
+    return res
+  }
+
+  var itemsToRetrieve = [];
+
+  function updateSelectionCookie(id, uid, name, push = true) {
+    console.log("Updated cookie");
+
+    //Set cookie expire date to 1 day
+    var d = new Date();
+    d.setTime(d.getTime() + (1 * 24 * 60 * 60 * 1000));
+    var expires = "expires=" + d.toUTCString();
+    //get IDs of selected items
+    let item = {
+      'id': id,
+      'uid': uid,
+      'name': name
+    }
+    if (push) {
+      itemsToRetrieve.push(item);
+    } else {
+      itemsToRetrieve = itemsToRetrieve.filter(function (obj) {
+        return obj.id !== id;
+      });
+    }
+    jsonItems = JSON.stringify(itemsToRetrieve);
+    document.cookie = "itemsToRetrieve=" + jsonItems + ";" + expires + ";path=/";
+  }
+
+
+  function reloadSavedSelections() {
+    console.log("Reloading items from cookies");
+
+    var cookie = getCookie("itemsToRetrieve");
+
+    itemsToRetrieve = JSON.parse(cookie);
+
+    if (itemsToRetrieve != "") {
+      itemsToRetrieve.forEach(item => {
+        prepare(item.id, item.uid, item.name, true);
+      });
+    }
+  }
+
+
+  // END OF cooke management
   $(document).ready(function () {
     $('.intactForm').css('display', 'none');
     // Csak akkor jelenjen meg a checkbox, ha már van Go gomb is.
@@ -256,6 +317,8 @@ function PhparrayCookie()
         }
       }, 1000);
     }
+
+    reloadSavedSelections();
 
 
 

@@ -1,7 +1,7 @@
 <?php
 
 namespace Mediaio;
-
+error_reporting(E_ERROR | E_PARSE);
 session_start();
 require_once __DIR__ . '/../Database.php';
 require_once __DIR__ . '/../Core.php';
@@ -9,7 +9,7 @@ require_once __DIR__ . '/../Core.php';
 use Mediaio\Core;
 use Mediaio\Database;
 
-error_reporting(E_ERROR | E_WARNING | E_PARSE);
+
 $SESSuserName = $_SESSION['UserUserName'];
 
 if (isset($_POST['takeoutData'])) {
