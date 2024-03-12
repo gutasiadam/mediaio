@@ -17,6 +17,8 @@ include("../translation.php"); ?>
    </div>
 
 </body>
+
+<script src="backend/elementGenerator.js" type="text/javascript"></script>
 <script>
    let isAnonim = 0;
    <?php if (isset($_GET['success'])) { ?>
@@ -120,7 +122,7 @@ include("../translation.php"); ?>
 
                   //Add settings, where possible
                   //console.log("Id: " + elementId + " Place:" + elementPlace + " Type: " + elementType + " Settings: " + elementSettings);
-                  formContainer.appendChild(generateElement(elementType, elementId, elementPlace, elementSettings));
+                  formContainer.appendChild(generateElement(elementType, elementId, elementPlace, elementSettings, "fill"));
 
                }
 
@@ -139,201 +141,6 @@ include("../translation.php"); ?>
 
 
    <?php if (!isset($_GET['success'])) { ?>
-      //Generate form elements (view mode)
-      function generateElement(type, id, place, settings) {
-         if (settings != "") {
-            //Parse settings
-            var questionSetting = JSON.parse(settings).question;
-            var isRequired = JSON.parse(settings).required;
-            var CheckOptions = JSON.parse(settings).options;
-         }
-         //Create div, which will hold the form element
-         var div = document.createElement("div");
-         div.id = type + "-" + id;
-         div.setAttribute('data-position', place); //Set position
-         if (isRequired) {
-            div.setAttribute('data-required', "true");
-         } else {
-            div.setAttribute('data-required', "false");
-         }
-         div.classList.add("mb-3", "question");
-
-         //Create question label
-         var question = document.createElement("label");
-         question.for = id;
-         console.log("Required: " + isRequired);
-         if (isRequired) {
-            question.innerHTML = questionSetting + "<span style='color: red;'> *</span>";
-         } else {
-            question.innerHTML = questionSetting;
-         }
-         //question.innerHTML = questionSetting;
-         div.appendChild(question);
-
-         console.log("Generating element: " + type);
-
-         //Create form type
-         switch (type) {
-            case "email":
-               //Generate email input
-               var input = document.createElement("input");
-               input.type = "email";
-               input.classList.add("form-control", "userInput");
-               input.id = id;
-               input.placeholder = "Írja be az email címét";
-               if (isRequired) {
-                  input.required = true;
-               }
-               div.appendChild(input);
-               break;
-            case "date":
-               //Generate date input
-               var input = document.createElement("input");
-               input.type = "date";
-               input.classList.add("form-control", "userInput");
-               input.id = id;
-               if (isRequired) {
-                  input.required = true;
-               }
-               div.appendChild(input);
-               break;
-            case "time":
-               //Generate time input
-               var input = document.createElement("input");
-               input.type = "time";
-               input.classList.add("form-control", "userInput");
-               input.id = id;
-               if (isRequired) {
-                  input.required = true;
-               }
-               div.appendChild(input);
-               break;
-
-            case "shortText":
-               //Generate short text input
-               var input = document.createElement("input");
-               input.type = "text";
-               input.classList.add("form-control", "userInput");
-               input.id = id;
-               if (isRequired) {
-                  input.required = true;
-               }
-               input.placeholder = "Rövid szöveg";
-               div.appendChild(input);
-               break;
-
-            case "longText":
-               //Generate long text input
-               var input = document.createElement("textarea");
-               input.classList.add("form-control", "userInput");
-               input.id = id;
-               input.placeholder = "Hosszú szöveg";
-               if (isRequired) {
-                  input.required = true;
-               }
-               div.appendChild(input);
-               break;
-
-            case "radio":
-               //Generate radio buttons
-               var radioHolder = document.createElement("div");
-               radioHolder.classList.add("radio-holder");
-               if (settings == "") {
-                  radioHolder.append(listCheckOpt("radio", id, "", 0)); //Add empty radio button
-               } else {
-                  for (var i = 0; i < CheckOptions.length; i++) {
-                     //Add radio buttons
-                     radioHolder.append(listCheckOpt("radio", id, CheckOptions[i], i));
-                  }
-               }
-               div.appendChild(radioHolder);
-               break;
-
-            case "checkbox":
-               //Generate checkboxes
-               var checkboxHolder = document.createElement("div");
-               checkboxHolder.classList.add("checkbox-holder");
-               if (settings == "") {
-                  checkboxHolder.append(listCheckOpt("checkbox", id, "", 0));
-               } else {
-                  for (var i = 0; i < CheckOptions.length; i++) {
-                     checkboxHolder.append(listCheckOpt("checkbox", id, CheckOptions[i], i));
-                  }
-               }
-               div.appendChild(checkboxHolder);
-               break;
-
-            case "dropdown":
-               //Generate dropdown
-               //Create dropdown holder
-               var dropdownHolder = document.createElement("div");
-               dropdownHolder.classList.add("dropdown-holder");
-
-               //Create dropdown
-               var select = document.createElement("select");
-               select.classList.add("form-select", "userInput");
-               select.id = id;
-
-               if (settings == "") {
-                  select.append(listDropdown(id, ""));
-               } else {
-                  for (var i = 0; i < CheckOptions.length; i++) {
-                     select.append(listDropdown(id, CheckOptions[i]));
-                  }
-               }
-               dropdownHolder.appendChild(select);
-               div.appendChild(dropdownHolder);
-               break;
-
-            case "fileUpload":
-               //Generate file upload
-               var input = document.createElement("input");
-               input.type = "file";
-               input.classList.add("form-control", "userInput");
-               input.id = id;
-               div.appendChild(input);
-               break;
-         }
-         return div;
-      }
-
-      //Generate dropdown options
-      function listDropdown(id, settings) {
-         var option = document.createElement("option");
-         option.value = settings;
-         option.innerHTML = settings;
-
-         return option;
-      }
-
-      //Generate radio and checkbox options
-      function listCheckOpt(type, id, settings, optionNum) {
-
-         //Create div to hold input and label
-         var div = document.createElement("div");
-         div.classList.add("form-check");
-         div.setAttribute('data-option', optionNum);
-
-         //Create input
-         var input = document.createElement("input");
-         input.type = type;
-         input.classList.add("form-check-input", "userInput");
-         if (type == "radio") {
-            input.name = "flexRadioDefault";
-         }
-         input.id = id;
-         input.setAttribute('data-name', settings);
-         div.appendChild(input);
-
-         //Create label
-         var label = document.createElement("label");
-         label.classList.add("form-check-label");
-         label.for = id;
-         label.innerHTML = settings;
-         div.appendChild(label);
-
-         return div;
-      }
 
       var form = document.getElementById("form-body");
 
