@@ -1507,6 +1507,24 @@ nav .navbarPhP {
         width: 100px;
     }
 }
+/* Grid css */
+.scale-grid-holder {
+    display: flex;
+    flex-direction: row;
+}
+
+.grid-label-holder{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-left: 10px;
+}
+
+.header-row{
+    display: flex;
+    flex-direction: row;
+}
 
 #available_forms {
     margin-top: 20px;

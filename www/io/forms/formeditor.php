@@ -180,6 +180,13 @@ include("../translation.php"); ?>
                   <li><a class="dropdown-item" href="#" onclick="addFormElement('dropdown')"><i
                            class="fas fa-chevron-down fa-2x"></i> Legördülő lista</a></li>
 
+                  <!-- Skála -->
+                  <li class="dropdown-divider"></li>
+                  <li><a class="dropdown-item" href="#" onclick="addFormElement('linearScale')"><i
+                           class="fas fa-ellipsis-h fa-2x"></i> Lineáris skála</a></li>
+                  <li><a class="dropdown-item" href="#" onclick="addFormElement('grid')"><i class="fas fa-th fa-2x"></i>
+                        Feleletválasztós rács</a></li>
+
                   <!-- Idő -->
                   <li class="dropdown-divider"></li>
                   <li><a class="dropdown-item" href="#" onclick="addFormElement('date')"><i
@@ -208,8 +215,8 @@ include("../translation.php"); ?>
             </div>
             <button class="btn btn-primary" onclick="saveForm(false)">Mentés</button>
             <button class="btn btn-danger" onclick="showDeleteModal()"><i class='fas fa-trash-alt fa-lg'></i></button>
-            <button class="btn btn-secondary" onclick="showFormAnswers(<?php echo $_GET['formId'] ?>)"><i
-                  class='fas fa-check fa-lg'></i> Válaszok</button>
+            <button class="btn" onclick="showFormAnswers(<?php echo $_GET['formId'] ?>)"><i
+                  class='fas fa-align-left fa-lg'></i></button>
             <button class="btn" onclick="viewForm(<?php echo $_GET['formId'] ?>)"><i class="fas fa-eye"></i></button>
             <button class="btn" onclick="showSettingsModal()"><i class="fas fa-sliders-h fa-lg"></i></button>
          </div>
@@ -367,7 +374,7 @@ include("../translation.php"); ?>
 
 
                //Add settings, where possible
-               console.log("Id: " + elementId + " Place:" + elementPlace + " Type: " + elementType + " Settings: " + elementSettings);
+               //console.log("Id: " + elementId + " Place:" + elementPlace + " Type: " + elementType + " Settings: " + elementSettings);
                formContainer.appendChild(generateElement(elementType, elementId, elementPlace, elementSettings, "editor"));
 
             }
@@ -395,8 +402,8 @@ include("../translation.php"); ?>
       i = checkIdNotUsed(i); //Check if id is used
       console.log("Adding form element: " + type);
       var place = document.getElementById("editorZone").getElementsByClassName("form-member").length + 1; //Get the place of the new element
-      console.log("Place: " + place);
-      document.getElementById("editorZone").appendChild(generateElement(type, i, place, "")); //Generate the element
+      //console.log("Place: " + place);
+      document.getElementById("editorZone").appendChild(generateElement(type, i, place, "", "editor")); //Generate the element
    };
 
 
@@ -410,14 +417,29 @@ include("../translation.php"); ?>
       return checkboxOptions;
    }
 
+   function getGridSettings(maindiv) {
+      var grid_holder = maindiv.getElementsByClassName('grid-holder');
+      var rows = grid_holder[0].getElementsByClassName('grid-row').length;
+
+      var gridOptions = {
+         'rows': rows,
+         'columns': 5,
+         'options': []
+      };
+      return gridOptions;
+   }
+
 
    //Function to get element settings
    function getElementSettings(type, id) {
       var maindiv = document.getElementById(type + "-" + id); //Get the main div of the element
-      var checkOptions = "";
+      var extraOptions = "";
       //Check if the element is a checkbox, radio or dropdown
       if (type == "checkbox" || type == "radio" || type == "dropdown") {
-         checkOptions = getCheckSettings(maindiv); //Get the options of the element
+         extraOptions = getCheckSettings(maindiv); //Get the options of the element
+      }
+      if (type == "linearScale") {
+         extraOptions = getGridSettings(maindiv);
       }
       //Get the question of the element
       var elementQuestion = maindiv.querySelector("#e-settings").getElementsByTagName("input")[0].value;
@@ -427,7 +449,7 @@ include("../translation.php"); ?>
       var elementSettings = {
          question: elementQuestion,
          required: isRequired,
-         options: checkOptions
+         options: extraOptions
       }
       //Return settings as JSON string
       elementSettings = JSON.stringify(elementSettings).replace(/"/g, '\\"');

@@ -5,7 +5,7 @@ function generateElement(type, id, place, settings, state) {
     if (settings != "") {
         var questionSetting = JSON.parse(settings).question;
         var isRequired = JSON.parse(settings).required;
-        var CheckOptions = JSON.parse(settings).options;
+        var extraOptions = JSON.parse(settings).options;
     }
 
     //Create div, which will contain the element
@@ -19,7 +19,7 @@ function generateElement(type, id, place, settings, state) {
         } else {
             div.setAttribute('data-required', "false");
         }
-        div.classList.add("question");
+        div.classList.add("question",  "form-control");
     } else if (state == "editor") {
         div.classList.add("form-member");
     }
@@ -61,15 +61,19 @@ function generateElement(type, id, place, settings, state) {
             break;
 
         case "radio":
-            uidiv.appendChild(generateCheckRadio(id, settings, CheckOptions, state, "radio"));
+            uidiv.appendChild(generateCheckRadio(id, settings, extraOptions, state, "radio"));
             break;
 
         case "checkbox":
-            uidiv.appendChild(generateCheckRadio(id, settings, CheckOptions, state, "checkbox"));
+            uidiv.appendChild(generateCheckRadio(id, settings, extraOptions, state, "checkbox"));
             break;
 
         case "dropdown":
-            uidiv.appendChild(generateDropdown(id, settings, CheckOptions, state));
+            uidiv.appendChild(generateDropdown(id, settings, extraOptions, state));
+            break;
+
+        case "linearScale":
+            uidiv.appendChild(generateScaleGrid(id, settings, extraOptions, state));
             break;
 
         case "fileUpload":
@@ -136,6 +140,9 @@ function generateElement(type, id, place, settings, state) {
 }
 
 function generateQuestionLabel(id, isRequired, questionSetting, state) {
+    if (questionSetting == undefined) {
+        questionSetting = "";
+    }
     var label;
     if (state == "editor") {
         label = document.createElement("input");
@@ -160,7 +167,7 @@ function generateQuestionLabel(id, isRequired, questionSetting, state) {
 function generateEmail(id, isRequired, state) {
     var input = document.createElement("input");
     input.type = "email";
-    input.classList.add("form-control");
+    input.classList.add("form-control", "mb-3");
     input.id = id;
     input.placeholder = "Email cím";
 
@@ -244,16 +251,16 @@ function generateTime(id, isRequired, state) {
     return input;
 }
 
-function generateCheckRadio(id, settings, CheckOptions, state, type) {
+function generateCheckRadio(id, settings, extraOptions, state, type) {
     var radioHolder = document.createElement("div");
     radioHolder.classList.add(type + "-holder");
 
     if (settings == "") {
         radioHolder.append(listCheckOpt(type, id, "", 0, state));
     } else {
-        for (var i = 0; i < CheckOptions.length; i++) {
+        for (var i = 0; i < extraOptions.length; i++) {
             //Add radio buttons
-            radioHolder.append(listCheckOpt(type, id, CheckOptions[i], i, state));
+            radioHolder.append(listCheckOpt(type, id, extraOptions[i], i, state));
         }
     }
 
@@ -270,7 +277,7 @@ function generateCheckRadio(id, settings, CheckOptions, state, type) {
     return radioHolder;
 }
 
-function generateDropdown(id, settings, CheckOptions, state) {
+function generateDropdown(id, settings, extraOptions, state) {
     //Create dropdown holder
     var dropdownHolder = document.createElement("div");
     dropdownHolder.classList.add("dropdown-holder");
@@ -286,8 +293,8 @@ function generateDropdown(id, settings, CheckOptions, state) {
     if (settings == "") {
         dropdownHolder.append(listDropdown("", 0, state));
     } else {
-        for (var i = 0; i < CheckOptions.length; i++) {
-            dropdownHolder.append(listDropdown(CheckOptions[i], i, state));
+        for (var i = 0; i < extraOptions.length; i++) {
+            dropdownHolder.append(listDropdown(extraOptions[i], i, state));
         }
     }
 
@@ -302,6 +309,71 @@ function generateDropdown(id, settings, CheckOptions, state) {
     }
 
     return dropdownHolder;
+}
+
+function generateScaleGrid(id, settings, extraOptions, state) {
+    var multipleRows = false;
+    var rows = 1;
+    columns = 5;
+    if (settings != "") {
+        rows = extraOptions.rows;
+        columns = extraOptions.columns;
+        if (rows > 1) {
+            var multipleRows = true;
+        }
+    }
+    //Create main div
+    var mainDiv = document.createElement("div");
+    mainDiv.classList.add("scale-grid-holder");
+
+    //Create label holder
+    var labelHolder = document.createElement("div");
+    labelHolder.classList.add("grid-label-holder");
+
+    //Create scale holder
+    var gridHolder = document.createElement("div");
+    gridHolder.classList.add("grid-holder");
+
+    //Create header row
+    var headerRow = document.createElement("div");
+    headerRow.classList.add("header-row");
+    headerRow.setAttribute('data-option', "header");
+
+    for (var i = 0; i < columns; i++) {
+        var column = document.createElement("div");
+        column.classList.add("form-check", "form-check-inline");
+        var label = document.createElement("label");
+        label.classList.add("form-check-label");
+        label.innerHTML = i + 1;
+        column.appendChild(label);
+
+        headerRow.appendChild(column);
+    }
+    gridHolder.appendChild(headerRow);
+
+    //Create rows
+    for (var i = 0; i < rows; i++) {
+        labelHolder.appendChild(createRowInput(id, state, i));
+        gridHolder.appendChild(createRow(i, columns, id, state, multipleRows));
+    }
+
+    //Create add row button
+    if (state == "editor") {
+        var addRow = document.createElement("button");
+        addRow.classList.add("btn", "btn-success", "btn-sm");
+        addRow.innerHTML = "+";
+        addRow.onclick = function () {
+            rows++;
+            var newRow = createRow(rows, columns, id, state, true);
+            gridHolder.insertBefore(newRow, addRow);
+            labelHolder.appendChild(createRowInput(id, state, rows));
+        };
+        gridHolder.appendChild(addRow);
+    }
+
+    mainDiv.appendChild(labelHolder);
+    mainDiv.appendChild(gridHolder);
+    return mainDiv;
 }
 
 function generateFileUpload(id, isRequired, state) {
@@ -412,4 +484,72 @@ function listCheckOpt(type, id, settings, optionNum, state) {
         div.appendChild(deleteButton);
     }
     return div;
+}
+
+//Create a row for the scale grid
+function createRow(rownum, columns, id, state, multipleRows) {
+    console.log("Creating row: " + rownum + " for " + id + " in " + state + " mode" + " with " + columns + " columns", multipleRows);
+    //Create row
+    var row = document.createElement("div");
+    row.classList.add("form-check", "grid-row");
+    row.setAttribute('data-option', rownum);
+
+    //Create columns with radio buttons
+    for (var j = 0; j < columns; j++) {
+        var column = document.createElement("div");
+        column.classList.add("form-check", "form-check-inline");
+
+        var input = document.createElement("input");
+        input.type = "radio";
+        input.classList.add("form-check-input");
+        input.id = id + "-" + rownum + "-" + j;
+        input.name = id + "-" + rownum;
+        if (state == "editor") {
+            input.disabled = true;
+        } else if (state == "fill") {
+            input.classList.add("userInput");
+        }
+        column.appendChild(input);
+
+        row.appendChild(column);
+    }
+
+    //Create delete button
+    if (state == "editor") {
+        var deleteButton = document.createElement("button");
+        deleteButton.classList.add("btn", "btn-close", "btn-sm");
+        if (multipleRows) {
+            deleteButton.onclick = function () {
+                row.remove();
+                RemoveRowInput(id, rownum);
+            };
+        } else {
+            deleteButton.disabled = true;
+        }
+        row.appendChild(deleteButton);
+    }
+
+    return row;
+}
+
+function createRowInput(id, state, rownum) {
+    //Create input for row
+    if (state == "editor") {
+        var input = document.createElement("input");
+        input.type = "text";
+        input.classList.add("form-control");
+        input.id = id + "-" + rownum;
+        input.placeholder = "Opció";
+        return input;
+    } else if (state == "fill") {
+        var label = document.createElement("label");
+        label.classList.add("form-check-label");
+        label.innerHTML = "Opció";
+        return label;
+    }
+}
+
+function RemoveRowInput(id, rownum) {
+    var input = document.getElementById(id + "-" + rownum);
+    input.remove();
 }

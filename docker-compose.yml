@@ -36,7 +36,7 @@ services:
      mysql:
         image: mysql:5.7.8
         container_name: mysql
-        restart: always
+        restart: unless-stopped
         env_file: data.env
         environment:
             - MYSQL_DATABASE=arpadmedia
@@ -52,7 +52,7 @@ services:
      phpmyadmin:
         image: phpmyadmin/phpmyadmin
         container_name: phpmyadmin-container
-        restart: always
+        restart: unless-stopped
         #links:
         #    - mysql
         ports:

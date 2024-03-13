@@ -282,7 +282,9 @@ function PhparrayCookie()
     console.log("Reloading items from cookies");
 
     var cookie = getCookie("itemsToRetrieve");
-
+    if (cookie == "") {
+      return;
+    }
     itemsToRetrieve = JSON.parse(cookie);
 
     if (itemsToRetrieve != "") {
@@ -290,6 +292,14 @@ function PhparrayCookie()
         prepare(item.id, item.uid, item.name, true);
       });
     }
+  }
+
+  function clearSelectionCookie() {
+    console.log("Cleared cookie");
+    var d = new Date();
+    d.setTime(d.getTime() + (1 * 24 * 60 * 60 * 1000));
+    var expires = "expires=" + d.toUTCString();
+    document.cookie = "itemsToRetrieve=;" + expires + ";path=/";
   }
 
 
@@ -368,6 +378,7 @@ function PhparrayCookie()
           },
           success: function (response) {
             if (response == '200') {
+              clearSelectionCookie();
               $('#doTitle').animate({
                 'opacity': 0
               }, 400, function () {
