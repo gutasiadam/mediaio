@@ -1513,17 +1513,12 @@ nav .navbarPhP {
     flex-direction: row;
 }
 
-.grid-label-holder{
+.grid-column{
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    margin-left: 10px;
-}
-
-.header-row{
-    display: flex;
-    flex-direction: row;
+    width: 10px;
 }
 
 #available_forms {

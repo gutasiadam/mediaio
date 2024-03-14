@@ -19,7 +19,7 @@ function generateElement(type, id, place, settings, state) {
         } else {
             div.setAttribute('data-required', "false");
         }
-        div.classList.add("question",  "form-control");
+        div.classList.add("question", "form-control");
     } else if (state == "editor") {
         div.classList.add("form-member");
     }
@@ -315,9 +315,11 @@ function generateScaleGrid(id, settings, extraOptions, state) {
     var multipleRows = false;
     var rows = 1;
     columns = 5;
+    var labels = [""];
     if (settings != "") {
         rows = extraOptions.rows;
         columns = extraOptions.columns;
+        labels = extraOptions.options;
         if (rows > 1) {
             var multipleRows = true;
         }
@@ -329,46 +331,68 @@ function generateScaleGrid(id, settings, extraOptions, state) {
     //Create label holder
     var labelHolder = document.createElement("div");
     labelHolder.classList.add("grid-label-holder");
+    labelHolder.classList.add("container", "justify-content-center");
+    labelHolder.style.maxWidth = "30%";
+
+    var headerSpacer = document.createElement("div");
+    headerSpacer.classList.add("row");
+    
+    var hiddenInput = document.createElement("input");
+    hiddenInput.type = "text";
+    hiddenInput.classList.add("form-control");
+    hiddenInput.style.opacity = "0";
+    hiddenInput.placeholder = "CSÁ TESO";
+
+    headerSpacer.appendChild(hiddenInput);
+
+    labelHolder.appendChild(headerSpacer);
 
     //Create scale holder
     var gridHolder = document.createElement("div");
+    gridHolder.classList.add("container", "justify-content-center");
     gridHolder.classList.add("grid-holder");
 
     //Create header row
     var headerRow = document.createElement("div");
-    headerRow.classList.add("header-row");
+    headerRow.classList.add("row", "mb-3");
     headerRow.setAttribute('data-option', "header");
 
     for (var i = 0; i < columns; i++) {
         var column = document.createElement("div");
-        column.classList.add("form-check", "form-check-inline");
-        var label = document.createElement("label");
-        label.classList.add("form-check-label");
-        label.innerHTML = i + 1;
-        column.appendChild(label);
+        column.classList.add("col", "text-center");
+        column.innerHTML = i + 1;
 
         headerRow.appendChild(column);
+    }
+    if (state == "editor") {
+        var spacerColumn = document.createElement("div");
+        spacerColumn.classList.add("col");
+        headerRow.appendChild(spacerColumn);
     }
     gridHolder.appendChild(headerRow);
 
     //Create rows
     for (var i = 0; i < rows; i++) {
-        labelHolder.appendChild(createRowInput(id, state, i));
+        labelHolder.appendChild(createRowInput(labels[i], id, state, i));
         gridHolder.appendChild(createRow(i, columns, id, state, multipleRows));
     }
 
     //Create add row button
     if (state == "editor") {
+        var plusHolder = document.createElement("div");
+        plusHolder.classList.add("row", "mb-3", "justify-content-center");
+
         var addRow = document.createElement("button");
-        addRow.classList.add("btn", "btn-success", "btn-sm");
+        addRow.classList.add("btn", "btn-success", "btn-sm", "w-50");
         addRow.innerHTML = "+";
         addRow.onclick = function () {
             rows++;
             var newRow = createRow(rows, columns, id, state, true);
-            gridHolder.insertBefore(newRow, addRow);
-            labelHolder.appendChild(createRowInput(id, state, rows));
+            gridHolder.insertBefore(newRow, plusHolder);
+            labelHolder.appendChild(createRowInput("", id, state, rows));
         };
-        gridHolder.appendChild(addRow);
+        plusHolder.appendChild(addRow);
+        gridHolder.appendChild(plusHolder);
     }
 
     mainDiv.appendChild(labelHolder);
@@ -491,13 +515,14 @@ function createRow(rownum, columns, id, state, multipleRows) {
     console.log("Creating row: " + rownum + " for " + id + " in " + state + " mode" + " with " + columns + " columns", multipleRows);
     //Create row
     var row = document.createElement("div");
-    row.classList.add("form-check", "grid-row");
+    row.classList.add("row", "mb-3");
     row.setAttribute('data-option', rownum);
+    row.classList.add("grid-row");
 
     //Create columns with radio buttons
     for (var j = 0; j < columns; j++) {
         var column = document.createElement("div");
-        column.classList.add("form-check", "form-check-inline");
+        column.classList.add("col", "text-center");
 
         var input = document.createElement("input");
         input.type = "radio";
@@ -516,6 +541,9 @@ function createRow(rownum, columns, id, state, multipleRows) {
 
     //Create delete button
     if (state == "editor") {
+        var deleteHolder = document.createElement("div");
+        deleteHolder.classList.add("col");
+
         var deleteButton = document.createElement("button");
         deleteButton.classList.add("btn", "btn-close", "btn-sm");
         if (multipleRows) {
@@ -526,13 +554,16 @@ function createRow(rownum, columns, id, state, multipleRows) {
         } else {
             deleteButton.disabled = true;
         }
-        row.appendChild(deleteButton);
+        deleteHolder.appendChild(deleteButton);
+        row.appendChild(deleteHolder);
     }
 
     return row;
 }
 
-function createRowInput(id, state, rownum) {
+function createRowInput(val, id, state, rownum) {
+    var inputHolder = document.createElement("div");
+    inputHolder.classList.add("row", "justify-content-center");
     //Create input for row
     if (state == "editor") {
         var input = document.createElement("input");
@@ -540,13 +571,15 @@ function createRowInput(id, state, rownum) {
         input.classList.add("form-control");
         input.id = id + "-" + rownum;
         input.placeholder = "Opció";
-        return input;
+        input.value = val;
+        inputHolder.appendChild(input);
     } else if (state == "fill") {
         var label = document.createElement("label");
         label.classList.add("form-check-label");
-        label.innerHTML = "Opció";
-        return label;
+        label.innerHTML = val;
+        inputHolder.appendChild(label);
     }
+    return inputHolder;
 }
 
 function RemoveRowInput(id, rownum) {

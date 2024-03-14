@@ -133,13 +133,16 @@ class formManager
     }
   }
 
-  static function submitAnswer($uid, $id, $ip, $answers)
+  static function submitAnswer($uid, $id, $ip, $answers, $form)
   {
     // Prevent injection
     if (preg_match('/[<>]/', $answers)) {
       echo 500;
       exit();
     }
+    //convert to json
+    $form = json_decode($form, true);
+    //TODO: save form info to databese
     $sql = "INSERT INTO `formanswers` (`ID`, `FormID`, `userID`, `userIp`, `UserAnswers`) VALUES (NULL,'" . $id . "','" . $uid . "','" . $ip . "','" . $answers . "');";
     $connection = Database::runQuery_mysqli();
     $connection->query($sql);
@@ -259,7 +262,13 @@ if (isset($_POST['mode'])) {
   }
 
   if ($_POST['mode'] == 'submitAnswer') {
-    echo formManager::submitAnswer($_POST['uid'], $_POST['id'], $_POST['userIp'], $_POST['answers']);
+    echo formManager::submitAnswer(
+      $_POST['uid'],
+      $_POST['id'],
+      $_POST['userIp'],
+      $_POST['answers'],
+      $_POST['form']
+    );
     //echo $_POST['value'] ;
     //Header set.
     exit();

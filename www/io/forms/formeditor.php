@@ -421,10 +421,16 @@ include("../translation.php"); ?>
       var grid_holder = maindiv.getElementsByClassName('grid-holder');
       var rows = grid_holder[0].getElementsByClassName('grid-row').length;
 
+      var labelHolder = maindiv.getElementsByClassName('grid-label-holder');
+      var labels = labelHolder[0].querySelectorAll('input[type="text"]');
+      labels = Array.from(labels).map(function (el) {
+         return el.value;
+      });
+
       var gridOptions = {
          'rows': rows,
          'columns': 5,
-         'options': []
+         'options': labels
       };
       return gridOptions;
    }
