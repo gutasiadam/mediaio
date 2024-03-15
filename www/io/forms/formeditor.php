@@ -1,11 +1,11 @@
 <?php
 session_start();
-include("header.php");
-include("../translation.php"); ?>
+include ("header.php");
+include ("../translation.php"); ?>
 <html>
 
 
-<?php if (isset($_SESSION["userId"]) && in_array("admin", $_SESSION["groups"])) { ?>
+<?php if (isset ($_SESSION["userId"]) && in_array("admin", $_SESSION["groups"])) { ?>
    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
       <a class="navbar-brand" href="./index.php">
          <img src="../utility/logo2.png" height="50">
@@ -43,6 +43,18 @@ include("../translation.php"); ?>
          </form>
       </div>
    </nav>
+
+   <div class="toast-container position-absolute p-3 indexToasts">
+      <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" id="save_toast">
+         <div class="toast-header">
+            <img src="../utility/logo.png" height="30">
+            <strong class="me-auto" id="save_status"></strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+         </div>
+      </div>
+   </div>
+
+
    <!-- Title edit modal -->
    <div class="modal fade" id="Title_Modal" tabindex="-1" role="dialog" aria-labelledby="title_ModalLabel"
       aria-hidden="true">
@@ -116,16 +128,19 @@ include("../translation.php"); ?>
                   <label class="form-check-label" for="flexSwitchCheckDefault">Korlátozás egy válaszra (még nem
                      működik)</label>
                </div>
-               <div class="form-check form-switch">
+               <div class="form-check form-switch mb-3">
                   <input type="checkbox" class="form-check-input" id="flexSwitchCheckDefault" data-setting="Anonim">
                   <label class="form-check-label" for="flexSwitchCheckDefault"><b>Anonymous</b> válaszadás</label>
                </div>
-               <br>
-               <label for="background_img">Háttérkép: <a href="#" id="default-background" data-bs-toggle="popover"
-                     data-bs-placement="top">(alapértelmezett)</a></label>
-               <input type="file" class="form-control" name="fileToUpload" id="background_img" accept="image/*">
-               <button class="btn btn-success" type="submit" onclick="changeBackground()">Feltöltés</button>
-               <button class="btn btn-danger" onclick="changeBackground(true)">Törlés</button>
+               <label class="mb-2" for="background_img">Háttérkép: <a href="#" id="default-background"
+                     data-bs-toggle="popover" data-bs-placement="top">(alapértelmezett)</a></label>
+               <div class="input-group">
+
+                  <input type="file" class="form-control" placeholder="Háttérkép feltöltése" aria-label="Background upload"
+                     name="fileToUpload" id="background_img" accept="image/*">
+                  <button class="btn btn-outline-danger" type="button" onclick="changeBackground(true)">Reset</button>
+                  <button class="btn btn-outline-success" type="button" onclick="changeBackground()">Feltöltés</button>
+               </div>
             </div>
             <div class="modal-footer">
                <button class="btn btn-success col-lg-auto mb-1" id="save" data-bs-dismiss="modal"
@@ -137,15 +152,6 @@ include("../translation.php"); ?>
    </div>
    <!-- End of Settings Modal -->
 
-   <div class="toast-container position-absolute p-3 indexToasts">
-      <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" id="save_toast">
-         <div class="toast-header">
-            <img src="../utility/logo.png" height="30">
-            <strong class="me-auto" id="save_status"></strong>
-            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-         </div>
-      </div>
-   </div>
 
 
    <div class="form">
@@ -335,6 +341,8 @@ include("../translation.php"); ?>
                document.querySelector('[data-setting="SingleAnswer"]').checked = true;
             }
 
+            console.log(form.Background);
+
             //Set background
             var style = document.createElement('style');
             style.innerHTML = `
@@ -409,7 +417,7 @@ include("../translation.php"); ?>
 
    function getCheckSettings(maindiv) {
       var checkboxOptions = [];
-      var checkbox_holder = maindiv.getElementsByClassName('select-holder');
+      var checkbox_holder = maindiv.getElementsByClassName('radio-holder');
       var checkNames = checkbox_holder[0].querySelectorAll('input[type="text"]');
       for (var i = 0; i < checkNames.length; i++) {
          checkboxOptions.push(checkNames[i].value);
@@ -421,8 +429,7 @@ include("../translation.php"); ?>
       var grid_holder = maindiv.getElementsByClassName('grid-holder');
       var rows = grid_holder[0].getElementsByClassName('grid-row').length;
 
-      var labelHolder = maindiv.getElementsByClassName('grid-label-holder');
-      var labels = labelHolder[0].querySelectorAll('input[type="text"]');
+      var labels = grid_holder[0].querySelectorAll('input[type="text"]');
       labels = Array.from(labels).map(function (el) {
          return el.value;
       });
@@ -496,66 +503,49 @@ include("../translation.php"); ?>
       }
    }
 
-   //Function to change background TODO!!!!
-   function changeBackground(clear) {
-
-      if (clear) {
-         var formId = <?php echo $_GET['formId'] ?>;
-         $.ajax({
-            type: "POST",
-            url: "../formManager.php",
-            data: { mode: "changeBackground", id: formId, name: "default.jpg" },
-            success: function (data) {
-               console.log(data);
-            }
-         });
-         /*          var form_data = new FormData();
-                  $.ajax({
-                  url: './upload-handler.php', // point to server-side PHP script
-                  dataType: 'text', // what to expect back from the PHP script
-                  cache: false,
-                  contentType: false,
-                  processData: false,
-                  data: form_data,
-                  type: 'POST',
-                  success: function (response) {
-                     console.log(response);
-                  }
-               }); */
+   //Function to change background
+   function changeBackground(clear = false) {
+      var fileInput = document.getElementById("background_img");
+      if (fileInput.files.length === 0) {
+         console.log("No file selected");
          return;
       }
 
-      var file_data = $('#background_img').prop('files')[0];
+      var file = document.getElementById("background_img").files[0];
       var formId = <?php echo $_GET['formId'] ?>;
-
-      var form_data = new FormData();
-      form_data.append('fileToUpload', file_data);
-      form_data.append('formId', formId);
-
-      console.log(form_data);
+      var formData = new FormData();
+      formData.append('fileToUpload', file);
+      formData.append('formId', formId);
+      formData.append('mode', 'uploadBackground');
 
       $.ajax({
-         url: './upload-handler.php', // point to server-side PHP script
-         dataType: 'text', // what to expect back from the PHP script
-         cache: false,
+         type: "POST",
+         url: "upload-handler.php",
+         data: formData,
          contentType: false,
          processData: false,
-         data: { form_data: form_data, mode: "uploadBackground" },
-         type: 'POST',
-         success: function (response) {
-
-            console.log(response);
-            /* $.ajax({
-               type: "POST",
-               url: "../formManager.php",
-               data: { mode: "changeBackground", id: formId, name: response },
-               success: function (data) {
-                  console.log(data);
-               }
-            }); */
+         success: function (data) {
+            //console.log(data);
+            if (data != 500) {
+               $.ajax({
+                  type: "POST",
+                  url: "../formManager.php",
+                  data: { mode: "changeBackground", id: formId, name: data },
+                  success: function (data) {
+                     console.log(data);
+                     saveForm(false);
+                     setTimeout(function () {
+                        location.reload();
+                     }, 1000);
+                  }
+               });
+            } else if (data == 500) {
+               console.log("Upload failed!");
+            } else if (data == 400) {
+               console.log("Not an image!");
+            }
          }
       });
-
    }
 
 

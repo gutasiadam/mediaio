@@ -154,6 +154,7 @@ function generateQuestionLabel(id, isRequired, questionSetting, state) {
 
     } else if (state == "fill") {
         label = document.createElement("label");
+        label.classList.add("form-label");
         if (isRequired) {
             label.innerHTML = questionSetting + "<span style='color: red;'> *</span>";
         } else {
@@ -324,42 +325,30 @@ function generateScaleGrid(id, settings, extraOptions, state) {
             var multipleRows = true;
         }
     }
-    //Create main div
-    var mainDiv = document.createElement("div");
-    mainDiv.classList.add("scale-grid-holder");
-
-    //Create label holder
-    var labelHolder = document.createElement("div");
-    labelHolder.classList.add("grid-label-holder");
-    labelHolder.classList.add("container", "justify-content-center");
-    labelHolder.style.maxWidth = "30%";
-
-    var headerSpacer = document.createElement("div");
-    headerSpacer.classList.add("row");
-    
-    var hiddenInput = document.createElement("input");
-    hiddenInput.type = "text";
-    hiddenInput.classList.add("form-control");
-    hiddenInput.style.opacity = "0";
-    hiddenInput.placeholder = "CSÁ TESO";
-
-    headerSpacer.appendChild(hiddenInput);
-
-    labelHolder.appendChild(headerSpacer);
 
     //Create scale holder
     var gridHolder = document.createElement("div");
     gridHolder.classList.add("container", "justify-content-center");
     gridHolder.classList.add("grid-holder");
+    gridHolder.style.paddingLeft = "10px";
+    gridHolder.style.paddingRight = "10px";
 
     //Create header row
     var headerRow = document.createElement("div");
-    headerRow.classList.add("row", "mb-3");
+    headerRow.classList.add("row");
+    headerRow.style.flexWrap = "nowrap";
     headerRow.setAttribute('data-option', "header");
+
+
+    var spacerColumn = document.createElement("div");
+    spacerColumn.classList.add("col-3");
+    spacerColumn.style.minWidth = "50px";
+    headerRow.appendChild(spacerColumn);
 
     for (var i = 0; i < columns; i++) {
         var column = document.createElement("div");
         column.classList.add("col", "text-center");
+        column.style.minWidth = "46px";
         column.innerHTML = i + 1;
 
         headerRow.appendChild(column);
@@ -373,8 +362,7 @@ function generateScaleGrid(id, settings, extraOptions, state) {
 
     //Create rows
     for (var i = 0; i < rows; i++) {
-        labelHolder.appendChild(createRowInput(labels[i], id, state, i));
-        gridHolder.appendChild(createRow(i, columns, id, state, multipleRows));
+        gridHolder.appendChild(createRow(labels[i], i, columns, id, state, multipleRows));
     }
 
     //Create add row button
@@ -387,17 +375,14 @@ function generateScaleGrid(id, settings, extraOptions, state) {
         addRow.innerHTML = "+";
         addRow.onclick = function () {
             rows++;
-            var newRow = createRow(rows, columns, id, state, true);
+            var newRow = createRow("", rows, columns, id, state, true);
             gridHolder.insertBefore(newRow, plusHolder);
-            labelHolder.appendChild(createRowInput("", id, state, rows));
         };
         plusHolder.appendChild(addRow);
         gridHolder.appendChild(plusHolder);
     }
 
-    mainDiv.appendChild(labelHolder);
-    mainDiv.appendChild(gridHolder);
-    return mainDiv;
+    return gridHolder;
 }
 
 function generateFileUpload(id, isRequired, state) {
@@ -511,18 +496,27 @@ function listCheckOpt(type, id, settings, optionNum, state) {
 }
 
 //Create a row for the scale grid
-function createRow(rownum, columns, id, state, multipleRows) {
+function createRow(questionLabel, rownum, columns, id, state, multipleRows) {
     console.log("Creating row: " + rownum + " for " + id + " in " + state + " mode" + " with " + columns + " columns", multipleRows);
     //Create row
     var row = document.createElement("div");
     row.classList.add("row", "mb-3");
+    row.style.flexWrap = "nowrap";
     row.setAttribute('data-option', rownum);
     row.classList.add("grid-row");
+
+    //Create label for row
+
+    var labelHolder = document.createElement("div");
+    labelHolder.classList.add("col-3");
+    labelHolder.appendChild(createRowInput(questionLabel, id, state, rownum));
+    row.appendChild(labelHolder);
+
 
     //Create columns with radio buttons
     for (var j = 0; j < columns; j++) {
         var column = document.createElement("div");
-        column.classList.add("col", "text-center");
+        column.classList.add("col", "text-center", "align-self-center");
 
         var input = document.createElement("input");
         input.type = "radio";
@@ -542,7 +536,7 @@ function createRow(rownum, columns, id, state, multipleRows) {
     //Create delete button
     if (state == "editor") {
         var deleteHolder = document.createElement("div");
-        deleteHolder.classList.add("col");
+        deleteHolder.classList.add("col", "align-self-center");
 
         var deleteButton = document.createElement("button");
         deleteButton.classList.add("btn", "btn-close", "btn-sm");
@@ -562,24 +556,23 @@ function createRow(rownum, columns, id, state, multipleRows) {
 }
 
 function createRowInput(val, id, state, rownum) {
-    var inputHolder = document.createElement("div");
-    inputHolder.classList.add("row", "justify-content-center");
     //Create input for row
     if (state == "editor") {
         var input = document.createElement("input");
         input.type = "text";
         input.classList.add("form-control");
+        input.style.marginBottom = "0";
         input.id = id + "-" + rownum;
         input.placeholder = "Opció";
         input.value = val;
-        inputHolder.appendChild(input);
+        return input;
     } else if (state == "fill") {
         var label = document.createElement("label");
         label.classList.add("form-check-label");
         label.innerHTML = val;
-        inputHolder.appendChild(label);
+        label.style.textAlign = "center";
+        return label;
     }
-    return inputHolder;
 }
 
 function RemoveRowInput(id, rownum) {
