@@ -14,10 +14,21 @@ session_start();
 
 class formManager
 {
+  private static function generateRandomString($length = 10)
+  {
+    $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    $charactersLength = strlen($characters);
+    $randomString = '';
+    for ($i = 0; $i < $length; $i++) {
+      $randomString .= $characters[rand(0, $charactersLength - 1)];
+    }
+    return $randomString;
+  }
   static function createNewForm()
   {
     if (in_array("admin", $_SESSION['groups'])) { //Auto accept 
-      $sql = "INSERT INTO `forms`(`ID`, `Name`, `Header`, `Status`, `Anonim`, `AccessRestrict`, `Data`) VALUES(NULL,'Névtelen','Leírás','0','0','1',NULL);";
+      $formHash = formManager::generateRandomString(12);
+      $sql = "INSERT INTO `forms`(`ID`, `LinkHash`, `Name`, `Header`, `Status`, `Anonim`, `AccessRestrict`, `Data`) VALUES(NULL,'" . $formHash . "' ,'Névtelen','Leírás','0','0','1',NULL);";
       $connection = Database::runQuery_mysqli();
       $connection->query($sql);
       $id = $connection->insert_id;
@@ -30,7 +41,7 @@ class formManager
   static function listForms()
   {
     $sql = "SELECT * FROM forms WHERE AccessRestrict='0';";
-    if (isset($_SESSION['userId'])) {
+    if (isset ($_SESSION['userId'])) {
       $sql = "SELECT * FROM forms WHERE AccessRestrict IN ('0', '2');";
       if (in_array("admin", $_SESSION['groups'])) {
         $sql = "SELECT * FROM forms";
@@ -47,20 +58,40 @@ class formManager
     exit();
   }
 
-  static function saveForm($form, $formHeader, $id, $accessRestrict, $formAnonim, $formSingleAnswer, $formState)
+  static function saveForm($form, $id)
   {
     if (in_array("admin", $_SESSION['groups'])) {
-      //convert to json
       $form = json_decode($form, true);
-      $accessArray = array("restrictGroups" => array($accessRestrict));
-      // echo $accessRestrict;
-      // var_dump($_POST);
-      //array_push($accessArray,$accessRestrict);
+      $form['elements'] = json_encode($form['elements'], JSON_UNESCAPED_UNICODE);
 
+      $sql = "UPDATE forms SET Name='" . $form['name'] . "',Header='" . $form['header'] . "',Status='" . $form['state'] . "',Anonim='" . $form['anonim'] . "',Data='" . $form['elements'] . "'
+            ,Accessrestrict='" . $form['access'] . "' WHERE ID=" . $id . ";";
+      $connection = Database::runQuery_mysqli();
+      $connection->query($sql);
+      $connection->close();
+      echo 200;
+      exit();
+    }
+  }
 
+  static function getFormLinkHash($id)
+  {
+    if (in_array("admin", $_SESSION['groups'])) {
+      $sql = "SELECT LinkHash FROM forms WHERE ID=" . $id . ";";
+      $connection = Database::runQuery_mysqli();
+      $result = $connection->query($sql);
+      $connection->close();
+      $row = $result->fetch_assoc();
+      echo json_encode($row);
+      exit();
+    }
+  }
 
-      $sql = "UPDATE forms SET Name='" . $form['name'] . "',Header='" . $formHeader . "',Status='" . $formState . "',Anonim='" . $formAnonim . "',Data='" . json_encode($form['elements'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . "'
-            ,Accessrestrict='" . $accessRestrict . "' WHERE ID=" . $id . ";";
+  static function generateNewLinkHash($id)
+  {
+    if (in_array("admin", $_SESSION['groups'])) {
+      $formHash = formManager::generateRandomString(12);
+      $sql = "UPDATE forms SET LinkHash='" . $formHash . "' WHERE ID=" . $id . ";";
       $connection = Database::runQuery_mysqli();
       $connection->query($sql);
       $connection->close();
@@ -81,36 +112,23 @@ class formManager
     }
   }
 
-  static function getForm($form, $id)
+  static function getForm($id, $formHash)
   {
-    if (in_array("admin", $_SESSION['groups'])) {
-      $sql = "SELECT * FROM forms WHERE ID=" . $id . ";";
-      $connection = Database::runQuery_mysqli();
-      $result = $connection->query($sql);
-      $connection->close();
-      $row = $result->fetch_assoc();
-      //If no rows are returned, return 404
-      if ($row == null) {
-        echo 404;
-        exit();
+    if ($id != null) {
+      if (isset ($_SESSION['userId']) && in_array("admin", $_SESSION['groups'])) {
+        $sql = "SELECT * FROM forms WHERE ID=" . $id . ";";
+      } else if (isset ($_SESSION['userId'])) {
+        $sql = "SELECT * FROM forms WHERE ID=" . $id . " AND AccessRestrict IN ('0','2') AND Status='1';";
+      } else {
+        $sql = "SELECT * FROM forms WHERE ID=" . $id . " AND AccessRestrict='0' AND Status='1';";
       }
-      echo json_encode($row);
-      exit();
+    } else {
+      $sql = "SELECT * FROM forms WHERE LinkHash='" . $formHash . "' AND AccessRestrict='3' AND Status='1';";
     }
-  }
-
-  static function viewForm($form, $id)
-  {
-    $sql = "SELECT * FROM forms WHERE ID=" . $id . ";";
     $connection = Database::runQuery_mysqli();
     $result = $connection->query($sql);
     $connection->close();
     $row = $result->fetch_assoc();
-    //If form is closed, return 500
-    if (isset($row['Status']) && $row['Status'] == 0) {
-      echo 500;
-      exit();
-    }
     //If no rows are returned, return 404
     if ($row == null) {
       echo 404;
@@ -118,7 +136,6 @@ class formManager
     }
     echo json_encode($row);
     exit();
-
   }
 
 
@@ -140,10 +157,7 @@ class formManager
       echo 500;
       exit();
     }
-    //convert to json
-    $form = json_decode($form, true);
-    //TODO: save form info to databese
-    $sql = "INSERT INTO `formanswers` (`ID`, `FormID`, `userID`, `userIp`, `UserAnswers`) VALUES (NULL,'" . $id . "','" . $uid . "','" . $ip . "','" . $answers . "');";
+    $sql = "INSERT INTO `formanswers` (`ID`, `FormID`, `userID`, `userIp`, `UserAnswers`, `FormState`) VALUES (NULL,'" . $id . "','" . $uid . "','" . $ip . "','" . $answers . "','" . $form . "');";
     $connection = Database::runQuery_mysqli();
     $connection->query($sql);
     $connection->close();
@@ -194,7 +208,7 @@ class formManager
 
 
 
-if (isset($_POST['mode'])) {
+if (isset ($_POST['mode'])) {
 
   //Set timezone to the computer's timezone.
   date_default_timezone_set('Europe/Budapest');
@@ -220,44 +234,34 @@ if (isset($_POST['mode'])) {
   if ($_POST['mode'] == 'save') {
     echo formManager::saveForm(
       $_POST['form'],
-      $_POST['formHeader'],
       $_POST['id'],
-      $_POST['accessRestrict'],
-      $_POST['formAnonim'],
-      $_POST['formSingleAnswer'],
-      $_POST['formState'],
     );
-    //echo $_POST['value'] ;
-    //Header set.
     exit();
   }
 
   if ($_POST['mode'] == 'changeBackground') {
     echo formManager::changeBackground($_POST['name'], $_POST['id']);
-    //echo $_POST['value'] ;
-    //Header set.
     exit();
   }
 
   if ($_POST['mode'] == 'getForm') {
-    echo formManager::getForm($_POST['form'], $_POST['id']);
-    //echo $_POST['value'] ;
-    //Header set.
+    echo formManager::getForm($_POST['id'], $_POST['formHash']);
     exit();
   }
 
-  if ($_POST['mode'] == 'viewForm') {
-    echo formManager::viewForm($_POST['form'], $_POST['id']);
-    //echo $_POST['value'] ;
-    //Header set.
+  if ($_POST['mode'] == 'getLinkHash') {
+    echo formManager::getFormLinkHash($_POST['id']);
+    exit();
+  }
+
+  if ($_POST['mode'] == 'newLinkHash') {
+    echo formManager::generateNewLinkHash($_POST['id']);
     exit();
   }
 
   if ($_POST['mode'] == 'deleteForm') {
     echo "deleteForm";
     echo formManager::deleteForm($_POST['id']);
-    //echo $_POST['value'] ;
-    //Header set.
     exit();
   }
 
@@ -269,15 +273,11 @@ if (isset($_POST['mode'])) {
       $_POST['answers'],
       $_POST['form']
     );
-    //echo $_POST['value'] ;
-    //Header set.
     exit();
   }
 
   if ($_POST['mode'] == 'getFormAnswers') {
     echo formManager::getFormAnswers($_POST['id']);
-    //echo $_POST['value'] ;
-    //Header set.
     exit();
   }
 }

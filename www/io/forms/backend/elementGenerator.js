@@ -72,7 +72,7 @@ function generateElement(type, id, place, settings, state) {
             uidiv.appendChild(generateDropdown(id, settings, extraOptions, state));
             break;
 
-        case "linearScale":
+        case "scaleGrid":
             uidiv.appendChild(generateScaleGrid(id, settings, extraOptions, state));
             break;
 
@@ -568,7 +568,7 @@ function createRowInput(val, id, state, rownum) {
         return input;
     } else if (state == "fill") {
         var label = document.createElement("label");
-        label.classList.add("form-check-label");
+        label.classList.add("form-check-label", "row-label");
         label.innerHTML = val;
         label.style.textAlign = "center";
         return label;

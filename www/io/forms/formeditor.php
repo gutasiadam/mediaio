@@ -25,7 +25,7 @@ include ("../translation.php"); ?>
          </ul>
          <ul class="navbar-nav ms-auto navbarPhP">
             <li>
-               <a class="nav-link disabled timelock" href="#"><span id="time"> 10:00 </span>
+               <a class="nav-link disabled timelock" href="#"><span id="time"> 60:00 </span>
                   <?php echo ' ' . $_SESSION['UserUserName']; ?>
                </a>
             </li>
@@ -115,14 +115,20 @@ include ("../translation.php"); ?>
                   <option value="1">Fogad válaszokat</option>
                </select>
                </br>
-               Csak nem szerkesztés alatt levő form esetén:
-               <select class="form-select form-select-sm" id="accessRestrict" name="accessRestrict">
-                  <option value="1">Privát</option>
-                  <option value="2">Médiás</option>
-                  <option value="3">Csak linkkel elérhető</option>
-                  <option value="0">Publikus</option>
-               </select>
-               <br>
+               <div class="mb-3" id="accessForm">
+                  Elérhetőség:
+                  <select class="form-select form-select-sm mb-1" id="accessRestrict" name="accessRestrict">
+                     <option value="1">Privát</option>
+                     <option value="2">Médiás</option>
+                     <option value="3">Csak linkkel elérhető</option>
+                     <option value="0">Publikus</option>
+                  </select>
+                  <div class="input-group" id="linkHolderGroup" style="display: none;">
+                     <input type="text" class="form-control" placeholder="Kérdőív link" aria-label="Form link"
+                        id="formLinkHolder">
+                     <button class="btn btn-outline-secondary" type="button" onclick="copyLink()">Másolás</button>
+                  </div>
+               </div>
                <div class="form-check form-switch">
                   <input type="checkbox" class="form-check-input" id="flexSwitchCheckDefault" data-setting="SingleAnswer">
                   <label class="form-check-label" for="flexSwitchCheckDefault">Korlátozás egy válaszra (még nem
@@ -138,8 +144,10 @@ include ("../translation.php"); ?>
 
                   <input type="file" class="form-control" placeholder="Háttérkép feltöltése" aria-label="Background upload"
                      name="fileToUpload" id="background_img" accept="image/*">
-                  <button class="btn btn-outline-danger" type="button" onclick="changeBackground(true)">Reset</button>
-                  <button class="btn btn-outline-success" type="button" onclick="changeBackground()">Feltöltés</button>
+                  <button class="btn btn-outline-danger" type="button"
+                     onclick="changeBackground(<?php echo $_GET['formId'] ?>,true)">Reset</button>
+                  <button class="btn btn-outline-success" type="button"
+                     onclick="changeBackground(<?php echo $_GET['formId'] ?>)">Feltöltés</button>
                </div>
             </div>
             <div class="modal-footer">
@@ -188,10 +196,8 @@ include ("../translation.php"); ?>
 
                   <!-- Skála -->
                   <li class="dropdown-divider"></li>
-                  <li><a class="dropdown-item" href="#" onclick="addFormElement('linearScale')"><i
-                           class="fas fa-ellipsis-h fa-2x"></i> Lineáris skála</a></li>
-                  <li><a class="dropdown-item" href="#" onclick="addFormElement('grid')"><i class="fas fa-th fa-2x"></i>
-                        Feleletválasztós rács</a></li>
+                  <li><a class="dropdown-item" href="#" onclick="addFormElement('scaleGrid')"><i
+                           class="fas fa-th fa-2x"></i> Feleletválasztós rács</a></li>
 
                   <!-- Idő -->
                   <li class="dropdown-divider"></li>
@@ -239,6 +245,7 @@ include ("../translation.php"); ?>
 ?>
 
 <script src="backend/elementGenerator.js" type="text/javascript"></script>
+<script src="backend/backgroundManager.js" type="text/javascript"></script>
 
 <script>
    //Changing this variable if something is changed
@@ -301,6 +308,13 @@ include ("../translation.php"); ?>
       everythingSaved = false;
    }
 
+   function copyLink() {
+      var copyText = document.getElementById("formLinkHolder");
+      copyText.select();
+      copyText.setSelectionRange(0, 99999);
+      document.execCommand("copy");
+   }
+
    $(document).ready(function () {
       //Load form from server
       console.log(<?php echo $_GET['formId'] ?>);
@@ -321,6 +335,7 @@ include ("../translation.php"); ?>
             var formAnonim = form.Anonim;
             var formSingleAnswer = form.SingleAnswer;
             var formName = form.Name;
+            var formHash = form.LinkHash;
 
             console.log(formElements);
             //Set form state
@@ -328,6 +343,15 @@ include ("../translation.php"); ?>
 
             //Set form access
             document.getElementById("accessRestrict").value = formAccess;
+
+            if (form.AccessRestrict == 3) {
+               document.getElementById("linkHolderGroup").style.display = "flex";
+               document.getElementById("linkHolderGroup").classList.add("mb-1");
+               var linkholder = document.getElementById("formLinkHolder");
+               linkholder.value = "https://localhost/forms/viewform.php?form=" + formHash;
+            } else {
+               document.getElementById("linkHolderGroup").classList.add("mb-3");
+            }
 
             //Set form Name
             document.getElementById("form_name").innerHTML = formName + '&nbsp<i class="fas fa-edit fa-xs" style="color: #747b86"></i>';
@@ -451,7 +475,7 @@ include ("../translation.php"); ?>
       if (type == "checkbox" || type == "radio" || type == "dropdown") {
          extraOptions = getCheckSettings(maindiv); //Get the options of the element
       }
-      if (type == "linearScale") {
+      if (type == "scaleGrid") {
          extraOptions = getGridSettings(maindiv);
       }
       //Get the question of the element
@@ -503,51 +527,6 @@ include ("../translation.php"); ?>
       }
    }
 
-   //Function to change background
-   function changeBackground(clear = false) {
-      var fileInput = document.getElementById("background_img");
-      if (fileInput.files.length === 0) {
-         console.log("No file selected");
-         return;
-      }
-
-      var file = document.getElementById("background_img").files[0];
-      var formId = <?php echo $_GET['formId'] ?>;
-      var formData = new FormData();
-      formData.append('fileToUpload', file);
-      formData.append('formId', formId);
-      formData.append('mode', 'uploadBackground');
-
-      $.ajax({
-         type: "POST",
-         url: "upload-handler.php",
-         data: formData,
-         contentType: false,
-         processData: false,
-         success: function (data) {
-            //console.log(data);
-            if (data != 500) {
-               $.ajax({
-                  type: "POST",
-                  url: "../formManager.php",
-                  data: { mode: "changeBackground", id: formId, name: data },
-                  success: function (data) {
-                     console.log(data);
-                     saveForm(false);
-                     setTimeout(function () {
-                        location.reload();
-                     }, 1000);
-                  }
-               });
-            } else if (data == 500) {
-               console.log("Upload failed!");
-            } else if (data == 400) {
-               console.log("Not an image!");
-            }
-         }
-      });
-   }
-
 
 
    //Every 10 seconds, save the form
@@ -592,11 +571,7 @@ include ("../translation.php"); ?>
          formElements.push(formElement);
       }
 
-      var form = {
-         "name": formName,
-         "elements": formElements
-      };
-      var formJson = JSON.stringify(form);
+
 
       var formState = document.getElementById("formState").value;
       var accessRestrict = document.getElementById("accessRestrict").value;
@@ -605,11 +580,22 @@ include ("../translation.php"); ?>
       var formAnonim = document.querySelector('[data-setting="Anonim"]').checked ? 1 : 0;
       var formSingleAnswer = document.querySelector('[data-setting="SingleAnswer"]').checked ? 1 : 0;
 
+      var form = {
+         "name": formName,
+         "header": formHeader,
+         "elements": formElements,
+         "state": formState,
+         "access": accessRestrict,
+         "anonim": formAnonim,
+         "singleAnswer": formSingleAnswer
+      };
+      var formJson = JSON.stringify(form);
+
       //Send form to server
       $.ajax({
          type: "POST",
          url: "../formManager.php",
-         data: { form: formJson, formState: formState, formHeader: formHeader, accessRestrict: accessRestrict, formAnonim: formAnonim, formSingleAnswer: formSingleAnswer, mode: "save", id: <?php echo $_GET['formId'] ?> },
+         data: { form: formJson, mode: "save", id: <?php echo $_GET['formId'] ?> },
          success: function (data) {
             console.log(data);
 

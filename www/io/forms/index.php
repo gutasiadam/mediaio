@@ -107,12 +107,9 @@ error_reporting(E_ERROR | E_PARSE);
   $(document).ready(function () {
 
     <?php if (isset($_GET['invalidID'])) { ?>
-      alert("Nem létező kérdőív");
+      alert("A kérdőív nem elérhető vagy nem létezik!");
     <?php } ?>
 
-    <?php if (isset($_GET['closedForm'])) { ?>
-      alert("A kérdőív lezárásra került");
-    <?php } ?>
 
     //If user is admin
     <?php if (isset($_SESSION['userId']) && in_array("admin", $_SESSION["groups"])) { ?>

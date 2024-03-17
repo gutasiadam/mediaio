@@ -17,7 +17,7 @@ class backGroundManager
     }
 
     // Check file size
-    if ($file["size"] > 5*1024*1024) { // 5MB
+    if ($file["size"] > 5 * 1024 * 1024) { // 5MB
       return 500;
     }
     // Allow certain file formats
@@ -40,15 +40,23 @@ class backGroundManager
     }
   }
 
-  static function deleteBackground($formId, $file)
+  static function deleteBackground($formId)
   {
     $target_dir = "./backgrounds/";
-    $target_file = $target_dir . $file;
-    if (file_exists($target_file)) {
-      unlink($target_file);
-      echo "File deleted.";
+    $target_file = $target_dir . $formId . "-background";
+
+    // Get an array of file paths that match the pattern
+    $files = glob($target_file . ".*");
+
+    if (!empty ($files)) {
+      foreach ($files as $file) {
+        if (file_exists($file)) {
+          unlink($file);
+        }
+      }
+      echo 200;
     } else {
-      echo "File not found.";
+      echo 404;
     }
   }
 }
@@ -60,7 +68,7 @@ if (isset ($_POST['mode'])) {
     exit();
   }
   if ($_POST['mode'] == "deleteBackground") {
-    echo backGroundManager::deleteBackground($_POST['formId'], $_POST['fileToUpload']);
+    echo backGroundManager::deleteBackground($_POST['formId']);
     exit();
   }
 }
