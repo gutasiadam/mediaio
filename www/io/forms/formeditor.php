@@ -1,11 +1,11 @@
 <?php
 session_start();
-include ("header.php");
-include ("../translation.php"); ?>
+include("header.php");
+include("../translation.php"); ?>
 <html>
 
 
-<?php if (isset ($_SESSION["userId"]) && in_array("admin", $_SESSION["groups"])) { ?>
+<?php if (isset($_SESSION["userId"]) && in_array("admin", $_SESSION["groups"])) { ?>
    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
       <a class="navbar-brand" href="./index.php">
          <img src="../utility/logo2.png" height="50">
@@ -308,6 +308,22 @@ include ("../translation.php"); ?>
       everythingSaved = false;
    }
 
+   //Function to show link holder
+
+   function showLink(formHash, show = true) {
+      if (show) {
+         document.getElementById("linkHolderGroup").style.display = "flex";
+         document.getElementById("linkHolderGroup").classList.add("mb-1");
+         var linkholder = document.getElementById("formLinkHolder");
+         linkholder.value = "https://localhost/forms/viewform.php?form=" + formHash;
+      } else {
+         document.getElementById("linkHolderGroup").style.display = "none";
+         document.getElementById("linkHolderGroup").classList.remove("mb-1");
+         var linkholder = document.getElementById("formLinkHolder");
+         linkholder.value = "https://localhost/forms/viewform.php?form=" + formHash;
+      }
+   }
+
    function copyLink() {
       var copyText = document.getElementById("formLinkHolder");
       copyText.select();
@@ -315,9 +331,11 @@ include ("../translation.php"); ?>
       document.execCommand("copy");
    }
 
+
    $(document).ready(function () {
       //Load form from server
       console.log(<?php echo $_GET['formId'] ?>);
+      var formHash;
       $.ajax({
          type: "POST",
          url: "../formManager.php",
@@ -335,7 +353,7 @@ include ("../translation.php"); ?>
             var formAnonim = form.Anonim;
             var formSingleAnswer = form.SingleAnswer;
             var formName = form.Name;
-            var formHash = form.LinkHash;
+            formHash = form.LinkHash;
 
             console.log(formElements);
             //Set form state
@@ -345,12 +363,9 @@ include ("../translation.php"); ?>
             document.getElementById("accessRestrict").value = formAccess;
 
             if (form.AccessRestrict == 3) {
-               document.getElementById("linkHolderGroup").style.display = "flex";
-               document.getElementById("linkHolderGroup").classList.add("mb-1");
-               var linkholder = document.getElementById("formLinkHolder");
-               linkholder.value = "https://localhost/forms/viewform.php?form=" + formHash;
+               showLink(formHash);
             } else {
-               document.getElementById("linkHolderGroup").classList.add("mb-3");
+               showLink(formHash, false);
             }
 
             //Set form Name
@@ -412,6 +427,16 @@ include ("../translation.php"); ?>
             }
          }
       })
+
+      $('#accessRestrict').change(function () {
+         // Assuming the specific option value is 'specificOption'
+         if ($(this).val() === '3') {
+            // Assuming your link has an id of 'myLink'
+            showLink(formHash);
+         } else {
+            showLink(formHash, false);
+         }
+      });
    });
 
    //Function to check if question id is used

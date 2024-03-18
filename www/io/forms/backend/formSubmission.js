@@ -1,5 +1,5 @@
 //Submit form
-async function submitAnswer(formId, isAnonim) {
+async function submitAnswer(formId, formHash, isAnonim) {
     var form = document.getElementById("form-body"); //Get form container
 
     var elements = form.getElementsByClassName("question"); //Get all form elements
@@ -85,18 +85,22 @@ async function submitAnswer(formId, isAnonim) {
         userIp = '0.0.0.0';
     }
 
-    var formJson = await getFormJson(formId);
+    var formJson = await getFormJson(formId, formHash);
     formJson = JSON.stringify(formJson).replace(/"/g, '\\"');
     $.ajax({
         type: "POST",
         url: "../formManager.php",
-        data: { mode: "submitAnswer", uid: uid, userIp: userIp, id: formId, answers: answers, form: formJson },
+        data: { mode: "submitAnswer", uid: uid, userIp: userIp, id: formId, formHash: formHash, answers: answers, form: formJson },
         success: function (data) {
             console.log(data);
             if (data == 500) {
                 alert("Nem megengedett karakterek a válaszban!");
             } else if (data == 200) {
-                window.location.href = "viewform.php?formId=" + formId + "&success";
+                if (formId != -1) {
+                    window.location.href = "viewform.php?formId=" + formId + "&success";
+                } else {
+                    window.location.href = "viewform.php?formId=" + formHash + "&success";
+                }
             } else {
                 alert("Sikertelen leadás");
             }
@@ -106,17 +110,28 @@ async function submitAnswer(formId, isAnonim) {
 
 //Get form JSON
 
-async function getFormJson(formId) {
+async function getFormJson(formId, formHash) {
     var formJson;
-    await $.ajax({
-        type: "POST",
-        url: "../formManager.php",
-        data: { mode: "getForm", id: formId },
-        success: function (data) {
-            formJson = JSON.parse(data);
-            formData = JSON.parse(formJson.Data);
-            console.log(formData);
-        }
-    });
+    if (formId != -1) {
+        await $.ajax({
+            type: "POST",
+            url: "../formManager.php",
+            data: { mode: "getForm", id: formId },
+            success: function (data) {
+                formJson = JSON.parse(data);
+                formData = JSON.parse(formJson.Data);
+            }
+        });
+    } else {
+        await $.ajax({
+            type: "POST",
+            url: "../formManager.php",
+            data: { mode: "getForm", formHash: formHash },
+            success: function (data) {
+                formJson = JSON.parse(data);
+                formData = JSON.parse(formJson.Data);
+            }
+        });
+    }
     return formData;
 }

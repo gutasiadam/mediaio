@@ -24,6 +24,16 @@ class formManager
     }
     return $randomString;
   }
+
+  private static function getIdFromHash($formHash)
+  {
+    $sql = "SELECT ID FROM forms WHERE LinkHash='" . $formHash . "';";
+    $connection = Database::runQuery_mysqli();
+    $result = $connection->query($sql);
+    $connection->close();
+    $row = $result->fetch_assoc();
+    return $row['ID'];
+  }
   static function createNewForm()
   {
     if (in_array("admin", $_SESSION['groups'])) { //Auto accept 
@@ -41,7 +51,7 @@ class formManager
   static function listForms()
   {
     $sql = "SELECT * FROM forms WHERE AccessRestrict='0';";
-    if (isset ($_SESSION['userId'])) {
+    if (isset($_SESSION['userId'])) {
       $sql = "SELECT * FROM forms WHERE AccessRestrict IN ('0', '2');";
       if (in_array("admin", $_SESSION['groups'])) {
         $sql = "SELECT * FROM forms";
@@ -115,9 +125,9 @@ class formManager
   static function getForm($id, $formHash)
   {
     if ($id != null) {
-      if (isset ($_SESSION['userId']) && in_array("admin", $_SESSION['groups'])) {
+      if (isset($_SESSION['userId']) && in_array("admin", $_SESSION['groups'])) {
         $sql = "SELECT * FROM forms WHERE ID=" . $id . ";";
-      } else if (isset ($_SESSION['userId'])) {
+      } else if (isset($_SESSION['userId'])) {
         $sql = "SELECT * FROM forms WHERE ID=" . $id . " AND AccessRestrict IN ('0','2') AND Status='1';";
       } else {
         $sql = "SELECT * FROM forms WHERE ID=" . $id . " AND AccessRestrict='0' AND Status='1';";
@@ -150,12 +160,15 @@ class formManager
     }
   }
 
-  static function submitAnswer($uid, $id, $ip, $answers, $form)
+  static function submitAnswer($uid, $id, $formHash, $ip, $answers, $form)
   {
     // Prevent injection
     if (preg_match('/[<>]/', $answers)) {
       echo 500;
       exit();
+    }
+    if ($id == -1) {
+      $id = formManager::getIdFromHash($formHash);
     }
     $sql = "INSERT INTO `formanswers` (`ID`, `FormID`, `userID`, `userIp`, `UserAnswers`, `FormState`) VALUES (NULL,'" . $id . "','" . $uid . "','" . $ip . "','" . $answers . "','" . $form . "');";
     $connection = Database::runQuery_mysqli();
@@ -208,7 +221,7 @@ class formManager
 
 
 
-if (isset ($_POST['mode'])) {
+if (isset($_POST['mode'])) {
 
   //Set timezone to the computer's timezone.
   date_default_timezone_set('Europe/Budapest');
@@ -269,6 +282,7 @@ if (isset ($_POST['mode'])) {
     echo formManager::submitAnswer(
       $_POST['uid'],
       $_POST['id'],
+      $_POST['formHash'],
       $_POST['userIp'],
       $_POST['answers'],
       $_POST['form']
