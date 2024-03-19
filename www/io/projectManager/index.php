@@ -2,7 +2,6 @@
 session_start();
 include ("header.php");
 include ("../translation.php"); ?>
-<script src="../utility/_initMenu.js" crossorigin="anonymous"></script>
 
 <html>
 <?php
@@ -21,7 +20,7 @@ if (isset ($_SESSION["userId"])) { ?>
             <script>
                $(document).ready(function () {
                   menuItems = importItem("../utility/menuitems.json");
-                  drawMenuItemsLeft('messages', menuItems, 2);
+                  drawMenuItemsLeft('projectmanager', menuItems, 2);
                });
             </script>
          </ul>
@@ -47,23 +46,78 @@ if (isset ($_SESSION["userId"])) { ?>
    </nav>
 
    <body>
-      <h1 class="rainbow">Üzenőfal</h1>
-      <div class="container">
-         <div class="row">
-            <div class="card uzifalcard">
-               <div class="card-header">
-                  Featured
+      <!-- Project settings modal -->
+
+      <div class="modal fade" id="projectSettingsModal" tabindex="-1" aria-labelledby="projectSettingsModalLabel"
+         aria-hidden="true">
+         <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+               <div class="modal-header">
+                  <h5 class="modal-title" id="projectSettingsModalLabel">Projekt beállítások</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                </div>
-               <div class="card-body">
-                  <h5 class="card-title">Special title treatment</h5>
-                  <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                  <a href="#" class="btn btn-primary">Go somewhere</a>
+               <div class="modal-body">
+                  <form>
+                     <div class="mb-3">
+                        <label for="projectName" class="col-form-label">Projekt neve:</label>
+                        <input type="text" class="form-control" id="projectName">
+                     </div>
+                     <div class="mb-3">
+                        <label for="projectDescription" class="col-form-label">Projekt leírása:</label>
+                        <textarea class="form-control" id="projectDescription"></textarea>
+                     </div>
+                     <div class="mb-3">
+                        <label for="projectMembers" class="col-form-label">Projekt tagjai:</label>
+                        <input type="text" class="form-control" id="projectMembers">
+                     </div>
+                     <div class="mb-3">
+                        <label for="projectDeadline" class="col-form-label">Projekt határideje:</label>
+                        <input type="date" class="form-control" id="projectDeadline">
+                     </div>
+                  </form>
+               </div>
+               <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bezárás</button>
+                  <button type="button" class="btn btn-primary">Mentés</button>
                </div>
             </div>
          </div>
       </div>
 
+
+      <h1 class="rainbow">Projekt Menedzsment</h1>
+
+      <div class="container" id="projectHolder">
+         <?php if (isset ($_SESSION["userId"]) && in_array("admin", $_SESSION["groups"])) { ?>
+            <div class="row" id="admin_opt">
+               <button class="btn btn-success noprint mb-2 mr-sm-2" onclick=createNewProject()><i
+                     class="fas fa-plus fa-lg"></i></button>
+            </div>
+         <?php } ?>
+
+      </div>
+
    </body>
+
+   <script src="frontEnd/projektGen.js" crossorigin="anonymous"></script>
+   <script src="frontEnd/projektSettings.js" crossorigin="anonymous"></script>
+   <script src="frontEnd/fetchData.js" crossorigin="anonymous"></script>
+
+   <script>
+
+      $(document).ready(function () {
+
+         async function loadPage() {
+            let projects = await fetchProjects();
+            console.log(projects);
+            generateProjects(projects);
+         }
+
+         loadPage();
+      });
+
+   </script>
+
    <?php
 
 } else {

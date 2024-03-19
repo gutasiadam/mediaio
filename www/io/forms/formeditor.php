@@ -244,9 +244,9 @@ include ("../translation.php"); ?>
 }
 ?>
 
-<script src="backend/elementGenerator.js" type="text/javascript"></script>
-<script src="backend/backgroundManager.js" type="text/javascript"></script>
-<script src="backend/fetchData.js" type="text/javascript"></script>
+<script src="frontEnd/elementGenerator.js" type="text/javascript"></script>
+<script src="frontEnd/backgroundManager.js" type="text/javascript"></script>
+<script src="frontEnd/fetchData.js" type="text/javascript"></script>
 
 <script>
    //Changing this variable if something is changed
@@ -385,9 +385,9 @@ include ("../translation.php"); ?>
    };
 
 
-   function getCheckSettings(maindiv) {
+   function getCheckSettings(maindiv, type) {
       var checkboxOptions = [];
-      var checkbox_holder = maindiv.getElementsByClassName('radio-holder');
+      var checkbox_holder = maindiv.getElementsByClassName(type + '-holder');
       var checkNames = checkbox_holder[0].querySelectorAll('input[type="text"]');
       for (var i = 0; i < checkNames.length; i++) {
          checkboxOptions.push(checkNames[i].value);
@@ -419,7 +419,7 @@ include ("../translation.php"); ?>
       var extraOptions = "";
       //Check if the element is a checkbox, radio or dropdown
       if (type == "checkbox" || type == "radio" || type == "dropdown") {
-         extraOptions = getCheckSettings(maindiv); //Get the options of the element
+         extraOptions = getCheckSettings(maindiv, type); //Get the options of the element
       }
       if (type == "scaleGrid") {
          extraOptions = getGridSettings(maindiv);
@@ -497,7 +497,7 @@ include ("../translation.php"); ?>
          formName = "Névtelen";
       }
 
-      console.log(elements);
+      //console.log(elements);
       var formElements = [];
       //Get all elements and their settings
       for (var k = 0; k < elements.length; k++) {

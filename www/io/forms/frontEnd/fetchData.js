@@ -57,13 +57,15 @@ async function fetchAnswers(formId, formHash) {
             }
 
             var submission = JSON.parse(response);
+            //console.log(submission);
             
+            for (var i = 0; i < submission.length; i++) {
+                formAnswers.push(submission[i]);
+            }
 
             var dropdown = document.getElementById("answers_dropdown"); 
 
             for (var i = 0; i < submission.length; i++) {
-                formAnswers.push(submission[i].UserAnswers);
-                formStates.push(submission[i].FormState);
                 var id = submission[i].ID;
 
                 var li = document.createElement("li");
@@ -194,5 +196,8 @@ async function loadPage(formId, formHash, state) {
             submit.innerHTML = "Leadás";
             formContainer.appendChild(submit);
         }
+    }
+    if (state == "answers") {
+        return formElements;
     }
 }

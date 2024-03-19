@@ -26,12 +26,11 @@ async function submitAnswer(formId, formHash, isAnonim) {
         //Get value of form element
         if (elementType == "radio" || elementType == "checkbox") {
             for (var j = 0; j < inputs.length; j++) {
-                var checked = 0;
                 if (inputs[j].checked) {
-                    checked = 1
+                    value.push(1);
+                } else {
+                    value.push(0);
                 }
-                var input = inputs[j].getAttribute("data-name") + ":" + checked;
-                value.push(input);
             }
         }
         else if (elementType == "scaleGrid") {

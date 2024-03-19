@@ -1,6 +1,6 @@
 
 // MAIN
-function generateElement(type, id, place, settings, state) {
+function generateElement(type, id, place, settings, state, answer = "") {
     //Parse settings
     if (settings != "") {
         var questionSetting = JSON.parse(settings).question;
@@ -8,12 +8,17 @@ function generateElement(type, id, place, settings, state) {
         var extraOptions = JSON.parse(settings).options;
     }
 
+    //parse answer
+    if (answer != "") {
+        answer = JSON.parse(answer);
+    }
+
     //Create div, which will contain the element
     var div = document.createElement("div");
     div.id = type + "-" + id;
     div.setAttribute('data-position', place);
     div.classList.add("mb-3");
-    if (state == "fill") {
+    if (state == "fill" || state == "answer") {
         if (isRequired) {
             div.setAttribute('data-required', "true");
         } else {
@@ -30,7 +35,7 @@ function generateElement(type, id, place, settings, state) {
         uidiv.classList.add("form-control");
         uidiv.id = "e-settings";
         div.appendChild(uidiv);
-    } else if (state == "fill") {
+    } else if (state == "fill" || state == "answer") {
         var uidiv = div;
     }
 
@@ -41,43 +46,43 @@ function generateElement(type, id, place, settings, state) {
 
     switch (type) {
         case "email":
-            uidiv.appendChild(generateEmail(id, isRequired, state));
+            uidiv.appendChild(generateEmail(id, isRequired, state, answer));
             break;
 
         case "shortText":
-            uidiv.appendChild(generateShortText(id, isRequired, state));
+            uidiv.appendChild(generateShortText(id, isRequired, state, answer));
             break;
 
         case "longText":
-            uidiv.appendChild(generateLongText(id, isRequired, state));
+            uidiv.appendChild(generateLongText(id, isRequired, state, answer));
             break;
 
         case "date":
-            uidiv.appendChild(generateDate(id, isRequired, state));
+            uidiv.appendChild(generateDate(id, isRequired, state, answer));
             break;
 
         case "time":
-            uidiv.appendChild(generateTime(id, isRequired, state));
+            uidiv.appendChild(generateTime(id, isRequired, state, answer));
             break;
 
         case "radio":
-            uidiv.appendChild(generateCheckRadio(id, settings, extraOptions, state, "radio"));
+            uidiv.appendChild(generateCheckRadio(id, settings, extraOptions, state, "radio", answer));
             break;
 
         case "checkbox":
-            uidiv.appendChild(generateCheckRadio(id, settings, extraOptions, state, "checkbox"));
+            uidiv.appendChild(generateCheckRadio(id, settings, extraOptions, state, "checkbox", answer));
             break;
 
         case "dropdown":
-            uidiv.appendChild(generateDropdown(id, settings, extraOptions, state));
+            uidiv.appendChild(generateDropdown(id, settings, extraOptions, state, answer));
             break;
 
         case "scaleGrid":
-            uidiv.appendChild(generateScaleGrid(id, settings, extraOptions, state));
+            uidiv.appendChild(generateScaleGrid(id, settings, extraOptions, state, answer));
             break;
 
         case "fileUpload":
-            uidiv.appendChild(generateFileUpload(id, isRequired, state));
+            uidiv.appendChild(generateFileUpload(id, isRequired, state, answer));
             break;
     }
 
@@ -152,7 +157,7 @@ function generateQuestionLabel(id, isRequired, questionSetting, state) {
         label.value = questionSetting;
         label.placeholder = "Kérdés...";
 
-    } else if (state == "fill") {
+    } else if (state == "fill" || state == "answer") {
         label = document.createElement("label");
         label.classList.add("form-label");
         if (isRequired) {
@@ -165,7 +170,7 @@ function generateQuestionLabel(id, isRequired, questionSetting, state) {
     return label;
 }
 
-function generateEmail(id, isRequired, state) {
+function generateEmail(id, isRequired, state, answer = "") {
     var input = document.createElement("input");
     input.type = "email";
     input.classList.add("form-control", "mb-3");
@@ -174,16 +179,20 @@ function generateEmail(id, isRequired, state) {
 
     if (state == "editor") {
         input.disabled = true;
-    } else if (state == "fill") {
+    } else if (state == "fill" || state == "answer") {
         input.classList.add("userInput");
         if (isRequired) {
             input.required = true;
+        }
+        if (state == "answer") {
+            input.disabled = true;
+            input.value = answer;
         }
     }
     return input;
 }
 
-function generateShortText(id, isRequired, state) {
+function generateShortText(id, isRequired, state, answer = "") {
     var input = document.createElement("input");
     input.type = "text";
     input.classList.add("form-control");
@@ -192,16 +201,20 @@ function generateShortText(id, isRequired, state) {
 
     if (state == "editor") {
         input.disabled = true;
-    } else if (state == "fill") {
+    } else if (state == "fill" || state == "answer") {
         input.classList.add("userInput");
         if (isRequired) {
             input.required = true;
+        }
+        if (state == "answer") {
+            input.disabled = true;
+            input.value = answer;
         }
     }
     return input;
 }
 
-function generateLongText(id, isRequired, state) {
+function generateLongText(id, isRequired, state, answer = "") {
     var input = document.createElement("textarea");
     input.classList.add("form-control");
     input.id = id;
@@ -209,16 +222,20 @@ function generateLongText(id, isRequired, state) {
 
     if (state == "editor") {
         input.disabled = true;
-    } else if (state == "fill") {
+    } else if (state == "fill" || state == "answer") {
         input.classList.add("userInput");
         if (isRequired) {
             input.required = true;
+        }
+        if (state == "answer") {
+            input.disabled = true;
+            input.value = answer;
         }
     }
     return input;
 }
 
-function generateDate(id, isRequired, state) {
+function generateDate(id, isRequired, state, answer = "") {
     var input = document.createElement("input");
     input.type = "date";
     input.classList.add("form-control");
@@ -226,16 +243,20 @@ function generateDate(id, isRequired, state) {
 
     if (state == "editor") {
         input.disabled = true;
-    } else if (state == "fill") {
+    } else if (state == "fill" || state == "answer") {
         input.classList.add("userInput");
         if (isRequired) {
             input.required = true;
+        }
+        if (state == "answer") {
+            input.disabled = true;
+            input.value = answer;
         }
     }
     return input;
 }
 
-function generateTime(id, isRequired, state) {
+function generateTime(id, isRequired, state, answer = "") {
     var input = document.createElement("input");
     input.type = "time";
     input.classList.add("form-control");
@@ -243,16 +264,20 @@ function generateTime(id, isRequired, state) {
 
     if (state == "editor") {
         input.disabled = true;
-    } else if (state == "fill") {
+    } else if (state == "fill" || state == "answer") {
         input.classList.add("userInput");
         if (isRequired) {
             input.required = true;
+        }
+        if (state == "answer") {
+            input.disabled = true;
+            input.value = answer;
         }
     }
     return input;
 }
 
-function generateCheckRadio(id, settings, extraOptions, state, type) {
+function generateCheckRadio(id, settings, extraOptions, state, type, answer = "") {
     var radioHolder = document.createElement("div");
     radioHolder.classList.add(type + "-holder");
 
@@ -261,7 +286,12 @@ function generateCheckRadio(id, settings, extraOptions, state, type) {
     } else {
         for (var i = 0; i < extraOptions.length; i++) {
             //Add radio buttons
-            radioHolder.append(listCheckOpt(type, id, extraOptions[i], i, state));
+            if (state == "answer") {
+                radioHolder.append(listCheckOpt(type, id, extraOptions[i], i, state, answer[i]));
+            }
+            else {
+                radioHolder.append(listCheckOpt(type, id, extraOptions[i], i, state));
+            }
         }
     }
 
@@ -271,32 +301,45 @@ function generateCheckRadio(id, settings, extraOptions, state, type) {
         addRadio.classList.add("btn", "btn-success", "btn-sm");
         addRadio.innerHTML = "+";
         addRadio.onclick = function () {
-            radioHolder.append(listCheckOpt(type, id, "", i++, state));
+            var newInput = listCheckOpt(type, id, "", i++, state);
+            radioHolder.insertBefore(newInput, addRadio);
         };
         radioHolder.appendChild(addRadio);
     }
     return radioHolder;
 }
 
-function generateDropdown(id, settings, extraOptions, state) {
+function generateDropdown(id, settings, extraOptions, state, answer = "") {
     //Create dropdown holder
     var dropdownHolder = document.createElement("div");
     dropdownHolder.classList.add("dropdown-holder");
 
     //Create dropdown
-    if (state == "fill") {
+    if (state == "fill" || state == "answer") {
         var select = document.createElement("select");
         select.classList.add("form-select", "userInput");
         select.id = id;
         dropdownHolder.appendChild(select);
+        if (state == "answer") {
+            select.disabled = true;
+        }
     }
 
-    if (settings == "") {
-        dropdownHolder.append(listDropdown("", 0, state));
-    } else {
-        for (var i = 0; i < extraOptions.length; i++) {
-            dropdownHolder.append(listDropdown(extraOptions[i], i, state));
+    if (state == "editor" || state == "fill") {
+        if (settings == "") {
+            dropdownHolder.append(listDropdown("", 0, state));
+        } else {
+            for (var i = 0; i < extraOptions.length; i++) {
+                if (state == "fill") {
+                    select.append(listDropdown(extraOptions[i], i, state));
+                }
+                else {
+                    dropdownHolder.append(listDropdown(extraOptions[i], i, state));
+                }
+            }
         }
+    } else if (state == "answer") {
+        select.append(listDropdown(answer, 0, state));
     }
 
     if (state == "editor") {
@@ -304,7 +347,8 @@ function generateDropdown(id, settings, extraOptions, state) {
         addDropdown.classList.add("btn", "btn-success", "btn-sm");
         addDropdown.innerHTML = "+";
         addDropdown.onclick = function () {
-            dropdownHolder.append(listDropdown("", i++, state));
+            var newInput = listDropdown("", i++, state);
+            dropdownHolder.insertBefore(newInput, addDropdown);
         };
         dropdownHolder.appendChild(addDropdown);
     }
@@ -312,7 +356,7 @@ function generateDropdown(id, settings, extraOptions, state) {
     return dropdownHolder;
 }
 
-function generateScaleGrid(id, settings, extraOptions, state) {
+function generateScaleGrid(id, settings, extraOptions, state, answer = "") {
     var multipleRows = false;
     var rows = 1;
     columns = 5;
@@ -362,7 +406,12 @@ function generateScaleGrid(id, settings, extraOptions, state) {
 
     //Create rows
     for (var i = 0; i < rows; i++) {
-        gridHolder.appendChild(createRow(labels[i], i, columns, id, state, multipleRows));
+        if (state == "answer") {
+            gridHolder.appendChild(createRow(labels[i], i, columns, id, state, multipleRows, answer[i].answers));
+        }
+        else {
+            gridHolder.appendChild(createRow(labels[i], i, columns, id, state, multipleRows));
+        }
     }
 
     //Create add row button
@@ -385,7 +434,7 @@ function generateScaleGrid(id, settings, extraOptions, state) {
     return gridHolder;
 }
 
-function generateFileUpload(id, isRequired, state) {
+function generateFileUpload(id, isRequired, state, answer = "") {
     var input = document.createElement("input");
     input.type = "file";
     input.classList.add("form-control");
@@ -421,7 +470,7 @@ function listDropdown(value, optionNum, state) {
         label.type = "text";
         label.classList.add("form-control");
         label.placeholder = "Opció";
-        label.value = settings;
+        label.value = value;
         div.appendChild(label);
 
         //Create delete button
@@ -432,7 +481,7 @@ function listDropdown(value, optionNum, state) {
         };
         div.appendChild(deleteButton);
         return div;
-    } else if (state == "fill") {
+    } else if (state == "fill" || state == "answer") {
         var option = document.createElement("option");
         option.value = value;
         option.innerHTML = value;
@@ -442,7 +491,7 @@ function listDropdown(value, optionNum, state) {
 }
 
 //Function to generate a checkbox or radio element
-function listCheckOpt(type, id, settings, optionNum, state) {
+function listCheckOpt(type, id, settings, optionNum, state, answer = "") {
     //Create div for checkbox or radio
     var div = document.createElement("div");
     div.classList.add("form-check");
@@ -454,10 +503,16 @@ function listCheckOpt(type, id, settings, optionNum, state) {
     input.classList.add("form-check-input");
     if (state == "editor") {
         input.disabled = true;
-    } else if (state == "fill") {
+    } else if (state == "fill" || state == "answer") {
         input.classList.add("userInput");
         if (input.type == "radio") {
             input.name = "flexRadioDefault";
+        }
+        if (state == "answer") {
+            input.disabled = true;
+            if (answer == 1) {
+                input.checked = true;
+            }
         }
     }
     input.id = id;
@@ -474,7 +529,7 @@ function listCheckOpt(type, id, settings, optionNum, state) {
         label.value = settings;
         div.appendChild(label);
     }
-    else if (state == "fill") {
+    else if (state == "fill" || state == "answer") {
         //Create label
         var label = document.createElement("label");
         label.classList.add("form-check-label");
@@ -496,8 +551,7 @@ function listCheckOpt(type, id, settings, optionNum, state) {
 }
 
 //Create a row for the scale grid
-function createRow(questionLabel, rownum, columns, id, state, multipleRows) {
-    console.log("Creating row: " + rownum + " for " + id + " in " + state + " mode" + " with " + columns + " columns", multipleRows);
+function createRow(questionLabel, rownum, columns, id, state, multipleRows, answer = "") {
     //Create row
     var row = document.createElement("div");
     row.classList.add("row", "mb-3");
@@ -525,8 +579,14 @@ function createRow(questionLabel, rownum, columns, id, state, multipleRows) {
         input.name = id + "-" + rownum;
         if (state == "editor") {
             input.disabled = true;
-        } else if (state == "fill") {
+        } else if (state == "fill" || state == "answer") {
             input.classList.add("userInput");
+            if (state == "answer") {
+                input.disabled = true;
+                if (answer[j] == 1) {
+                    input.checked = true;
+                }
+            }
         }
         column.appendChild(input);
 
@@ -566,7 +626,7 @@ function createRowInput(val, id, state, rownum) {
         input.placeholder = "Opció";
         input.value = val;
         return input;
-    } else if (state == "fill") {
+    } else if (state == "fill" || state == "answer") {
         var label = document.createElement("label");
         label.classList.add("form-check-label", "row-label");
         label.innerHTML = val;

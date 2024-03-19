@@ -70,9 +70,6 @@ error_reporting(E_ERROR | E_PARSE);
 
     <h2 class="rainbow">Kérdőívek</h2>
     <?php if (in_array("admin", $_SESSION["groups"])) {
-
-    // A szerkesztés alatt levő formokat is megjelenítjük
-//TODO
   } ?>
     <div class="container">
       <div class="row" id="admin_opt">

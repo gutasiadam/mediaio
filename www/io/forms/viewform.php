@@ -18,9 +18,9 @@ include ("../translation.php"); ?>
 
 </body>
 
-<script src="backend/elementGenerator.js" type="text/javascript"></script>
-<script src="backend/formSubmission.js" type="text/javascript"></script>
-<script src="backend/fetchData.js" type="text/javascript"></script>
+<script src="frontEnd/elementGenerator.js" type="text/javascript"></script>
+<script src="frontEnd/formSubmission.js" type="text/javascript"></script>
+<script src="frontEnd/fetchData.js" type="text/javascript"></script>
 <script>
    let isAnonim = 0;
    <?php if (isset ($_GET['success'])) { ?>
