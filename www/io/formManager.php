@@ -68,14 +68,17 @@ class formManager
     exit();
   }
 
-  static function saveForm($form, $id)
+  static function saveForm($form, $id, $formHash)
   {
     if (in_array("admin", $_SESSION['groups'])) {
       $form = json_decode($form, true);
       $form['elements'] = json_encode($form['elements'], JSON_UNESCAPED_UNICODE);
 
-      $sql = "UPDATE forms SET Name='" . $form['name'] . "',Header='" . $form['header'] . "',Status='" . $form['state'] . "',Anonim='" . $form['anonim'] . "',Data='" . $form['elements'] . "'
-            ,Accessrestrict='" . $form['access'] . "' WHERE ID=" . $id . ";";
+      if ($id == -1) {
+        $id = formManager::getIdFromHash($formHash);
+      }
+
+      $sql = "UPDATE forms SET Name='" . $form['name'] . "',Header='" . $form['header'] . "',Status='" . $form['state'] . "',Anonim='" . $form['anonim'] . "',Data='" . $form['elements'] . "',Accessrestrict='" . $form['access'] . "' WHERE ID=" . $id . ";";
       $connection = Database::runQuery_mysqli();
       $connection->query($sql);
       $connection->close();
@@ -178,9 +181,12 @@ class formManager
     exit();
   }
 
-  static function getFormAnswers($id)
+  static function getFormAnswers($id, $formHash)
   {
     if (in_array("admin", $_SESSION['groups'])) {
+      if ($id == -1) {
+        $id = formManager::getIdFromHash($formHash);
+      }
       $sql = "SELECT * FROM formanswers WHERE FormID=" . $id . ";";
       $connection = Database::runQuery_mysqli();
       $result = $connection->query($sql);
@@ -248,6 +254,7 @@ if (isset($_POST['mode'])) {
     echo formManager::saveForm(
       $_POST['form'],
       $_POST['id'],
+      $_POST['formHash']
     );
     exit();
   }
@@ -291,7 +298,7 @@ if (isset($_POST['mode'])) {
   }
 
   if ($_POST['mode'] == 'getFormAnswers') {
-    echo formManager::getFormAnswers($_POST['id']);
+    echo formManager::getFormAnswers($_POST['id'], $_POST['formHash']);
     exit();
   }
 }

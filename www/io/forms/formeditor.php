@@ -1,11 +1,11 @@
 <?php
 session_start();
-include("header.php");
-include("../translation.php"); ?>
+include ("header.php");
+include ("../translation.php"); ?>
 <html>
 
 
-<?php if (isset($_SESSION["userId"]) && in_array("admin", $_SESSION["groups"])) { ?>
+<?php if (isset ($_SESSION["userId"]) && in_array("admin", $_SESSION["groups"])) { ?>
    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
       <a class="navbar-brand" href="./index.php">
          <img src="../utility/logo2.png" height="50">
@@ -246,6 +246,7 @@ include("../translation.php"); ?>
 
 <script src="backend/elementGenerator.js" type="text/javascript"></script>
 <script src="backend/backgroundManager.js" type="text/javascript"></script>
+<script src="backend/fetchData.js" type="text/javascript"></script>
 
 <script>
    //Changing this variable if something is changed
@@ -334,99 +335,19 @@ include("../translation.php"); ?>
 
    $(document).ready(function () {
       //Load form from server
-      console.log(<?php echo $_GET['formId'] ?>);
-      var formHash;
-      $.ajax({
-         type: "POST",
-         url: "../formManager.php",
-         data: { mode: "getForm", id: <?php echo $_GET['formId'] ?> },
-         success: function (data) {
-            //console.log(data);
-            //if data is 404, redirect to index.php
-            if (data == 404) {
-               window.location.href = "index.php?invalidID";
-            }
-            var form = JSON.parse(data);
-            var formStatus = JSON.parse(form.Status);
-            var formAccess = JSON.parse(form.AccessRestrict);
-            var formElements = JSON.parse(form.Data);
-            var formAnonim = form.Anonim;
-            var formSingleAnswer = form.SingleAnswer;
-            var formName = form.Name;
-            formHash = form.LinkHash;
 
-            console.log(formElements);
-            //Set form state
-            document.getElementById("formState").value = formStatus;
+      var formId = <?php if (isset ($_GET['formId'])) {
+         echo $_GET['formId'];
+      } else {
+         echo '-1';
+      } ?>;
+      var formHash = <?php if (isset ($_GET['form'])) {
+         echo '"' . $_GET['form'] . '"';
+      } else {
+         echo 'null';
+      } ?>;
 
-            //Set form access
-            document.getElementById("accessRestrict").value = formAccess;
-
-            if (form.AccessRestrict == 3) {
-               showLink(formHash);
-            } else {
-               showLink(formHash, false);
-            }
-
-            //Set form Name
-            document.getElementById("form_name").innerHTML = formName + '&nbsp<i class="fas fa-edit fa-xs" style="color: #747b86"></i>';
-            document.getElementById("description").value = form.Header;
-
-            //Set form settings
-            if (formAnonim == 1) {
-               document.querySelector('[data-setting="Anonim"]').checked = true;
-            }
-            if (formSingleAnswer == 1) {
-               document.querySelector('[data-setting="SingleAnswer"]').checked = true;
-            }
-
-            console.log(form.Background);
-
-            //Set background
-            var style = document.createElement('style');
-            style.innerHTML = `
-               body::before {
-               content: "";
-               position: fixed;
-               top: 0;
-               right: 0;
-               bottom: 0;
-               left: 0;
-               background-image: url(../forms/backgrounds/` + form.Background + `);
-               background-size: cover;
-               background-position: center;
-               z-index: -1;
-               }`;
-            document.head.appendChild(style);
-
-            formContainer = document.getElementById("editorZone");
-            //Load form elements
-            if (formElements == null) {
-               return;
-            }
-            i = formElements.length;
-            for (var pos = 1; pos <= formElements.length; pos++) {
-               //Find element with the same position
-               for (var j = 0; j < formElements.length; j++) {
-                  if (formElements[j].place == pos) {
-                     var element = formElements[j];
-                  }
-               }
-               console.log(element);
-
-               var elementType = element.type;
-               var elementId = element.id;
-               var elementPlace = element.place;
-               var elementSettings = element.settings;
-
-
-               //Add settings, where possible
-               //console.log("Id: " + elementId + " Place:" + elementPlace + " Type: " + elementType + " Settings: " + elementSettings);
-               formContainer.appendChild(generateElement(elementType, elementId, elementPlace, elementSettings, "editor"));
-
-            }
-         }
-      })
+      loadPage(formId, formHash, "editor");
 
       $('#accessRestrict').change(function () {
          // Assuming the specific option value is 'specificOption'
@@ -616,11 +537,23 @@ include("../translation.php"); ?>
       };
       var formJson = JSON.stringify(form);
 
+      var formId = <?php if (isset ($_GET['formId'])) {
+         echo $_GET['formId'];
+      } else {
+         echo '-1';
+      } ?>;
+      var formHash = <?php if (isset ($_GET['form'])) {
+         echo '"' . $_GET['form'] . '"';
+      } else {
+         echo 'null';
+      } ?>;
+
+      console.log(formJson);
       //Send form to server
       $.ajax({
          type: "POST",
          url: "../formManager.php",
-         data: { form: formJson, mode: "save", id: <?php echo $_GET['formId'] ?> },
+         data: { form: formJson, mode: "save", id: formId, formHash: formHash },
          success: function (data) {
             console.log(data);
 
@@ -645,11 +578,21 @@ include("../translation.php"); ?>
    }
 
    function deleteForm() {
+      var formId = <?php if (isset ($_GET['formId'])) {
+         echo $_GET['formId'];
+      } else {
+         echo '-1';
+      } ?>;
+      var formHash = <?php if (isset ($_GET['form'])) {
+         echo '"' . $_GET['form'] . '"';
+      } else {
+         echo 'null';
+      } ?>;
       //Send request to server
       $.ajax({
          type: "POST",
          url: "../formManager.php",
-         data: { mode: "deleteForm", id: <?php echo $_GET['formId'] ?> },
+         data: { mode: "deleteForm", id: formId, formHash: formHash },
          success: function (data) {
             //console.log(data);
             window.location.href = "index.php";

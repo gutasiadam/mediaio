@@ -99,7 +99,7 @@ async function submitAnswer(formId, formHash, isAnonim) {
                 if (formId != -1) {
                     window.location.href = "viewform.php?formId=" + formId + "&success";
                 } else {
-                    window.location.href = "viewform.php?formId=" + formHash + "&success";
+                    window.location.href = "viewform.php?form=" + formHash + "&success";
                 }
             } else {
                 alert("Sikertelen leadás");

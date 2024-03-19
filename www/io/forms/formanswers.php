@@ -1,11 +1,11 @@
 <?php
 session_start();
-if (!isset($_SESSION['userId'])) {
+if (!isset ($_SESSION['userId'])) {
    header("Location: ../index.php?error=AccessViolation");
    exit();
 }
-include("header.php");
-include("../translation.php");
+include ("header.php");
+include ("../translation.php");
 
 ?>
 <html>
@@ -86,115 +86,36 @@ include("../translation.php");
       </div>
    </body>
 
+   <script src="backend/fetchData.js" type="text/javascript"></script>
+   <script src="backend/elementGenerator.js" type="text/javascript"></script>
+
 <?php } ?>
 <script>
-   var UserAnswers = [];
-   var formElements;
+   var formAnswers = [];
+   var formStates = [];
 
    $(document).ready(function () {
       //Load form from server
-      console.log(<?php echo $_GET['formId'] ?>);
-      loadPage();
+      var formId = <?php if (isset ($_GET['formId'])) {
+         echo $_GET['formId'];
+      } else {
+         echo '-1';
+      } ?>;
+      var formHash = <?php if (isset ($_GET['form'])) {
+         echo '"' . $_GET['form'] . '"';
+      } else {
+         echo 'null';
+      } ?>;
+
+      async function loadPageAsync() {
+         await loadPage(formId, formHash, "answers");
+         await fetchAnswers(formId, formHash);
+         //showTable();
+      }
+      loadPageAsync();
+
    });
 
-   async function loadPage() {
-      await fetchData();
-      await fetchAnswers();
-      showTable();
-   }
-
-
-   async function fetchData() {
-      console.log("Fetching form data");
-      return new Promise(async (resolve, reject) => {
-         try {
-            const response = await $.ajax({
-               type: "POST",
-               url: "../formManager.php",
-               data: { mode: "getForm", id: <?php echo $_GET['formId'] ?> }
-            });
-
-            if (response == 404) {
-               window.location.href = "index.php?invalidID";
-            }
-
-            var form = JSON.parse(response);
-            formElements = JSON.parse(form.Data);
-            console.log(formElements);
-            var formName = form.Name;
-            //Set form Name and header
-            document.getElementById("form_name").innerHTML = formName;
-
-            formContainer = document.getElementById("form-body");
-
-            //Set background
-            var style = document.createElement('style');
-            style.innerHTML = `
-               body::before {
-               content: "";
-               position: fixed;
-               top: 0;
-               right: 0;
-               bottom: 0;
-               left: 0;
-               background-image: url(../forms/backgrounds/` + form.Background + `);
-               background-size: cover;
-               background-position: center;
-               z-index: -1;
-               }`;
-            document.head.appendChild(style);
-
-            resolve();
-         } catch (error) {
-            console.error("Error:", error);
-            reject(error);
-         }
-      });
-   }
-
-   async function fetchAnswers() {
-      console.log("Fetching form answers");
-      return new Promise(async (resolve, reject) => {
-         try {
-            const response = await $.ajax({
-               type: "POST",
-               url: "../formManager.php",
-               data: { mode: "getFormAnswers", id: <?php echo $_GET['formId'] ?> }
-            });
-
-
-            if (response == 404) {
-               window.location.href = "index.php?invalidID";
-            }
-
-            var answers = JSON.parse(response);
-            console.log("Answers:" + answers);
-            var dropdown = document.getElementById("answers_dropdown");
-
-            for (var i = 0; i < answers.length; i++) {
-               UserAnswers.push(answers[i]);
-               var id = answers[i].ID;
-
-               var li = document.createElement("li");
-               li.classList.add("dropdown-item");
-               li.style.cursor = "pointer";
-
-               li.onclick = (function (id) {
-                  return function () {
-                     showFormAnswers(id);
-                  };
-               })(id);
-
-               li.innerHTML = (i + 1) + ". válasz</a>";
-               dropdown.appendChild(li);
-            }
-            resolve();
-         } catch (error) {
-            console.error("Error:", error);
-            reject(error);
-         }
-      });
-   }
 
    function setButtonClass(name) {
       var buttons = document.getElementById("form-option-buttons").getElementsByTagName("button");
@@ -231,15 +152,17 @@ include("../translation.php");
       table.style.display = "none";
 
       console.log("Showing form answers: " + id);
-      var UserSubmission;
-      for (var i = 0; i < UserAnswers.length; i++) {
-         if (UserAnswers[i].ID == id) {
-            UserSubmission = UserAnswers[i];
+      var AnswerData;
+      var formElements;
+
+      for (var i = 0; i < formAnswers.length; i++) {
+         if (formAnswers[i].ID == id) {
+            UserSubmission = formAnswers[i];
+            formElements = formStates[i]
+            console.log(formStates);
          }
       }
 
-      var AnswerData = JSON.parse(UserSubmission.UserAnswers);
-      //console.log(AnswerData);
 
       var formContainer = document.getElementById("form-body");
       formContainer.innerHTML = "";
@@ -250,7 +173,6 @@ include("../translation.php");
                var element = formElements[j];
             }
          }
-         //console.log(element);
 
          var elementType = element.type;
          var elementId = element.id;
@@ -264,10 +186,7 @@ include("../translation.php");
             }
          }
 
-         //console.log("Element answer: " + elementAnswer);
-         //Add settings, where possible
-         //console.log("Id: " + elementId + " Place:" + elementPlace + " Type: " + elementType + " Settings: " + elementSettings);
-         formContainer.appendChild(generateElement(elementType, elementId, elementPlace, elementSettings, elementAnswer));
+         formContainer.appendChild(generateElement(elementType, elementId, elementPlace, elementSettings, elementAnswer, "editor"));
 
       }
 
@@ -279,174 +198,6 @@ include("../translation.php");
       window.location.href = "formeditor.php?formId=" + <?php echo $_GET['formId'] ?>;
    }
 
-   function generateElement(type, id, place, settings, answer) {
-      answer = JSON.parse(answer);
-
-
-      if (settings != "") {
-         var questionSetting = JSON.parse(settings).question;
-         var isRequired = JSON.parse(settings).required;
-         var CheckOptions = JSON.parse(settings).options;
-      }
-      var div = document.createElement("div");
-      div.id = type + "-" + id;
-      div.setAttribute('data-position', place);
-      if (isRequired) {
-         div.setAttribute('data-required', "true");
-      } else {
-         div.setAttribute('data-required', "false");
-      }
-      div.classList.add("mb-3", "question");
-
-      var question = document.createElement("label");
-      question.for = id;
-
-      if (isRequired) {
-         question.innerHTML = questionSetting + "<span style='color: red;'> *</span>";
-      } else {
-         question.innerHTML = questionSetting;
-      }
-      //question.innerHTML = questionSetting;
-      div.appendChild(question);
-
-
-
-      switch (type) {
-         case "email":
-            var input = document.createElement("input");
-            input.type = "email";
-            input.classList.add("form-control", "userInput");
-            input.id = id;
-            input.value = answer;
-            input.disabled = true;
-            div.appendChild(input);
-            break;
-         case "date":
-            var input = document.createElement("input");
-            input.type = "date";
-            input.classList.add("form-control", "userInput");
-            input.id = id;
-            input.value = answer;
-            input.disabled = true;
-            div.appendChild(input);
-            break;
-         case "time":
-            var input = document.createElement("input");
-            input.type = "time";
-            input.classList.add("form-control", "userInput");
-            input.id = id;
-            input.value = answer;
-            input.disabled = true;
-            div.appendChild(input);
-            break;
-
-         case "shortText":
-            var input = document.createElement("input");
-            input.type = "text";
-            input.classList.add("form-control", "userInput");
-            input.id = id;
-            input.value = answer;
-            input.disabled = true;
-            input.placeholder = "Rövid szöveg";
-            div.appendChild(input);
-            break;
-
-         case "longText":
-            var input = document.createElement("textarea");
-            input.classList.add("form-control", "userInput");
-            input.id = id;
-            input.value = answer;
-            input.disabled = true;
-            input.placeholder = "Hosszú szöveg";
-            div.appendChild(input);
-            break;
-
-         case "radio":
-            var radioHolder = document.createElement("div");
-            radioHolder.classList.add("radio-holder");
-            if (settings == "") {
-               radioHolder.append(listCheckOpt("radio", id, "", 0, false));
-            } else {
-               for (var i = 0; i < CheckOptions.length; i++) {
-                  radioHolder.append(listCheckOpt("radio", id, CheckOptions[i], i, answer[i]));
-               }
-            }
-            div.appendChild(radioHolder);
-            break;
-
-         case "checkbox":
-            var checkboxHolder = document.createElement("div");
-            checkboxHolder.classList.add("checkbox-holder");
-            if (settings == "") {
-               checkboxHolder.append(listCheckOpt("checkbox", id, "", 0), false);
-            } else {
-               for (var i = 0; i < CheckOptions.length; i++) {
-                  checkboxHolder.append(listCheckOpt("checkbox", id, CheckOptions[i], i, answer[i]));
-               }
-            }
-            div.appendChild(checkboxHolder);
-            break;
-
-         case "dropdown":
-            var dropdownHolder = document.createElement("div");
-            dropdownHolder.classList.add("dropdown-holder");
-
-            var select = document.createElement("select");
-            select.classList.add("form-select", "userInput");
-            select.id = id;
-            select.disabled = true;
-
-            var option = document.createElement("option");
-            option.innerHTML = answer;
-            select.appendChild(option);
-
-            dropdownHolder.appendChild(select);
-            div.appendChild(dropdownHolder);
-            break;
-
-         case "fileUpload":
-            var input = document.createElement("input");
-            input.type = "file";
-            input.classList.add("form-control", "userInput");
-            input.id = id;
-            div.appendChild(input);
-            break;
-      }
-      return div;
-   }
-
-
-   function listCheckOpt(type, id, settings, optionNum, answer) {
-      //console.log("Answer: " + answer);
-      var labelname = answer.split(":")[0];
-      var checked = Boolean(Number(answer.split(":")[1]));
-
-      //console.log("Labelname: " + labelname + " Checked: " + checked);
-
-      var div = document.createElement("div");
-      div.classList.add("form-check");
-      div.setAttribute('data-option', optionNum);
-
-      var input = document.createElement("input");
-      input.type = type;
-      input.disabled = true;
-      input.classList.add("form-check-input", "userInput");
-      if (type == "radio") {
-         input.name = "flexRadioDefault";
-      }
-      input.id = id;
-      input.checked = checked;
-      input.setAttribute('data-name', settings);
-      div.appendChild(input);
-
-      var label = document.createElement("label");
-      label.classList.add("form-check-label");
-      label.for = id;
-      label.innerHTML = labelname;
-      div.appendChild(label);
-
-      return div;
-   }
 
    function showTable() {
 
@@ -486,12 +237,12 @@ include("../translation.php");
 
       // Generate table body
 
-      function createRow(UserAnswers, formElements) {
+      function createRow(formAnswers, formElements) {
          var tr = document.createElement("tr");
-         var AnswerData = JSON.parse(UserAnswers.UserAnswers);
+         var AnswerData = JSON.parse(formAnswers.formAnswers);
 
          var idTd = document.createElement("td");
-         idTd.innerHTML = UserAnswers.ID;
+         idTd.innerHTML = formAnswers.ID;
          tr.appendChild(idTd);
 
          for (var j = 0; j < formElements.length; j++) {
@@ -541,8 +292,8 @@ include("../translation.php");
          return elementAnswer;
       }
 
-      for (var i = 0; i < UserAnswers.length; i++) {
-         var tr = createRow(UserAnswers[i], formElements);
+      for (var i = 0; i < formAnswers.length; i++) {
+         var tr = createRow(formAnswers[i], formElements);
          answerHolder.appendChild(tr);
       }
 
