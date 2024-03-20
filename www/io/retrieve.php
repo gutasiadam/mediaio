@@ -6,10 +6,10 @@ namespace Mediaio;
 use Mediaio\Database;
 
 
-require_once('./Database.php');
+require_once ('./Database.php');
 session_start();
 
-if (!isset($_SESSION['userId'])) {
+if (!isset ($_SESSION['userId'])) {
   header("Location: ./index.php?error=AccessViolation");
   exit();
 }
@@ -33,7 +33,7 @@ function PhparrayCookie()
 <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 
 <html>
-<?php if (isset($_SESSION["userId"])) { ?>
+<?php if (isset ($_SESSION["userId"])) { ?>
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <a class="navbar-brand" href="index.php">
       <img src="./utility/logo2.png" height="50">
@@ -282,7 +282,7 @@ function PhparrayCookie()
     console.log("Reloading items from cookies");
 
     var cookie = getCookie("itemsToRetrieve");
-    if (cookie == "") {
+    if (cookie == "" || cookie == undefined) {
       return;
     }
     itemsToRetrieve = JSON.parse(cookie);
@@ -515,7 +515,7 @@ function PhparrayCookie()
 <script src="utility/qr_scanner/io_qr_scanner.js" type="text/javascript"></script>
 
 <?php //Message handler
-if (isset($_GET['state'])) {
+if (isset ($_GET['state'])) {
   if ($_GET['state'] == "Success") {
     echo '<table align=center width=200px class=successtable><tr><td><div class="alert alert-success"><strong>Retrieve - </strong>Sikeresen bekerültek a tárgyak a raktárba.</div></tr></td></table>';
   }

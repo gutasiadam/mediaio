@@ -1,20 +1,59 @@
+.container {
 
-
+    max-width: 90vw;
+}
 
 .projectHolder {
-    
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    gap: 15px;
+
+    overflow: auto;
+    height: 75dvh;
 }
 
 .projectCard {
-
+    min-width: 300px;
 }
 
 .projectTitle {
-
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    vertical-align: middle;
+    align-items: center;
+    justify-content: space-between;
+    font-weight: bold;
 }
 
 
+.projectDescriptionHolder {
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    vertical-align: middle;
+    align-items: center;
+    justify-content: space-between;
+    /* border-bottom: 1px solid black; */
+}
+
+.projectDescription {
+    width: 220px;
+    overflow: hidden;
+}
+
 
 .projectBody {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
 
+
+.taskHolder {
+    border-top: 1px solid rgb(175, 175, 175);
+}
+
+.addTask {
+    
 }

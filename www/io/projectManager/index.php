@@ -63,22 +63,57 @@ if (isset ($_SESSION["userId"])) { ?>
                         <input type="text" class="form-control" id="projectName">
                      </div>
                      <div class="mb-3">
-                        <label for="projectDescription" class="col-form-label">Projekt leírása:</label>
-                        <textarea class="form-control" id="projectDescription"></textarea>
-                     </div>
-                     <div class="mb-3">
                         <label for="projectMembers" class="col-form-label">Projekt tagjai:</label>
                         <input type="text" class="form-control" id="projectMembers">
                      </div>
                      <div class="mb-3">
-                        <label for="projectDeadline" class="col-form-label">Projekt határideje:</label>
-                        <input type="date" class="form-control" id="projectDeadline">
+                        <label for="projectVisibility" class="col-form-label">Projekt láthatósága:</label>
+                        <select class="form-select" id="projectVisibility">
+                           <option value="0">Mindenki</option>
+                           <option value="1">Médiás</option>
+                           <option value="2">Stúdiós</option>
+                           <option value="3">Admin</option>
+                           <option value="4">Hozzáadott emberek</option>
+                        </select>
+                     </div>
+                     <div class="mb-3 input-group">
+                        <span class="input-group-text">Projekt határideje: </span>
+                        <input type="date" class="form-control" id="projectDate">
+                        <input type="time" class="form-control" id="projectTime">
+                     </div>
+                     <div class="mb-3 input-group">
+                        <span class="input-group-text">Projekt törlése: </span>
+                        <input type="text" class="form-control" id="deleteText">
+                        <button type="button" class="btn btn-outline-danger" id="deleteButton">Törlés</button>
                      </div>
                   </form>
                </div>
                <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bezárás</button>
-                  <button type="button" class="btn btn-primary">Mentés</button>
+                  <button type="button" class="btn btn-secondary">Bezárás</button>
+                  <button type="button" class="btn btn-success" id="saveButton">Mentés</button>
+               </div>
+            </div>
+         </div>
+      </div>
+
+
+      <!-- Description modal -->
+      <div class="modal fade" id="projectDescModal" tabindex="-1" aria-labelledby="projectDescModalLabel"
+         aria-hidden="true">
+         <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+               <div class="modal-header">
+                  <h5 class="modal-title">Leírás</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+               </div>
+               <div class="modal-body">
+                  <form>
+                     <textarea class="form-control" id="projectDescription"></textarea>
+                  </form>
+               </div>
+               <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary">Bezárás</button>
+                  <button type="button" class="btn btn-success" id="saveDescButton">Mentés</button>
                </div>
             </div>
          </div>
@@ -87,13 +122,17 @@ if (isset ($_SESSION["userId"])) { ?>
 
       <h1 class="rainbow">Projekt Menedzsment</h1>
 
-      <div class="container" id="projectHolder">
+      <div class="container">
          <?php if (isset ($_SESSION["userId"]) && in_array("admin", $_SESSION["groups"])) { ?>
             <div class="row" id="admin_opt">
                <button class="btn btn-success noprint mb-2 mr-sm-2" onclick=createNewProject()><i
                      class="fas fa-plus fa-lg"></i></button>
             </div>
          <?php } ?>
+
+         <div class="projectHolder" id="projectHolder">
+
+         </div>
 
       </div>
 
@@ -109,7 +148,6 @@ if (isset ($_SESSION["userId"])) { ?>
 
          async function loadPage() {
             let projects = await fetchProjects();
-            console.log(projects);
             generateProjects(projects);
          }
 

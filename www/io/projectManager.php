@@ -22,20 +22,25 @@ class projectManager
             $id = $connection->insert_id;
             $connection->close();
 
-            // Create a new table for the project
-            $sql = "CREATE TABLE `project_" . $id . "` (ID INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY, Name VARCHAR(30) NOT NULL, Description VARCHAR(100), Members VARCHAR(100), Deadline DATE);";
-            $connection = Database::runProjectQuery_mysqli();
+            echo $id;
+        }
+    }
+
+    static function deleteProject()
+    {
+        if (in_array("admin", $_SESSION['groups'])) {
+            $sql = "DELETE FROM projects WHERE ID=" . $_POST['id'] . ";";
+            $connection = Database::runQuery_mysqli();
             $connection->query($sql);
             $connection->close();
-
-            echo $id;
-            echo 200;
+            echo 1;
+            exit();
         }
     }
 
     static function listProjects()
     {
-        $sql = "SELECT * FROM projects;";
+        $sql = "SELECT * FROM projects;";       //TODO: Add a filter to show only the projects that are supposed to be shown to a user.
         $connection = Database::runQuery_mysqli();
         $result = $connection->query($sql);
         $connection->close();
@@ -47,31 +52,77 @@ class projectManager
         exit();
     }
 
-    static function getProject()
+    static function getProjectSettings()
     {
-        $sql = "SELECT * FROM projects WHERE ID=" . $_POST['id'];
+        $sql = "SELECT * FROM projects WHERE ID=" . $_POST['id'] . ";";
         $connection = Database::runQuery_mysqli();
         $result = $connection->query($sql);
         $connection->close();
         $row = $result->fetch_assoc();
+        if ($row == null) {
+            echo 404;
+            exit();
+        }
         echo (json_encode($row));
         exit();
     }
 
-    static function updateProject()
+    static function getProjectTasks()
+    {
+        $sql = "SELECT * FROM project_components WHERE projectId=" . $_POST['id'] . ";";
+        $connection = Database::runQuery_mysqli();
+        $result = $connection->query($sql);
+        $connection->close();
+        $rows = $result->fetch_all(MYSQLI_ASSOC);
+        if ($rows == null) {
+            echo 404;
+            exit();
+        }
+        echo (json_encode($rows));
+        exit();
+    }
+
+    static function saveProjectSettings()
     {
         if (in_array("admin", $_SESSION['groups'])) {
-            $projectName = $_POST['projectName'];
-            $projectDescription = $_POST['projectDescription'];
-            $projectMembers = $_POST['projectMembers'];
-            $projectDeadline = $_POST['projectDeadline'];
-            $sql = "UPDATE projects SET Name='" . $projectName . "', Description='" . $projectDescription . "', Members='" . $projectMembers . "', Deadline='" . $projectDeadline . "' WHERE ID=" . $_POST['id'];
+
+            $settings = json_decode($_POST['settings'], true);
+
+            $sql = "UPDATE projects SET Name='" . $settings['Name'] . "', Members='" . $settings['Members'] . "', Deadline='" . $settings['Deadline'] . "', Visibility_group='" . $settings['Visibility_group'] . "' WHERE ID=" . $_POST['id'];
             $connection = Database::runQuery_mysqli();
             $connection->query($sql);
             $connection->close();
             echo 1;
             exit();
         }
+    }
+
+    static function saveDescription()
+    {
+        if (in_array("admin", $_SESSION['groups'])) {
+            $sql = "UPDATE projects SET Description='" . $_POST['description'] . "' WHERE ID=" . $_POST['id'] . ";";
+            $connection = Database::runQuery_mysqli();
+            $connection->query($sql);
+            $connection->close();
+            echo 1;
+            exit();
+        }
+    }
+
+    // Functions for users
+
+    static function getUsers()
+    {
+        $sql = "SELECT * FROM users;";
+        $connection = Database::runQuery_mysqli();
+        $result = $connection->query($sql);
+        $connection->close();
+        $resultItems = array();
+        while ($row = $result->fetch_assoc()) {
+            $resultItems[] = $row;
+        }
+        echo (json_encode($resultItems));
+        exit();
     }
 }
 
@@ -83,14 +134,28 @@ if (isset ($_POST['mode'])) {
         case 'createNewProject':
             echo projectManager::createNewProject();
             break;
+        case 'deleteProject':
+            echo projectManager::deleteProject();
+            break;
         case 'listProjects':
             echo projectManager::listProjects();
             break;
-        case 'getProject':
-            echo projectManager::getProject();
+
+        case 'getProjectTasks':
+            echo projectManager::getProjectTasks();
             break;
-        case 'updateProject':
-            echo projectManager::updateProject();
+        case 'saveProjectSettings':
+            echo projectManager::saveProjectSettings();
+            break;
+        case 'saveDescription':
+            echo projectManager::saveDescription();
+            break;
+        case 'getProjectSettings':
+            echo projectManager::getProjectSettings();
+            break;
+
+        case 'getUsers':
+            echo projectManager::getUsers();
             break;
     }
     exit();

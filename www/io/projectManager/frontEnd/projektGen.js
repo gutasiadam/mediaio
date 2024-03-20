@@ -10,9 +10,9 @@ function generateProjects(project) {
 
 // Function to generate a trello like project
 
-function generateProjectBody(project) {
-    console.log("Generating project body");
-    console.log(project);
+async function generateProjectBody(project) {
+    //console.log("Generating project body");
+    //console.log(project);
     let projectName = project.Name;
     let projectID = project.ID;
 
@@ -50,5 +50,82 @@ function generateProjectBody(project) {
     projectBody.classList.add("card-body", "projectBody");
     projectCard.appendChild(projectBody);
 
+    // Create a new project description
+    projectBody.appendChild(createDiscription(projectID, project.Description));
+
+    // Generating the project tasks
+    projectBody.appendChild(await generateTasks(projectID));
+
+    let addTask = document.createElement("button");
+    addTask.classList.add("btn", "btn-success", "noprint", "addTask");
+    addTask.innerHTML = "<i class='fas fa-plus'></i>";
+    addTask.onclick = function () {
+        addTaskToProject(projectID);
+    }
+    projectBody.appendChild(addTask);
+
+
     return projectCard;
+}
+
+
+function createDiscription(projectID, Description) {
+    // Create a new project description
+    let projectDescriptionHolder = document.createElement("div");
+    projectDescriptionHolder.classList.add("projectDescriptionHolder");
+
+    let projectDescription = document.createElement("span");
+    projectDescription.classList.add("card-text", "projectDescription");
+    projectDescription.innerHTML = Description;
+    projectDescriptionHolder.appendChild(projectDescription);
+
+    let editDescription = document.createElement("button");
+    editDescription.classList.add("btn", "editDescription");
+    editDescription.innerHTML = "<i class='fas fa-pencil-alt' style='color: #585d65;'></i>";
+    editDescription.onclick = function () {
+        editProjectDescription(projectID);
+    }
+    projectDescriptionHolder.appendChild(editDescription);
+
+    return projectDescriptionHolder;
+}
+
+
+async function generateTasks(projectID) {
+    let taskHolder = document.createElement("div");
+    taskHolder.classList.add("taskHolder");
+
+    // Fetch the tasks
+    let tasks = await fetchTasks(projectID);
+
+    // Parse the tasks
+    tasks = JSON.parse(tasks);
+
+    // Append each task to taskHolder
+    for (let i = 0; i < tasks.length; i++) {
+        taskHolder.appendChild(await createTask(tasks[i]));
+    }
+
+    return taskHolder;
+}
+
+
+
+async function createTask(task) {
+
+    let taskCard = document.createElement("div");
+    taskCard.classList.add("card", "taskCard");
+    taskCard.id = task.ID;
+
+    let taskTitle = document.createElement("div");
+    taskTitle.classList.add("card-header", "taskTitle");
+    taskTitle.innerHTML = task.Task_type;
+    taskCard.appendChild(taskTitle);
+
+    let taskBody = document.createElement("div");
+    taskBody.classList.add("card-body", "taskBody");
+    taskBody.innerHTML = task.Task_data;
+    taskCard.appendChild(taskBody);
+
+    return taskCard;
 }

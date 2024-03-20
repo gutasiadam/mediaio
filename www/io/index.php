@@ -99,7 +99,7 @@ error_reporting(E_ERROR | E_PARSE);
             },
             success: function (data) {
               var dataArray = data.split(",");
-              console.log(dataArray);
+              //console.log(dataArray);
               //Set the user item count
               //document.getElementById("userItemCount").innerHTML = dataArray[2];
               //Set the usercheck count
