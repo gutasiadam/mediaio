@@ -316,12 +316,12 @@ include ("../translation.php"); ?>
          document.getElementById("linkHolderGroup").style.display = "flex";
          document.getElementById("linkHolderGroup").classList.add("mb-1");
          var linkholder = document.getElementById("formLinkHolder");
-         linkholder.value = "https://localhost/forms/viewform.php?form=" + formHash;
+         linkholder.value = "https://<?php echo $_SERVER['HTTP_HOST']; ?>/forms/viewform.php?form=" + formHash;
       } else {
          document.getElementById("linkHolderGroup").style.display = "none";
          document.getElementById("linkHolderGroup").classList.remove("mb-1");
          var linkholder = document.getElementById("formLinkHolder");
-         linkholder.value = "https://localhost/forms/viewform.php?form=" + formHash;
+         linkholder.value = "https://<?php echo $_SERVER['HTTP_HOST']; ?>/forms/viewform.php?form=" + formHash;;
       }
    }
 

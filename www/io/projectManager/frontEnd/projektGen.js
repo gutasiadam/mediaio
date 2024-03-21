@@ -23,7 +23,13 @@ async function generateProjectBody(project) {
     let projectCard = document.createElement("div");
     projectCard.classList.add("card", "projectCard");
     projectCard.id = projectID;
+    projectCard.draggable = true; // Make the projectCard draggable
     projectHolder.appendChild(projectCard);
+
+    // Add event listeners for the drag events
+    projectCard.addEventListener('dragstart', function (event) {
+        event.dataTransfer.setData('text/plain', projectCard.id);
+    });
 
     // Create a new project title header
     let projectTitle = document.createElement("div");
@@ -50,6 +56,28 @@ async function generateProjectBody(project) {
     projectBody.classList.add("card-body", "projectBody");
     projectCard.appendChild(projectBody);
 
+    // Add event listeners for the dragover and drop events
+    projectBody.addEventListener('dragover', function (event) {
+        event.preventDefault(); // Prevent the default to allow drop
+    });
+
+    projectBody.addEventListener('drop', function (event) {
+        event.preventDefault(); // Prevent the default action (open as link for some elements)
+
+        // Get the id of the dragged projectCard from the drag data
+        let id = event.dataTransfer.getData('text/plain');
+
+        // Get the dragged projectCard
+        let draggedProjectCard = document.getElementById(id);
+
+        // Remove the dragged projectCard from its current parent node
+        draggedProjectCard.parentNode.removeChild(draggedProjectCard);
+
+        // Append the dragged projectCard to the projectBody
+        projectBody.appendChild(draggedProjectCard);
+    });
+
+
     // Create a new project description
     projectBody.appendChild(createDiscription(projectID, project.Description));
 
@@ -57,12 +85,31 @@ async function generateProjectBody(project) {
     projectBody.appendChild(await generateTasks(projectID));
 
     let addTask = document.createElement("button");
-    addTask.classList.add("btn", "btn-success", "noprint", "addTask");
-    addTask.innerHTML = "<i class='fas fa-plus'></i>";
-    addTask.onclick = function () {
-        addTaskToProject(projectID);
-    }
+    addTask.classList.add("btn", "btn-success", "dropdown-toggle", "addTask");
     projectBody.appendChild(addTask);
+
+    // Creat ul dropdown
+    let ul = document.createElement("ul");
+    ul.classList.add("dropdown-menu");
+    projectBody.appendChild(ul);
+
+    // create li elements
+    let text = document.createElement("li");
+    text.classList.add("dropdown-item");
+    text.innerHTML = "Add text";
+    text.onclick = function () {
+        addNewTask(projectID, "text");
+    }
+    ul.appendChild(text);
+
+    let image = document.createElement("li");
+    image.classList.add("dropdown-item");
+    image.innerHTML = "Add image";
+    image.onclick = function () {
+        addNewTask(projectID, "image");
+    }
+    ul.appendChild(image);
+
 
 
     return projectCard;
@@ -116,15 +163,42 @@ async function createTask(task) {
     let taskCard = document.createElement("div");
     taskCard.classList.add("card", "taskCard");
     taskCard.id = task.ID;
+    taskCard.draggable = true; // Make the taskCard draggable
 
-    let taskTitle = document.createElement("div");
-    taskTitle.classList.add("card-header", "taskTitle");
-    taskTitle.innerHTML = task.Task_type;
-    taskCard.appendChild(taskTitle);
+    // Add event listeners for the drag events
+    taskCard.addEventListener('dragstart', function (event) {
+        event.dataTransfer.setData('text/plain', taskCard.id);
+    });
+
+    if (task.Task_Title) {
+        let taskTitle = document.createElement("div");
+        taskTitle.classList.add("card-header", "taskTitle");
+        taskTitle.innerHTML = task.Task_Title;
+        taskCard.appendChild(taskTitle);
+    }
 
     let taskBody = document.createElement("div");
     taskBody.classList.add("card-body", "taskBody");
-    taskBody.innerHTML = task.Task_data;
+
+    // Generate certain task elements
+
+    switch (task.Task_type) {
+
+        case "text":
+            let text = document.createElement("p");
+            text.classList.add("card-text", "taskText");
+            text.innerHTML = task.Task_data;
+            taskBody.appendChild(text);
+            break;
+
+        case 'image':
+            let image = document.createElement("img");
+            image.classList.add("card-img-top", "taskImage");
+            image.src = task.Task_Image;
+            taskBody.appendChild(image);
+            break;
+    }
+
     taskCard.appendChild(taskBody);
 
     return taskCard;
