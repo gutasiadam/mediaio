@@ -116,16 +116,50 @@ async function fetchTasks(proj_id) {
     });
 }
 
+// SAVE TASKS
+
+async function createNewTaskDB(task) {
+    console.info("Saving task...");
+
+    var taskJson = JSON.stringify(task);
+
+    console.log(taskJson);
+
+    return new Promise(async (resolve, reject) => {
+        try {
+            let response;
+
+            response = await $.ajax({
+                type: "POST",
+                url: "../projectManager.php",
+                data: { mode: "createNewTask", task: taskJson }
+            });
+
+            if (response == 500) {
+                window.location.href = "index.php?serverError";
+            }
+
+            //console.log(response);
+
+            resolve(response);
+        } catch (error) {
+            console.error("Error:", error);
+            reject(error);
+        }
+    });
+}
+
 // SAVE PROJECT SETTINGS
 
-async function saveProjectSettingsToDB(proj_id, projectName, projectDeadline, projectVisibility) {
+async function saveProjectSettingsToDB(proj_id, projectName, projectDeadline, projectVisibility, projectMembers) {
     console.info("Saving project settings...");
 
     var settings = {
         "Name": projectName,
         "Members": "",
         "Deadline": projectDeadline,
-        "Visibility_group": projectVisibility
+        "Visibility_group": projectVisibility,
+        "Members": projectMembers
     };
 
     console.log(settings);
@@ -208,6 +242,36 @@ async function deleteProjectFromDB(proj_id) {
             //console.log(response);
 
             location.reload();
+
+            resolve(response);
+        } catch (error) {
+            console.error("Error:", error);
+            reject(error);
+        }
+    });
+}
+
+
+// GET PROJECT MEMBERS
+
+async function getUsers() {
+    console.info("Loading available members...");
+
+    return new Promise(async (resolve, reject) => {
+        try {
+            let response;
+
+            response = await $.ajax({
+                type: "POST",
+                url: "../projectManager.php",
+                data: { mode: "getUsers" }
+            });
+
+            if (response == 500) {
+                window.location.href = "index.php?serverError";
+            }
+
+            //console.log(response);
 
             resolve(response);
         } catch (error) {

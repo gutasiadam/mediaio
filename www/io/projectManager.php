@@ -82,15 +82,48 @@ class projectManager
         exit();
     }
 
+    static function createNewTask()
+    {
+        $settings = json_decode($_POST['task'], true);
+
+        if ($settings['Deadline'] != "NULL") {
+            $sql = "INSERT INTO `project_components` (`ProjectId`, `Task_type`, `Task_title`, `Task_data`, `Task_members`, `Deadline`) VALUES ('" . $settings['ProjectId'] . "','" . $settings['Task_type'] . "','" . $settings['Task_title'] . "','" . $settings['Task_data'] . "',NULL,'" . $settings['Deadline'] . "');";
+        } else {
+            $sql = "INSERT INTO `project_components` (`ProjectId`, `Task_type`, `Task_title`, `Task_data`, `Task_members`, `Deadline`) VALUES ('" . $settings['ProjectId'] . "','" . $settings['Task_type'] . "','" . $settings['Task_title'] . "','" . $settings['Task_data'] . "',NULL,NULL);";
+        }
+        $connection = Database::runQuery_mysqli();
+        $connection->query($sql);
+        $connection->close();
+        echo 200;
+        exit();
+    }
+
     static function saveProjectSettings()
     {
         if (in_array("admin", $_SESSION['groups'])) {
 
             $settings = json_decode($_POST['settings'], true);
 
-            $sql = "UPDATE projects SET Name='" . $settings['Name'] . "', Members='" . $settings['Members'] . "', Deadline='" . $settings['Deadline'] . "', Visibility_group='" . $settings['Visibility_group'] . "' WHERE ID=" . $_POST['id'];
+            // Convert Members to a string of comma-separated numbers
+            $members = implode(",", $settings['Members']);
+
             $connection = Database::runQuery_mysqli();
-            $connection->query($sql);
+
+            if ($settings['Deadline'] == "NULL") {
+                $sql = "UPDATE projects SET Name=?, Members=?, Deadline=NULL, Visibility_group=? WHERE ID=?";
+            } else {
+                $sql = "UPDATE projects SET Name=?, Members=?, Deadline=?, Visibility_group=? WHERE ID=?";
+            }
+
+            $stmt = $connection->prepare($sql);
+            if ($settings['Deadline'] == "NULL") {
+                $stmt->bind_param("sssi", $settings['Name'], $members, $settings['Visibility_group'], $_POST['id']);
+            } else {
+                $stmt->bind_param("ssssi", $settings['Name'], $members, $settings['Deadline'], $settings['Visibility_group'], $_POST['id']);
+            }
+
+            $stmt->execute();
+            $stmt->close();
             $connection->close();
             echo 1;
             exit();
@@ -113,7 +146,7 @@ class projectManager
 
     static function getUsers()
     {
-        $sql = "SELECT * FROM users;";
+        $sql = "SELECT `idUsers`, `firstName`, `lastName` FROM `users`;";
         $connection = Database::runQuery_mysqli();
         $result = $connection->query($sql);
         $connection->close();
@@ -144,6 +177,10 @@ if (isset ($_POST['mode'])) {
         case 'getProjectTasks':
             echo projectManager::getProjectTasks();
             break;
+        case 'createNewTask':
+            echo projectManager::createNewTask();
+            break;
+
         case 'saveProjectSettings':
             echo projectManager::saveProjectSettings();
             break;

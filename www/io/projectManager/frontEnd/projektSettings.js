@@ -15,9 +15,36 @@ async function openSettings(proj_id) {
     document.getElementById("projectName").value = projectName;
 
     // Load project members
-    //var projectMembers = projectSettings.Members;
+    var projectMembers = projectSettings.Members;
 
-    //TODO: Load project members into the settings modal as elements in an input field
+    var membersList = await getUsers();
+    membersList = JSON.parse(membersList);
+
+    var members = document.getElementById("projectMembersSelect");
+    for (let i = 0; i < membersList.length; i++) {
+        var member = membersList[i];
+
+        var option = document.createElement("div");
+        option.classList.add("availableMember");
+        option.style.cursor = "pointer";
+        option.id = member.idUsers;
+        option.innerHTML = member.lastName + " " + member.firstName;
+        option.onclick = function () {
+            if (this.classList.contains("selectedMember")) {
+                this.classList.remove("selectedMember");
+            }
+            else {
+                this.classList.add("selectedMember");
+            }
+        }
+
+        if (projectMembers.includes(member.idUsers)) {
+            option.classList.add("selectedMember");
+        }
+
+        members.appendChild(option);
+    }
+
 
     // Load deadline
     if (projectSettings.Deadline == null) {
@@ -90,14 +117,25 @@ async function saveProjectSettings(proj_id) {
     var projectDate = document.getElementById("projectDate").value;
     var projectTime = document.getElementById("projectTime").value;
 
+    // Getting added users
+    var members = document.getElementsByClassName("selectedMember");
+    var projectMembers = [];
+    for (let i = 0; i < members.length; i++) {
+        projectMembers.push(members[i].id);
+    }
+
     // Combine the date and time
-    var projectDeadline = projectDate + " " + projectTime;
+    let projectDeadline = "NULL";
+
+    if (projectDate && projectTime) {
+        projectDeadline = projectDate + " " + projectTime;
+    }
 
     // Get the project visibility
     var projectVisibility = document.getElementById("projectVisibility").value;
 
     // Save the project settings
-    var response = await saveProjectSettingsToDB(proj_id, projectName, projectDeadline, projectVisibility);
+    var response = await saveProjectSettingsToDB(proj_id, projectName, projectDeadline, projectVisibility, projectMembers);
 
     if (response == 500) {
         console.error("Error: 500");

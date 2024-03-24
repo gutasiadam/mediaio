@@ -131,6 +131,13 @@ function generateElement(type, id, place, settings, state, answer = "") {
         };
         navdiv.appendChild(deleteButton);
 
+        // Drag handle button
+        //var dragHandle = document.createElement("button");
+        //dragHandle.classList.add("btn", "btn-secondary", "btn-sm");
+        //dragHandle.innerHTML = "☰";
+        //dragHandle.style.cursor = "grab";
+        //navdiv.appendChild(dragHandle);
+
         //Move down button
         var moveDownButton = document.createElement("button");
         moveDownButton.classList.add("btn", "btn-secondary", "btn-sm");

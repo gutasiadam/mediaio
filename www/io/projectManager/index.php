@@ -64,7 +64,7 @@ if (isset ($_SESSION["userId"])) { ?>
                      </div>
                      <div class="mb-3">
                         <label for="projectMembers" class="col-form-label">Projekt tagjai:</label>
-                        <input type="text" class="form-control" id="projectMembers">
+                        <div id="projectMembersSelect"></div>
                      </div>
                      <div class="mb-3">
                         <label for="projectVisibility" class="col-form-label">Projekt láthatósága:</label>
@@ -89,7 +89,7 @@ if (isset ($_SESSION["userId"])) { ?>
                   </form>
                </div>
                <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary">Bezárás</button>
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bezárás</button>
                   <button type="button" class="btn btn-success" id="saveButton">Mentés</button>
                </div>
             </div>
@@ -112,8 +112,41 @@ if (isset ($_SESSION["userId"])) { ?>
                   </form>
                </div>
                <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary">Bezárás</button>
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bezárás</button>
                   <button type="button" class="btn btn-success" id="saveDescButton">Mentés</button>
+               </div>
+            </div>
+         </div>
+      </div>
+
+      <!-- New task modal -->
+      <div class="modal fade" id="taskEditorModal" tabindex="-1" aria-labelledby="taskEditorModalLabel" aria-hidden="true">
+         <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+               <div class="modal-header">
+                  <h5 class="modal-title" id="newTaskTitle">Új feladat hozzáadása</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+               </div>
+               <div class="modal-body">
+                  <form>
+                     <div class="mb-3">
+                        <label for="taskName" class="col-form-label">Feladat neve:</label>
+                        <input type="text" class="form-control" id="taskName">
+                     </div>
+                     <div class="mb-3">
+                        <label for="taskData" class="col-form-label"></label>
+                        <textarea type="text" class="form-control" id="taskData"></textarea>
+                     </div>
+                     <div class="mb-3 input-group">
+                        <span class="input-group-text">Feladat határideje: </span>
+                        <input type="date" class="form-control" id="taskDate">
+                        <input type="time" class="form-control" id="taskTime">
+                     </div>
+                  </form>
+               </div>
+               <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bezárás</button>
+                  <button type="button" class="btn btn-success" id="saveNewProject">Mentés</button>
                </div>
             </div>
          </div>
@@ -142,6 +175,9 @@ if (isset ($_SESSION["userId"])) { ?>
    <script src="frontEnd/projektSettings.js" crossorigin="anonymous"></script>
    <script src="frontEnd/fetchData.js" crossorigin="anonymous"></script>
 
+   <?php if (isset ($_SESSION["userId"]) && in_array("admin", $_SESSION["groups"])) { ?>
+      <script src="frontEnd/adminButtons.js" crossorigin="anonymous"></script>
+   <?php } ?>
    <script>
 
       $(document).ready(function () {

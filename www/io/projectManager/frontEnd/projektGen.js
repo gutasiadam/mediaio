@@ -23,13 +23,8 @@ async function generateProjectBody(project) {
     let projectCard = document.createElement("div");
     projectCard.classList.add("card", "projectCard");
     projectCard.id = projectID;
-    projectCard.draggable = true; // Make the projectCard draggable
+    //projectCard.draggable = true; // Make the projectCard draggable
     projectHolder.appendChild(projectCard);
-
-    // Add event listeners for the drag events
-    projectCard.addEventListener('dragstart', function (event) {
-        event.dataTransfer.setData('text/plain', projectCard.id);
-    });
 
     // Create a new project title header
     let projectTitle = document.createElement("div");
@@ -40,13 +35,11 @@ async function generateProjectBody(project) {
     projectTitle.appendChild(title);
 
     // Add settings button to project title
-    let settingsButton = document.createElement("button");
-    settingsButton.classList.add("btn", "settingsButton");
-    settingsButton.innerHTML = "<i class='fas fa-cog'></i>";
-    settingsButton.onclick = function () {
-        openSettings(projectID);
+    try {
+        projectTitle.appendChild(changeProjectSettingsButton(projectID));
+    } catch (error) {
+        ;
     }
-    projectTitle.appendChild(settingsButton);
 
     projectCard.appendChild(projectTitle);
 
@@ -56,28 +49,6 @@ async function generateProjectBody(project) {
     projectBody.classList.add("card-body", "projectBody");
     projectCard.appendChild(projectBody);
 
-    // Add event listeners for the dragover and drop events
-    projectBody.addEventListener('dragover', function (event) {
-        event.preventDefault(); // Prevent the default to allow drop
-    });
-
-    projectBody.addEventListener('drop', function (event) {
-        event.preventDefault(); // Prevent the default action (open as link for some elements)
-
-        // Get the id of the dragged projectCard from the drag data
-        let id = event.dataTransfer.getData('text/plain');
-
-        // Get the dragged projectCard
-        let draggedProjectCard = document.getElementById(id);
-
-        // Remove the dragged projectCard from its current parent node
-        draggedProjectCard.parentNode.removeChild(draggedProjectCard);
-
-        // Append the dragged projectCard to the projectBody
-        projectBody.appendChild(draggedProjectCard);
-    });
-
-
     // Create a new project description
     projectBody.appendChild(createDiscription(projectID, project.Description));
 
@@ -86,6 +57,8 @@ async function generateProjectBody(project) {
 
     let addTask = document.createElement("button");
     addTask.classList.add("btn", "btn-success", "dropdown-toggle", "addTask");
+    addTask.innerHTML = "Új hozzáadása";
+    addTask.setAttribute("data-bs-toggle", "dropdown");
     projectBody.appendChild(addTask);
 
     // Creat ul dropdown
@@ -96,7 +69,8 @@ async function generateProjectBody(project) {
     // create li elements
     let text = document.createElement("li");
     text.classList.add("dropdown-item");
-    text.innerHTML = "Add text";
+    text.innerHTML = "Szöveg";
+    text.style.cursor = "pointer";
     text.onclick = function () {
         addNewTask(projectID, "text");
     }
@@ -104,7 +78,8 @@ async function generateProjectBody(project) {
 
     let image = document.createElement("li");
     image.classList.add("dropdown-item");
-    image.innerHTML = "Add image";
+    image.innerHTML = "Kép";
+    image.style.cursor = "pointer";
     image.onclick = function () {
         addNewTask(projectID, "image");
     }
@@ -126,13 +101,11 @@ function createDiscription(projectID, Description) {
     projectDescription.innerHTML = Description;
     projectDescriptionHolder.appendChild(projectDescription);
 
-    let editDescription = document.createElement("button");
-    editDescription.classList.add("btn", "editDescription");
-    editDescription.innerHTML = "<i class='fas fa-pencil-alt' style='color: #585d65;'></i>";
-    editDescription.onclick = function () {
-        editProjectDescription(projectID);
+    try {
+        projectDescriptionHolder.appendChild(editDescriptionButton(projectID));
+    } catch (error) {
+        ;
     }
-    projectDescriptionHolder.appendChild(editDescription);
 
     return projectDescriptionHolder;
 }
@@ -164,16 +137,15 @@ async function createTask(task) {
     taskCard.classList.add("card", "taskCard");
     taskCard.id = task.ID;
     taskCard.draggable = true; // Make the taskCard draggable
+    taskCard.onclick = function () {
+        openTask(task.ID);
+    }
+    taskCard.style.cursor = "pointer";
 
-    // Add event listeners for the drag events
-    taskCard.addEventListener('dragstart', function (event) {
-        event.dataTransfer.setData('text/plain', taskCard.id);
-    });
-
-    if (task.Task_Title) {
+    if (task.Task_title) {
         let taskTitle = document.createElement("div");
         taskTitle.classList.add("card-header", "taskTitle");
-        taskTitle.innerHTML = task.Task_Title;
+        taskTitle.innerHTML = task.Task_title;
         taskCard.appendChild(taskTitle);
     }
 
@@ -202,4 +174,93 @@ async function createTask(task) {
     taskCard.appendChild(taskBody);
 
     return taskCard;
+}
+
+
+function addNewTask(projectID, taskType) {
+    console.log("Adding new " + taskType + " task to project: " + projectID);
+
+    let modalTitle = document.getElementById("newTaskTitle");
+    let projectName = document.getElementById(projectID).querySelector(".projectTitle").innerText;
+
+
+    switch (taskType) {
+        case "text":
+            document.getElementById("taskData").placeholder = "Szöveg...";
+            modalTitle.innerHTML = projectName + " - szöveg hozzáadása";
+            break;
+
+        case "image":
+            document.getElementById("taskData").placeholder = "Kép URL...";
+            modalTitle.innerHTML = projectName + " - kép hozzáadása";
+            break;
+    }
+
+    // Display task editor modal
+    $('#taskEditorModal').modal('show');
+
+    // Get the saveNewProject button
+    let saveNewProjectButton = document.getElementById('saveNewProject');
+
+    // Add a click event listener to the button
+    saveNewProjectButton.addEventListener('click', async function () {
+        // Get task title-name
+        let taskTitle = document.getElementById('taskName').value;
+
+        // Get the task data
+        let taskData = document.getElementById('taskData').value;
+
+        let deadline = "NULL";
+
+
+        let date = document.getElementById('taskDate').value;
+        let time = document.getElementById('taskTime').value;
+
+        if (date && time) {
+            // Combine the date and time
+            deadline = date + " " + time;
+        }
+
+        task = {
+            ProjectId: projectID,
+            Task_type: taskType,
+            Task_title: taskTitle,
+            Task_data: taskData,
+            Deadline: deadline
+        }
+
+        // Save the task
+        if (await createNewTaskDB(task) == 200) {
+            console.log("Task saved successfully");
+            location.reload();
+        };
+    });
+
+}
+
+
+
+function openTask(TaskId) {
+    console.log("Opening task: " + TaskId);
+
+    let modalTitle = document.getElementById("newTaskTitle");
+    modalTitle.innerHTML = "Feladat szerkesztése";
+
+    // Get the task
+    let task = document.getElementById(TaskId);
+
+    // Get the task title
+    let taskTitle = task.querySelector(".taskTitle").innerText;
+    document.getElementById("taskName").value = taskTitle;
+
+    // Get the task data
+    let taskData = task.querySelector(".tasktext").innerText;
+
+    document.getElementById("taskData").value = taskData;
+
+    // Get the task deadline
+    //let deadline = task.querySelector(".taskDeadline").innerText;
+
+    // Display task editor modal
+    $('#taskEditorModal').modal('show');
 }
