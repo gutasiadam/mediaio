@@ -15,12 +15,15 @@ async function openSettings(proj_id) {
     document.getElementById("projectName").value = projectName;
 
     // Load project members
-    var projectMembers = projectSettings.Members;
+    var projectMembers = await fetchProjectMembers(proj_id);
+    projectMembers = JSON.parse(projectMembers);
+    projectMembers = projectMembers.map(member => member.UserID);
 
     var membersList = await getUsers();
     membersList = JSON.parse(membersList);
 
     var members = document.getElementById("projectMembersSelect");
+    members.innerHTML = "";
     for (let i = 0; i < membersList.length; i++) {
         var member = membersList[i];
 
@@ -38,7 +41,7 @@ async function openSettings(proj_id) {
             }
         }
 
-        if (projectMembers.includes(member.idUsers)) {
+        if (projectMembers && projectMembers.includes(member.idUsers.toString())) {
             option.classList.add("selectedMember");
         }
 
@@ -140,13 +143,13 @@ async function saveProjectSettings(proj_id) {
     if (response == 500) {
         console.error("Error: 500");
         return;
+    } else if (response == 200) {
+        location.reload();
     }
 
     // Close the modal
     $('#projectSettingsModal').modal('hide');
 
-    // Reload the page
-    location.reload();
 
 }
 

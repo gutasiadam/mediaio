@@ -16,7 +16,7 @@ class projectManager
     static function createNewProject()
     {
         if (in_array("admin", $_SESSION['groups'])) { //Auto accept 
-            $sql = "INSERT INTO `projects`(`ID`, `Name`, `Description`, `Members`, `Deadline`) VALUES (NULL,'Névtelen','Leírás...',NULL,NULL);";
+            $sql = "INSERT INTO `projects`(`ID`, `Name`, `Description`, `Deadline`) VALUES (NULL,'Névtelen','Leírás...',NULL);";
             $connection = Database::runQuery_mysqli();
             $connection->query($sql);
             $id = $connection->insert_id;
@@ -104,28 +104,48 @@ class projectManager
 
             $settings = json_decode($_POST['settings'], true);
 
-            // Convert Members to a string of comma-separated numbers
-            $members = implode(",", $settings['Members']);
+            // For every member in array add to database
+            $members = $settings['Members'];
+            $membersString = implode(',', $members);
+            foreach ($members as $member) {
+                $connection = Database::runQuery_mysqli();
+
+                // Check if the record already exists
+                $sql = "SELECT * FROM `project_members` WHERE `ProjectID` = " . $_POST['id'] . " AND `UserID` = " . $member;
+                $result = $connection->query($sql);
+
+                // If the record doesn't exist, insert it
+                if ($result->num_rows == 0) {
+                    $sql = "INSERT INTO `project_members` (`ProjectID`, `UserID`) VALUES (" . $_POST['id'] . "," . $member . ")";
+                    $connection->query($sql);
+                }
+
+                // Delete all other members
+                $sql = "DELETE FROM `project_members` WHERE `ProjectID` = " . $_POST['id'] . " AND `UserID` NOT IN (" . $membersString . ")";
+                $connection->query($sql);
+
+                $connection->close();
+            }
 
             $connection = Database::runQuery_mysqli();
 
             if ($settings['Deadline'] == "NULL") {
-                $sql = "UPDATE projects SET Name=?, Members=?, Deadline=NULL, Visibility_group=? WHERE ID=?";
+                $sql = "UPDATE projects SET Name=?, Deadline=NULL, Visibility_group=? WHERE ID=?";
             } else {
-                $sql = "UPDATE projects SET Name=?, Members=?, Deadline=?, Visibility_group=? WHERE ID=?";
+                $sql = "UPDATE projects SET Name=?, Deadline=?, Visibility_group=? WHERE ID=?";
             }
 
             $stmt = $connection->prepare($sql);
             if ($settings['Deadline'] == "NULL") {
-                $stmt->bind_param("sssi", $settings['Name'], $members, $settings['Visibility_group'], $_POST['id']);
+                $stmt->bind_param("ssi", $settings['Name'], $settings['Visibility_group'], $_POST['id']);
             } else {
-                $stmt->bind_param("ssssi", $settings['Name'], $members, $settings['Deadline'], $settings['Visibility_group'], $_POST['id']);
+                $stmt->bind_param("sssi", $settings['Name'], $settings['Deadline'], $settings['Visibility_group'], $_POST['id']);
             }
 
             $stmt->execute();
             $stmt->close();
             $connection->close();
-            echo 1;
+            echo 200;
             exit();
         }
     }
@@ -156,6 +176,33 @@ class projectManager
         }
         echo (json_encode($resultItems));
         exit();
+    }
+
+
+    static function getProjectMembers()
+    {
+        $sql = "SELECT * FROM `project_members` WHERE ProjectID=" . $_POST['id'] . ";";
+        $connection = Database::runQuery_mysqli();
+        $result = $connection->query($sql);
+        $connection->close();
+        $resultItems = array();
+        while ($row = $result->fetch_assoc()) {
+            $resultItems[] = $row;
+        }
+        echo (json_encode($resultItems));
+        exit();
+    }
+
+    static function removeMemberFromProject()
+    {
+        if (in_array("admin", $_SESSION['groups'])) {
+            $sql = "DELETE FROM project_members WHERE ProjectID=" . $_POST['projectId'] . " AND UserID=" . $_POST['userId'] . ";";
+            $connection = Database::runQuery_mysqli();
+            $connection->query($sql);
+            $connection->close();
+            echo 200;
+            exit();
+        }
     }
 }
 
@@ -193,6 +240,12 @@ if (isset ($_POST['mode'])) {
 
         case 'getUsers':
             echo projectManager::getUsers();
+            break;
+        case 'getProjectMembers':
+            echo projectManager::getProjectMembers();
+            break;
+        case 'removeMemberFromProject':
+            echo projectManager::removeMemberFromProject();
             break;
     }
     exit();

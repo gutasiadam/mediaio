@@ -18,7 +18,7 @@ async function fetchProjects() {
 
             var projects = JSON.parse(response);
 
-            console.log(projects);
+            //console.log(projects);
 
             resolve(projects);
         } catch (error) {
@@ -106,7 +106,7 @@ async function fetchTasks(proj_id) {
                 window.location.href = "index.php?serverError";
             }
 
-            console.log(response);
+            //console.log(response);
 
             resolve(response);
         } catch (error) {
@@ -180,7 +180,7 @@ async function saveProjectSettingsToDB(proj_id, projectName, projectDeadline, pr
                 window.location.href = "index.php?serverError";
             }
 
-            //console.log(response);
+            console.log(response);
 
             resolve(response);
         } catch (error) {
@@ -265,6 +265,33 @@ async function getUsers() {
                 type: "POST",
                 url: "../projectManager.php",
                 data: { mode: "getUsers" }
+            });
+
+            if (response == 500) {
+                window.location.href = "index.php?serverError";
+            }
+
+            //console.log(response);
+
+            resolve(response);
+        } catch (error) {
+            console.error("Error:", error);
+            reject(error);
+        }
+    });
+}
+
+async function fetchProjectMembers(proj_id) {
+    console.info("Loading project members...");
+
+    return new Promise(async (resolve, reject) => {
+        try {
+            let response;
+
+            response = await $.ajax({
+                type: "POST",
+                url: "../projectManager.php",
+                data: { mode: "getProjectMembers", id: proj_id }
             });
 
             if (response == 500) {

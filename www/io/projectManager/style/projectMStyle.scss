@@ -36,6 +36,9 @@
 .projectCard {
     min-width: 350px;
     max-width: 350px;
+
+    max-height: 77dvh;
+    min-height: 60dvh;
 }
 
 .projectTitle {
@@ -45,7 +48,11 @@
     vertical-align: middle;
     align-items: center;
     justify-content: space-between;
-    font-weight: bold;
+
+    .active {
+        font-weight: bold;
+    }
+
 }
 
 
@@ -134,6 +141,12 @@
     background-color: rgb(163, 235, 175);
 }
 
+.memberBody {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
 
 .taskHolder {
     border-top: 1px solid rgb(175, 175, 175);
@@ -147,3 +160,17 @@
 .addTask {}
 
 
+
+/* Deadline states */
+
+.soon {
+    border: 2px solid rgb(241, 183, 24)
+}
+
+.now {
+    border: 2px solid rgb(56, 231, 64)
+}
+
+.overdue {
+    border: 2px solid rgb(255, 0, 0);
+}
