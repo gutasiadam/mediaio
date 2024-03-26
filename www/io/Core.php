@@ -1,6 +1,6 @@
 <?php
 namespace Mediaio;
-error_reporting(E_ERROR | E_WARNING | E_PARSE | E_NOTICE);
+//error_reporting(E_ERROR | E_WARNING | E_PARSE | E_NOTICE);
 require_once 'Database.php';
 require_once 'Mailer.php';
 require_once 'Accounting.php';
@@ -19,17 +19,6 @@ class Core{
     public $role;
     public $color;
 
-
-    function setUserData($userData){
-        $this->$userID=$userData[0];
-        $this->$userName=$userData[1];
-        $this->$firstName=$userData[2];
-        $this->$email=$userData[3];
-        $this->$lastName=$userData[4];
-        $this->$fullName=$userData[5];
-        $this->$role=$userData[6];
-        $this->$color=$userData[7];
-    }
 
     //Validate user with api key
     function loginWithApikey($apikey){
@@ -111,7 +100,7 @@ class Core{
                                     exit();
                                 }
 
-                                Accounting::logLoginAttempt($row['idUsers'],"login_WrongPass");
+                                Accounting::logEvent($row['idUsers'],"login_WrongPass");
                                 header("Location: ../index.php?error=WrongPass");
                                 exit();
                             }else if($pwdcheck == true){
