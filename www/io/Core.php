@@ -1,9 +1,11 @@
 <?php
 namespace Mediaio;
-//error_reporting(E_ERROR | E_WARNING | E_PARSE);
+error_reporting(E_ERROR | E_WARNING | E_PARSE | E_NOTICE);
 require_once 'Database.php';
 require_once 'Mailer.php';
+require_once 'Accounting.php';
 use Mediaio\Database;
+use Mediaio\Accounting;
 use Mediaio\MailService;
 session_start();
 
@@ -108,6 +110,8 @@ class Core{
                                     return array('code' => 401);
                                     exit();
                                 }
+
+                                Accounting::logLoginAttempt($row['idUsers'],"login_WrongPass");
                                 header("Location: ../index.php?error=WrongPass");
                                 exit();
                             }else if($pwdcheck == true){
@@ -157,6 +161,7 @@ class Core{
                                 $additionalData = json_decode($_SESSION['AdditionalData'], true);
                                 $_SESSION['groups'] = $additionalData['groups'];
 
+                                Accounting::logEvent($row['idUsers'],"login_Success");
                                 header("Location: ../index.php?login=success");
         
                             }else{
@@ -164,6 +169,8 @@ class Core{
                                 exit();
                             }
                         }else{
+
+                            Accounting::logEvent(0,"login_NoUser");
                             header("Location: ../index.php?error=NoUser");
                             exit();
                         }
@@ -174,6 +181,7 @@ class Core{
         }
     }
     function logoutUser(){
+        Accounting::logEvent($_SESSION['userId'],"logout");
         session_unset();
         session_destroy();
         header("Location: ../index.php?logout=success");
