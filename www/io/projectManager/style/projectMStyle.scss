@@ -78,7 +78,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    max-height: 75dvh;
+    max-height: 66dvh;
     overflow: auto;
 
     &::-webkit-scrollbar-track {
@@ -101,6 +101,13 @@
     }
 }
 
+.tab-content>.active {
+    display: flex;
+}
+
+.tab-content {
+    max-height: 75dvh;
+}
 
 #projectMembersSelect {
     display: flex;
@@ -157,9 +164,9 @@
     }
 }
 
-.addTask {}
-
-
+.editorOn {
+    cursor: pointer;
+}
 
 /* Deadline states */
 

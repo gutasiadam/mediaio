@@ -116,6 +116,33 @@ async function fetchTasks(proj_id) {
     });
 }
 
+async function fetchTask(task_id) {
+    console.info("Loading task...");
+
+    return new Promise(async (resolve, reject) => {
+        try {
+            let response;
+
+            response = await $.ajax({
+                type: "POST",
+                url: "../projectManager.php",
+                data: { mode: "getTask", ID: task_id }
+            });
+
+            if (response == 500) {
+                window.location.href = "index.php?serverError";
+            }
+
+            //console.log(response);
+
+            resolve(response);
+        } catch (error) {
+            console.error("Error:", error);
+            reject(error);
+        }
+    });
+}
+
 // SAVE TASKS
 
 async function createNewTaskDB(task) {
@@ -148,18 +175,51 @@ async function createNewTaskDB(task) {
         }
     });
 }
+async function saveTaskToDB(task_id, taskName, taskDeadline, taskData) {
+    console.info("Saving task...");
+
+    var task = {
+        "Task_title": taskName,
+        "Task_data": taskData,
+        "Deadline": taskDeadline
+    };
+
+    var taskJson = JSON.stringify(task);
+
+    return new Promise(async (resolve, reject) => {
+        try {
+            let response;
+
+            response = await $.ajax({
+                type: "POST",
+                url: "../projectManager.php",
+                data: { mode: "saveTask", ID: task_id, task: taskJson }
+            });
+
+            if (response == 500) {
+                window.location.href = "index.php?serverError";
+            }
+
+            //console.log(response);
+
+            resolve(response);
+        } catch (error) {
+            console.error("Error:", error);
+            reject(error);
+        }
+    });
+}
 
 // SAVE PROJECT SETTINGS
 
-async function saveProjectSettingsToDB(proj_id, projectName, projectDeadline, projectVisibility, projectMembers) {
+async function saveProjectSettingsToDB(proj_id, projectName, projectDeadline, projectVisibility) {
     console.info("Saving project settings...");
 
     var settings = {
         "Name": projectName,
         "Members": "",
         "Deadline": projectDeadline,
-        "Visibility_group": projectVisibility,
-        "Members": projectMembers
+        "Visibility_group": projectVisibility
     };
 
     console.log(settings);
@@ -209,6 +269,36 @@ async function saveProjectDescriptionToDB(proj_id, projectDescription) {
             }
 
             //console.log(response);
+
+            resolve(response);
+        } catch (error) {
+            console.error("Error:", error);
+            reject(error);
+        }
+    });
+
+}
+
+async function saveProjectMembersToDB(proj_id, members) {
+    console.info("Saving project members...");
+
+    var membersJson = JSON.stringify(members);
+
+    return new Promise(async (resolve, reject) => {
+        try {
+            let response;
+
+            response = await $.ajax({
+                type: "POST",
+                url: "../projectManager.php",
+                data: { mode: "saveProjectMembers", id: proj_id, Members: membersJson }
+            });
+
+            if (response == 500) {
+                window.location.href = "index.php?serverError";
+            }
+
+            console.log(response);
 
             resolve(response);
         } catch (error) {

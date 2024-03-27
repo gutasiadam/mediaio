@@ -14,40 +14,6 @@ async function openSettings(proj_id) {
     var projectName = projectSettings.Name;
     document.getElementById("projectName").value = projectName;
 
-    // Load project members
-    var projectMembers = await fetchProjectMembers(proj_id);
-    projectMembers = JSON.parse(projectMembers);
-    projectMembers = projectMembers.map(member => member.UserID);
-
-    var membersList = await getUsers();
-    membersList = JSON.parse(membersList);
-
-    var members = document.getElementById("projectMembersSelect");
-    members.innerHTML = "";
-    for (let i = 0; i < membersList.length; i++) {
-        var member = membersList[i];
-
-        var option = document.createElement("div");
-        option.classList.add("availableMember");
-        option.style.cursor = "pointer";
-        option.id = member.idUsers;
-        option.innerHTML = member.lastName + " " + member.firstName;
-        option.onclick = function () {
-            if (this.classList.contains("selectedMember")) {
-                this.classList.remove("selectedMember");
-            }
-            else {
-                this.classList.add("selectedMember");
-            }
-        }
-
-        if (projectMembers && projectMembers.includes(member.idUsers.toString())) {
-            option.classList.add("selectedMember");
-        }
-
-        members.appendChild(option);
-    }
-
 
     // Load deadline
     if (projectSettings.Deadline == null) {
@@ -120,13 +86,6 @@ async function saveProjectSettings(proj_id) {
     var projectDate = document.getElementById("projectDate").value;
     var projectTime = document.getElementById("projectTime").value;
 
-    // Getting added users
-    var members = document.getElementsByClassName("selectedMember");
-    var projectMembers = [];
-    for (let i = 0; i < members.length; i++) {
-        projectMembers.push(members[i].id);
-    }
-
     // Combine the date and time
     let projectDeadline = "NULL";
 
@@ -138,7 +97,7 @@ async function saveProjectSettings(proj_id) {
     var projectVisibility = document.getElementById("projectVisibility").value;
 
     // Save the project settings
-    var response = await saveProjectSettingsToDB(proj_id, projectName, projectDeadline, projectVisibility, projectMembers);
+    var response = await saveProjectSettingsToDB(proj_id, projectName, projectDeadline, projectVisibility);
 
     if (response == 500) {
         console.error("Error: 500");
@@ -199,6 +158,45 @@ async function deleteProject(proj_id) {
     } else {
         console.error("Error: Project name does not match");
         return;
+    }
+
+}
+
+
+
+// Task settnigs modal
+
+async function saveTaskSettings(task_id) {
+
+    // Get the task name
+    var taskName = document.getElementById("taskName").value;
+
+    // Get the task deadline
+    var taskDate = document.getElementById("taskDate").value;
+    var taskTime = document.getElementById("taskTime").value;
+
+    // Combine the date and time
+    let taskDeadline = "NULL";
+
+    if (taskDate && taskTime) {
+        taskDeadline = taskDate + " " + taskTime;
+    }
+
+    // Get the task description
+    var taskDescription = document.getElementById("taskData").value;
+
+    // Save the task settings
+    var response = await saveTaskToDB(task_id, taskName, taskDeadline, taskDescription);
+
+    if (response == 500) {
+        console.error("Error: 500");
+        return;
+    }
+
+    if (response == 200) {
+        location.reload();
+        // Close the modal
+        $('#taskSettingsModal').modal('hide');
     }
 
 }

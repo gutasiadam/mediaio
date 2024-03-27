@@ -53,3 +53,84 @@ function removeMemberFromProject(projectID, memberID) {
         }
     });
 }
+
+async function editProjectMembersButton(projectID) {
+    let addMember = document.createElement("button");
+    addMember.classList.add("btn", "btn-secondary", "btn-lg");
+    addMember.innerHTML = "<i class='far fa-edit'></i>";
+    addMember.style.margin = "auto auto";
+    addMember.onclick = function () {
+        editProjectMembers(projectID);
+    }
+    return addMember;
+}
+
+
+async function editProjectMembers(projectID) {
+    console.log("Adding new member to project: " + projectID);
+
+    $('#addMemberModal').modal('show');
+
+    // Load project members
+    var projectMembers = await fetchProjectMembers(projectID);
+    projectMembers = JSON.parse(projectMembers);
+    projectMembers = projectMembers.map(member => member.UserID);
+
+    var membersList = await getUsers();
+    membersList = JSON.parse(membersList);
+
+    var members = document.getElementById("projectMembersSelect");
+    members.innerHTML = "";
+    for (let i = 0; i < membersList.length; i++) {
+        var member = membersList[i];
+
+        var option = document.createElement("div");
+        option.classList.add("availableMember");
+        option.style.cursor = "pointer";
+        option.id = member.idUsers;
+        option.innerHTML = member.lastName + " " + member.firstName;
+        option.onclick = function () {
+            if (this.classList.contains("selectedMember")) {
+                this.classList.remove("selectedMember");
+            }
+            else {
+                this.classList.add("selectedMember");
+            }
+        }
+
+        if (projectMembers && projectMembers.includes(member.idUsers.toString())) {
+            option.classList.add("selectedMember");
+        }
+
+        members.appendChild(option);
+    }
+
+    // Create save button
+    var saveButton = document.getElementById("saveProjectMembers");
+    saveButton.onclick = function () {
+        saveProjectMemberSettings(projectID);
+    }
+}
+
+
+async function saveProjectMemberSettings(projectID) {
+    var members = document.getElementsByClassName("selectedMember");
+    var projectMembers = [];
+    for (let i = 0; i < members.length; i++) {
+        projectMembers.push(members[i].id);
+    }
+
+    console.log(projectMembers);
+    var response = await saveProjectMembersToDB(projectID, projectMembers);
+
+    if (response == 500) {
+        console.error("Error: 500");
+        return;
+    } else if (response == 200) {
+        location.reload();
+    }
+
+    // Close the modal
+    $('#addMemberModal').modal('hide');
+
+}

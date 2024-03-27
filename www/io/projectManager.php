@@ -23,6 +23,8 @@ class projectManager
             $connection->close();
 
             echo $id;
+        } else {
+            echo 403;
         }
     }
 
@@ -35,6 +37,8 @@ class projectManager
             $connection->close();
             echo 1;
             exit();
+        } else {
+            echo 403;
         }
     }
 
@@ -79,7 +83,20 @@ class projectManager
             exit();
         }
         echo (json_encode($rows));
-        exit();
+    }
+
+    static function getTask()
+    {
+        $sql = "SELECT * FROM project_components WHERE ID=" . $_POST['ID'] . ";";
+        $connection = Database::runQuery_mysqli();
+        $result = $connection->query($sql);
+        $connection->close();
+        $row = $result->fetch_assoc();
+        if ($row == null) {
+            echo 404;
+            exit();
+        }
+        echo (json_encode($row));
     }
 
     static function createNewTask()
@@ -87,15 +104,29 @@ class projectManager
         $settings = json_decode($_POST['task'], true);
 
         if ($settings['Deadline'] != "NULL") {
-            $sql = "INSERT INTO `project_components` (`ProjectId`, `Task_type`, `Task_title`, `Task_data`, `Task_members`, `Deadline`) VALUES ('" . $settings['ProjectId'] . "','" . $settings['Task_type'] . "','" . $settings['Task_title'] . "','" . $settings['Task_data'] . "',NULL,'" . $settings['Deadline'] . "');";
+            $sql = "INSERT INTO `project_components` (`ProjectId`, `Task_type`, `Task_title`, `Task_data`, `Deadline`) VALUES ('" . $settings['ProjectId'] . "','" . $settings['Task_type'] . "','" . $settings['Task_title'] . "','" . $settings['Task_data'] . "','" . $settings['Deadline'] . "');";
         } else {
-            $sql = "INSERT INTO `project_components` (`ProjectId`, `Task_type`, `Task_title`, `Task_data`, `Task_members`, `Deadline`) VALUES ('" . $settings['ProjectId'] . "','" . $settings['Task_type'] . "','" . $settings['Task_title'] . "','" . $settings['Task_data'] . "',NULL,NULL);";
+            $sql = "INSERT INTO `project_components` (`ProjectId`, `Task_type`, `Task_title`, `Task_data`, `Deadline`) VALUES ('" . $settings['ProjectId'] . "','" . $settings['Task_type'] . "','" . $settings['Task_title'] . "','" . $settings['Task_data'] . "',NULL);";
         }
         $connection = Database::runQuery_mysqli();
         $connection->query($sql);
         $connection->close();
         echo 200;
-        exit();
+    }
+
+    static function saveTask()
+    {
+        $settings = json_decode($_POST['task'], true);
+
+        if ($settings['Deadline'] != "NULL") {
+            $sql = "UPDATE `project_components` SET `Task_title`='" . $settings['Task_title'] . "', `Task_data`='" . $settings['Task_data'] . "', `Deadline`='" . $settings['Deadline'] . "' WHERE `ID`=" . $_POST['ID'] . ";";
+        } else {
+            $sql = "UPDATE `project_components` SET `Task_title`='" . $settings['Task_title'] . "', `Task_data`='" . $settings['Task_data'] . "', `Deadline`=NULL WHERE `ID`=" . $_POST['ID'] . ";";
+        }
+        $connection = Database::runQuery_mysqli();
+        $connection->query($sql);
+        $connection->close();
+        echo 200;
     }
 
     static function saveProjectSettings()
@@ -103,29 +134,6 @@ class projectManager
         if (in_array("admin", $_SESSION['groups'])) {
 
             $settings = json_decode($_POST['settings'], true);
-
-            // For every member in array add to database
-            $members = $settings['Members'];
-            $membersString = implode(',', $members);
-            foreach ($members as $member) {
-                $connection = Database::runQuery_mysqli();
-
-                // Check if the record already exists
-                $sql = "SELECT * FROM `project_members` WHERE `ProjectID` = " . $_POST['id'] . " AND `UserID` = " . $member;
-                $result = $connection->query($sql);
-
-                // If the record doesn't exist, insert it
-                if ($result->num_rows == 0) {
-                    $sql = "INSERT INTO `project_members` (`ProjectID`, `UserID`) VALUES (" . $_POST['id'] . "," . $member . ")";
-                    $connection->query($sql);
-                }
-
-                // Delete all other members
-                $sql = "DELETE FROM `project_members` WHERE `ProjectID` = " . $_POST['id'] . " AND `UserID` NOT IN (" . $membersString . ")";
-                $connection->query($sql);
-
-                $connection->close();
-            }
 
             $connection = Database::runQuery_mysqli();
 
@@ -147,6 +155,8 @@ class projectManager
             $connection->close();
             echo 200;
             exit();
+        } else {
+            echo 403;
         }
     }
 
@@ -193,6 +203,35 @@ class projectManager
         exit();
     }
 
+    static function saveProjectMembers()
+    {
+        // For every member in array add to database
+
+        $members = json_decode($_POST['Members'], true);
+        $membersString = implode(",", $members);
+
+        foreach ($members as $member) {
+            $connection = Database::runQuery_mysqli();
+
+            // Check if the record already exists
+            $sql = "SELECT * FROM `project_members` WHERE `ProjectID` = " . $_POST['id'] . " AND `UserID` = " . $member;
+            $result = $connection->query($sql);
+
+            // If the record doesn't exist, insert it
+            if ($result->num_rows == 0) {
+                $sql = "INSERT INTO `project_members` (`ProjectID`, `UserID`) VALUES (" . $_POST['id'] . "," . $member . ")";
+                $connection->query($sql);
+            }
+
+            // Delete all other members
+            $sql = "DELETE FROM `project_members` WHERE `ProjectID` = " . $_POST['id'] . " AND `UserID` NOT IN (" . $membersString . ")";
+            $connection->query($sql);
+
+            $connection->close();
+        }
+        echo 200;
+    }
+
     static function removeMemberFromProject()
     {
         if (in_array("admin", $_SESSION['groups'])) {
@@ -202,11 +241,13 @@ class projectManager
             $connection->close();
             echo 200;
             exit();
+        } else {
+            echo 403;
         }
     }
 }
 
-if (isset ($_POST['mode'])) {
+if (isset($_POST['mode'])) {
     //Set timezone to the computer's timezone.
     date_default_timezone_set('Europe/Budapest');
 
@@ -224,8 +265,16 @@ if (isset ($_POST['mode'])) {
         case 'getProjectTasks':
             echo projectManager::getProjectTasks();
             break;
+
+        case 'getTask':
+            echo projectManager::getTask();
+            break;
+
         case 'createNewTask':
             echo projectManager::createNewTask();
+            break;
+        case 'saveTask':
+            echo projectManager::saveTask();
             break;
 
         case 'saveProjectSettings':
@@ -243,6 +292,9 @@ if (isset ($_POST['mode'])) {
             break;
         case 'getProjectMembers':
             echo projectManager::getProjectMembers();
+            break;
+        case 'saveProjectMembers':
+            echo projectManager::saveProjectMembers();
             break;
         case 'removeMemberFromProject':
             echo projectManager::removeMemberFromProject();

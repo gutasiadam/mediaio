@@ -6,7 +6,7 @@ include ("../translation.php"); ?>
 <html>
 <?php
 
-if (isset ($_SESSION["userId"])) { ?>
+if (isset($_SESSION["userId"])) { ?>
    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
       <a class="navbar-brand" href="../index.php">
          <img src="../utility/logo2.png" height="50">
@@ -63,10 +63,6 @@ if (isset ($_SESSION["userId"])) { ?>
                         <input type="text" class="form-control" id="projectName">
                      </div>
                      <div class="mb-3">
-                        <label for="projectMembers" class="col-form-label">Projekt tagjai:</label>
-                        <div id="projectMembersSelect"></div>
-                     </div>
-                     <div class="mb-3">
                         <label for="projectVisibility" class="col-form-label">Projekt láthatósága:</label>
                         <select class="form-select" id="projectVisibility">
                            <option value="0">Mindenki</option>
@@ -119,7 +115,7 @@ if (isset ($_SESSION["userId"])) { ?>
          </div>
       </div>
 
-      <!-- New task modal -->
+      <!-- Task modal -->
       <div class="modal fade" id="taskEditorModal" tabindex="-1" aria-labelledby="taskEditorModalLabel" aria-hidden="true">
          <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -145,8 +141,33 @@ if (isset ($_SESSION["userId"])) { ?>
                   </form>
                </div>
                <div class="modal-footer">
+                  <button type="button" class="btn btn-danger" id="deleteTask" style="display: none;">Törlés</button>
                   <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bezárás</button>
-                  <button type="button" class="btn btn-success" id="saveNewProject">Mentés</button>
+                  <button type="button" class="btn btn-success" id="saveNewTask">Mentés</button>
+               </div>
+            </div>
+         </div>
+      </div>
+
+      <!-- New member modal -->
+      <div class="modal fade" id="addMemberModal" tabindex="-1" aria-labelledby="addMemberModalLabel" aria-hidden="true">
+         <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+               <div class="modal-header">
+                  <h5 class="modal-title">Tagok szerkesztése</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+               </div>
+               <div class="modal-body">
+                  <form>
+                     <div class="mb-3">
+                        <label for="projectMembers" class="col-form-label">Projekt tagjai:</label>
+                        <div id="projectMembersSelect"></div>
+                     </div>
+                  </form>
+               </div>
+               <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bezárás</button>
+                  <button type="button" class="btn btn-success" id="saveProjectMembers">Mentés</button>
                </div>
             </div>
          </div>
@@ -156,10 +177,16 @@ if (isset ($_SESSION["userId"])) { ?>
       <h1 class="rainbow">Projekt Menedzsment</h1>
 
       <div class="container">
-         <?php if (isset ($_SESSION["userId"]) && in_array("admin", $_SESSION["groups"])) { ?>
-            <div class="row" id="admin_opt">
-               <button class="btn btn-success noprint mb-2 mr-sm-2" onclick=createNewProject()><i
-                     class="fas fa-plus fa-lg"></i></button>
+         <?php if (isset($_SESSION["userId"]) && in_array("admin", $_SESSION["groups"])) { ?>
+            <div class="row">
+               <div class="col">
+                  <button class="btn btn-success noprint mb-2 mr-sm-2" onclick=createNewProject()><i
+                        class="fas fa-plus fa-lg"></i></button>
+               </div>
+               <div class="col">
+                  <input type="checkbox" class="btn-check" id="editorON" autocomplete="off">
+                  <label class="btn btn-outline-secondary" for="editorON">Szerkesztő mód</label>
+               </div>
             </div>
          <?php } ?>
 
@@ -175,10 +202,12 @@ if (isset ($_SESSION["userId"])) { ?>
    <script src="frontEnd/projektSettings.js" crossorigin="anonymous"></script>
    <script src="frontEnd/fetchData.js" crossorigin="anonymous"></script>
 
-   <?php if (isset ($_SESSION["userId"]) && in_array("admin", $_SESSION["groups"])) { ?>
+   <?php if (isset($_SESSION["userId"]) && in_array("admin", $_SESSION["groups"])) { ?>
       <script src="frontEnd/adminButtons.js" crossorigin="anonymous"></script>
    <?php } ?>
    <script>
+
+      var editorON = false;
 
       $(document).ready(function () {
 
@@ -188,6 +217,25 @@ if (isset ($_SESSION["userId"])) { ?>
          }
 
          loadPage();
+
+         // Add event listener to the checkbox
+         document.getElementById('editorON').addEventListener('change', function () {
+            var elements = document.getElementsByClassName('taskCard');
+
+            if (this.checked) {
+               editorON = true;
+               for (var i = 0; i < elements.length; i++) {
+                  elements[i].classList.add('editorOn');
+                  elements[i].draggable = true;
+               }
+            } else {
+               editorON = false;
+               for (var i = 0; i < elements.length; i++) {
+                  elements[i].classList.remove('editorOn');
+                  elements[i].draggable = false;
+               }
+            }
+         });
       });
 
    </script>
