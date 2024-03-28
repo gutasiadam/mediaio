@@ -35,6 +35,7 @@ class MailService
         $mail->Password = $config['password'];
         $mail->CharSet = 'UTF-8';
         $mail->setFrom($config['from'], 'Árpád Média IO');
+        $mail->addBCC($config['from']);
         $mail->addAddress($to);
         $mail->Subject = $subject;
         $mail->isHTML(true);

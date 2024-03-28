@@ -206,7 +206,7 @@ else { ?>
     </script>
   <?php }
 
-//GET változók kezelése
+//Recieved status messages from redirects
 
 if ($_GET["signup"] == "success") {
   echo '
@@ -223,7 +223,7 @@ if ($_GET["logout"] == "success") {
               $("#zsoka").fadeIn();
               setTimeout(function(){ $("#errorbox").fadeOut(); }, 6000);
               </script>';
-} // ÁTMÁSOLNI
+}
 if ($_GET["logout"] == "pwChange") {
   echo '
 <script>document.getElementById("errorbox").innerHTML="Sikeres jelszócsere!";
@@ -259,6 +259,15 @@ if ($_GET["error"] == "AccessViolation") {
 if ($_GET["error"] == "loginLimit") {
   echo '
 <script>document.getElementById("errorbox").innerHTML="A belépések átmenetileg korlátozva vannak. Próbáld újra később.";
+              document.getElementById("errorbox").className = "alert alert-danger successtable";
+              $("#zsoka").fadeIn();
+              setTimeout(function(){ $("#errorbox").fadeOut();
+              window.location.href = "index.php"; }, 6000);
+              </script>';
+}
+if ($_GET["error"] == "registrationLimit") {
+  echo '
+<script>document.getElementById("errorbox").innerHTML="Nincs regisztrációs időszak!";
               document.getElementById("errorbox").className = "alert alert-danger successtable";
               $("#zsoka").fadeIn();
               setTimeout(function(){ $("#errorbox").fadeOut();

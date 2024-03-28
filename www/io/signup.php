@@ -1,4 +1,14 @@
 <?php
+//Read the loginPageSettings.json file. If registrationLimit is true, then redirect to the index.php page.
+
+$file = fopen("./data/loginPageSettings.json", "r");
+$message = fread($file, filesize("./data/loginPageSettings.json"));
+$message = json_decode($message, true);
+if($message["registrationLimit"] == "true"){
+    header("Location: ../index.php?error=registrationLimit");
+}
+fclose($file);
+
     if(isset($_SESSION['userId'])){
         #date_default_timezone_set("Europe/Budapest"); 
         echo '<nav class="navbar navbar-expand-lg navbar-dark bg-dark>

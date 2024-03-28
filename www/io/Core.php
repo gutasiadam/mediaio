@@ -4,6 +4,8 @@ namespace Mediaio;
 require_once 'Database.php';
 require_once 'Mailer.php';
 require_once 'Accounting.php';
+
+use Google\Service\AlertCenter\User;
 use Mediaio\Database;
 use Mediaio\Accounting;
 use Mediaio\MailService;
@@ -159,7 +161,7 @@ class Core{
                             }
                         }else{
 
-                            Accounting::logEvent(0,"login_NoUser");
+                            Accounting::logEvent(0,"login_NoUser", '{"username":"'.$userName.'"}');
                             header("Location: ../index.php?error=NoUser");
                             exit();
                         }
@@ -214,7 +216,9 @@ class Core{
                                 ';
                                 try {
                                     MailService::sendContactMail('MediaIO - jelszócsere',$_SESSION['email'],'Sikeres jelszócsere!',$content);
-                                    header("Location: ./profile/chPwd.php?error=none");
+                                    //logout the user with userlogging
+                                    $this->logoutUser();
+                                    header("Location: ./index.php?logout=pwChange");
                                 } catch (\Exception $e) {
                                     echo "Mailer Error: " . $e;
                                 }

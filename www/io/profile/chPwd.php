@@ -67,10 +67,7 @@ if (isset($_SESSION['userId'])) { ?>
     } else if ($_GET['error'] == 'OldPwdError') {
       echo '<tr><td><h5 class="registererror text-danger">Hibásan adtad meg a jelenlegi jelszavadat!</h5></td></tr>';
     } else if ($_GET['error'] == 'none') {
-      echo '<tr><td><p class="success">Successfully changed password! Please log out in order to use your brand new, shiny password! </p></td></tr>';
-      session_unset();
-      session_destroy();
-      header("Location: ../utility/userLogging.php?logout-submit=1");
+      //Obsolte branch, Core.php handles the redirection
     }
   }
   echo "</table>";
