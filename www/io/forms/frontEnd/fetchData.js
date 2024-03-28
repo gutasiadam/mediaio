@@ -19,7 +19,7 @@ async function FetchData(formId, formHash) {
             }
 
             if (response == 404) {
-                window.location.href = "index.php?invalidID";
+               window.location.href = "index.php?invalidID";
             }
 
             var form = JSON.parse(response);
@@ -90,9 +90,8 @@ async function fetchAnswers(formId, formHash) {
 }
 
 
-async function loadPage(formId, formHash, state) {
+async function loadPage(form, state) {
 
-    var form = await FetchData(formId, formHash);
     var formElements = JSON.parse(form.Data);
     var formName = form.Name;
     var formStatus = JSON.parse(form.Status);

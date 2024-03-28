@@ -8,11 +8,6 @@ function generateElement(type, id, place, settings, state, answer = "") {
         var extraOptions = JSON.parse(settings).options;
     }
 
-    //parse answer
-    if (answer != "") {
-        answer = JSON.parse(answer);
-    }
-
     //Create div, which will contain the element
     var div = document.createElement("div");
     div.id = type + "-" + id;

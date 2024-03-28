@@ -289,7 +289,7 @@ error_reporting(E_ERROR | E_PARSE);
 
 
   function openForm(formId) {
-    window.location.href = "viewform.php?formId=" + formId;
+    window.open("viewform.php?formId=" + formId, "_self");
   }
 
   function editForm(formId) {

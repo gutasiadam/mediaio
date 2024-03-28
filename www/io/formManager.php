@@ -51,7 +51,7 @@ class formManager
   static function listForms()
   {
     $sql = "SELECT * FROM forms WHERE AccessRestrict='0';";
-    if (isset($_SESSION['userId'])) {
+    if (isset ($_SESSION['userId'])) {
       $sql = "SELECT * FROM forms WHERE AccessRestrict IN ('0', '2');";
       if (in_array("admin", $_SESSION['groups'])) {
         $sql = "SELECT * FROM forms";
@@ -128,9 +128,9 @@ class formManager
   static function getForm($id, $formHash)
   {
     if ($id != null) {
-      if (isset($_SESSION['userId']) && in_array("admin", $_SESSION['groups'])) {
+      if (isset ($_SESSION['userId']) && in_array("admin", $_SESSION['groups'])) {
         $sql = "SELECT * FROM forms WHERE ID=" . $id . ";";
-      } else if (isset($_SESSION['userId'])) {
+      } else if (isset ($_SESSION['userId'])) {
         $sql = "SELECT * FROM forms WHERE ID=" . $id . " AND AccessRestrict IN ('0','2') AND Status='1';";
       } else {
         $sql = "SELECT * FROM forms WHERE ID=" . $id . " AND AccessRestrict='0' AND Status='1';";
@@ -173,9 +173,15 @@ class formManager
     if ($id == -1) {
       $id = formManager::getIdFromHash($formHash);
     }
-    $sql = "INSERT INTO `formanswers` (`ID`, `FormID`, `userID`, `userIp`, `UserAnswers`, `FormState`) VALUES (NULL,'" . $id . "','" . $uid . "','" . $ip . "','" . $answers . "','" . $form . "');";
+
     $connection = Database::runQuery_mysqli();
-    $connection->query($sql);
+
+    $sql = "INSERT INTO `formanswers` (`ID`, `FormID`, `userID`, `userIp`, `UserAnswers`, `FormState`) VALUES (NULL, ?, ?, ?, ?, ?);";
+    $stmt = $connection->prepare($sql);
+    $stmt->bind_param("sssss", $id, $uid, $ip, $answers, $form);
+
+    $stmt->execute();
+
     $connection->close();
     echo 200;
     exit();
@@ -227,7 +233,7 @@ class formManager
 
 
 
-if (isset($_POST['mode'])) {
+if (isset ($_POST['mode'])) {
 
   //Set timezone to the computer's timezone.
   date_default_timezone_set('Europe/Budapest');

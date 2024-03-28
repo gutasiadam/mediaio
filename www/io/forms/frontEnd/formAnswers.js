@@ -135,8 +135,7 @@ function showTable() {
         return elementAnswer;
     }
 
-    function getScaleGridAnswer(value) {
-        var submission = JSON.parse(value);
+    function getScaleGridAnswer(submission) {
         var answer = "";
 
         function getGrade(sub) {

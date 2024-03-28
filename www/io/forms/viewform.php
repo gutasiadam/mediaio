@@ -4,6 +4,10 @@ include ("header.php");
 include ("../translation.php"); ?>
 <html>
 
+<script src="frontEnd/elementGenerator.js" type="text/javascript"></script>
+<script src="frontEnd/formSubmission.js" type="text/javascript"></script>
+<script src="frontEnd/fetchData.js" type="text/javascript"></script>
+
 <body>
 
    <div class="container" id="form-container">
@@ -18,31 +22,29 @@ include ("../translation.php"); ?>
 
 </body>
 
-<script src="frontEnd/elementGenerator.js" type="text/javascript"></script>
-<script src="frontEnd/formSubmission.js" type="text/javascript"></script>
-<script src="frontEnd/fetchData.js" type="text/javascript"></script>
 <script>
    let isAnonim = 0;
    <?php if (isset ($_GET['success'])) { ?>
 
       $(document).ready(function () {
 
-         var formId = <?php if (isset ($_GET['formId'])) {
+         let formId = <?php if (isset ($_GET['formId'])) {
             echo $_GET['formId'];
          } else {
             echo '-1';
          } ?>;
-         var formHash = <?php if (isset ($_GET['form'])) {
+         let formHash = <?php if (isset ($_GET['form'])) {
             echo '"' . $_GET['form'] . '"';
          } else {
             echo 'null';
          } ?>;
 
          async function loadPageAsync() {
-            await loadPage(formId, formHash, "success");
+            var form = await FetchData(formId, formHash);
+            await loadPage(form, "success");
 
             var formContainer = document.getElementById("form-body");
-            
+
             <?php if (isset ($_SESSION['userId']) && in_array("admin", $_SESSION["groups"])) { ?>
                //Add view answers button
                var viewAnswers = document.createElement("button");
@@ -67,20 +69,22 @@ include ("../translation.php"); ?>
 
    <?php if ((isset ($_GET['formId']) || isset ($_GET['form'])) && !isset ($_GET['success'])) { ?>
 
-      $(document).ready(function () {
-         var formId = <?php if (isset ($_GET['formId'])) {
-            echo $_GET['formId'];
-         } else {
-            echo '-1';
-         } ?>;
-         var formHash = <?php if (isset ($_GET['form'])) {
-            echo '"' . $_GET['form'] . '"';
-         } else {
-            echo 'null';
-         } ?>;
+      let formId = <?php if (isset ($_GET['formId'])) {
+         echo $_GET['formId'];
+      } else {
+         echo '-1';
+      } ?>;
+      let formHash = '<?php if (isset ($_GET['form'])) {
+         echo '"' . $_GET['form'] . '"';
+      } else {
+         echo 'null';
+      } ?>';
 
-         async function loadPageAsync() {
-            await loadPage(formId, formHash, "fill");
+      $(document).ready(function () {
+
+         async function loadPageAsync(formId, formHash) {
+            var form = await FetchData(formId, formHash);
+            await loadPage(form, "fill");
 
             <?php if (isset ($_SESSION['userId']) && in_array("admin", $_SESSION["groups"])) { ?>
                var editForm = document.createElement("button");
@@ -97,9 +101,28 @@ include ("../translation.php"); ?>
                console.log(editForm);
                document.getElementById("form_name").appendChild(editForm);
             <?php } ?>
+
+            reloadUserInput();
          }
 
-         loadPageAsync();
+         loadPageAsync(formId, formHash);
+
+         let cookieSaveTimeout;
+
+         function handleEvent() {
+            // If there's a timeout already, clear it
+            if (cookieSaveTimeout) {
+               clearTimeout(cookieSaveTimeout);
+            }
+
+            // Set a new timeout
+            cookieSaveTimeout = setTimeout(function () {
+               saveUserInputToCookie();
+            }, 2000); // 5000 milliseconds = 5 seconds
+         }
+
+         document.addEventListener("click", handleEvent);
+         document.addEventListener("keydown", handleEvent);
       });
 
    <?php } ?>
@@ -112,16 +135,6 @@ include ("../translation.php"); ?>
 
       form.addEventListener("submit", function (event) {
          event.preventDefault();
-         var formId = <?php if (isset ($_GET['formId'])) {
-            echo $_GET['formId'];
-         } else {
-            echo '-1';
-         } ?>;
-         var formHash = <?php if (isset ($_GET['form'])) {
-            echo '"' . $_GET['form'] . '"';
-         } else {
-            echo 'null';
-         } ?>;
          submitAnswer(formId, formHash, isAnonim);
       });
 

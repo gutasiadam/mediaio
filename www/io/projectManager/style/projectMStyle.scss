@@ -1,6 +1,19 @@
 .container {
 
-    max-width: 90vw;
+    max-width: 90dvw;
+}
+
+.optionsHolder {
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+
+    * {
+        width: fit-content;
+    }
 }
 
 .projectHolder {
@@ -10,7 +23,7 @@
     gap: 15px;
 
     overflow: auto;
-    max-height: 77dvh;
+    max-height: 74dvh;
 
     &::-webkit-scrollbar-track {
         background: rgb(255, 255, 255);
@@ -37,7 +50,7 @@
     min-width: 350px;
     max-width: 350px;
 
-    max-height: 77dvh;
+    max-height: 74dvh;
     min-height: 60dvh;
 }
 
@@ -78,7 +91,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    max-height: 66dvh;
+    max-height: 63dvh;
     overflow: auto;
 
     &::-webkit-scrollbar-track {
@@ -164,6 +177,10 @@
     }
 }
 
+.taskCard {
+    width: 300px;
+}
+
 .editorOn {
     cursor: pointer;
 }
@@ -171,13 +188,43 @@
 /* Deadline states */
 
 .soon {
-    border: 2px solid rgb(241, 183, 24)
+    border: 2px solid rgb(241, 227, 24);
+    animation: pulseSoon 5s ease-in-out infinite alternate;
 }
 
-.now {
-    border: 2px solid rgb(56, 231, 64)
+.future {
+    border: 2px solid rgb(56, 231, 64);
+    animation: pulseFuture 5s ease-in-out infinite alternate;
 }
 
 .overdue {
     border: 2px solid rgb(255, 0, 0);
+    animation: pulseOverdue 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes pulseSoon {
+    0% {
+        border-color: rgb(241, 227, 24);
+    }
+    100% {
+        border-color: rgb(255, 198, 11);
+    }
+}
+
+@keyframes pulseFuture {
+    0% {
+        border-color: rgb(56, 231, 64);
+    }
+    100% {
+        border-color: rgb(26, 177, 51);
+    }
+}
+
+@keyframes pulseOverdue {
+    0% {
+        border-color: rgb(255, 39, 39);
+    }
+    100% {
+        border-color: rgba(71, 17, 17, 0)
+    }
 }

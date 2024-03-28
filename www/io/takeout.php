@@ -10,8 +10,8 @@ include "header.php";
 
 
 
-if (!isset($_SESSION['userId'])) {
-  header("Location: index.php?error=AccessViolation");
+if (!isset ($_SESSION["userId"])) {
+  echo "<script>window.location.href = '../index.php?error=AccessViolation';</script>";
   exit();
 }
 

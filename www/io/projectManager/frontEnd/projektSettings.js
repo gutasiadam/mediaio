@@ -91,6 +91,8 @@ async function saveProjectSettings(proj_id) {
 
     if (projectDate && projectTime) {
         projectDeadline = projectDate + " " + projectTime;
+    } else if (projectDate) {
+        projectDeadline = projectDate + " 23:59:59";
     }
 
     // Get the project visibility
@@ -158,45 +160,6 @@ async function deleteProject(proj_id) {
     } else {
         console.error("Error: Project name does not match");
         return;
-    }
-
-}
-
-
-
-// Task settnigs modal
-
-async function saveTaskSettings(task_id) {
-
-    // Get the task name
-    var taskName = document.getElementById("taskName").value;
-
-    // Get the task deadline
-    var taskDate = document.getElementById("taskDate").value;
-    var taskTime = document.getElementById("taskTime").value;
-
-    // Combine the date and time
-    let taskDeadline = "NULL";
-
-    if (taskDate && taskTime) {
-        taskDeadline = taskDate + " " + taskTime;
-    }
-
-    // Get the task description
-    var taskDescription = document.getElementById("taskData").value;
-
-    // Save the task settings
-    var response = await saveTaskToDB(task_id, taskName, taskDeadline, taskDescription);
-
-    if (response == 500) {
-        console.error("Error: 500");
-        return;
-    }
-
-    if (response == 200) {
-        location.reload();
-        // Close the modal
-        $('#taskSettingsModal').modal('hide');
     }
 
 }

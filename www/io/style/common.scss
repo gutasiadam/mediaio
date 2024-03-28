@@ -1510,6 +1510,10 @@ nav .navbarPhP {
 
 .question{
     overflow: auto;
+     
+    label.form-label {
+        font-weight: bold;
+    }
 }
 
 /* Grid css */

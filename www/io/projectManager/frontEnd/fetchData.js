@@ -143,6 +143,62 @@ async function fetchTask(task_id) {
     });
 }
 
+// FETCH PROJECT USER INTERACTIONS
+
+async function fetchUIs(task_id) {
+    console.info("Loading user interactions...");
+
+    return new Promise(async (resolve, reject) => {
+        try {
+            let response;
+
+            response = await $.ajax({
+                type: "POST",
+                url: "../projectManager.php",
+                data: { mode: "getUIs", id: task_id }
+            });
+
+            if (response == 500) {
+                window.location.href = "index.php?serverError";
+            }
+
+            //console.log(response);
+
+            resolve(response);
+        } catch (error) {
+            console.error("Error:", error);
+            reject(error);
+        }
+    });
+}
+
+async function fetchUI(task_id) {
+    console.info("Loading user interaction...");
+
+    return new Promise(async (resolve, reject) => {
+        try {
+            let response;
+
+            response = await $.ajax({
+                type: "POST",
+                url: "../projectManager.php",
+                data: { mode: "getUI", ID: task_id }
+            });
+
+            if (response == 500) {
+                window.location.href = "index.php?serverError";
+            }
+
+            //console.log(response);
+
+            resolve(response);
+        } catch (error) {
+            console.error("Error:", error);
+            reject(error);
+        }
+    });
+}
+
 // SAVE TASKS
 
 async function createNewTaskDB(task) {
@@ -166,7 +222,7 @@ async function createNewTaskDB(task) {
                 window.location.href = "index.php?serverError";
             }
 
-            //console.log(response);
+            console.log(response);
 
             resolve(response);
         } catch (error) {
@@ -175,12 +231,13 @@ async function createNewTaskDB(task) {
         }
     });
 }
-async function saveTaskToDB(task_id, taskName, taskDeadline, taskData) {
+async function saveTaskToDB(task_id, taskName, taskType, taskDeadline, taskData) {
     console.info("Saving task...");
 
     var task = {
         "Task_title": taskName,
         "Task_data": taskData,
+        "Task_type": taskType,
         "Deadline": taskDeadline
     };
 
@@ -194,6 +251,63 @@ async function saveTaskToDB(task_id, taskName, taskDeadline, taskData) {
                 type: "POST",
                 url: "../projectManager.php",
                 data: { mode: "saveTask", ID: task_id, task: taskJson }
+            });
+
+            if (response == 500) {
+                window.location.href = "index.php?serverError";
+            }
+
+            console.log(response);
+
+            resolve(response);
+        } catch (error) {
+            console.error("Error:", error);
+            reject(error);
+        }
+    });
+}
+
+async function submitTaskToDB(task_id, taskData) {
+    console.info("Submitting task...");
+
+
+    var taskJson = JSON.stringify(taskData);
+
+    return new Promise(async (resolve, reject) => {
+        try {
+            let response;
+
+            response = await $.ajax({
+                type: "POST",
+                url: "../projectManager.php",
+                data: { mode: "submitTask", ID: task_id, task: taskJson }
+            });
+
+            if (response == 500) {
+                window.location.href = "index.php?serverError";
+            }
+
+            console.log(response);
+
+            resolve(response);
+        } catch (error) {
+            console.error("Error:", error);
+            reject(error);
+        }
+    });
+}
+
+async function deleteTaskFromDB(task_id) {
+    console.info("Deleting task...");
+
+    return new Promise(async (resolve, reject) => {
+        try {
+            let response;
+
+            response = await $.ajax({
+                type: "POST",
+                url: "../projectManager.php",
+                data: { mode: "deleteTask", ID: task_id }
             });
 
             if (response == 500) {
@@ -382,6 +496,35 @@ async function fetchProjectMembers(proj_id) {
                 type: "POST",
                 url: "../projectManager.php",
                 data: { mode: "getProjectMembers", id: proj_id }
+            });
+
+            if (response == 500) {
+                window.location.href = "index.php?serverError";
+            }
+
+            //console.log(response);
+
+            resolve(response);
+        } catch (error) {
+            console.error("Error:", error);
+            reject(error);
+        }
+    });
+}
+
+// GET TASK MEMBERS
+
+async function fetchTaskMembers(task_id) {
+    console.info("Loading task members...");
+
+    return new Promise(async (resolve, reject) => {
+        try {
+            let response;
+
+            response = await $.ajax({
+                type: "POST",
+                url: "../projectManager.php",
+                data: { mode: "getTaskMembers", id: task_id }
             });
 
             if (response == 500) {

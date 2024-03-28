@@ -93,7 +93,7 @@ async function generateProjectBody(project) {
     // create li elements
     let text = document.createElement("li");
     text.classList.add("dropdown-item");
-    text.innerHTML = "Szöveg";
+    text.innerHTML = "<i class='fas fa-paragraph fa-sm'></i> Szöveg";
     text.style.cursor = "pointer";
     text.onclick = function () {
         addNewTask(projectID, "text");
@@ -102,13 +102,21 @@ async function generateProjectBody(project) {
 
     let image = document.createElement("li");
     image.classList.add("dropdown-item");
-    image.innerHTML = "Kép";
+    image.innerHTML = "<i class='far fa-image fa-sm'></i> Kép";
     image.style.cursor = "pointer";
     image.onclick = function () {
         addNewTask(projectID, "image");
     }
     ul.appendChild(image);
 
+    let checklist = document.createElement("li");
+    checklist.classList.add("dropdown-item");
+    checklist.innerHTML = "<i class='fas fa-list fa-sm'></i> Lista";
+    checklist.style.cursor = "pointer";
+    checklist.onclick = function () {
+        addNewTask(projectID, "checklist");
+    }
+    ul.appendChild(checklist);
 
     // Create Body for members
     let membersBody = document.createElement("div");
@@ -138,8 +146,10 @@ function colorCardBasedOnDeadline(projectCard, deadline) {
 
         if (diff < 0) {
             projectCard.classList.add("overdue");
-        } else if (diff < 86400000) {
+        } else if (diff < 86400000) {   // 24 hours
             projectCard.classList.add("soon");
+        } else {
+            projectCard.classList.add("future");
         }
     }
 }
@@ -164,24 +174,6 @@ function createDiscription(projectID, Description) {
     return projectDescriptionHolder;
 }
 
-
-async function generateTasks(projectID) {
-    let taskHolder = document.createElement("div");
-    taskHolder.classList.add("taskHolder");
-
-    // Fetch the tasks
-    let tasks = await fetchTasks(projectID);
-
-    // Parse the tasks
-    tasks = JSON.parse(tasks);
-
-    // Append each task to taskHolder
-    for (let i = 0; i < tasks.length; i++) {
-        taskHolder.appendChild(await createTask(tasks[i]));
-    }
-
-    return taskHolder;
-}
 
 async function generateMembers(proj_id) {
     let membersHolder = document.createElement("div");
@@ -237,162 +229,3 @@ async function createMember(member, projectID, memberID) {
     return memberCard;
 }
 
-async function createTask(task) {
-
-    let taskCard = document.createElement("div");
-    taskCard.classList.add("card", "taskCard");
-    taskCard.id = "task-" + task.ID;
-    taskCard.draggable = false; // Make the taskCard draggable
-    taskCard.onclick = function () {
-        openTask(task.ID);
-    }
-
-    if (task.Task_title) {
-        let taskTitle = document.createElement("div");
-        taskTitle.classList.add("card-header", "taskTitle");
-        taskTitle.innerHTML = task.Task_title;
-        taskCard.appendChild(taskTitle);
-    }
-
-    let taskBody = document.createElement("div");
-    taskBody.classList.add("card-body", "taskBody");
-
-    // Generate certain task elements
-
-    switch (task.Task_type) {
-
-        case "text":
-            let text = document.createElement("p");
-            text.classList.add("card-text", "taskText");
-            text.innerHTML = task.Task_data;
-            taskBody.appendChild(text);
-            break;
-
-        case 'image':
-            let image = document.createElement("img");
-            image.classList.add("card-img-top", "taskImage");
-            image.src = task.Task_Image;
-            taskBody.appendChild(image);
-            break;
-    }
-
-    taskCard.appendChild(taskBody);
-
-    return taskCard;
-}
-
-
-function addNewTask(projectID, taskType) {
-    console.log("Adding new " + taskType + " task to project: " + projectID);
-
-    let modalTitle = document.getElementById("newTaskTitle");
-
-
-    switch (taskType) {
-        case "text":
-            document.getElementById("taskData").placeholder = "Szöveg...";
-            modalTitle.innerHTML = "Új feladat hozzáadása (szöveg)";
-            break;
-
-        case "image":
-            document.getElementById("taskData").placeholder = "Kép URL...";
-            modalTitle.innerHTML = "Új feladat hozzáadása (kép)";
-            break;
-    }
-
-    // Hide delete button if shown
-    let deleteButton = document.getElementById("deleteTask");
-    deleteButton.style.display = "none";
-
-    // Display task editor modal
-    $('#taskEditorModal').modal('show');
-
-    // Get the save button
-    let saveButton = document.getElementById('saveNewTask');
-
-    // Add a click event listener to the button
-    saveButton.addEventListener('click', async function () {
-        // Get task title-name
-        let taskTitle = document.getElementById('taskName').value;
-
-        // Get the task data
-        let taskData = document.getElementById('taskData').value;
-
-        let deadline = "NULL";
-
-
-        let date = document.getElementById('taskDate').value;
-        let time = document.getElementById('taskTime').value;
-
-        if (date && time) {
-            // Combine the date and time
-            deadline = date + " " + time;
-        }
-
-        task = {
-            ProjectId: projectID,
-            Task_type: taskType,
-            Task_title: taskTitle,
-            Task_data: taskData,
-            Deadline: deadline
-        }
-
-        // Save the task
-        if (await createNewTaskDB(task) == 200) {
-            console.log("Task saved successfully");
-            location.reload();
-        };
-    });
-
-}
-
-
-
-async function openTask(TaskId) {
-    if (!editorON) {
-        return;
-    }
-    console.log("Opening task: " + TaskId);
-
-    // Fetch task
-    let task = await fetchTask(TaskId);
-    task = JSON.parse(task);
-
-    let modalTitle = document.getElementById("newTaskTitle");
-    modalTitle.innerHTML = "Feladat szerkesztése";
-
-    // Get the task title
-    let taskTitle = task.Task_title;
-    document.getElementById("taskName").value = taskTitle;
-
-    // Get the task data
-    let taskData = task.Task_data;
-    document.getElementById("taskData").value = taskData;
-
-
-    // Get the task deadline
-    let deadline = task.Deadline;
-    if (deadline) {
-        let date = deadline.split(" ")[0];
-        let time = deadline.split(" ")[1];
-        document.getElementById("taskDate").value = date;
-        document.getElementById("taskTime").value = time;
-    }
-
-
-    // Add delete button
-    let deleteButton = document.getElementById("deleteTask");
-    deleteButton.style.display = "block";
-    deleteButton.onclick = function () {
-        deleteTask(TaskId);
-    }
-
-    // Add save button
-    let saveButton = document.getElementById("saveNewTask");
-    saveButton.onclick = function () {
-        saveTaskSettings(TaskId);
-    }
-
-    // Display task editor modal
-    $('#taskEditorModal').modal('show');
-}
