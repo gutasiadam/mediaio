@@ -56,9 +56,8 @@ function removeMemberFromProject(projectID, memberID) {
 
 async function editProjectMembersButton(projectID) {
     let addMember = document.createElement("button");
-    addMember.classList.add("btn", "btn-secondary", "btn-lg");
+    addMember.classList.add("btn", "btn-secondary", "btn-lg", "mb-2");
     addMember.innerHTML = "<i class='far fa-edit'></i>";
-    addMember.style.margin = "auto auto";
     addMember.onclick = function () {
         editProjectMembers(projectID);
     }

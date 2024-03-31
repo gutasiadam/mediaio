@@ -46,6 +46,12 @@ async function generateProjectBody(project) {
     members.innerHTML = "<button class='nav-link' id='users-tab' data-bs-toggle='tab' data-bs-target='#users-tab-pane-" + projectID + "' type='button' role='tab' aria-controls='users-tab-pane' aria-selected='false'>Tagok</button>";
     nav.appendChild(members);
 
+    if (project.Deadline) {
+        let deadline = document.createElement("li");
+        deadline.classList.add("nav-item");
+        deadline.innerHTML = "<a class='nav-link disabled' aria-disabled='true'><b>" + await getDeadline(project.Deadline) + "</b></a>";
+        nav.appendChild(deadline);
+    }
 
     projectHeader.appendChild(nav);
 
@@ -118,6 +124,15 @@ async function generateProjectBody(project) {
     }
     ul.appendChild(checklist);
 
+    let radio = document.createElement("li");
+    radio.classList.add("dropdown-item");
+    radio.innerHTML = "<i class='fas fa-dot-circle fa-sm'></i> Választós lista";
+    radio.style.cursor = "pointer";
+    radio.onclick = function () {
+        addNewTask(projectID, "radio");
+    }
+    ul.appendChild(radio);
+
     // Create Body for members
     let membersBody = document.createElement("div");
     membersBody.classList.add("card-body", "projectBody", "tab-pane", "fade");
@@ -127,11 +142,16 @@ async function generateProjectBody(project) {
     CardBody.appendChild(membersBody);
 
 
+    try {
+        // Add + button to add new members
+        membersBody.appendChild(await editProjectMembersButton(projectID));
+    } catch (error) {
+        ;
+    }
     // Adding members to the project body
     membersBody.appendChild(await generateMembers(projectID));
 
-    // Add + button to add new members
-    membersBody.appendChild(await editProjectMembersButton(projectID));
+
 
 
     return projectCard;
@@ -146,7 +166,7 @@ function colorCardBasedOnDeadline(projectCard, deadline) {
 
         if (diff < 0) {
             projectCard.classList.add("overdue");
-        } else if (diff < 86400000) {   // 24 hours
+        } else if (diff < (1000 * 60 * 60 * 48)) {   // 48 hours
             projectCard.classList.add("soon");
         } else {
             projectCard.classList.add("future");
@@ -229,3 +249,29 @@ async function createMember(member, projectID, memberID) {
     return memberCard;
 }
 
+
+
+async function getDeadline(deadline) {
+
+    // If there is no deadline
+    if (!deadline) {
+        return "";
+    }
+
+    // Get the deadline
+
+    let now = new Date();
+    let projectDeadline = new Date(deadline);
+
+    let diff = projectDeadline - now;
+    var differenceInSeconds = Math.floor(diff / 1000);
+    var differenceInMinutes = Math.floor(differenceInSeconds / 60);
+    var differenceInHours = Math.floor(differenceInMinutes / 60);
+    var differenceInDays = Math.floor(differenceInHours / 24);
+
+    if (differenceInDays > 0) return differenceInDays + " nap";
+    if (differenceInHours > 0) return differenceInHours + " óra";
+    if (differenceInMinutes > 0) return differenceInMinutes + " perc";
+    if (differenceInSeconds >= 0) return "Épp most";
+    return "Lejárt";
+}

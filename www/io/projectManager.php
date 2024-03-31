@@ -111,50 +111,82 @@ class projectManager
         echo (json_encode($row));
     }
 
-    static function createNewTask()
+    static function getTaskCreator()
     {
-        $settings = json_decode($_POST['task'], true);
-
-        if ($settings['Task_type'] == "checklist") {
-            $settings['Task_data'] = json_encode($settings['Task_data']);
-        }
+        $sql = "SELECT `AddedByUID` FROM `project_components` WHERE `ID`=" . $_POST['ID'] . ";";
         $connection = Database::runQuery_mysqli();
-
-        if ($settings['Deadline'] != "NULL") {
-            $sql = "INSERT INTO `project_components` (`ProjectId`, `Task_type`, `Task_title`, `Task_data`, `isInteractable`, `Deadline`) VALUES (?, ?, ?, ?, ?, ?);";
-            $stmt = $connection->prepare($sql);
-            $stmt->bind_param("ssssss", $settings['ProjectId'], $settings['Task_type'], $settings['Task_title'], $settings['Task_data'], $settings['isInteractable'], $settings['Deadline']);
-        } else {
-            $sql = "INSERT INTO `project_components` (`ProjectId`, `Task_type`, `Task_title`, `Task_data`, `isInteractable`, `Deadline`) VALUES (?, ?, ?, ?, ?, NULL);";
-            $stmt = $connection->prepare($sql);
-            $stmt->bind_param("sssss", $settings['ProjectId'], $settings['Task_type'], $settings['Task_title'], $settings['Task_data'], $settings['isInteractable']);
-        }
-
-        $stmt->execute();
-
+        $result = $connection->query($sql);
         $connection->close();
-        echo 200;
+        $row = $result->fetch_assoc();
+        if ($row == null) {
+            echo 404;
+            exit();
+        }
+        echo (json_encode($row));
     }
 
     static function saveTask()
     {
         $settings = json_decode($_POST['task'], true);
 
-        $connection = Database::runQuery_mysqli();
-
-        // check if task is checklist
-        if ($settings['Task_type'] == "checklist") {
+        if ($settings['Task_type'] == "checklist" || $settings['Task_type'] == "radio") {
             $settings['Task_data'] = json_encode($settings['Task_data']);
         }
 
+        $connection = Database::runQuery_mysqli();
+
+        try {
+            // Get current task members
+            $sql = "SELECT * FROM `project_task_members` WHERE TaskId=" . $_POST['ID'] . ";";
+            $result = $connection->query($sql);
+            $currentMembers = array();
+            while ($row = $result->fetch_assoc()) {
+                $currentMembers[] = $row['UserId'];
+            }
+
+            $_POST['taskMembers'] = json_decode($_POST['taskMembers'], true);
+
+            foreach ($_POST['taskMembers'] as $member) {
+                // Check if the record already exists
+                if (in_array($member, $currentMembers)) {
+                    continue;
+                }
+
+                // If the record doesn't exist, insert it
+                $sql = "INSERT INTO `project_task_members` (`ProjectId`,`TaskId`, `UserId`) VALUES (" . $settings['ProjectId'] . "," . $_POST['ID'] . "," . $member . ")";
+                $connection->query($sql);
+
+                // Send an email to the new member
+                // You would need to implement the ProjectMailer::sendNewTaskMail method
+                //try {
+                //    ProjectMailer::sendNewTaskMail($_POST['ID'], $member);
+                //} catch (\Exception $e) {
+                //    // Do nothing
+                //}
+            }
+
+            // Delete members that were removed
+            $deletedMembers = array_diff($currentMembers, $_POST['taskMembers']);
+            foreach ($deletedMembers as $member) {
+                $sql = "DELETE FROM `project_task_members` WHERE `TaskId`=" . $_POST['ID'] . " AND `UserId`=" . $member . ";";
+                $connection->query($sql);
+            }
+        } catch (\Exception $e) {
+            // Do nothing
+        }
+
         if ($settings['Deadline'] != "NULL") {
-            $sql = "UPDATE `project_components` SET `Task_title`=?, `Task_data`=?, `Deadline`=? WHERE `ID`=?;";
+            $sql = "INSERT INTO `project_components` (`ID`, `ProjectId`, `Task_type`, `Task_title`, `Task_data`, `isInteractable`, `AddedByUID`, `Deadline`) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?) 
+                    ON DUPLICATE KEY UPDATE `Task_title`=?, `Task_data`=?, `Deadline`=?, `isInteractable`=?;";
             $stmt = $connection->prepare($sql);
-            $stmt->bind_param("sssi", $settings['Task_title'], $settings['Task_data'], $settings['Deadline'], $_POST['ID']);
+            $stmt->bind_param("iisssiissssi", $_POST['ID'], $settings['ProjectId'], $settings['Task_type'], $settings['Task_title'], $settings['Task_data'], $settings['isInteractable'], $_SESSION['userId'], $settings['Deadline'], $settings['Task_title'], $settings['Task_data'], $settings['Deadline'], $settings['isInteractable']);
         } else {
-            $sql = "UPDATE `project_components` SET `Task_title`=?, `Task_data`=?, `Deadline`=NULL WHERE `ID`=?;";
+            $sql = "INSERT INTO `project_components` (`ID`, `ProjectId`, `Task_type`, `Task_title`, `Task_data`, `isInteractable`, `AddedByUID`, `Deadline`) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, NULL) 
+                    ON DUPLICATE KEY UPDATE `Task_title`=?, `Task_data`=?, `Deadline`=NULL, `isInteractable`=?;";
             $stmt = $connection->prepare($sql);
-            $stmt->bind_param("ssi", $settings['Task_title'], $settings['Task_data'], $_POST['ID']);
+            $stmt->bind_param("iisssiissi", $_POST['ID'], $settings['ProjectId'], $settings['Task_type'], $settings['Task_title'], $settings['Task_data'], $settings['isInteractable'], $_SESSION['userId'], $settings['Task_title'], $settings['Task_data'], $settings['isInteractable']);
         }
 
         $stmt->execute();
@@ -268,7 +300,11 @@ class projectManager
 
     static function getUsers()
     {
-        $sql = "SELECT `idUsers`, `firstName`, `lastName` FROM `users`;";
+        if (isset($_POST['ID'])) {
+            $sql = "SELECT `idUsers`, `firstName`, `lastName` FROM `users` WHERE `idUsers`=" . $_POST['ID'] . ";";
+        } else {
+            $sql = "SELECT `idUsers`, `firstName`, `lastName` FROM `users`;";
+        }
         $connection = Database::runQuery_mysqli();
         $result = $connection->query($sql);
         $connection->close();
@@ -362,7 +398,7 @@ class projectManager
     }
 }
 
-if (isset ($_POST['mode'])) {
+if (isset($_POST['mode'])) {
     //Set timezone to the computer's timezone.
     date_default_timezone_set('Europe/Budapest');
 
@@ -385,9 +421,10 @@ if (isset ($_POST['mode'])) {
             echo projectManager::getTask();
             break;
 
-        case 'createNewTask':
-            echo projectManager::createNewTask();
+        case 'getTaskCreator':
+            echo projectManager::getTaskCreator();
             break;
+
         case 'saveTask':
             echo projectManager::saveTask();
             break;

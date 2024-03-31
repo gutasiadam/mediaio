@@ -159,6 +159,10 @@ if (!isset ($_SESSION["userId"])) {
                      <input type="date" class="form-control" id="taskDate" placeholder="Nap">
                      <input type="time" class="form-control" id="taskTime" placeholder="Időpont">
                   </div>
+                  <div class="form-check mb-3">
+                     <label for="taskSubmittable" class="form-check-label">Elvégzendő feladat</label>
+                     <input type="checkbox" class="form-check-input" name="taskSubmittable" id="taskSubmittable">
+                  </div>
                </form>
             </div>
             <div class="modal-footer">

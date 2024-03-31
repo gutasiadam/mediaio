@@ -30,7 +30,7 @@ async function createTask(task, projectID) {
     if (task.Task_title) {
         let taskTitle = document.createElement("div");
         taskTitle.classList.add("card-header", "taskTitle");
-        taskTitle.innerHTML = task.Task_title;
+        taskTitle.innerHTML = task.Task_title + " - " + await fetchTaskCreator(task.ID);
         taskCard.appendChild(taskTitle);
     }
 
@@ -55,46 +55,10 @@ async function createTask(task, projectID) {
             taskBody.appendChild(image);
             break;
         case 'checklist':
-            let checklist = document.createElement("div");
-            checklist.classList.add("cheklistHolder");
-
-            let checklistItems = JSON.parse(task.Task_data);
-
-            let UIs = JSON.parse(await fetchUIs(task.ID));
-            let UIData = UIs.map(ui => JSON.parse(ui.Data));
-
-
-            for (let i = 0; i < checklistItems.length; i++) {
-                let checklistItem = document.createElement("div");
-                checklistItem.classList.add("form-check");
-
-                let input = document.createElement("input");
-                input.classList.add("form-check-input");
-                input.type = "checkbox";
-                input.disabled = true;
-                input.id = checklistItems[i].pos;
-                checklistItem.appendChild(input);
-
-                let selectedCount = 0;
-                for (let j = 0; j < UIData.length; j++) {
-                    if (UIData[j].length <= i) {
-                        continue;
-                    }
-                    if (UIData[j][i].checked && UIData[j][i].value == checklistItems[i].value) {
-                        selectedCount += 1;
-                    }
-                }
-
-                let label = document.createElement("label");
-                label.classList.add("form-check-label");
-                label.htmlFor = checklistItems[i].pos;
-                label.innerHTML = checklistItems[i].value + " (" + selectedCount + ")";
-                checklistItem.appendChild(label);
-
-                checklist.appendChild(checklistItem);
-            }
-
-            taskBody.appendChild(checklist);
+            cardCheckOrRadio(taskBody, task, "checklist");
+            break;
+        case 'radio':
+            cardCheckOrRadio(taskBody, task, "radio");
             break;
     }
 
@@ -148,7 +112,7 @@ async function openTask(TaskId, projectID) {
 
     switch (task.Task_type) {
         case "text":
-            textEditor(taskData, taskDataHolder);
+            textEditor(taskDataHolder, taskData);
             break;
         case "image":
             let imageInput = document.createElement("input");
@@ -158,75 +122,53 @@ async function openTask(TaskId, projectID) {
             taskDataHolder.appendChild(imageInput);
             break;
         case "checklist":
-            let checklistItems = JSON.parse(taskData);
-
-            let checklist = document.createElement("ul");
-            checklist.classList.add("list-group", "list-group-flush");
-            checklist.id = "checklist";
-
-            for (let i = 0; i < checklistItems.length; i++) {
-                let checklistItem = document.createElement("li");
-                checklistItem.classList.add("list-group-item");
-                checklistItem.innerHTML = "<input type='text' class='form-control checklistItem' value='" + checklistItems[i].value + "'>";
-                checklist.appendChild(checklistItem);
-            }
-
-            let newChecklistItem = document.createElement("button");
-            newChecklistItem.classList.add("btn", "btn-success", "btn-sm");
-            newChecklistItem.innerHTML = "Új elem";
-            newChecklistItem.onclick = function () {
-                let checklist = document.getElementById("checklist");
-                let checklistItem = document.createElement("li");
-                checklistItem.classList.add("list-group-item");
-                checklistItem.innerHTML = "<input type='text' class='form-control checklistItem' placeholder='Új elem'>";
-                checklist.appendChild(checklistItem);
-            }
-
-            // Prevent form submission
-            newChecklistItem.addEventListener('click', function (event) {
-                event.preventDefault();
-            });
-
-            taskDataHolder.appendChild(checklist);
-            taskDataHolder.appendChild(newChecklistItem);
-
+            generateCheckOrRadioEditor(taskDataHolder, taskData, "checklist");
             break;
+        case "radio":
+            generateCheckOrRadioEditor(taskDataHolder, taskData, "radio");
     }
 
     // Get task assigned users
 
     let projectMembers = await fetchProjectMembers(projectID);
     projectMembers = JSON.parse(projectMembers);
-    console.log(projectMembers);
+    projectMembers = projectMembers.map(member => member.UserID);
+
+    let projectMemberNames = await fetchMemberNames(projectMembers);
+
 
     let taskMembers = await fetchTaskMembers(TaskId);
     taskMembers = JSON.parse(taskMembers);
-    console.log(taskMembers);
+    taskMembers = taskMembers.map(member => member.UserId);
+
 
     let taskMembersHolder = document.getElementById("taskMembers");
     taskMembersHolder.innerHTML = "";
 
     for (let i = 0; i < projectMembers.length; i++) {
-        let member = projectMembers[i];
+        let member = projectMemberNames[i];
         let memberDiv = document.createElement("div");
         memberDiv.classList.add("form-check");
 
         let input = document.createElement("input");
         input.classList.add("form-check-input");
         input.type = "checkbox";
-        input.id = "member-" + member.ID;
-        input.checked = taskMembers.includes(member.ID);
+        input.id = "member-" + member.idUsers;
+        input.checked = taskMembers.includes(member.idUsers);
         memberDiv.appendChild(input);
 
         let label = document.createElement("label");
         label.classList.add("form-check-label");
-        label.htmlFor = "member-" + member.ID;
-        label.innerHTML = member.Name;
+        label.htmlFor = "member-" + member.idUsers;
+        label.innerHTML = member.lastName + " " + member.firstName;
         memberDiv.appendChild(label);
 
         taskMembersHolder.appendChild(memberDiv);
     }
 
+
+    // Set the task submittable checkbox
+    document.getElementById("taskSubmittable").checked = task.isInteractable;
 
 
     // Get the task deadline
@@ -256,7 +198,7 @@ async function openTask(TaskId, projectID) {
     // Add save button
     let saveButton = document.getElementById("saveNewTask");
     saveButton.onclick = function () {
-        saveTaskSettings(TaskId, task.Task_type);
+        saveTaskSettings(TaskId, task.Task_type, projectID);
     }
 
     // Display task editor modal
@@ -296,34 +238,10 @@ function fillOutTask(TaskId) {
 
                     break;
                 case "checklist":
-                    let checklist = document.createElement("div");
-                    checklist.classList.add("cheklistHolder");
-
-                    let checklistItems = JSON.parse(task.Task_data);
-
-                    let UI = JSON.parse(await fetchUI(TaskId));
-                    let UIData = JSON.parse(UI.Data);
-
-                    for (let i = 0; i < checklistItems.length; i++) {
-                        let checklistItem = document.createElement("div");
-                        checklistItem.classList.add("form-check");
-
-                        let input = document.createElement("input");
-                        input.classList.add("form-check-input");
-                        input.type = "checkbox";
-                        input.id = checklistItems[i].pos;
-                        input.checked = UIData[i].checked;
-                        checklistItem.appendChild(input);
-
-                        let label = document.createElement("label");
-                        label.classList.add("form-check-label");
-                        label.htmlFor = checklistItems[i].pos;
-                        label.innerHTML = checklistItems[i].value;
-                        checklistItem.appendChild(label);
-
-                        checklist.appendChild(checklistItem);
-                    }
-                    taskBody.appendChild(checklist);
+                    generateCheckOrRadioFillOut(taskBody, task, "checklist");
+                    break;
+                case "radio":
+                    generateCheckOrRadioFillOut(taskBody, task, "radio");
                     break;
             }
 
@@ -371,11 +289,7 @@ function addNewTask(projectID, taskType) {
         case "text":
             modalTitle.innerHTML = "Új feladat hozzáadása (szöveg)";
 
-            let textArea = document.createElement("textarea");
-            textArea.classList.add("form-control");
-            textArea.id = "textTaskData";
-            textArea.placeholder = "Szöveg...";
-            taskDataHolder.appendChild(textArea);
+            textEditor(taskDataHolder);
             break;
 
         case "image":
@@ -390,45 +304,12 @@ function addNewTask(projectID, taskType) {
 
         case "checklist":
             modalTitle.innerHTML = "Új feladat hozzáadása (checklist)";
-            let dataHolder = document.getElementById("taskData");
-            dataHolder.innerHTML = "";
-
-            let label = document.createElement("label");
-            label.classList.add("form-label");
-            label.innerHTML = "Elemek:";
-            dataHolder.appendChild(label);
-
-            let checklist = document.createElement("ul");
-            checklist.classList.add("list-group", "list-group-flush");
-            checklist.id = "checklist";
-
-            let checklistItem = document.createElement("li");
-            checklistItem.classList.add("list-group-item");
-            checklistItem.innerHTML = "<input type='text' class='form-control checklistItem' placeholder='Új elem'>";
-            checklist.appendChild(checklistItem);
-
-            let newChecklistItem = document.createElement("button");
-            newChecklistItem.classList.add("btn", "btn-success", "btn-sm");
-            newChecklistItem.innerHTML = "Új elem";
-            newChecklistItem.onclick = function () {
-                let checklist = document.getElementById("checklist");
-                let checklistItem = document.createElement("li");
-                checklistItem.classList.add("list-group-item");
-                checklistItem.innerHTML = "<input type='text' class='form-control checklistItem' placeholder='Új elem'>";
-                checklist.appendChild(checklistItem);
-            }
-
-            // Prevent form submission
-            newChecklistItem.addEventListener('click', function (event) {
-                event.preventDefault();
-            });
-
-            dataHolder.appendChild(checklist);
-
-            dataHolder.appendChild(newChecklistItem);
-
-
+            generateNewCheckOrRadioEditor(taskDataHolder, "checklist");
             break;
+
+        case "radio":
+            modalTitle.innerHTML = "Új feladat hozzáadása (radio)";
+            generateNewCheckOrRadioEditor(taskDataHolder, "radio");
     }
 
     // Hide delete button if shown
@@ -472,7 +353,7 @@ async function saveTaskSettings(task_id, taskType, projectID = null) {
     var taskDataHolder = document.getElementById("taskData");
 
     // Check if the task is interactable
-    var isInteractable = 0;
+    var isInteractable = document.getElementById("taskSubmittable").checked ? 1 : 0;
 
     switch (taskType) {
         case "text":
@@ -492,19 +373,42 @@ async function saveTaskSettings(task_id, taskType, projectID = null) {
                 }
                 taskData.push(checklistItem);
             }
-            isInteractable = 1;
+            break;
+        case "radio":
+            var radioItems = taskDataHolder.getElementsByClassName("radioItem");
+            var taskData = [];
+
+            for (let i = 0; i < radioItems.length; i++) {
+                var radioItem = {
+                    pos: i,
+                    value: radioItems[i].value,
+                }
+                taskData.push(radioItem);
+            }
             break;
     }
 
-    if (task_id == null) {
-        task = {
-            ProjectId: projectID,
-            Task_type: taskType,
-            Task_title: taskName,
-            Task_data: taskData,
-            isInteractable: isInteractable,
-            Deadline: taskDeadline
+    // Getting assigned users
+    let taskMembers = document.getElementById("taskMembers").getElementsByClassName("form-check");
+    let taskMembersArray = [];
+    for (let i = 0; i < taskMembers.length; i++) {
+        if (taskMembers[i].querySelector("input").checked) {
+            taskMembersArray.push(taskMembers[i].querySelector("input").id.split("-")[1]);
         }
+    }
+    console.log(taskMembersArray);
+
+    let task = {
+        "ProjectId": projectID,
+        "Task_type": taskType,
+        "Task_title": taskName,
+        "Task_data": taskData,
+        "isInteractable": isInteractable,
+        "Deadline": taskDeadline
+    }
+    console.log(task);
+
+    if (task_id == null) {
         // Save the task
         if (await createNewTaskDB(task) == 200) {
             console.log("Task saved successfully");
@@ -513,7 +417,7 @@ async function saveTaskSettings(task_id, taskType, projectID = null) {
     } else {
 
         // Save the task settings
-        var response = await saveTaskToDB(task_id, taskName, taskType, taskDeadline, taskData);
+        var response = await saveTaskToDB(task_id, task, taskMembersArray);
         if (response == 500) {
             console.error("Error: 500");
             return;
@@ -614,7 +518,7 @@ function makeFormatting(taskData) {
 
 }
 
-function textEditor(taskData, taskDataHolder) {
+function textEditor(taskDataHolder, taskData = "") {
     let textFormatOptions = document.createElement("div");
     textFormatOptions.classList.add("btn-group", "mb-1");
 
@@ -703,4 +607,170 @@ function textEditor(taskData, taskDataHolder) {
     textArea.style.height = "250px";
 
     taskDataHolder.appendChild(textArea);
+}
+
+function generateNewCheckOrRadioEditor(taskDataHolder, type) {
+    taskDataHolder.innerHTML = "";
+
+    let label = document.createElement("label");
+    label.classList.add("form-label");
+    label.innerHTML = "Elemek:";
+    taskDataHolder.appendChild(label);
+
+    let checklist = document.createElement("ul");
+    checklist.classList.add("list-group", "list-group-flush");
+    checklist.id = type;
+
+    let checklistItem = document.createElement("li");
+    checklistItem.classList.add("list-group-item");
+    checklistItem.innerHTML = "<input type='text' class='form-control " + type + "Item' placeholder='Új elem'>";
+    checklist.appendChild(checklistItem);
+
+    let newChecklistItem = document.createElement("button");
+    newChecklistItem.classList.add("btn", "btn-success", "btn-sm");
+    newChecklistItem.innerHTML = "Új elem";
+    newChecklistItem.onclick = function () {
+        let checklist = document.getElementById(type);
+        let checklistItem = document.createElement("li");
+        checklistItem.classList.add("list-group-item");
+        checklistItem.innerHTML = "<input type='text' class='form-control " + type + "Item' placeholder='Új elem'>";
+        checklist.appendChild(checklistItem);
+    }
+
+    // Prevent form submission
+    newChecklistItem.addEventListener('click', function (event) {
+        event.preventDefault();
+    });
+
+    taskDataHolder.appendChild(checklist);
+    taskDataHolder.appendChild(newChecklistItem);
+}
+
+
+function generateCheckOrRadioEditor(taskDataHolder, taskData, type) {
+    let checklistItems = JSON.parse(taskData);
+
+    let checklist = document.createElement("ul");
+    checklist.classList.add("list-group", "list-group-flush");
+    checklist.id = type;
+
+    for (let i = 0; i < checklistItems.length; i++) {
+        let checklistItem = document.createElement("li");
+        checklistItem.classList.add("list-group-item");
+        checklistItem.innerHTML = "<input type='text' class='form-control " + type + "Item' value='" + checklistItems[i].value + "'>";
+        checklist.appendChild(checklistItem);
+    }
+
+    let newChecklistItem = document.createElement("button");
+    newChecklistItem.classList.add("btn", "btn-success", "btn-sm");
+    newChecklistItem.innerHTML = "Új elem";
+    newChecklistItem.onclick = function () {
+        let checklist = document.getElementById(type);
+        let checklistItem = document.createElement("li");
+        checklistItem.classList.add("list-group-item");
+        checklistItem.innerHTML = "<input type='text' class='form-control " + type + "Item' placeholder='Új elem'>";
+        checklist.appendChild(checklistItem);
+    }
+
+    // Prevent form submission
+    newChecklistItem.addEventListener('click', function (event) {
+        event.preventDefault();
+    });
+
+    taskDataHolder.appendChild(checklist);
+    taskDataHolder.appendChild(newChecklistItem);
+
+}
+
+
+async function cardCheckOrRadio(taskBody, task, type) {
+    let checklist = document.createElement("div");
+    checklist.classList.add(type + "Holder");
+
+    let checklistItems = JSON.parse(task.Task_data);
+    try {
+        var UIs = JSON.parse(await fetchUIs(task.ID));
+        var UIData = UIs.map(ui => JSON.parse(ui.Data));
+    } catch (error) {
+        var UIData = false;
+    }
+
+    for (let i = 0; i < checklistItems.length; i++) {
+        let checklistItem = document.createElement("div");
+        checklistItem.classList.add("form-check");
+
+        let input = document.createElement("input");
+        input.classList.add("form-check-input");
+        if (type == "checklist") {
+            input.type = "checkbox";
+        } else {
+            input.type = "radio";
+        }
+        input.disabled = true;
+        input.id = checklistItems[i].pos;
+        checklistItem.appendChild(input);
+
+        let selectedCount = 0;
+        for (let j = 0; j < UIData.length; j++) {
+            if (UIData[j].length <= i) {
+                continue;
+            }
+            if (UIData[j][i].checked && UIData[j][i].value == checklistItems[i].value) {
+                selectedCount += 1;
+            }
+        }
+
+        let label = document.createElement("label");
+        label.classList.add("form-check-label");
+        label.htmlFor = checklistItems[i].pos;
+        label.innerHTML = checklistItems[i].value + " (" + selectedCount + ")";
+        checklistItem.appendChild(label);
+
+        checklist.appendChild(checklistItem);
+    }
+
+    taskBody.appendChild(checklist);
+}
+
+async function generateCheckOrRadioFillOut(taskBody, task, type) {
+    let checklist = document.createElement("div");
+    checklist.classList.add(type + "Holder");
+
+    let checklistItems = JSON.parse(task.Task_data);
+
+    let UI = await fetchUI(task.ID);
+    if (UI != 404) {
+        UI = JSON.parse(UI);
+        var UIData = JSON.parse(UI.Data);
+    } else {
+        var UIData = false;
+    }
+    for (let i = 0; i < checklistItems.length; i++) {
+        let checklistItem = document.createElement("div");
+        checklistItem.classList.add("form-check");
+
+        let input = document.createElement("input");
+        input.classList.add("form-check-input");
+        if (type == "checklist") {
+            input.type = "checkbox";
+        } else {
+            input.type = "radio";
+            input.name = "radio-" + task.ID;
+        }
+        input.id = checklistItems[i].pos;
+        if (UIData) {
+            input.checked = UIData[i].checked;
+        }
+        checklistItem.appendChild(input);
+
+        let label = document.createElement("label");
+        label.classList.add("form-check-label");
+        label.htmlFor = checklistItems[i].pos;
+        label.innerHTML = checklistItems[i].value;
+        checklistItem.appendChild(label);
+
+        checklist.appendChild(checklistItem);
+    }
+    taskBody.appendChild(checklist);
+
 }

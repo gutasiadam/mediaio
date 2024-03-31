@@ -143,6 +143,48 @@ async function fetchTask(task_id) {
     });
 }
 
+async function fetchTaskCreator(task_id) {
+    console.info("Loading task creator...");
+
+    return new Promise(async (resolve, reject) => {
+        try {
+            let response;
+
+            response = await $.ajax({
+                type: "POST",
+                url: "../projectManager.php",
+                data: { mode: "getTaskCreator", ID: task_id }
+            });
+
+            if (response == 500) {
+                window.location.href = "index.php?serverError";
+            }
+
+            let UID = JSON.parse(response).AddedByUID;
+            if (!UID) {
+                resolve("N/A");
+            }
+
+            let creator;
+
+            creator = await $.ajax({
+                type: "POST",
+                url: "../projectManager.php",
+                data: { mode: "getUsers", ID: UID }
+            });
+
+
+            creator = JSON.parse(creator)[0].firstName;
+            //console.log(creator);
+
+            resolve(creator);
+        } catch (error) {
+            console.error("Error:", error);
+            reject(error);
+        }
+    });
+}
+
 // FETCH PROJECT USER INTERACTIONS
 
 async function fetchUIs(task_id) {
@@ -215,7 +257,7 @@ async function createNewTaskDB(task) {
             response = await $.ajax({
                 type: "POST",
                 url: "../projectManager.php",
-                data: { mode: "createNewTask", task: taskJson }
+                data: { mode: "saveTask", task: taskJson }
             });
 
             if (response == 500) {
@@ -231,33 +273,27 @@ async function createNewTaskDB(task) {
         }
     });
 }
-async function saveTaskToDB(task_id, taskName, taskType, taskDeadline, taskData) {
+async function saveTaskToDB(task_id, task, taskMembers) {
     console.info("Saving task...");
-
-    var task = {
-        "Task_title": taskName,
-        "Task_data": taskData,
-        "Task_type": taskType,
-        "Deadline": taskDeadline
-    };
-
-    var taskJson = JSON.stringify(task);
 
     return new Promise(async (resolve, reject) => {
         try {
             let response;
 
+            task = JSON.stringify(task);
+            taskMembers = JSON.stringify(taskMembers);
+
             response = await $.ajax({
                 type: "POST",
                 url: "../projectManager.php",
-                data: { mode: "saveTask", ID: task_id, task: taskJson }
+                data: { mode: "saveTask", ID: task_id, task: task, taskMembers: taskMembers }
             });
 
             if (response == 500) {
                 window.location.href = "index.php?serverError";
             }
 
-            console.log(response);
+            //console.log(response);
 
             resolve(response);
         } catch (error) {
@@ -478,6 +514,43 @@ async function getUsers() {
             //console.log(response);
 
             resolve(response);
+        } catch (error) {
+            console.error("Error:", error);
+            reject(error);
+        }
+    });
+}
+
+async function fetchMemberNames(memberIDs) {
+    console.info("Loading member names...");
+
+    return new Promise(async (resolve, reject) => {
+        try {
+            let response;
+
+            var members = [];
+
+            for (let i = 0; i < memberIDs.length; i++) {
+                let memberID = memberIDs[i];
+
+                response = await $.ajax({
+                    type: "POST",
+                    url: "../projectManager.php",
+                    data: { mode: "getUsers", ID: memberID }
+                });
+
+                if (response == 500) {
+                    window.location.href = "index.php?serverError";
+                }
+
+                var member = JSON.parse(response)[0];
+
+                members.push(member);
+            }
+
+            //console.log(members);
+
+            resolve(members);
         } catch (error) {
             console.error("Error:", error);
             reject(error);

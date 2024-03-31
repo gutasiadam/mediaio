@@ -27,16 +27,15 @@ class Accounting {
         $stmt->execute();
 
         if ($stmt->affected_rows == 1) {
+            $connection->close();
             return array('code' => '200');
         }else{
+            $connection->close();
             return array('code' => '401');
         }
 
-        
 
-        $stmt->close();
+
     }
 
 }
-
-?>
