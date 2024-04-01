@@ -1,24 +1,31 @@
 <?php
 namespace Mediaio;
 
+
 class Database
 {
+    //public static mixed $credentials;
 
-
-    static function runQuery($query)
-    {
-        // Specify the path to the JSON file
+    private static function getCredentials(){
         $file_path = $_SERVER["DOCUMENT_ROOT"] . '/server/dbCredentials.json';
-        // Read the contents of the file
         $json_data = file_get_contents($file_path);
+        return json_decode($json_data, true);
+    }
 
-        // Decode the JSON data into an associative array
-        $credentials = json_decode($json_data, true);
+    public static function createObject() {
+        return new self(); // Instantiating the current class
+    }
+
+    static function runQuery($query, $schema = null)
+    {
+        $credentials=self::getCredentials();
+        if ($schema === null) {
+            $schema = $credentials['schema'];
+        }
 
         // Extract the username, password, and schema fields
         $username = $credentials['username'];
         $password = $credentials['password'];
-        $schema = $credentials['schema'];
 
         /* Runs an SQL query on the databse, and returns it's result. 
             - Doesn't check the query, it blindly runs it !
@@ -37,21 +44,16 @@ class Database
     //Runs query, and returns the mysqli object as a result.
 
     //Caller object SHOULD close the connection!
-    static function runQuery_mysqli()
+    static function runQuery_mysqli($schema = null)
     {
-
-        $file_path = $_SERVER["DOCUMENT_ROOT"] . '/server/dbCredentials.json';
-
-        // Read the contents of the file
-        $json_data = file_get_contents($file_path);
-
-        // Decode the JSON data into an associative array
-        $credentials = json_decode($json_data, true);
+        $credentials=self::getCredentials();
+        if ($schema === null) {
+            $schema = $credentials['schema'];
+        }
 
         // Extract the username, password, and schema fields
         $username = $credentials['username'];
         $password = $credentials['password'];
-        $schema = $credentials['schema'];
 
         $connection = mysqli_connect('mysql', $username, $password, $schema);
         mysqli_set_charset($connection, "utf8mb4");
