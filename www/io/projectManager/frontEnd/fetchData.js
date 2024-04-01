@@ -1,5 +1,5 @@
 async function fetchProjects() {
-    console.log("Fetching projects");
+    //console.log("Fetching projects");
 
     return new Promise(async (resolve, reject) => {
         try {
@@ -21,6 +21,34 @@ async function fetchProjects() {
             //console.log(projects);
 
             resolve(projects);
+        } catch (error) {
+            console.error("Error:", error);
+            reject(error);
+        }
+    });
+}
+
+async function fetchProject(proj_id) {
+    //console.log("Fetching project");
+
+    return new Promise(async (resolve, reject) => {
+        try {
+            let response;
+
+            response = await $.ajax({
+                type: "POST",
+                url: "../projectManager.php",
+                data: { mode: "getProject", id: proj_id }
+            });
+
+            if (response == 500) {
+                window.location.href = "index.php?serverError";
+            }
+
+            response = JSON.parse(response);
+            //console.log(response);
+
+            resolve(response);
         } catch (error) {
             console.error("Error:", error);
             reject(error);
@@ -58,39 +86,10 @@ async function createNewProject() {
 }
 
 
-// FETCH PROJECT SETTINGS
-
-async function fetchProjectSettings(proj_id) {
-    console.info("Loading project settings...");
-
-    return new Promise(async (resolve, reject) => {
-        try {
-            let response;
-
-            response = await $.ajax({
-                type: "POST",
-                url: "../projectManager.php",
-                data: { mode: "getProjectSettings", id: proj_id }
-            });
-
-            if (response == 500) {
-                window.location.href = "index.php?serverError";
-            }
-
-            //console.log(response);
-
-            resolve(response);
-        } catch (error) {
-            console.error("Error:", error);
-            reject(error);
-        }
-    });
-}
-
 // FETCH PROJECT TASKS
 
-async function fetchTasks(proj_id) {
-    console.info("Loading project tasks...");
+async function fetchTask(proj_id = null, task_id = null, fillOut = false) {
+    //console.info("Loading project tasks...");
 
     return new Promise(async (resolve, reject) => {
         try {
@@ -99,7 +98,7 @@ async function fetchTasks(proj_id) {
             response = await $.ajax({
                 type: "POST",
                 url: "../projectManager.php",
-                data: { mode: "getProjectTasks", id: proj_id }
+                data: { mode: "getProjectTask", proj_id: proj_id , task_id: task_id, fillOut: fillOut}
             });
 
             if (response == 500) {
@@ -116,79 +115,11 @@ async function fetchTasks(proj_id) {
     });
 }
 
-async function fetchTask(task_id) {
-    console.info("Loading task...");
-
-    return new Promise(async (resolve, reject) => {
-        try {
-            let response;
-
-            response = await $.ajax({
-                type: "POST",
-                url: "../projectManager.php",
-                data: { mode: "getTask", ID: task_id }
-            });
-
-            if (response == 500) {
-                window.location.href = "index.php?serverError";
-            }
-
-            //console.log(response);
-
-            resolve(response);
-        } catch (error) {
-            console.error("Error:", error);
-            reject(error);
-        }
-    });
-}
-
-async function fetchTaskCreator(task_id) {
-    console.info("Loading task creator...");
-
-    return new Promise(async (resolve, reject) => {
-        try {
-            let response;
-
-            response = await $.ajax({
-                type: "POST",
-                url: "../projectManager.php",
-                data: { mode: "getTaskCreator", ID: task_id }
-            });
-
-            if (response == 500) {
-                window.location.href = "index.php?serverError";
-            }
-
-            let UID = JSON.parse(response).AddedByUID;
-            if (!UID) {
-                resolve("N/A");
-            }
-
-            let creator;
-
-            creator = await $.ajax({
-                type: "POST",
-                url: "../projectManager.php",
-                data: { mode: "getUsers", ID: UID }
-            });
-
-
-            creator = JSON.parse(creator)[0].firstName;
-            //console.log(creator);
-
-            resolve(creator);
-        } catch (error) {
-            console.error("Error:", error);
-            reject(error);
-        }
-    });
-}
 
 // FETCH PROJECT USER INTERACTIONS
 
 async function fetchUIs(task_id) {
-    console.info("Loading user interactions...");
+    //console.info("Loading user interactions...");
 
     return new Promise(async (resolve, reject) => {
         try {
@@ -215,7 +146,7 @@ async function fetchUIs(task_id) {
 }
 
 async function fetchUI(task_id) {
-    console.info("Loading user interaction...");
+    //console.info("Loading user interaction...");
 
     return new Promise(async (resolve, reject) => {
         try {
@@ -232,6 +163,33 @@ async function fetchUI(task_id) {
             }
 
             //console.log(response);
+
+            resolve(response);
+        } catch (error) {
+            console.error("Error:", error);
+            reject(error);
+        }
+    });
+}
+
+async function userTaskData(task_id, proj_id) {
+    //console.info("Loading user task data...");
+
+    return new Promise(async (resolve, reject) => {
+        try {
+            let response;
+
+            response = await $.ajax({
+                type: "POST",
+                url: "../projectManager.php",
+                data: { mode: "getUserTaskData", task_id: task_id, proj_id: proj_id }
+            });
+
+            if (response == 500) {
+                window.location.href = "index.php?serverError";
+            }
+
+            console.log(response);
 
             resolve(response);
         } catch (error) {
@@ -495,7 +453,7 @@ async function deleteProjectFromDB(proj_id) {
 // GET PROJECT MEMBERS
 
 async function getUsers() {
-    console.info("Loading available members...");
+    //console.info("Loading available members...");
 
     return new Promise(async (resolve, reject) => {
         try {
@@ -522,7 +480,7 @@ async function getUsers() {
 }
 
 async function fetchMemberNames(memberIDs) {
-    console.info("Loading member names...");
+    //console.info("Loading member names...");
 
     return new Promise(async (resolve, reject) => {
         try {
@@ -559,7 +517,7 @@ async function fetchMemberNames(memberIDs) {
 }
 
 async function fetchProjectMembers(proj_id) {
-    console.info("Loading project members...");
+    //console.info("Loading project members...");
 
     return new Promise(async (resolve, reject) => {
         try {
@@ -587,8 +545,8 @@ async function fetchProjectMembers(proj_id) {
 
 // GET TASK MEMBERS
 
-async function fetchTaskMembers(task_id) {
-    console.info("Loading task members...");
+async function fetchTaskMembers(task_id, proj_id) {
+    //console.info("Loading task members...");
 
     return new Promise(async (resolve, reject) => {
         try {
@@ -597,7 +555,7 @@ async function fetchTaskMembers(task_id) {
             response = await $.ajax({
                 type: "POST",
                 url: "../projectManager.php",
-                data: { mode: "getTaskMembers", id: task_id }
+                data: { mode: "getTaskMembers", task_id: task_id, proj_id: proj_id }
             });
 
             if (response == 500) {

@@ -29,7 +29,7 @@ if (in_array("system", $_SESSION["groups"]) || in_array("teacher", $_SESSION["gr
     <title>Pontok</title>
 
   </head>
-  <?php if (isset($_SESSION["userId"])) { ?> <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <?php if (isset($_SESSION["userId"])) { ?> <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-dark">
       <a class="navbar-brand" href="index.php">
         <img src="../utility/logo2.png" height="50">
       </a>

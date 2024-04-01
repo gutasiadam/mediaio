@@ -7,7 +7,7 @@ error_reporting(E_ERROR | E_PARSE);
 
 ?>
 <?php if (isset($_SESSION["userId"])) { ?>
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-dark">
     <a class="navbar-brand" href="index.php">
       <img src="./utility/logo2.png" height="50">
     </a>

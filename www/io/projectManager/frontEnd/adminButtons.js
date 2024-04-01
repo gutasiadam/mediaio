@@ -133,3 +133,152 @@ async function saveProjectMemberSettings(projectID) {
     $('#addMemberModal').modal('hide');
 
 }
+
+
+async function editProjectDescription(proj_id) {
+
+    // Fetch the project settings
+    var projectSettings = await fetchProject(proj_id);
+
+    // Set the project description
+    var projectDescription = projectSettings.Description;
+    document.getElementById("projectDescription").value = projectDescription;
+
+    // Create save button
+    var saveButton = document.getElementById("saveDescButton");
+    saveButton.onclick = function () {
+        saveProjectDescription(proj_id);
+    }
+
+    $('#projectDescModal').modal('show');
+}
+
+
+// Save project settings
+
+async function saveProjectSettings(proj_id) {
+
+    // Get the project name
+    var projectName = document.getElementById("projectName").value;
+
+    // Get the project deadline
+    var projectDate = document.getElementById("projectDate").value;
+    var projectTime = document.getElementById("projectTime").value;
+
+    // Combine the date and time
+    let projectDeadline = "NULL";
+
+    if (projectDate && projectTime) {
+        projectDeadline = projectDate + " " + projectTime;
+    } else if (projectDate) {
+        projectDeadline = projectDate + " 23:59:59";
+    }
+
+    // Get the project visibility
+    var projectVisibility = document.getElementById("projectVisibility").value;
+
+    // Save the project settings
+    var response = await saveProjectSettingsToDB(proj_id, projectName, projectDeadline, projectVisibility);
+
+    if (response == 500) {
+        console.error("Error: 500");
+        return;
+    } else if (response == 200) {
+        location.reload();
+    }
+
+    // Close the modal
+    $('#projectSettingsModal').modal('hide');
+
+
+}
+
+async function saveProjectDescription(proj_id) {
+
+    // Get the project description
+    var projectDescription = document.getElementById("projectDescription").value;
+
+    // Save the project description
+    var response = await saveProjectDescriptionToDB(proj_id, projectDescription);
+
+    if (response == 500) {
+        console.error("Error: 500");
+        return;
+    }
+
+    // Close the modal
+    $('#projectDescModal').modal('hide');
+
+    // Reload the page
+    location.reload();
+
+}
+
+
+
+
+// Delete project
+
+async function deleteProject(proj_id) {
+
+    // Get the project name
+    var projectName = document.getElementById("deleteText").placeholder;
+
+    var typedName = document.getElementById("deleteText").value;
+
+    if (projectName == typedName) {
+
+        // Delete the project
+        await deleteProjectFromDB(proj_id);
+
+        // Close the modal
+        $('#projectSettingsModal').modal('hide');
+
+        // Reload the page
+        location.reload();
+
+    } else {
+        console.error("Error: Project name does not match");
+        return;
+    }
+
+}
+
+
+async function archiveProject(projectID) {
+    console.log("Archiving project: " + projectID);
+
+    document.getElementById('deleteTaskSure').innerHTML = "Archiválás";
+    document.getElementById('deleteTaskSure').classList.remove("btn-danger");
+    document.getElementById('deleteTaskSure').classList.add("btn-warning");
+
+    // Create a new Promise that resolves when the button is clicked
+    let buttonClicked = new Promise((resolve, reject) => {
+        document.getElementById('deleteTaskSure').addEventListener('click', resolve);
+        document.getElementById('cancelButton').addEventListener('click', reject);
+    });
+
+    buttonClicked.then(async () => {
+        // Archive the project
+        $.ajax({
+            type: "POST",
+            url: "../projectManager.php",
+            data: { mode: "archiveProject", projectId: projectID },
+            success: function (response) {
+                console.log(response);
+                if (response == 500) {
+                    window.location.href = "index.php?serverError";
+                }
+                if (response == 200) {
+                    location.reload();
+                }
+            }
+        });
+    }).catch(() => {
+        // Do nothing
+        console.log("Archiving cancelled");
+        return;
+    });
+
+
+}

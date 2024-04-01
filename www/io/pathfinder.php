@@ -24,7 +24,7 @@ include "header.php";
 <script src="utility/jquery.js"></script>
 
 <!-- If user is logged in -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-dark">
   <a class="navbar-brand" href="index.php">
     <img src="./utility/logo2.png" height="50">
   </a>

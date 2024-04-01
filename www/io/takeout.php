@@ -29,7 +29,7 @@ error_reporting(E_ALL ^ E_NOTICE);
 <html>
 <title>MediaIo - takeout</title>
 <?php if (isset($_SESSION["userId"])) { ?>
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-dark">
     <a class="navbar-brand" href="index.php">
       <img src="./utility/logo2.png" height="50">
     </a>
