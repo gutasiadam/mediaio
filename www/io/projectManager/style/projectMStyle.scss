@@ -17,7 +17,7 @@
 .container {
 
     max-width: 90dvw;
-    max-height: 78dvh;
+    max-height: 80dvh;
     overflow: auto;
 
     @media (max-width: 768px) {
@@ -33,7 +33,7 @@
     gap: 15px;
 
     overflow: auto;
-    max-height: 77dvh;
+    max-height: 79dvh;
 
     &::-webkit-scrollbar-track {
         background: rgb(255, 255, 255);
@@ -63,7 +63,7 @@
 
 .projectCard {
     min-width: 400px;
-
+    max-width: 400px;
     max-height: 60%;
     /* min-height: 60%; */
 }
@@ -82,8 +82,18 @@
 
 }
 
+.infoDiv {
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
 
 .projectDescriptionHolder {
+    width: 100%;
+    padding: 0px 5px 0px 5px;
     display: flex;
     flex-wrap: nowrap;
     flex-direction: row;
@@ -94,7 +104,6 @@
 }
 
 .projectDescription {
-    max-width: 220px;
     overflow: hidden;
 }
 
@@ -105,26 +114,6 @@
     flex-direction: column;
     align-items: center;
     height: 100%;
-    overflow: auto;
-
-    &::-webkit-scrollbar-track {
-        background: rgb(255, 255, 255);
-        /* color of the tracking area */
-    }
-
-    &::-webkit-scrollbar {
-        width: 8px;
-        /* width of the entire scrollbar */
-    }
-
-    &::-webkit-scrollbar-thumb {
-        background-color: rgb(179, 179, 179);
-        /* color of the scroll thumb */
-        border-radius: 20px;
-        /* roundness of the scroll thumb */
-        /* border: 1px solid rgb(221, 221, 221); */
-        /* creates padding around scroll thumb */
-    }
 }
 
 .tab-content>.active {
@@ -132,7 +121,11 @@
 }
 
 .tab-content {
-    max-height: 92%;
+    max-height: 72dvh;
+
+    @media (max-width: 768px) {
+        max-height: 85dvh;
+    }
 }
 
 
@@ -181,6 +174,14 @@
     justify-content: space-between;
 }
 
+.taskHeader {
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
 
 .taskHolder {
     border-top: 1px solid rgb(175, 175, 175);
@@ -189,11 +190,64 @@
         margin-bottom: 10px;
         margin-top: 10px;
     }
+    overflow: auto;
+    max-height: 100%;
+
+    &::-webkit-scrollbar-track {
+        background: rgb(255, 255, 255);
+        /* color of the tracking area */
+    }
+
+    &::-webkit-scrollbar {
+        width: 8px;
+        /* width of the entire scrollbar */
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background-color: rgb(179, 179, 179);
+        /* color of the scroll thumb */
+        border-radius: 20px;
+        /* roundness of the scroll thumb */
+        /* border: 1px solid rgb(221, 221, 221); */
+        /* creates padding around scroll thumb */
+    }
+    margin-bottom: 10px;
+}
+
+.membersHolder {
+    overflow: auto;
+    max-height: 100%;
+
+    &::-webkit-scrollbar-track {
+        background: rgb(255, 255, 255);
+        /* color of the tracking area */
+    }
+
+    &::-webkit-scrollbar {
+        width: 8px;
+        /* width of the entire scrollbar */
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background-color: rgb(179, 179, 179);
+        /* color of the scroll thumb */
+        border-radius: 20px;
+        /* roundness of the scroll thumb */
+        /* border: 1px solid rgb(221, 221, 221); */
+        /* creates padding around scroll thumb */
+    }
 }
 
 .taskCard {
-    min-width: 300px;
-    max-width: 350px;
+    width: 100%;
+}
+
+.taskFooter {
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .editorOn {

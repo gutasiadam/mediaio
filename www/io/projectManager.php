@@ -2,11 +2,12 @@
 namespace Mediaio;
 
 require_once __DIR__ . '/Database.php';
-require_once __DIR__ . '/Core.php';
 require_once __DIR__ . '/projectMailer.php';
-use Mediaio\Core;
+require_once __DIR__ . '/projectManager/upload-handler.php';
+
 use Mediaio\Database;
 use Mediaio\ProjectMailer;
+use Mediaio\projectPictureManager;
 
 error_reporting(E_ERROR | E_PARSE);
 
@@ -62,21 +63,43 @@ class projectManager
 
     static function listProjects()
     {
+        $sql = "SELECT DISTINCT * FROM (";
+
         if (in_array("admin", $_SESSION['groups'])) {
-            $sql = "SELECT * FROM projects WHERE Archived=0;";
+            $sql .= "SELECT * FROM `projects` WHERE Archived=0";
         } else if (in_array("média", $_SESSION['groups'])) {
-            $sql = "SELECT * FROM projects WHERE Visibility_group IN (0,1) AND Archived=0;";
+            $sql .= "SELECT * FROM `projects` WHERE Visibility_group IN (0,1) AND Archived=0";
         } else if (in_array("studio", $_SESSION['groups'])) {
-            $sql = "SELECT * FROM projects WHERE Visibility_group IN (0,2) AND Archived=0;";
+            $sql .= "SELECT * FROM `projects` WHERE Visibility_group IN (0,2) AND Archived=0";
         } else {
-            $sql = "SELECT * FROM projects WHERE Visibility_group=0 AND Archived=0;";
+            $sql .= "SELECT * FROM `projects` WHERE Visibility_group=0 AND Archived=0";
         }
+
+        $sql .= " UNION ALL SELECT * FROM `projects` WHERE ID IN (SELECT ProjectID FROM project_members WHERE UserID=" . $_SESSION['userId'] . ") AND Visibility_group=4 AND Archived=0";
+
+        $sql .= ") AS combined ORDER BY Deadline IS NULL, Deadline";
+
         $connection = Database::runQuery_mysqli(self::$schema);
         $result = $connection->query($sql);
-        $connection->close();
         $resultItems = array();
         while ($row = $result->fetch_assoc()) {
             $resultItems[] = $row;
+        }
+
+        // Get project members for each project
+        foreach ($resultItems as $key => $item) {
+            $sql = "SELECT * FROM `project_members` WHERE ProjectID=" . $item['ID'] . ";";
+            $result = $connection->query($sql);
+            $members = array();
+            while ($row = $result->fetch_assoc()) {
+                $members[] = $row['UserID'];
+            }
+            // If the user is an admin or is part of the project, set "canEdit" to true
+            if (in_array("admin", $_SESSION['groups']) || in_array($_SESSION['userId'], $members)) {
+                $resultItems[$key]['canEdit'] = 1;
+            } else {
+                $resultItems[$key]['canEdit'] = 0;
+            }
         }
         echo (json_encode($resultItems));
         exit();
@@ -87,13 +110,28 @@ class projectManager
         $sql = "SELECT * FROM projects WHERE ID=" . $_POST['id'] . ";";
         $connection = Database::runQuery_mysqli(self::$schema);
         $result = $connection->query($sql);
-        $connection->close();
-        $row = $result->fetch_assoc();
-        if ($row == null) {
+        $project = $result->fetch_assoc();
+        if ($project == null) {
             echo 404;
             exit();
         }
-        echo (json_encode($row));
+
+        // Get project members
+        $sql = "SELECT * FROM `project_members` WHERE ProjectID=" . $_POST['id'] . ";";
+        $result = $connection->query($sql);
+        $members = array();
+        while ($row = $result->fetch_assoc()) {
+            $members[] = $row['UserID'];
+        }
+        // If the user is an admin or is part of the project, set "canEdit" to true
+        if (in_array("admin", $_SESSION['groups']) || in_array($_SESSION['userId'], $members)) {
+            $project['canEdit'] = 1;
+        } else {
+            $project['canEdit'] = 0;
+        }
+
+
+        echo (json_encode($project));
         exit();
     }
 
@@ -129,7 +167,20 @@ class projectManager
             $row['CreatorLastName'] = $creatorUserArray[0]['lastName'];
             $row['CreatorUsername'] = $creatorUserArray[0]['usernameUsers'];
 
+            //Check if user is allowed to delete the task
+            if (in_array("admin", $_SESSION['groups'])) {
+                $row['canDelete'] = 1;
+            } else {
+                if ($creatorUID == $_SESSION['userId']) {
+                    $row['canDelete'] = 1;
+                } else {
+                    $row['canDelete'] = 0;
+                }
+            }
+
+            // Check if the task is a single answer task and the user is trying to edit it
             if ($row['SingleAnswer'] == 1 && $_POST['fillOut'] == 'false' && !in_array("admin", $_SESSION['groups'])) {
+                // If the task is a checklist or radio task, only the creator can edit it (unless the user is an admin)
                 if ($row['Task_type'] == "checklist" || $row['Task_type'] == "radio") {
                     if ($creatorUID == $_SESSION['userId']) {
                         echo (json_encode($row));
@@ -177,9 +228,32 @@ class projectManager
 
         $connection = Database::runQuery_mysqli(self::$schema);
 
+        if ($settings['Deadline'] != "NULL") {
+            $sql = "INSERT INTO `project_components` (`ID`, `ProjectId`, `Task_type`, `Task_title`, `Task_data`, `isInteractable`, `fillOutText`, `SingleAnswer`, `AddedByUID`, `Deadline`) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
+                    ON DUPLICATE KEY UPDATE `Task_title`=?, `Task_data`=?, `Deadline`=?, `isInteractable`=?, `fillOutText`=?, `SingleAnswer`=?;";
+            $stmt = $connection->prepare($sql);
+            $stmt->bind_param("iisssisiissssisi", $_POST['ID'], $settings['ProjectId'], $settings['Task_type'], $settings['Task_title'], $settings['Task_data'], $settings['isInteractable'], $settings['fillOutText'], $settings['singleAnswer'], $_SESSION['userId'], $settings['Deadline'], $settings['Task_title'], $settings['Task_data'], $settings['Deadline'], $settings['isInteractable'], $settings['fillOutText'], $settings['singleAnswer']);
+        } else {
+            $sql = "INSERT INTO `project_components` (`ID`, `ProjectId`, `Task_type`, `Task_title`, `Task_data`, `isInteractable`, `fillOutText`, `SingleAnswer`, `AddedByUID`, `Deadline`) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NULL) 
+                    ON DUPLICATE KEY UPDATE `Task_title`=?, `Task_data`=?, `Deadline`=NULL, `isInteractable`=?, `fillOutText`=?, `SingleAnswer`=?;";
+            $stmt = $connection->prepare($sql);
+            $stmt->bind_param("iisssisiissisi", $_POST['ID'], $settings['ProjectId'], $settings['Task_type'], $settings['Task_title'], $settings['Task_data'], $settings['isInteractable'], $settings['fillOutText'], $settings['singleAnswer'], $_SESSION['userId'], $settings['Task_title'], $settings['Task_data'], $settings['isInteractable'], $settings['fillOutText'], $settings['singleAnswer']);
+        }
+
+        $stmt->execute();
+        // Check if a new record was inserted
+        if ($stmt->affected_rows === 1) {
+            // Get the ID of the newly inserted record
+            $taskID = $connection->insert_id;
+        } else {
+            $taskID = $_POST['ID'];
+        }
+
         try {
             // Get current task members
-            $sql = "SELECT * FROM `project_task_members` WHERE TaskId=" . $_POST['ID'] . ";";
+            $sql = "SELECT * FROM `project_task_members` WHERE TaskId=" . $taskID . ";";
             $result = $connection->query($sql);
             $currentMembers = array();
             while ($row = $result->fetch_assoc()) {
@@ -195,13 +269,13 @@ class projectManager
                 }
 
                 // If the record doesn't exist, insert it
-                $sql = "INSERT INTO `project_task_members` (`ProjectId`,`TaskId`, `UserId`) VALUES (" . $settings['ProjectId'] . "," . $_POST['ID'] . "," . $member . ")";
+                $sql = "INSERT INTO `project_task_members` (`ProjectId`,`TaskId`, `UserId`) VALUES (" . $settings['ProjectId'] . "," . $taskID . "," . $member . ")";
                 $connection->query($sql);
 
                 // Send an email to the new member
                 // You would need to implement the ProjectMailer::sendNewTaskMail method
                 //try {
-                //    ProjectMailer::sendNewTaskMail($_POST['ID'], $member);
+                //    ProjectMailer::sendNewTaskMail($taskID, $member);
                 //} catch (\Exception $e) {
                 //    // Do nothing
                 //}
@@ -210,28 +284,32 @@ class projectManager
             // Delete members that were removed
             $deletedMembers = array_diff($currentMembers, $_POST['taskMembers']);
             foreach ($deletedMembers as $member) {
-                $sql = "DELETE FROM `project_task_members` WHERE `TaskId`=" . $_POST['ID'] . " AND `UserId`=" . $member . ";";
+                $sql = "DELETE FROM `project_task_members` WHERE `TaskId`=" . $taskID . " AND `UserId`=" . $member . ";";
                 $connection->query($sql);
             }
         } catch (\Exception $e) {
             // Do nothing
         }
 
-        if ($settings['Deadline'] != "NULL") {
-            $sql = "INSERT INTO `project_components` (`ID`, `ProjectId`, `Task_type`, `Task_title`, `Task_data`, `isInteractable`, `SingleAnswer`, `AddedByUID`, `Deadline`) 
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) 
-                    ON DUPLICATE KEY UPDATE `Task_title`=?, `Task_data`=?, `Deadline`=?, `isInteractable`=?, `SingleAnswer`=?;";
-            $stmt = $connection->prepare($sql);
-            $stmt->bind_param("iisssiiissssii", $_POST['ID'], $settings['ProjectId'], $settings['Task_type'], $settings['Task_title'], $settings['Task_data'], $settings['isInteractable'], $settings['singleAnswer'], $_SESSION['userId'], $settings['Deadline'], $settings['Task_title'], $settings['Task_data'], $settings['Deadline'], $settings['isInteractable'], $settings['singleAnswer']);
-        } else {
-            $sql = "INSERT INTO `project_components` (`ID`, `ProjectId`, `Task_type`, `Task_title`, `Task_data`, `isInteractable`, `SingleAnswer`, `AddedByUID`, `Deadline`) 
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, NULL) 
-                    ON DUPLICATE KEY UPDATE `Task_title`=?, `Task_data`=?, `Deadline`=NULL, `isInteractable`=?, `SingleAnswer`=?;";
-            $stmt = $connection->prepare($sql);
-            $stmt->bind_param("iisssiiissii", $_POST['ID'], $settings['ProjectId'], $settings['Task_type'], $settings['Task_title'], $settings['Task_data'], $settings['isInteractable'], $settings['singleAnswer'], $_SESSION['userId'], $settings['Task_title'], $settings['Task_data'], $settings['isInteractable'], $settings['singleAnswer']);
-        }
+        if ($settings['Task_type'] == "image" && $_FILES['image']['name'] != "") {
 
-        $stmt->execute();
+            $settings['Task_data'] = json_decode($settings['Task_data'], true);
+            $settings['Task_data']['image'] = "./pictures/" . $taskID . "." . pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
+            $settings['Task_data'] = json_encode($settings['Task_data']);
+
+            $sql = "UPDATE `project_components` SET `Task_data`=? WHERE `ID`=?;";
+            $stmt = $connection->prepare($sql);
+            $stmt->bind_param("si", $settings['Task_data'], $taskID);
+            $stmt->execute();
+
+            // If the task is an image task, upload the image
+            $uploadResult = projectPictureManager::uploadImage($taskID, $_FILES['image']);
+            if ($uploadResult != 200) {
+                echo $uploadResult;
+                exit();
+            }
+
+        }
 
         $connection->close();
         echo 200;
@@ -288,8 +366,37 @@ class projectManager
     static function deleteTask()
     {
         $connection = Database::runQuery_mysqli(self::$schema);
-        $sql = "DELETE FROM project_components WHERE ID=" . $_POST['ID'] . ";";
-        $connection->query($sql);
+
+        // If task was picture task, delete the picture
+        $sql = "SELECT `Task_type` FROM `project_components` WHERE `ID`=" . $_POST['ID'] . ";";
+        $result = $connection->query($sql);
+        $taskType = $result->fetch_assoc()['Task_type'];
+
+        if (in_array("admin", $_SESSION['groups'])) {
+            $sql = "DELETE FROM project_components WHERE ID=" . $_POST['ID'] . ";";
+            $connection->query($sql);
+        } else {
+            $sql = "SELECT `AddedByUID` FROM `project_components` WHERE `ID`=" . $_POST['ID'] . ";";
+            $result = $connection->query($sql);
+            $creatorUID = $result->fetch_assoc()['AddedByUID'];
+            if ($creatorUID == $_SESSION['userId']) {
+                $sql = "DELETE FROM project_components WHERE ID=" . $_POST['ID'] . ";";
+                $connection->query($sql);
+            } else {
+                $connection->close();
+                echo 403;
+                exit();
+            }
+        }
+
+        if ($taskType == "image") {
+            try {
+                projectPictureManager::deleteImage($_POST['ID']);
+            } catch (\Exception $e) {
+                // Do nothing
+            }
+        }
+
         $connection->close();
         echo 200;
     }
@@ -435,11 +542,21 @@ class projectManager
         while ($row = $result->fetch_assoc()) {
             $resultItems[] = $row;
         }
-        if ($_POST['mode'] == "getProjectMembers") {
-            echo (json_encode($resultItems));
-            exit();
+        if ($_POST['mode'] != "getProjectMembers") {
+            return $resultItems;
         }
-        return $resultItems;
+
+        // Getting the names of the users
+        $connection = Database::runQuery_mysqli();
+        foreach ($resultItems as $key => $item) {
+            $sql = "SELECT `firstName`, `lastName` FROM `users` WHERE `idUsers`=" . $item['UserID'] . ";";
+            $result = $connection->query($sql);
+            $user = $result->fetch_assoc();
+            $resultItems[$key]['firstName'] = $user['firstName'];
+            $resultItems[$key]['lastName'] = $user['lastName'];
+            $resultItems[$key]['UserId'] = $item['UserID'];
+        }
+        echo (json_encode($resultItems));
     }
 
     static function saveProjectMembers()

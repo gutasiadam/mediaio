@@ -1,6 +1,7 @@
 <!-- Are you sure? modal -->
 
-<div class="modal fade" id="areyousureModal" tabindex="-1" aria-labelledby="areyousureModalLabel" aria-hidden="true">
+<div class="modal fade" id="areyousureModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="areyousureModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
@@ -8,7 +9,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Mégse</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="cancelButton">Mégse</button>
                 <button type="button" class="btn btn-danger" id="deleteTaskSure">Törlés</button>
             </div>
         </div>
@@ -40,7 +41,7 @@
                             <option value="1">Médiás</option>
                             <option value="2">Stúdiós</option>
                             <option value="3">Admin</option>
-                            <option value="4">Hozzáadott emberek (Még nem működik)</option>
+                            <option value="4">Hozzáadott emberek</option>
                         </select>
                     </div>
                     <div class="mb-3 input-group">
@@ -110,7 +111,7 @@
                         <input type="date" class="form-control" id="taskDate" placeholder="Nap">
                         <input type="time" class="form-control" id="taskTime" placeholder="Időpont">
                     </div>
-                    <div class="mb-1">
+                    <div class="mb-2">
                         <button type="button" class="btn" data-bs-toggle="button" id="taskSubmittable">Elvégzendő
                             feladat</button>
                         <button type="button" class="btn" data-bs-toggle="button" id="singleAnswer" disabled>Csak
@@ -124,7 +125,9 @@
                                     if (mutation.attributeName === "class") {
                                         if (taskSubmittable.classList.contains('active')) {
                                             document.getElementById("singleAnswer").disabled = false;
+                                            document.getElementById("fillOutText").disabled = false;
                                         } else {
+                                            document.getElementById("fillOutText").disabled = true;
                                             document.getElementById("singleAnswer").disabled = true;
                                             document.getElementById("singleAnswer").classList.remove('active');
                                         }
@@ -138,6 +141,7 @@
 
                         </script>
                     </div>
+                    <input type="text" class="form-control" id="fillOutText" placeholder="Kitöltés szövege...">
                 </form>
             </div>
             <div class="modal-footer">
@@ -161,12 +165,11 @@
                 <form>
                     <div class="mb-3" id="taskFillData">
                     </div>
-                    <div class="mb-3 input-group" id="taskFillDeadline">
-                        <span class="input-group-text">Feladat határideje: </span>
-                    </div>
                 </form>
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer d-flex justify-content-between">
+                <div id="taskFillDeadline">
+                </div>
                 <button type="button" class="btn btn-success" id="submitAnswer">Mentés</button>
             </div>
         </div>
@@ -199,13 +202,15 @@
 
 
 <!-- Expand image modal -->
-<div class="modal fade" id="expandImageModal" tabindex="-1" aria-labelledby="expandImageModalLabel" aria-hidden="true">
+<div class="modal modal-xl fade" id="expandImageModal" tabindex="-1" aria-labelledby="expandImageModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-body">
-                <img class="img-fluid" src="" alt="" id="expandedImage">
+                <img src="" alt="" id="expandedImage" style="width: 100%;">
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer d-flex justify-content-between">
+                <button type="button" class="btn btn-secondary" id="imgDownloadButton"><i class="fas fa-download fa-lg"></i></button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bezárás</button>
             </div>
         </div>

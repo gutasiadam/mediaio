@@ -97,56 +97,57 @@ async function generateBigView(project) {
     projectBody.appendChild(createDiscription(projectID, project.Description));
 
     // Generating the project tasks
-    projectBody.appendChild(await generateTasks(projectID));
+    projectBody.appendChild(await generateTasks(projectID, project.canEdit));
 
-    let addTask = document.createElement("button");
-    addTask.classList.add("btn", "btn-success", "dropdown-toggle", "addTask");
-    addTask.innerHTML = "Új hozzáadása";
-    addTask.setAttribute("data-bs-toggle", "dropdown");
-    projectBody.appendChild(addTask);
+    if (project.canEdit) {
+        let addTask = document.createElement("button");
+        addTask.classList.add("btn", "btn-success", "dropdown-toggle", "addTask");
+        addTask.innerHTML = "Új hozzáadása";
+        addTask.setAttribute("data-bs-toggle", "dropdown");
+        projectBody.appendChild(addTask);
 
-    // Creat ul dropdown
-    let ul = document.createElement("ul");
-    ul.classList.add("dropdown-menu");
-    projectBody.appendChild(ul);
+        // Creat ul dropdown
+        let ul = document.createElement("ul");
+        ul.classList.add("dropdown-menu");
+        projectBody.appendChild(ul);
 
-    // create li elements
-    let text = document.createElement("li");
-    text.classList.add("dropdown-item");
-    text.innerHTML = "<i class='fas fa-paragraph fa-sm'></i> Szöveg";
-    text.style.cursor = "pointer";
-    text.onclick = function () {
-        addNewTask(projectID, "text");
+        // create li elements
+        let text = document.createElement("li");
+        text.classList.add("dropdown-item");
+        text.innerHTML = "<i class='fas fa-paragraph fa-sm'></i> Szöveg";
+        text.style.cursor = "pointer";
+        text.onclick = function () {
+            addNewTask(projectID, "text");
+        }
+        ul.appendChild(text);
+
+        let image = document.createElement("li");
+        image.classList.add("dropdown-item");
+        image.innerHTML = "<i class='far fa-image fa-sm'></i> Kép";
+        image.style.cursor = "pointer";
+        image.onclick = function () {
+            addNewTask(projectID, "image");
+        }
+        ul.appendChild(image);
+
+        let checklist = document.createElement("li");
+        checklist.classList.add("dropdown-item");
+        checklist.innerHTML = "<i class='fas fa-list fa-sm'></i> Lista";
+        checklist.style.cursor = "pointer";
+        checklist.onclick = function () {
+            addNewTask(projectID, "checklist");
+        }
+        ul.appendChild(checklist);
+
+        let radio = document.createElement("li");
+        radio.classList.add("dropdown-item");
+        radio.innerHTML = "<i class='fas fa-dot-circle fa-sm'></i> Választós lista";
+        radio.style.cursor = "pointer";
+        radio.onclick = function () {
+            addNewTask(projectID, "radio");
+        }
+        ul.appendChild(radio);
     }
-    ul.appendChild(text);
-
-    let image = document.createElement("li");
-    image.classList.add("dropdown-item");
-    image.innerHTML = "<i class='far fa-image fa-sm'></i> Kép";
-    image.style.cursor = "pointer";
-    image.onclick = function () {
-        addNewTask(projectID, "image");
-    }
-    ul.appendChild(image);
-
-    let checklist = document.createElement("li");
-    checklist.classList.add("dropdown-item");
-    checklist.innerHTML = "<i class='fas fa-list fa-sm'></i> Lista";
-    checklist.style.cursor = "pointer";
-    checklist.onclick = function () {
-        addNewTask(projectID, "checklist");
-    }
-    ul.appendChild(checklist);
-
-    let radio = document.createElement("li");
-    radio.classList.add("dropdown-item");
-    radio.innerHTML = "<i class='fas fa-dot-circle fa-sm'></i> Választós lista";
-    radio.style.cursor = "pointer";
-    radio.onclick = function () {
-        addNewTask(projectID, "radio");
-    }
-    ul.appendChild(radio);
-
     // Create Body for members
     let membersBody = document.createElement("div");
     membersBody.classList.add("card-body", "projectBody", "tab-pane", "fade");
@@ -269,21 +270,33 @@ async function generateProjectBody(project) {
     members.innerHTML = "<button class='nav-link' id='users-tab' data-bs-toggle='tab' data-bs-target='#users-tab-pane-" + projectID + "' type='button' role='tab' aria-controls='users-tab-pane' aria-selected='false'>Tagok</button>";
     nav.appendChild(members);
 
-    if (project.Deadline) {
-        let deadline = document.createElement("li");
-        deadline.classList.add("nav-item");
-        deadline.innerHTML = "<a class='nav-link disabled' aria-disabled='true'><b>" + await getDeadline(project.Deadline) + "</b></a>";
-        nav.appendChild(deadline);
-    }
-
     projectHeader.appendChild(nav);
+
+    let infoDiv = document.createElement("div");
+    infoDiv.classList.add("infoDiv");
+
+    if (project.Deadline) {
+        var deadlineText = await getDeadline(project.Deadline);
+        let deadline = document.createElement("span");
+        deadline.classList.add("badge", "bg-secondary", "text-white", "ms-2");
+        deadline.innerHTML = deadlineText;
+        if (deadlineText == "Lejárt" || deadlineText.includes("perc") || deadlineText == "Épp most") {
+            deadline.classList.add("bg-danger");
+        } else if (deadlineText.includes("óra")) {
+            deadline.classList.add("bg-warning", "text-dark");
+        } else {
+            deadline.classList.add("bg-success", "text-dark");
+        }
+        infoDiv.appendChild(deadline);
+    }
 
     // Add settings button to project title
     try {
-        projectHeader.appendChild(changeProjectSettingsButton(projectID));
+        infoDiv.appendChild(changeProjectSettingsButton(projectID));
     } catch (error) {
         ;
     }
+    projectHeader.appendChild(infoDiv);
 
     projectCard.appendChild(projectHeader);
 
@@ -306,56 +319,66 @@ async function generateProjectBody(project) {
     projectBody.appendChild(createDiscription(projectID, project.Description));
 
     // Generating the project tasks
-    projectBody.appendChild(await generateTasks(projectID));
+    projectBody.appendChild(await generateTasks(projectID, project.canEdit));
 
-    let addTask = document.createElement("button");
-    addTask.classList.add("btn", "btn-success", "dropdown-toggle", "addTask");
-    addTask.innerHTML = "Új hozzáadása";
-    addTask.setAttribute("data-bs-toggle", "dropdown");
-    projectBody.appendChild(addTask);
+    if (project.canEdit) {
+        let addTask = document.createElement("button");
+        addTask.classList.add("btn", "btn-success", "dropdown-toggle", "addTask");
+        addTask.innerHTML = "Új hozzáadása";
+        addTask.setAttribute("data-bs-toggle", "dropdown");
+        projectBody.appendChild(addTask);
 
-    // Creat ul dropdown
-    let ul = document.createElement("ul");
-    ul.classList.add("dropdown-menu");
-    projectBody.appendChild(ul);
+        // Creat ul dropdown
+        let ul = document.createElement("ul");
+        ul.classList.add("dropdown-menu");
+        projectBody.appendChild(ul);
 
-    // create li elements
-    let text = document.createElement("li");
-    text.classList.add("dropdown-item");
-    text.innerHTML = "<i class='fas fa-paragraph fa-sm'></i> Szöveg";
-    text.style.cursor = "pointer";
-    text.onclick = function () {
-        addNewTask(projectID, "text");
+        // create li elements
+        let text = document.createElement("li");
+        text.classList.add("dropdown-item");
+        text.innerHTML = "<i class='fas fa-paragraph fa-sm'></i> Szöveg";
+        text.style.cursor = "pointer";
+        text.onclick = function () {
+            addNewTask(projectID, "text");
+        }
+        ul.appendChild(text);
+
+        let image = document.createElement("li");
+        image.classList.add("dropdown-item");
+        image.innerHTML = "<i class='far fa-image fa-sm'></i> Kép";
+        image.style.cursor = "pointer";
+        image.onclick = function () {
+            addNewTask(projectID, "image");
+        }
+        ul.appendChild(image);
+
+        let file = document.createElement("li");
+        file.classList.add("dropdown-item");
+        file.innerHTML = "<i class='fas fa-file-alt'></i> Fájl";
+        file.style.cursor = "pointer";
+        file.onclick = function () {
+            addNewTask(projectID, "file");
+        }
+        ul.appendChild(file);
+
+        let checklist = document.createElement("li");
+        checklist.classList.add("dropdown-item");
+        checklist.innerHTML = "<i class='fas fa-list fa-sm'></i> Lista";
+        checklist.style.cursor = "pointer";
+        checklist.onclick = function () {
+            addNewTask(projectID, "checklist");
+        }
+        ul.appendChild(checklist);
+
+        let radio = document.createElement("li");
+        radio.classList.add("dropdown-item");
+        radio.innerHTML = "<i class='fas fa-dot-circle fa-sm'></i> Választós lista";
+        radio.style.cursor = "pointer";
+        radio.onclick = function () {
+            addNewTask(projectID, "radio");
+        }
+        ul.appendChild(radio);
     }
-    ul.appendChild(text);
-
-    let image = document.createElement("li");
-    image.classList.add("dropdown-item");
-    image.innerHTML = "<i class='far fa-image fa-sm'></i> Kép";
-    image.style.cursor = "pointer";
-    image.onclick = function () {
-        addNewTask(projectID, "image");
-    }
-    ul.appendChild(image);
-
-    let checklist = document.createElement("li");
-    checklist.classList.add("dropdown-item");
-    checklist.innerHTML = "<i class='fas fa-list fa-sm'></i> Lista";
-    checklist.style.cursor = "pointer";
-    checklist.onclick = function () {
-        addNewTask(projectID, "checklist");
-    }
-    ul.appendChild(checklist);
-
-    let radio = document.createElement("li");
-    radio.classList.add("dropdown-item");
-    radio.innerHTML = "<i class='fas fa-dot-circle fa-sm'></i> Választós lista";
-    radio.style.cursor = "pointer";
-    radio.onclick = function () {
-        addNewTask(projectID, "radio");
-    }
-    ul.appendChild(radio);
-
     // Create Body for members
     let membersBody = document.createElement("div");
     membersBody.classList.add("card-body", "projectBody", "tab-pane", "fade");
@@ -433,7 +456,7 @@ async function generateMembers(proj_id) {
         .then(async response => {
             projectMembers = JSON.parse(response);
             projectMembers = projectMembers.map(member => member.UserID);
-            console.log(projectMembers);
+            //console.log(projectMembers);
 
             // Append each member to membersHolder
             for (let i = 0; i < userList.length; i++) {
@@ -475,12 +498,10 @@ async function createMember(member, projectID, memberID) {
 
 
 async function getDeadline(deadline) {
-
     // If there is no deadline
     if (!deadline) {
         return "";
     }
-
     // Get the deadline
 
     let now = new Date();

@@ -1,12 +1,13 @@
 <?php
+namespace Mediaio;
 
 class projectPictureManager
 {
   static function uploadImage($taskId, $file)
   {
     $imageFileType = strtolower(pathinfo($file["name"], PATHINFO_EXTENSION));
-    $target_dir = "./pictures/";
-    $target_file = $target_dir . $taskId . $imageFileType;
+    $target_dir = "./projectManager/pictures/";
+    $target_file = $target_dir . $taskId . "." . $imageFileType;
     $uploadOk = 1;
     // Check if image file is a actual image or fake image
     $check = getimagesize($file["tmp_name"]);
@@ -33,7 +34,7 @@ class projectPictureManager
       // if everything is ok, try to upload file
     } else {
       if (move_uploaded_file($file["tmp_name"], $target_file)) {
-        return $taskId . $imageFileType;
+        return 200;
       } else {
         return 500;
       }
@@ -42,27 +43,31 @@ class projectPictureManager
 
   static function deleteImage($taskId)
   {
-    $target_dir = "./pictures/";
+    if ($_POST['mode'] == "deleteImage") {
+      $target_dir = "./pictures/";
+    } else {
+      $target_dir = "./projectManager/pictures/";
+    }
     $target_file = $target_dir . $taskId;
-
     // Get an array of file paths that match the pattern
+
     $files = glob($target_file . ".*");
 
-    if (!empty ($files)) {
+    if (!empty($files)) {
       foreach ($files as $file) {
         if (file_exists($file)) {
           unlink($file);
         }
       }
-      echo 200;
+      return 200;
     } else {
-      echo 404;
+      return 404;
     }
   }
 }
 
 
-if (isset ($_POST['mode'])) {
+if (isset($_POST['mode'])) {
   if ($_POST['mode'] == "uploadImage") {
     echo projectPictureManager::uploadImage($_POST['taskId'], $_FILES['fileToUpload']);
     exit();

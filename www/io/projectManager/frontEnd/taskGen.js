@@ -1,7 +1,23 @@
 
-async function generateTasks(projectID) {
+async function generateTasks(projectID, canEdit) {
     let taskHolder = document.createElement("div");
     taskHolder.classList.add("taskHolder");
+    taskHolder.id = projectID + "-taskHolder";
+
+    // Adding dropping task card functionality
+    taskHolder.addEventListener("dragover", function (event) {
+        event.preventDefault();
+    });
+
+    taskHolder.addEventListener("drop", async function (event) {
+        console.log("Dropped task");
+        event.preventDefault();
+        let taskID = event.dataTransfer.getData("text/plain");
+        let taskCard = document.getElementById(taskID);
+
+        // Append the task card to the task holder
+        taskHolder.appendChild(taskCard);
+    });
 
     // Fetch the tasks
     let tasks = await fetchTask(projectID);
@@ -10,43 +26,44 @@ async function generateTasks(projectID) {
 
     // Append each task to taskHolder
     for (let i = 0; i < tasks.length; i++) {
-        taskHolder.appendChild(await createTask(tasks[i], projectID));
+        taskHolder.appendChild(await createTask(tasks[i], projectID, canEdit));
     }
 
     return taskHolder;
 }
 
-async function createTask(task, projectID) {
+async function createTask(task, projectID, canEdit) {
     var uData = await userTaskData(task.ID, projectID);
 
     let taskCard = document.createElement("div");
     taskCard.classList.add("card", "taskCard");
     taskCard.id = "task-" + task.ID;
-    taskCard.draggable = false; // Make the taskCard draggable
-    taskCard.oncontextmenu = function (event) {
-        event.preventDefault(); // Prevent the browser's context menu from appearing
-        openTask(task.ID, projectID);
-    }
-
-    //MOBILE DOUBLE TAP
-    let touchCount = 0;
-
-    taskCard.addEventListener('touchend', function (event) {
-        touchCount++;
-        if (touchCount === 1) {
-            setTimeout(function () {
-                if (touchCount === 2) {
-                    if ('vibrate' in navigator) {
-                        // Vibration supported
-                        navigator.vibrate(100);
-                    }
-                    openTask(task.ID, projectID);
-                }
-                touchCount = 0;
-            }, 300); // 300 milliseconds = 0.3 seconds
+    //taskCard.draggable = true; // Make the taskCard draggable
+    if (canEdit) {
+        taskCard.oncontextmenu = function (event) {
+            event.preventDefault(); // Prevent the browser's context menu from appearing
+            openTask(task.ID, projectID);
         }
-    });
 
+        //MOBILE DOUBLE TAP
+        let touchCount = 0;
+
+        taskCard.addEventListener('touchend', function (event) {
+            touchCount++;
+            if (touchCount === 1) {
+                setTimeout(function () {
+                    if (touchCount === 2) {
+                        if ('vibrate' in navigator) {
+                            // Vibration supported
+                            navigator.vibrate(100);
+                        }
+                        openTask(task.ID, projectID);
+                    }
+                    touchCount = 0;
+                }, 300); // 300 milliseconds = 0.3 seconds
+            }
+        });
+    }
 
     // Add task creator tooltip
     var creatorfirstName = task.CreatorFirstName;
@@ -54,23 +71,64 @@ async function createTask(task, projectID) {
     var creatorUsername = task.CreatorUsername;
 
 
-    var creatorTooltip = '<a data-bs-toggle="tooltip" data-bs-title="' + creatorlastName + " " + creatorfirstName + " (" + creatorUsername + ")" + '">' + creatorfirstName + '</a>';
+    var creatorTooltip = '<a data-bs-toggle="tooltip" data-bs-title="Készítette: ' + creatorlastName + " " + creatorfirstName + " (" + creatorUsername + ")" + '"><i class="fas fa-info-circle"></i></a>';
+
+    var taskHeader = document.createElement("div");
+    taskHeader.classList.add("card-header", "taskHeader");
 
     if (task.Task_title) {
-        var taskTitle = document.createElement("div");
-        taskTitle.classList.add("card-header", "taskTitle");
-        taskTitle.innerHTML = task.Task_title + " - " + creatorTooltip;
-        taskCard.appendChild(taskTitle);
+        var taskTitle = document.createElement("p");
+        taskTitle.classList.add("card-title", "taskTitle");
+        taskTitle.style.marginBottom = "0px";
+        taskTitle.innerHTML = task.Task_title;
+        taskHeader.appendChild(taskTitle);
+    } else {
+        taskHeader.style.justifyContent = "end";
     }
+    let creatorSpan = document.createElement("div");
+    //creatorSpan.classList.add("badge", "bg-light", "text-dark");
+    creatorSpan.innerHTML = creatorTooltip;
+    taskHeader.appendChild(creatorSpan);
 
-    // check deadline and color the card accordingly
-    if (task.Deadline) {
-        if (task.isInteractable && uData == 100) {
-            colorTaskCard(taskTitle, task.Deadline);
-        } else if (!task.isInteractable) {
-            colorTaskCard(taskTitle, task.Deadline);
+    // Create drag handle
+    let dragHandle = document.createElement("span");
+    dragHandle.classList.add("dragHandle");
+    dragHandle.innerHTML = "<i class='fas fa-grip-vertical'></i>";
+    dragHandle.style.marginLeft = "5px";
+    dragHandle.style.cursor = "grab";
+    dragHandle.draggable = true;
+    creatorSpan.appendChild(dragHandle);
+
+    // Add event listeners for the drag events
+    dragHandle.addEventListener("mousedown", function (event) {
+        event.preventDefault();
+        console.log("Grabbing task mouse down");
+        taskCard.style.cursor = "grabbing";
+        taskCard.draggable = true; // Make the taskCard draggable when the mouse button is down on the dragHandle
+    });
+
+    document.addEventListener("mouseup", function (event) {
+        if (taskCard.style.cursor === "grabbing") {
+            event.preventDefault();
+            taskCard.style.cursor = "grab";
+            taskCard.draggable = false; // Make the taskCard not draggable when the mouse button is up
         }
-    }
+    });
+
+    // Add event listeners for the drag events
+    taskCard.addEventListener("dragstart", function (event) {
+        console.log("Dragging task");
+        event.dataTransfer.setData("text/plain", taskCard.id);
+        taskCard.style.cursor = "grabbing";
+    });
+
+    taskCard.addEventListener("dragend", function (event) {
+        taskCard.style.cursor = "grab";
+        taskCard.draggable = false; // Make the taskCard not draggable after the drag operation
+    });
+
+
+    taskCard.appendChild(taskHeader);
 
     let taskBody = document.createElement("div");
     taskBody.classList.add("card-body", "taskBody");
@@ -102,9 +160,21 @@ async function createTask(task, projectID) {
             expandButton.style.position = "absolute";
             expandButton.style.top = "10px";
             expandButton.style.right = "10px";
+            expandButton.style.color = "white";
             expandButton.innerHTML = "<i class='fas fa-expand-alt'></i>";
             expandButton.onclick = function () {
                 document.getElementById('expandedImage').src = taskData.image;
+                document.getElementById('imgDownloadButton').onclick = function () {
+                    // Download the image
+                    let imageUrl = taskData.image;
+                    let imageName = "image.jpg";
+                    let a = document.createElement("a");
+                    a.href = imageUrl;
+                    a.download = imageName;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                }
                 $('#expandImageModal').modal('show');
             }
             imageContainer.appendChild(expandButton);
@@ -126,12 +196,35 @@ async function createTask(task, projectID) {
 
     taskCard.appendChild(taskBody);
 
+
+    cardFooter = document.createElement("div");
+    cardFooter.classList.add("card-footer", "taskFooter");
+
+    // check deadline and color the card accordingly
+    if (task.Deadline) {
+        var deadlineText = await getDeadline(task.Deadline);
+        if (task.isInteractable && uData == 100 || !task.isInteractable) {
+            colorTaskCard(taskHeader, task.Deadline);
+            let deadline = document.createElement("span");
+            deadline.classList.add("badge");
+            deadline.innerHTML = deadlineText;
+            if (deadlineText == "Lejárt" || deadlineText.includes("perc") || deadlineText == "Épp most") {
+                deadline.classList.add("bg-danger");
+            } else if (deadlineText.includes("óra")) {
+                deadline.classList.add("bg-warning", "text-dark");
+            } else {
+                deadline.classList.add("bg-success");
+            }
+            cardFooter.appendChild(deadline);
+        }
+        else {
+            cardFooter.style.justifyContent = "end";
+        }
+    }
+
     // Check if task is filled out
 
     if (task.isInteractable == 1 && uData != 404) {
-
-        cardFooter = document.createElement("div");
-        cardFooter.classList.add("card-footer", "taskFooter");
         if (uData == 100 || task.SingleAnswer == 0) {
             // ADD  fill out button to task
             let fillOutButton = document.createElement("button");
@@ -142,7 +235,7 @@ async function createTask(task, projectID) {
             }
             cardFooter.appendChild(fillOutButton);
         } else {
-            console.log("Task not filled out yet" + task.ID);
+            //console.log("Task not filled out yet" + task.ID);
             // Add "Leadva" text
             let filledOutText = document.createElement("p");
             filledOutText.classList.add("card-text", "taskText");
@@ -164,9 +257,10 @@ async function openTask(TaskId, projectID) {
     // Fetch task
     let task = await fetchTask(null, TaskId);
     if (task == 403) {
-        console.error("Szoptad a jogosultságot, bohóc!");
+        console.error("Ejnye ilyet nem lehet!");
         return;
     }
+    //console.log(task);
     task = JSON.parse(task);
 
     let modalTitle = document.getElementById("taskTitle");
@@ -183,13 +277,17 @@ async function openTask(TaskId, projectID) {
     // Get the task data
     let taskData = task.Task_data;
 
+    document.getElementById("fillOutText").style.display = "none";
+    document.getElementById("fillOutText").value = task.fillOutText;
     switch (task.Task_type) {
         case "text":
             textEditor(taskDataHolder, taskData, "150px");
+            document.getElementById("fillOutText").style.display = "block";
             break;
         case "image":
             taskData = JSON.parse(taskData);
             textEditor(taskDataHolder, taskData.text, "100px");
+            document.getElementById("fillOutText").style.display = "block";
 
 
             let imageInput = document.createElement("input");
@@ -216,18 +314,10 @@ async function openTask(TaskId, projectID) {
             resetButton.type = "button";
             resetButton.innerHTML = "Törlés";
             resetButton.onclick = function () {
-                changeImage(TaskId, true);
+                deleteImage(TaskId);
             }
             uploadDiv.appendChild(resetButton);
 
-            let uploadButton = document.createElement("button");
-            uploadButton.classList.add("btn", "btn-outline-success");
-            uploadButton.type = "button";
-            uploadButton.innerHTML = "Feltöltés";
-            uploadButton.onclick = function () {
-                changeImage(TaskId);
-            }
-            uploadDiv.appendChild(uploadButton);
             taskDataHolder.appendChild(uploadDiv);
             break;
         case "checklist":
@@ -307,10 +397,15 @@ async function openTask(TaskId, projectID) {
 
 
     // Add delete button
-    let deleteButton = document.getElementById("deleteTask");
-    deleteButton.style.display = "block";
-    deleteButton.onclick = function () {
-        deleteTask(TaskId);
+    if (task.canDelete) {
+        let deleteButton = document.getElementById("deleteTask");
+        deleteButton.style.display = "block";
+        deleteButton.onclick = function () {
+            deleteTask(TaskId);
+        }
+    } else {
+        let deleteButton = document.getElementById("deleteTask");
+        deleteButton.style.display = "none";
     }
 
     // Add save button
@@ -340,12 +435,19 @@ function fillOutTask(TaskId) {
             let taskBody = document.getElementById("taskFillData");
             taskBody.innerHTML = "";
 
+            // If fillOutText is null, set it
+            if (task.fillOutText == null) {
+                task.fillOutText = "Megerősítés.";
+            }
+
             switch (task.Task_type) {
                 case "text":
                     let text = document.createElement("p");
                     text.classList.add("card-text", "taskText");
                     text.innerHTML = makeFormatting(taskData);
                     taskBody.appendChild(text);
+
+                    addFillOutText(taskBody, task.fillOutText, TaskId);
 
                     break;
                 case "image":
@@ -357,8 +459,10 @@ function fillOutTask(TaskId) {
 
                     let caption = document.createElement("p");
                     caption.classList.add("card-text", "taskText");
-                    caption.innerHTML = taskData.text;
+                    caption.innerHTML = makeFormatting(taskData.text);
                     taskBody.appendChild(caption);
+
+                    addFillOutText(taskBody, task.fillOutText, TaskId);
                     break;
                 case "checklist":
                     generateCheckOrRadioFillOut(taskBody, task, "checklist");
@@ -371,11 +475,16 @@ function fillOutTask(TaskId) {
             // Get the task deadline
             let deadline = task.Deadline;
             let deadlineHolder = document.getElementById("taskFillDeadline");
+            deadlineHolder.innerHTML = "";
             if (deadline) {
                 let date = deadline.split(" ")[0];
-                let time = deadline.split(" ")[1];
+                let time = deadline.split(" ")[1].split(":").slice(0, 2).join(":");
 
-                deadlineHolder.innerHTML = "Határidő: " + date + " " + time;
+                let badge = document.createElement("span");
+                badge.classList.add("badge", "bg-secondary");
+                badge.style.fontSize = "1rem";
+                badge.innerHTML = "Határidő: " + date + " " + time;
+                deadlineHolder.appendChild(badge);
             } else {
                 deadlineHolder.innerHTML = "";
             }
@@ -391,10 +500,46 @@ function fillOutTask(TaskId) {
         });
 }
 
+// Task submission
+
+async function addFillOutText(taskBody, fillOutText, taskId) {
+
+    let UI = await fetchUI(taskId);
+    if (UI != 404) {
+        UI = JSON.parse(UI);
+        var UIData = JSON.parse(UI.Data);
+    } else {
+        var UIData = false;
+    }
+
+    // Create a div for the checkbox
+    let fillOutDiv = document.createElement("div");
+    fillOutDiv.classList.add("form-check");
+
+    // Create a checkbox
+    let fillOutCheckbox = document.createElement("input");
+    fillOutCheckbox.type = "checkbox";
+    fillOutCheckbox.id = "fillOutCheckbox";
+    fillOutCheckbox.classList.add("form-check-input");
+    fillOutCheckbox.style.marginRight = "5px";
+    if (UIData == 'done') {
+        fillOutCheckbox.checked = true;
+    }
+    fillOutDiv.appendChild(fillOutCheckbox);
+
+    // Create a label for the checkbox
+    let fillOutLabel = document.createElement("label");
+    fillOutLabel.classList.add("form-check-label");
+    fillOutLabel.innerHTML = fillOutText;
+    fillOutLabel.id = "fillOutText";
+    fillOutDiv.appendChild(fillOutLabel);
+
+    taskBody.appendChild(fillOutDiv);
+}
 
 // Task settings modal
 
-function addNewTask(projectID, taskType) {
+async function addNewTask(projectID, taskType) {
     console.log("Adding new " + taskType + " task to project: " + projectID);
 
     let modalTitle = document.getElementById("taskTitle");
@@ -408,28 +553,29 @@ function addNewTask(projectID, taskType) {
     taskDataLabel.innerHTML = "Adatok:";
     taskDataHolder.appendChild(taskDataLabel);
 
+    document.getElementById("fillOutText").style.display = "none";
     switch (taskType) {
         case "text":
-            modalTitle.innerHTML = "Új feladat hozzáadása (szöveg)";
-
+            modalTitle.innerHTML = "Új feladat hozzáadása";
+            document.getElementById("fillOutText").style.display = "block";
             textEditor(taskDataHolder);
             break;
 
         case "image":
-            modalTitle.innerHTML = "Új feladat hozzáadása (kép)";
-
+            modalTitle.innerHTML = "Új kép hozzáadása";
+            document.getElementById("fillOutText").style.display = "block";
             textEditor(taskDataHolder, "", "100px");
 
-            let imageInput = document.createElement("input");
+            var imageInput = document.createElement("input");
             imageInput.classList.add("form-control", "mb-2");
             imageInput.id = "imageLink";
             imageInput.placeholder = "Kép URL...";
             taskDataHolder.appendChild(imageInput);
 
-            let uploadDiv = document.createElement("div");
+            var uploadDiv = document.createElement("div");
             uploadDiv.classList.add("input-group");
 
-            let uploadImage = document.createElement("input");
+            var uploadImage = document.createElement("input");
             uploadImage.type = "file";
             uploadImage.classList.add("form-control");
             uploadImage.placeholder = "Kép feltöltése";
@@ -438,34 +584,89 @@ function addNewTask(projectID, taskType) {
             uploadImage.accept = "image/*";
             uploadDiv.appendChild(uploadImage);
 
-            let resetButton = document.createElement("button");
+            var resetButton = document.createElement("button");
             resetButton.classList.add("btn", "btn-outline-danger");
             resetButton.type = "button";
             resetButton.innerHTML = "Törlés";
             resetButton.onclick = function () {
-                changeImage(TaskId, true);
+                deleteImage(TaskId);
             }
             uploadDiv.appendChild(resetButton);
 
-            let uploadButton = document.createElement("button");
-            uploadButton.classList.add("btn", "btn-outline-success");
-            uploadButton.type = "button";
-            uploadButton.innerHTML = "Feltöltés";
-            uploadButton.onclick = function () {
-                changeImage(TaskId);
+            taskDataHolder.appendChild(uploadDiv);
+            break;
+
+        case "file":
+            modalTitle.innerHTML = "Új fájl hozzáadása";
+
+            textEditor(taskDataHolder, "", "100px");
+
+            var uploadDiv = document.createElement("div");
+            uploadDiv.classList.add("input-group");
+
+            var uploadFile = document.createElement("input");
+            uploadFile.type = "file";
+            uploadFile.classList.add("form-control");
+            uploadFile.placeholder = "Fájl feltöltése";
+            uploadFile.name = "fileToUpload";
+            uploadFile.id = "fileUpload";
+            uploadFile.accept = "*";
+            uploadDiv.appendChild(uploadFile);
+
+            var resetButton = document.createElement("button");
+            resetButton.classList.add("btn", "btn-outline-danger");
+            resetButton.type = "button";
+            resetButton.innerHTML = "Törlés";
+            resetButton.onclick = function () {
+                deleteFile(TaskId);
             }
-            uploadDiv.appendChild(uploadButton);
+            uploadDiv.appendChild(resetButton);
+
             taskDataHolder.appendChild(uploadDiv);
             break;
 
         case "checklist":
-            modalTitle.innerHTML = "Új feladat hozzáadása (checklist)";
+            modalTitle.innerHTML = "Új lista hozzáadása (checklist)";
             generateNewCheckOrRadioEditor(taskDataHolder, "checklist");
             break;
 
         case "radio":
-            modalTitle.innerHTML = "Új feladat hozzáadása (radio)";
+            modalTitle.innerHTML = "Új lista hozzáadása (radio)";
             generateNewCheckOrRadioEditor(taskDataHolder, "radio");
+    }
+
+    // Get task assigned users
+
+    let taskMembers = await fetchProjectMembers(projectID);
+    taskMembers = JSON.parse(taskMembers);
+
+
+    let taskMembersHolder = document.getElementById("taskMembers");
+    taskMembersHolder.innerHTML = "";
+
+
+    for (let i = 0; i < taskMembers.length; i++) {
+        var member = taskMembers[i];
+
+        var option = document.createElement("div");
+        option.classList.add("availableMember");
+        option.style.cursor = "pointer";
+        option.id = member.UserId;
+        option.innerHTML = member.lastName + " " + member.firstName;
+        option.onclick = function () {
+            if (this.classList.contains("selectedMember")) {
+                this.classList.remove("selectedMember");
+            }
+            else {
+                this.classList.add("selectedMember");
+            }
+        }
+
+        if (member.assignedToTask) {
+            option.classList.add("selectedMember");
+        }
+
+        taskMembersHolder.appendChild(option);
     }
 
     // Hide delete button if shown
@@ -517,13 +718,22 @@ async function saveTaskSettings(task_id, taskType, projectID = null) {
     var singleAnswer = document.getElementById("singleAnswer");
     singleAnswer = singleAnswer.classList.contains("active") ? 1 : 0;
 
+    var imageToUpload = null;
+    //
+    var fillOutText = null;
     switch (taskType) {
         case "text":
             var taskData = taskDataHolder.querySelector("#textTaskData").value;
+            fillOutText = document.getElementById('fillOutText').value;
             break;
         case "image":
+            fillOutText = document.getElementById('fillOutText').value;
             var caption = taskDataHolder.querySelector("#textTaskData").value;
             var imageLink = taskDataHolder.querySelector("#imageLink").value;
+            var uploadImage = taskDataHolder.querySelector("#imageUpload").files[0];
+            if (uploadImage) {
+                imageToUpload = uploadImage;
+            }
             var taskData = {
                 text: caption,
                 image: imageLink
@@ -574,7 +784,7 @@ async function saveTaskSettings(task_id, taskType, projectID = null) {
             taskMembersArray.push(taskMembers[i].id);
         }
     }
-    console.log(taskMembersArray);
+    //console.log(taskMembersArray);
 
     let task = {
         "ProjectId": projectID,
@@ -582,28 +792,21 @@ async function saveTaskSettings(task_id, taskType, projectID = null) {
         "Task_title": taskName,
         "Task_data": taskData,
         "isInteractable": isInteractable,
+        "fillOutText": fillOutText,
         "singleAnswer": singleAnswer,
         "Deadline": taskDeadline
     }
-    console.log(task);
+    //console.log(task);
 
-    if (task_id == null) {
-        // Save the task
-        if (await createNewTaskDB(task) == 200) {
-            console.log("Task saved successfully");
-            location.reload();
-        };
-    } else {
-
-        // Save the task settings
-        var response = await saveTaskToDB(task_id, task, taskMembersArray);
-        if (response == 500) {
-            console.error("Error: 500");
-            return;
-        }
-        if (response == 200) {
-            location.reload();
-        }
+    // Save the task settings
+    var response = await saveTaskToDB(task, taskMembersArray, imageToUpload, task_id);
+    if (response == 500) {
+        console.error("Error: 500");
+        return;
+    }
+    if (response == 200) {
+        console.log("Task saved successfully");
+        location.reload();
     }
 
 
@@ -626,9 +829,13 @@ async function deleteTask(taskId) {
 
     buttonClicked.then(async () => {
         // Delete the task
-        if (await deleteTaskFromDB(taskId) == 200) {
+        let res = await deleteTaskFromDB(taskId)
+        if (res == 200) {
             console.log("Task deleted successfully");
             location.reload();
+        } else if (res == 403) {
+            console.error("Ejnye ilyet nem lehet!");
+            return;
         }
     }).catch(() => {
         // Code to run when 'otherButtonId' is clicked
@@ -644,17 +851,32 @@ async function deleteTask(taskId) {
 async function submitTask(taskId, taskType) {
     console.log("Submitting task: " + taskId);
 
-    if (!(taskType == "checklist" || taskType == "radio")) {
-        console.error("Task type not supported");
-        return;
-    }
-
     // Get the task data
     let taskDataHolder = document.getElementById("taskFillData");
 
     let taskData = [];
 
     switch (taskType) {
+        case "text":
+            var done = document.getElementById("fillOutCheckbox").checked;
+            if (done) {
+                taskData.push('done');
+            } else {
+                var fillOutText = taskDataHolder.querySelector("#fillOutText").innerHTML;
+                alert(fillOutText);
+                return;
+            }
+            break;
+        case "image":
+            var done = document.getElementById("fillOutCheckbox").checked;
+            if (done) {
+                taskData.push('done');
+            } else {
+                var fillOutText = taskDataHolder.querySelector("#fillOutText").innerHTML;
+                alert(fillOutText);
+                return;
+            }
+            break;
         case "checklist":
             let checklistItems = taskDataHolder.getElementsByClassName("form-check");
 
@@ -748,82 +970,91 @@ function textEditor(taskDataHolder, taskData = "", height = "250px") {
         var start = textarea.selectionStart;
         var end = textarea.selectionEnd;
 
-        // Add ** at the start and end
-        var boldText = "**" + textarea.value.substring(start, end) + "**";
-
-        // Replace the selection with the bold text
-        textarea.value = textarea.value.substring(0, start) + boldText + textarea.value.substring(end);
-
-        // Adjust the selection to include the added **
-        textarea.selectionStart = start;
-        textarea.selectionEnd = end + 4; // 4 is the total length of the added **
+        // If the start and end contain **, remove them else add them
+        if (textarea.value.substring(start + 2, start) == "**" && textarea.value.substring(end, end - 2) == "**") {
+            // Remove the **
+            var boldText = textarea.value.substring(start + 2, end - 2);
+            textarea.value = textarea.value.replace(textarea.value.substring(start, end), boldText);
+            // Adjust the selection to exclude the **
+            textarea.selectionStart = start;
+            textarea.selectionEnd = end - 4;
+        } else {
+            // Add ** at the start and end
+            var boldText = "**" + textarea.value.substring(start, end) + "**";
+            textarea.value = textarea.value.substring(0, start) + boldText + textarea.value.substring(end);
+            // Adjust the selection to include the added **
+            textarea.selectionStart = start;
+            textarea.selectionEnd = end + 4; // 4 is the total length of the added **
+        }
+        // Set the focus back to the textarea
+        textarea.focus();
     }
 
     let italicButton = document.createElement("button");
     italicButton.classList.add("btn");
     italicButton.innerHTML = "<i>I</i>";
     italicButton.onclick = function () {
-        // Assume textarea is the textarea or input element where you want to bold the text
         var textarea = document.getElementById('textTaskData');
-
-        // Get the current selection
         var start = textarea.selectionStart;
         var end = textarea.selectionEnd;
 
-        // Add * at the start and end
-        var boldText = "*" + textarea.value.substring(start, end) + "*";
-
-        // Replace the selection with the italic text
-        textarea.value = textarea.value.substring(0, start) + boldText + textarea.value.substring(end);
-
-        // Adjust the selection to include the added **
-        textarea.selectionStart = start;
-        textarea.selectionEnd = end + 2; // 2 is the total length of the added *
+        if (textarea.value.substring(start + 1, start) == "*" && textarea.value.substring(end, end - 1) == "*") {
+            var italicText = textarea.value.substring(start + 1, end - 1);
+            textarea.value = textarea.value.replace(textarea.value.substring(start, end), italicText);
+            textarea.selectionStart = start;
+            textarea.selectionEnd = end - 2;
+        } else {
+            var italicText = "*" + textarea.value.substring(start, end) + "*";
+            textarea.value = textarea.value.substring(0, start) + italicText + textarea.value.substring(end);
+            textarea.selectionStart = start;
+            textarea.selectionEnd = end + 2;
+        }
+        textarea.focus();
     }
 
     let underlineButton = document.createElement("button");
     underlineButton.classList.add("btn");
     underlineButton.innerHTML = "<u>U</u>";
     underlineButton.onclick = function () {
-        // Assume textarea is the textarea or input element where you want to bold the text
         var textarea = document.getElementById('textTaskData');
-
-        // Get the current selection
         var start = textarea.selectionStart;
         var end = textarea.selectionEnd;
 
-        // Add __ at the start and end
-        var boldText = "__" + textarea.value.substring(start, end) + "__";
-
-        // Replace the selection with the underline text
-        textarea.value = textarea.value.substring(0, start) + boldText + textarea.value.substring(end);
-
-        // Adjust the selection to include the added __
-        textarea.selectionStart = start;
-        textarea.selectionEnd = end + 4; // 4 is the total length of the added __
+        if (textarea.value.substring(start + 2, start) == "__" && textarea.value.substring(end, end - 2) == "__") {
+            var underlineText = textarea.value.substring(start + 2, end - 2);
+            textarea.value = textarea.value.replace(textarea.value.substring(start, end), underlineText);
+            textarea.selectionStart = start;
+            textarea.selectionEnd = end - 4;
+        } else {
+            var underlineText = "__" + textarea.value.substring(start, end) + "__";
+            textarea.value = textarea.value.substring(0, start) + underlineText + textarea.value.substring(end);
+            textarea.selectionStart = start;
+            textarea.selectionEnd = end + 4;
+        }
+        textarea.focus();
     }
 
     let linkButton = document.createElement("button");
     linkButton.classList.add("btn");
     linkButton.innerHTML = "<a href='#'>Link</a>";
     linkButton.onclick = function () {
-        // Assume textarea is the textarea or input element where you want to insert the link
         var textarea = document.getElementById('textTaskData');
-
-        // Get the current selection
         var start = textarea.selectionStart;
         var end = textarea.selectionEnd;
 
-        // Add []() around the selected text
-        var linkText = "[" + textarea.value.substring(start, end) + "]()";
-
-        // Replace the selection with the link text
-        textarea.value = textarea.value.substring(0, start) + linkText + textarea.value.substring(end);
-
-        // Adjust the selection to include the added []()
-        textarea.selectionStart = start;
-        textarea.selectionEnd = end + 4; // 4 is the total length of the added []()
-    };
+        if (textarea.value.substring(start + 1, start) == "[" && textarea.value.substring(end, end - 3) == "]()") {
+            //var linkText = textarea.value.substring(start + 1, end - 3);
+            //textarea.value = textarea.value.replace(textarea.value.substring(start, end), linkText);
+            //textarea.selectionStart = start;
+            //textarea.selectionEnd = end - 4;
+        } else {
+            var linkText = "[" + textarea.value.substring(start, end) + "]()";
+            textarea.value = textarea.value.substring(0, start) + linkText + textarea.value.substring(end);
+            textarea.selectionStart = start;
+            textarea.selectionEnd = end + 4;
+        }
+        textarea.focus();
+    }
 
     textFormatOptions.appendChild(boldButton);
     textFormatOptions.appendChild(italicButton);
@@ -1043,4 +1274,31 @@ async function generateCheckOrRadioFillOut(taskBody, task, type) {
     }
     taskBody.appendChild(checklist);
 
+}
+
+
+async function deleteImage(taskId) {
+    console.log("Deleting image");
+
+    let imageLink = document.getElementById("imageLink");
+    imageLink.value = "";
+
+
+    let formData = new FormData();
+    formData.append('taskId', taskId);
+    formData.append('mode', 'deleteImage');
+
+    $.ajax({
+        url: './upload-handler.php',
+        type: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function (data) {
+            console.log(data);
+            if (data == 200) {
+                console.log("Image deleted successfully");
+            }
+        }
+    });
 }

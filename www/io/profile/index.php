@@ -100,7 +100,7 @@ if (isset($_SESSION["userId"])) { ?>
       }
       if (in_array("system", $_SESSION["groups"])) {
         echo '
-                      <tr><td><form action="roles.php"><button class="btn btn-danger w-100">Engedélyek módosítása <i class="fas fa-radiation"></i></button></form></td></tr>
+                      <tr><td><form action="./roles/index.php"><button class="btn btn-danger w-100">Engedélyek módosítása <i class="fas fa-radiation"></i></button></form></td></tr>
                       <tr><td><form action="../utility/loginPageSettings.php"><button class="btn btn-danger w-100">Motd/Belépések korlátozása <i class="fas fa-user-shield"></i></button></form></td></tr>
                       <tr><td><form action="../utility/refetchData.php"><button class="btn btn-success disabled w-100">Adattáblák frissítése - Frissíts a kivétel oldal betöltésével! <i class="fas fa-sync"></i></i></button></form></td></tr>';
       } ?>
