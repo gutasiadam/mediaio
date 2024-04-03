@@ -192,6 +192,7 @@
     }
     overflow: auto;
     max-height: 100%;
+    width: 100%;
 
     &::-webkit-scrollbar-track {
         background: rgb(255, 255, 255);
@@ -239,7 +240,7 @@
 }
 
 .taskCard {
-    width: 100%;
+    min-width: 100%;
 }
 
 .taskFooter {

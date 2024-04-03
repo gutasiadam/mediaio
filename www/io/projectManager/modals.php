@@ -5,7 +5,7 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Biztosan törölni szeretnéd?</h5>
+                <h5 class="modal-title">Biztosan vagy benne?</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-footer">
@@ -57,7 +57,7 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-warning" id="archiveButton">Befejezés (archiválás)</button>
+                <button type="button" class="btn btn-warning" id="archiveButton" data-bs-dismiss="modal">Befejezés (archiválás)</button>
                 <button type="button" class="btn btn-success" id="saveButton">Mentés</button>
             </div>
         </div>

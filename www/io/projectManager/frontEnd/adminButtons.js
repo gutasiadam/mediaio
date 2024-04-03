@@ -252,6 +252,8 @@ async function archiveProject(projectID) {
     document.getElementById('deleteTaskSure').classList.remove("btn-danger");
     document.getElementById('deleteTaskSure').classList.add("btn-warning");
 
+    
+
     // Create a new Promise that resolves when the button is clicked
     let buttonClicked = new Promise((resolve, reject) => {
         document.getElementById('deleteTaskSure').addEventListener('click', resolve);
@@ -262,7 +264,7 @@ async function archiveProject(projectID) {
         // Archive the project
         $.ajax({
             type: "POST",
-            url: "../projectManager.php",
+            url: "../../projectManager.php",
             data: { mode: "archiveProject", projectId: projectID },
             success: function (response) {
                 console.log(response);

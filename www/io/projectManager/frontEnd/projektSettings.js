@@ -49,6 +49,7 @@ async function openSettings(proj_id) {
     // Create archive button
     var archiveButton = document.getElementById("archiveButton");
     archiveButton.onclick = function () {
+        $('#areyousureModal').modal('show');
         archiveProject(proj_id);
     }
 
