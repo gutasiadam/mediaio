@@ -50,8 +50,22 @@ class projectManager
     static function deleteProject()
     {
         if (in_array("admin", $_SESSION['groups'])) {
-            $sql = "DELETE FROM projects WHERE ID=" . $_POST['id'] . ";";
+
+            // Get picture tasks of the project
+            $sql = "SELECT * FROM project_components WHERE ProjectId=" . $_POST['id'] . " AND Task_type='image';";
             $connection = Database::runQuery_mysqli(self::$schema);
+            $result = $connection->query($sql);
+            while ($row = $result->fetch_assoc()) {
+                // Delete the picture of the task
+                try {
+                    projectPictureManager::deleteImage($row['ID']);
+                } catch (\Exception $e) {
+                    // Do nothing
+                }
+            }
+
+
+            $sql = "DELETE FROM projects WHERE ID=" . $_POST['id'] . ";";
             $connection->query($sql);
             $connection->close();
             echo 1;
@@ -141,7 +155,7 @@ class projectManager
     {
         if ($_POST['task_id'] == null) {
             // Get all tasks of the project
-            $sql = "SELECT * FROM project_components WHERE ProjectId=" . $_POST['proj_id'] . ";";
+            $sql = "SELECT * FROM project_components WHERE ProjectId=" . $_POST['proj_id'] . " ORDER BY Position IS NULL, Position;";
         } else {
             // Get the task with the specified ID
             $sql = "SELECT * FROM project_components WHERE ID=" . $_POST['task_id'] . ";";
@@ -309,6 +323,23 @@ class projectManager
                 exit();
             }
 
+        }
+
+        $connection->close();
+        echo 200;
+    }
+
+    static function saveTaskOrder($tasks)
+    {
+        $tasks = json_decode($tasks, true);
+        $connection = Database::runQuery_mysqli(self::$schema);
+
+        $sql = "UPDATE `project_components` SET `Position`=? WHERE `ID`=?;";
+        $stmt = $connection->prepare($sql);
+
+        foreach ($tasks as $item) {
+            $stmt->bind_param("ii", $item['order'], $item['id']);
+            $stmt->execute();
         }
 
         $connection->close();
@@ -514,6 +545,10 @@ class projectManager
         $row = $result->fetch_assoc();
         if ($row == null) {
             $taskMembers = self::getTaskMembers();
+            if ($taskMembers == null) {
+                echo 404;
+                exit();
+            }
             $taskMembers = array_map(function ($item) {
                 if ($item['assignedToTask'] == 1) {
                     return intval($item['UserId']);
@@ -526,6 +561,10 @@ class projectManager
             }
 
             echo 404;
+            exit();
+        }
+        if ($row['Data'] == 'null') {
+            echo 100;
             exit();
         }
         echo (json_encode($row));
@@ -640,6 +679,9 @@ if (isset($_POST['mode'])) {
 
         case 'saveTask':
             echo projectManager::saveTask();
+            break;
+        case 'saveTaskOrder':
+            echo projectManager::saveTaskOrder($_POST['tasks']);
             break;
         case 'submitTask':
             echo projectManager::submitTask();

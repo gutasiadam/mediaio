@@ -130,6 +130,15 @@ async function generateBigView(project) {
         }
         ul.appendChild(image);
 
+        let file = document.createElement("li");
+        file.classList.add("dropdown-item");
+        file.innerHTML = "<i class='fas fa-file-alt'></i> Fájl";
+        file.style.cursor = "pointer";
+        file.onclick = function () {
+            addNewTask(projectID, "file");
+        }
+        ul.appendChild(file);
+
         let checklist = document.createElement("li");
         checklist.classList.add("dropdown-item");
         checklist.innerHTML = "<i class='fas fa-list fa-sm'></i> Lista";

@@ -72,10 +72,11 @@ if (!isset($_SESSION["userId"])) {
 
 <script src="frontEnd/projektGen.js" crossorigin="anonymous"></script>
 <script src="frontEnd/taskGen.js" crossorigin="anonymous"></script>
-<script src="frontEnd/projektSettings.js" crossorigin="anonymous"></script>
 <script src="frontEnd/fetchData.js" crossorigin="anonymous"></script>
+<script src="frontEnd/dragAndDrop.js" crossorigin="anonymous" defer></script>
 
 <?php if (in_array("admin", $_SESSION["groups"])) { ?>
+   <script src="frontEnd/projektSettings.js" crossorigin="anonymous"></script>
    <script src="frontEnd/adminButtons.js" crossorigin="anonymous"></script>
 <?php } ?>
 <script>
@@ -101,7 +102,7 @@ if (!isset($_SESSION["userId"])) {
          var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
             return new bootstrap.Tooltip(tooltipTriggerEl)
          })
-
+         documentReady();
       }
 
       if (window.innerWidth < 768) {

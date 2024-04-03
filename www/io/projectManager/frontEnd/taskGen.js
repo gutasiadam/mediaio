@@ -4,21 +4,6 @@ async function generateTasks(projectID, canEdit) {
     taskHolder.classList.add("taskHolder");
     taskHolder.id = projectID + "-taskHolder";
 
-    // Adding dropping task card functionality
-    taskHolder.addEventListener("dragover", function (event) {
-        event.preventDefault();
-    });
-
-    taskHolder.addEventListener("drop", async function (event) {
-        console.log("Dropped task");
-        event.preventDefault();
-        let taskID = event.dataTransfer.getData("text/plain");
-        let taskCard = document.getElementById(taskID);
-
-        // Append the task card to the task holder
-        taskHolder.appendChild(taskCard);
-    });
-
     // Fetch the tasks
     let tasks = await fetchTask(projectID);
     // Parse the tasks
@@ -38,7 +23,7 @@ async function createTask(task, projectID, canEdit) {
     let taskCard = document.createElement("div");
     taskCard.classList.add("card", "taskCard");
     taskCard.id = "task-" + task.ID;
-    //taskCard.draggable = true; // Make the taskCard draggable
+    taskCard.draggable = false;
     if (canEdit) {
         taskCard.oncontextmenu = function (event) {
             event.preventDefault(); // Prevent the browser's context menu from appearing
@@ -98,34 +83,6 @@ async function createTask(task, projectID, canEdit) {
     dragHandle.style.cursor = "grab";
     dragHandle.draggable = true;
     creatorSpan.appendChild(dragHandle);
-
-    // Add event listeners for the drag events
-    dragHandle.addEventListener("mousedown", function (event) {
-        event.preventDefault();
-        console.log("Grabbing task mouse down");
-        taskCard.style.cursor = "grabbing";
-        taskCard.draggable = true; // Make the taskCard draggable when the mouse button is down on the dragHandle
-    });
-
-    document.addEventListener("mouseup", function (event) {
-        if (taskCard.style.cursor === "grabbing") {
-            event.preventDefault();
-            taskCard.style.cursor = "grab";
-            taskCard.draggable = false; // Make the taskCard not draggable when the mouse button is up
-        }
-    });
-
-    // Add event listeners for the drag events
-    taskCard.addEventListener("dragstart", function (event) {
-        console.log("Dragging task");
-        event.dataTransfer.setData("text/plain", taskCard.id);
-        taskCard.style.cursor = "grabbing";
-    });
-
-    taskCard.addEventListener("dragend", function (event) {
-        taskCard.style.cursor = "grab";
-        taskCard.draggable = false; // Make the taskCard not draggable after the drag operation
-    });
 
 
     taskCard.appendChild(taskHeader);
@@ -220,6 +177,8 @@ async function createTask(task, projectID, canEdit) {
         else {
             cardFooter.style.justifyContent = "end";
         }
+    } else {
+        cardFooter.style.justifyContent = "end";
     }
 
     // Check if task is filled out
@@ -228,8 +187,14 @@ async function createTask(task, projectID, canEdit) {
         if (uData == 100 || task.SingleAnswer == 0) {
             // ADD  fill out button to task
             let fillOutButton = document.createElement("button");
-            fillOutButton.classList.add("btn", "btn-primary", "btn-sm", "fillOutButton");
+            fillOutButton.classList.add("btn", "btn-sm", "fillOutButton");
             fillOutButton.innerHTML = "Kitöltés";
+            if (uData != 100) {
+                fillOutButton.innerHTML = "Módosítás";
+                fillOutButton.classList.add("btn-warning");
+            } else {
+                fillOutButton.classList.add("btn-primary");
+            }
             fillOutButton.onclick = function () {
                 fillOutTask(task.ID);
             }
@@ -334,33 +299,34 @@ async function openTask(TaskId, projectID) {
 
 
     let taskMembersHolder = document.getElementById("taskMembers");
-    taskMembersHolder.innerHTML = "";
+    taskMembersHolder.innerHTML = "<i>Adj hozzá tagokat a projekthez először!</i>";
 
+    if (taskMembers != null) {
+        taskMembersHolder.innerHTML = "";
+        for (let i = 0; i < taskMembers.length; i++) {
+            var member = taskMembers[i];
 
-    for (let i = 0; i < taskMembers.length; i++) {
-        var member = taskMembers[i];
-
-        var option = document.createElement("div");
-        option.classList.add("availableMember");
-        option.style.cursor = "pointer";
-        option.id = member.UserId;
-        option.innerHTML = member.lastName + " " + member.firstName;
-        option.onclick = function () {
-            if (this.classList.contains("selectedMember")) {
-                this.classList.remove("selectedMember");
+            var option = document.createElement("div");
+            option.classList.add("availableMember");
+            option.style.cursor = "pointer";
+            option.id = member.UserId;
+            option.innerHTML = member.lastName + " " + member.firstName;
+            option.onclick = function () {
+                if (this.classList.contains("selectedMember")) {
+                    this.classList.remove("selectedMember");
+                }
+                else {
+                    this.classList.add("selectedMember");
+                }
             }
-            else {
-                this.classList.add("selectedMember");
+
+            if (member.assignedToTask) {
+                option.classList.add("selectedMember");
             }
-        }
 
-        if (member.assignedToTask) {
-            option.classList.add("selectedMember");
+            taskMembersHolder.appendChild(option);
         }
-
-        taskMembersHolder.appendChild(option);
     }
-
 
     // Set the task submittable checkbox
     //console.log(task.isInteractable);
@@ -879,8 +845,12 @@ async function submitTask(taskId, taskType) {
             break;
         case "checklist":
             let checklistItems = taskDataHolder.getElementsByClassName("form-check");
+            var noneChecked = true;
 
             for (let i = 0; i < checklistItems.length; i++) {
+                if (checklistItems[i].querySelector("input").checked) {
+                    noneChecked = false;
+                }
                 let checklistItem = {
                     pos: i,
                     value: checklistItems[i].querySelector("label").innerHTML,
@@ -888,17 +858,29 @@ async function submitTask(taskId, taskType) {
                 }
                 taskData.push(checklistItem);
             }
+            // if none selected taskData = null
+            if (noneChecked) {
+                taskData = null;
+            }
             break;
         case "radio":
             let radioItems = taskDataHolder.getElementsByClassName("form-check");
+            var noneChecked = true;
 
             for (let i = 0; i < radioItems.length; i++) {
+                if (radioItems[i].querySelector("input").checked) {
+                    noneChecked = false;
+                }
                 let radioItem = {
                     pos: i,
                     value: radioItems[i].querySelector("label").innerHTML,
                     checked: radioItems[i].querySelector("input").checked
                 }
                 taskData.push(radioItem);
+            }
+            // if none selected taskData = null
+            if (noneChecked) {
+                taskData = null;
             }
             break;
     }
@@ -1187,6 +1169,16 @@ async function cardCheckOrRadio(taskBody, task, type) {
         var UIData = false;
     }
 
+    if (UIData[0] == null) {
+        var UIData = false;
+    }
+
+    function decodeHtml(html) {
+        var txt = document.createElement("textarea");
+        txt.innerHTML = html;
+        return txt.textContent;
+    }
+
     for (let i = 0; i < checklistItems.length; i++) {
         let checklistItem = document.createElement("div");
         checklistItem.classList.add("form-check");
@@ -1207,7 +1199,7 @@ async function cardCheckOrRadio(taskBody, task, type) {
             if (UIData[j].length <= i) {
                 continue;
             }
-            if (UIData[j][i].checked && UIData[j][i].value == checklistItems[i].value) {
+            if (UIData[j][i].checked && decodeHtml(UIData[j][i].value) == checklistItems[i].value) {
                 selectedCount += 1;
             }
         }

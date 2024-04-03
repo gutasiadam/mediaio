@@ -200,7 +200,7 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
         <h3>Kiválasztva:</h3>
         <ul class="selectedItemsDisplay" id="output-desktop"></ul>
       </div>
-      <div class="col">
+      <div class="col" style="border-left: 1px solid;">
         Keresés: <input type="text" id="search" style='margin-bottom: 10px'
           placeholder="Kezdd el ide írni, mit vinnél el.." autocomplete="off" />
         <div class="row" id="takeout-option-buttons">
