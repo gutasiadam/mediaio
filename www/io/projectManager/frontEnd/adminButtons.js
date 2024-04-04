@@ -21,36 +21,76 @@ function editDescriptionButton(projectID) {
     return editDescription;
 }
 
+async function editProjectDescription(proj_id) {
+
+    // Fetch the project settings
+    var projectSettings = await fetchProject(proj_id);
+
+    // Set the project description
+    var projectDescription = projectSettings.Description;
+    document.getElementById("projectDescription").value = projectDescription;
+
+    // Create save button
+    var saveButton = document.getElementById("saveDescButton");
+    saveButton.onclick = function () {
+        saveProjectDescription(proj_id);
+    }
+
+    $('#projectDescModal').modal('show');
+}
+
+async function saveProjectDescription(proj_id) {
+
+    // Get the project description
+    var projectDescription = document.getElementById("projectDescription").value;
+
+    // Save the project description
+    var response = await saveProjectDescriptionToDB(proj_id, projectDescription);
+
+    if (response == 500) {
+        console.error("Error: 500");
+        return;
+    }
+
+    // Set the new description
+    let project = document.getElementById(proj_id);
+    project.querySelector(".projectDescription").innerHTML = projectDescription;
+
+    // Close the modal
+    $('#projectDescModal').modal('hide');
+
+}
+
 
 function removeMemberFromProjectButton(projectID, memberID) {
     let removeMemberButton = document.createElement("button");
     removeMemberButton.classList.add("btn", "removeMemberButton");
     removeMemberButton.innerHTML = "<i class='fas fa-user-minus'></i>";
     removeMemberButton.style.color = "#ff0000";
-    removeMemberButton.onclick = function () {
-        removeMemberFromProject(projectID, memberID);
+    removeMemberButton.onclick = async function () {
+        const response = await removeMemberFromProject(projectID, memberID);
+        if (response == 200) {
+            this.parentElement.parentElement.remove();
+        } else if (response == 500) {
+            console.error("Error: 500");
+            return;
+        } else if (response == 403) {
+            console.error("Ejnye ilyet nem szabad!");
+            return;
+        }
     }
     return removeMemberButton;
 }
 
-function removeMemberFromProject(projectID, memberID) {
+async function removeMemberFromProject(projectID, memberID) {
     console.log("Removing member from project");
     console.log("Project ID:", projectID);
     console.log("Member ID:", memberID);
 
-    $.ajax({
+    return await $.ajax({
         type: "POST",
         url: "../projectManager.php",
         data: { mode: "removeMemberFromProject", projectId: projectID, userId: memberID },
-        success: function (response) {
-            console.log(response);
-            if (response == 500) {
-                window.location.href = "index.php?serverError";
-            }
-            if (response == 200) {
-                location.reload();
-            }
-        }
     });
 }
 
@@ -135,25 +175,6 @@ async function saveProjectMemberSettings(projectID) {
 }
 
 
-async function editProjectDescription(proj_id) {
-
-    // Fetch the project settings
-    var projectSettings = await fetchProject(proj_id);
-
-    // Set the project description
-    var projectDescription = projectSettings.Description;
-    document.getElementById("projectDescription").value = projectDescription;
-
-    // Create save button
-    var saveButton = document.getElementById("saveDescButton");
-    saveButton.onclick = function () {
-        saveProjectDescription(proj_id);
-    }
-
-    $('#projectDescModal').modal('show');
-}
-
-
 // Save project settings
 
 async function saveProjectSettings(proj_id) {
@@ -190,27 +211,6 @@ async function saveProjectSettings(proj_id) {
     // Close the modal
     $('#projectSettingsModal').modal('hide');
 
-
-}
-
-async function saveProjectDescription(proj_id) {
-
-    // Get the project description
-    var projectDescription = document.getElementById("projectDescription").value;
-
-    // Save the project description
-    var response = await saveProjectDescriptionToDB(proj_id, projectDescription);
-
-    if (response == 500) {
-        console.error("Error: 500");
-        return;
-    }
-
-    // Close the modal
-    $('#projectDescModal').modal('hide');
-
-    // Reload the page
-    location.reload();
 
 }
 
@@ -252,7 +252,7 @@ async function archiveProject(projectID) {
     document.getElementById('deleteTaskSure').classList.remove("btn-danger");
     document.getElementById('deleteTaskSure').classList.add("btn-warning");
 
-    
+
 
     // Create a new Promise that resolves when the button is clicked
     let buttonClicked = new Promise((resolve, reject) => {

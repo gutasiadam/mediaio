@@ -3,18 +3,37 @@ namespace Mediaio;
 
 class projectPictureManager
 {
+  private static function checkIfFolderExists()
+  {
+    try {
+      if (!file_exists("./projectManager/pictures")) {
+        mkdir("./projectManager/pictures", 0777, true);
+      }
+    } catch (\Exception $e) {
+      return 500;
+    }
+    return 200;
+  }
+
   static function uploadImage($taskId, $file)
   {
+    // Check if folder exists
+    if (self::checkIfFolderExists() == 500) {
+      return 500;
+    }
+
     $imageFileType = strtolower(pathinfo($file["name"], PATHINFO_EXTENSION));
     $target_dir = "./projectManager/pictures/";
     $target_file = $target_dir . $taskId . "." . $imageFileType;
     $uploadOk = 1;
     // Check if image file is a actual image or fake image
-    $check = getimagesize($file["tmp_name"]);
-    if ($check !== false) {
-      $uploadOk = 1;
-    } else {
-      return 400;
+    if ($imageFileType != "heic" && $imageFileType != "heif") {
+      $check = getimagesize($file["tmp_name"]);
+      if ($check !== false) {
+        $uploadOk = 1;
+      } else {
+        return 400;
+      }
     }
 
     // Check file size
@@ -24,7 +43,7 @@ class projectPictureManager
     // Allow certain file formats
     if (
       $imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg"
-      && $imageFileType != "gif"
+      && $imageFileType != "gif" && $imageFileType != "heic" && $imageFileType != "heif"
     ) {
       return 400;
     }
@@ -33,9 +52,18 @@ class projectPictureManager
       return 500;
       // if everything is ok, try to upload file
     } else {
-      if (move_uploaded_file($file["tmp_name"], $target_file)) {
+      // Check if file format is heic or heif and convert it to jpg
+      try {
+        if ($imageFileType == "heic" || $imageFileType == "heif") {
+          $image = new \Imagick($file["tmp_name"]);
+          $image->setImageFormat('jpg');
+          $target_file = $target_dir . $taskId . ".jpg";
+          $image->writeImage($target_file);
+        } else {
+          move_uploaded_file($file["tmp_name"], $target_file);
+        }
         return 200;
-      } else {
+      } catch (\Exception $e) {
         return 500;
       }
     }

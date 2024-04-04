@@ -21,10 +21,15 @@ class projectManager
     static function createNewProject()
     {
         if (in_array("admin", $_SESSION['groups'])) { //Auto accept 
-            $sql = "INSERT INTO `projects`(`ID`, `Name`, `Description`, `Deadline`) VALUES (NULL,'Névtelen','Leírás...',NULL);";
+            $sql = "INSERT INTO `projects`(`ID`, `Name`, `Description`, `Deadline`, `managerUID`) VALUES (NULL,'Névtelen','Leírás...',NULL," . $_SESSION['userId'] . ");";
             $connection = Database::runQuery_mysqli(self::$schema);
             $connection->query($sql);
             $id = $connection->insert_id;
+
+            // Add the creator to the project
+            $sql = "INSERT INTO `project_members`(`ProjectID`, `UserID`) VALUES (" . $id . "," . $_SESSION['userId'] . ");";
+            $connection->query($sql);
+
             $connection->close();
 
             echo $id;
@@ -75,18 +80,18 @@ class projectManager
         }
     }
 
-    static function listProjects()
+    static function listProjects($archived = 0)
     {
         $sql = "SELECT DISTINCT * FROM (";
 
         if (in_array("admin", $_SESSION['groups'])) {
-            $sql .= "SELECT * FROM `projects` WHERE Archived=0";
+            $sql .= "SELECT * FROM `projects` WHERE Archived=" . $archived;
         } else if (in_array("média", $_SESSION['groups'])) {
-            $sql .= "SELECT * FROM `projects` WHERE Visibility_group IN (0,1) AND Archived=0";
+            $sql .= "SELECT * FROM `projects` WHERE Visibility_group IN (0,1) AND Archived=" . $archived;
         } else if (in_array("studio", $_SESSION['groups'])) {
-            $sql .= "SELECT * FROM `projects` WHERE Visibility_group IN (0,2) AND Archived=0";
+            $sql .= "SELECT * FROM `projects` WHERE Visibility_group IN (0,2) AND Archived=" . $archived;
         } else {
-            $sql .= "SELECT * FROM `projects` WHERE Visibility_group=0 AND Archived=0";
+            $sql .= "SELECT * FROM `projects` WHERE Visibility_group=0 AND Archived=" . $archived;
         }
 
         $sql .= " UNION ALL SELECT * FROM `projects` WHERE ID IN (SELECT ProjectID FROM project_members WHERE UserID=" . $_SESSION['userId'] . ") AND Visibility_group=4 AND Archived=0";
@@ -228,6 +233,12 @@ class projectManager
                 $rows[$key]['CreatorUsername'] = $creatorUserArray[0]['usernameUsers'];
             }
             $connection->close();
+
+            // Sort the array by lastname and firstname
+            usort($rows, function ($a, $b) {
+                return $a['CreatorLastName'] <=> $b['CreatorLastName'] ?: $a['CreatorFirstName'] <=> $b['CreatorFirstName'];
+            });
+
             echo (json_encode($rows));
         }
     }
@@ -307,15 +318,6 @@ class projectManager
 
         if ($settings['Task_type'] == "image" && $_FILES['image']['name'] != "") {
 
-            $settings['Task_data'] = json_decode($settings['Task_data'], true);
-            $settings['Task_data']['image'] = "./pictures/" . $taskID . "." . pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
-            $settings['Task_data'] = json_encode($settings['Task_data']);
-
-            $sql = "UPDATE `project_components` SET `Task_data`=? WHERE `ID`=?;";
-            $stmt = $connection->prepare($sql);
-            $stmt->bind_param("si", $settings['Task_data'], $taskID);
-            $stmt->execute();
-
             // If the task is an image task, upload the image
             $uploadResult = projectPictureManager::uploadImage($taskID, $_FILES['image']);
             if ($uploadResult != 200) {
@@ -323,6 +325,20 @@ class projectManager
                 exit();
             }
 
+            if (strtolower(pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION)) == "heic" || strtolower(pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION) == "heif")) {
+                $extension = "jpg";
+            } else {
+                $extension = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
+            }
+
+            $settings['Task_data'] = json_decode($settings['Task_data'], true);
+            $settings['Task_data']['image'] = "./pictures/" . $taskID . "." . $extension;
+            $settings['Task_data'] = json_encode($settings['Task_data']);
+
+            $sql = "UPDATE `project_components` SET `Task_data`=? WHERE `ID`=?;";
+            $stmt = $connection->prepare($sql);
+            $stmt->bind_param("si", $settings['Task_data'], $taskID);
+            $stmt->execute();
         }
 
         $connection->close();
@@ -483,7 +499,7 @@ class projectManager
         if ($UID != null) {
             $sql = "SELECT `idUsers`, `firstName`, `lastName`, `usernameUsers` FROM `users` WHERE `idUsers`=" . $UID . ";";
         } else {
-            $sql = "SELECT `idUsers`, `firstName`, `lastName` FROM `users`;";
+            $sql = "SELECT `idUsers`, `firstName`, `lastName` FROM `users` ORDER BY `lastName`, `firstName`;";
         }
         $connection = Database::runQuery_mysqli();
         $result = $connection->query($sql);
@@ -528,6 +544,11 @@ class projectManager
             $resultItems[$key]['assignedToTask'] = in_array($item['UserID'], array_column($taskMembers, 'UserId')) ? 1 : 0;
         }
         $connection->close();
+
+        // Sort the array by lastname and firstname
+        usort($resultItems, function ($a, $b) {
+            return $a['lastName'] <=> $b['lastName'] ?: $a['firstName'] <=> $b['firstName'];
+        });
 
         if ($_POST['mode'] == "getTaskMembers") {
             echo (json_encode($resultItems));
@@ -585,6 +606,12 @@ class projectManager
             return $resultItems;
         }
 
+        // Get project manager
+        $sql = "SELECT `managerUID` FROM `projects` WHERE `ID`=" . $projectID . ";";
+        $connection = Database::runQuery_mysqli(self::$schema);
+        $managerUID = $connection->query($sql)->fetch_assoc()['managerUID'];
+        $connection->close();
+
         // Getting the names of the users
         $connection = Database::runQuery_mysqli();
         foreach ($resultItems as $key => $item) {
@@ -593,7 +620,7 @@ class projectManager
             $user = $result->fetch_assoc();
             $resultItems[$key]['firstName'] = $user['firstName'];
             $resultItems[$key]['lastName'] = $user['lastName'];
-            $resultItems[$key]['UserId'] = $item['UserID'];
+            $resultItems[$key]['isManager'] = $managerUID == $item['UserID'] ? 1 : 0;
         }
         echo (json_encode($resultItems));
     }
@@ -612,7 +639,10 @@ class projectManager
             $currentMembers[] = $row['UserID'];
         }
 
-        //$deletedMembers = array_diff($currentMembers, $members);
+        $deletedMembers = array_diff($currentMembers, $members);
+        foreach ($deletedMembers as $member) {
+            self::removeMemberFromProject($member, $_POST['id']);
+        }
 
         foreach ($members as $member) {
             // Check if the record already exists
@@ -637,17 +667,25 @@ class projectManager
         echo 200;
     }
 
-    static function removeMemberFromProject()
+    static function removeMemberFromProject($userId, $projectId)
     {
         if (in_array("admin", $_SESSION['groups'])) {
-            $sql = "DELETE FROM project_members WHERE ProjectID=" . $_POST['projectId'] . " AND UserID=" . $_POST['userId'] . ";";
             $connection = Database::runQuery_mysqli(self::$schema);
+
+            // Check if the user is not the manager of the project
+            $sql = "SELECT `managerUID` FROM `projects` WHERE `ID`=" . $projectId . ";";
+            $result = $connection->query($sql);
+            $managerUID = $result->fetch_assoc()['managerUID'];
+            if ($managerUID == $userId) {
+                return 403;
+            }
+
+            $sql = "DELETE FROM project_members WHERE ProjectID=" . $projectId . " AND UserID=" . $userId . ";";
             $connection->query($sql);
             $connection->close();
-            echo 200;
-            exit();
+            return 200;
         } else {
-            echo 403;
+            return 403;
         }
     }
 }
@@ -667,7 +705,7 @@ if (isset($_POST['mode'])) {
             echo projectManager::archiveProject();
             break;
         case 'listProjects':
-            echo projectManager::listProjects();
+            echo projectManager::listProjects($_POST['archived']);
             break;
         case 'getProject':
             echo projectManager::getProject();
@@ -720,7 +758,7 @@ if (isset($_POST['mode'])) {
             echo projectManager::saveProjectMembers();
             break;
         case 'removeMemberFromProject':
-            echo projectManager::removeMemberFromProject();
+            echo projectManager::removeMemberFromProject($_POST['userId'], $_POST['projectId']);
             break;
     }
     exit();

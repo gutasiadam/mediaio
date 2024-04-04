@@ -18,7 +18,7 @@ async function generateTasks(projectID, canEdit) {
 }
 
 async function createTask(task, projectID, canEdit) {
-    var uData = await userTaskData(task.ID, projectID);
+    var uData = await userTaskData(task.ID);
 
     let taskCard = document.createElement("div");
     taskCard.classList.add("card", "taskCard");
@@ -222,7 +222,7 @@ async function openTask(TaskId, projectID) {
     // Fetch task
     let task = await fetchTask(null, TaskId);
     if (task == 403) {
-        console.error("Ejnye ilyet nem lehet!");
+        noAccessToast();
         return;
     }
     //console.log(task);
@@ -402,7 +402,7 @@ function fillOutTask(TaskId) {
             taskBody.innerHTML = "";
 
             // If fillOutText is null, set it
-            if (task.fillOutText == null) {
+            if (task.fillOutText == null || task.fillOutText == "") {
                 task.fillOutText = "Megerősítés.";
             }
 
@@ -463,6 +463,8 @@ function fillOutTask(TaskId) {
 
             // Display task editor modal
             $('#taskFillModal').modal('show');
+        }).catch(() => {
+            errorToast();
         });
 }
 
@@ -611,29 +613,18 @@ async function addNewTask(projectID, taskType) {
     taskMembersHolder.innerHTML = "";
 
 
-    for (let i = 0; i < taskMembers.length; i++) {
-        var member = taskMembers[i];
-
-        var option = document.createElement("div");
+    taskMembers.forEach(member => {
+        let option = document.createElement("div");
         option.classList.add("availableMember");
         option.style.cursor = "pointer";
         option.id = member.UserId;
-        option.innerHTML = member.lastName + " " + member.firstName;
+        option.innerHTML = `${member.lastName} ${member.firstName}`;
         option.onclick = function () {
-            if (this.classList.contains("selectedMember")) {
-                this.classList.remove("selectedMember");
-            }
-            else {
-                this.classList.add("selectedMember");
-            }
+            this.classList.toggle("selectedMember");
         }
-
-        if (member.assignedToTask) {
-            option.classList.add("selectedMember");
-        }
-
+        option.classList.add("selectedMember");
         taskMembersHolder.appendChild(option);
-    }
+    });
 
     // Hide delete button if shown
     let deleteButton = document.getElementById("deleteTask");
@@ -766,13 +757,16 @@ async function saveTaskSettings(task_id, taskType, projectID = null) {
 
     // Save the task settings
     var response = await saveTaskToDB(task, taskMembersArray, imageToUpload, task_id);
-    if (response == 500) {
-        console.error("Error: 500");
-        return;
-    }
     if (response == 200) {
         console.log("Task saved successfully");
+        //let taskHolder = document.getElementById(projectID + "-taskHolder"); // TODO
+        //taskHolder.appendChild(await createTask(task, projectID, true));
+
         location.reload();
+        $('#taskEditorModal').modal('hide');
+    } else {
+        console.error("Error: " + response);
+        errorToast();
     }
 
 
@@ -798,9 +792,11 @@ async function deleteTask(taskId) {
         let res = await deleteTaskFromDB(taskId)
         if (res == 200) {
             console.log("Task deleted successfully");
-            location.reload();
+            successToast("Feladat törölve");
+            document.getElementById("task-" + taskId).remove();
+            $('#areyousureModal').modal('hide');
         } else if (res == 403) {
-            console.error("Ejnye ilyet nem lehet!");
+            noAccessToast();
             return;
         }
     }).catch(() => {
@@ -1289,7 +1285,7 @@ async function deleteImage(taskId) {
         success: function (data) {
             console.log(data);
             if (data == 200) {
-                console.log("Image deleted successfully");
+                successToast("Kép törölve");
             }
         }
     });

@@ -271,6 +271,13 @@
     margin-right: 5px;
 }
 
+#expandedImage {
+    height: 100%;
+    max-height: 85dvh;
+    width: 100%;
+    object-fit: contain;
+}
+
 /* Deadline states */
 
 .soon {

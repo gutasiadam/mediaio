@@ -52,7 +52,11 @@ if (!isset($_SESSION["userId"])) {
 <body>
 
    <?php include "modals.php"; ?>
-   <h1 class="rainbow">Jelenlegi projektek&nbsp;
+   <h1 class="rainbow">
+      <?php if (isset($_SESSION["userId"]) && in_array("admin", $_SESSION["groups"])) { ?>
+         <button class="btn btn-secondary" onclick=showArchivedProjects()><i class="fas fa-archive fa-lg"></i></button>
+      <?php } ?>
+      &nbsp;Jelenlegi projektek&nbsp;
       <?php if (isset($_SESSION["userId"]) && in_array("admin", $_SESSION["groups"])) { ?>
          <button class="btn btn-success" onclick=createNewProject()><i class="fas fa-plus fa-lg"></i></button>
       <?php } ?>
@@ -69,16 +73,6 @@ if (!isset($_SESSION["userId"])) {
    </div>
 
 </body>
-
-<script src="frontEnd/projektGen.js" crossorigin="anonymous"></script>
-<script src="frontEnd/taskGen.js" crossorigin="anonymous"></script>
-<script src="frontEnd/fetchData.js" crossorigin="anonymous"></script>
-<script src="frontEnd/dragAndDrop.js" crossorigin="anonymous" defer></script>
-
-<?php if (in_array("admin", $_SESSION["groups"])) { ?>
-   <script src="frontEnd/projektSettings.js" crossorigin="anonymous"></script>
-   <script src="frontEnd/adminButtons.js" crossorigin="anonymous"></script>
-<?php } ?>
 <script>
 
    // Disable double tap zoom

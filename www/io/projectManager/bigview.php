@@ -64,17 +64,6 @@ if (!isset($_SESSION["userId"])) {
 
 </body>
 
-<script src="frontEnd/projektGen.js" crossorigin="anonymous"></script>
-<script src="frontEnd/taskGen.js" crossorigin="anonymous"></script>
-<script src="frontEnd/fetchData.js" crossorigin="anonymous"></script>
-<script src="frontEnd/dragAndDrop.js" crossorigin="anonymous" defer></script>
-
-<?php if (in_array("admin", $_SESSION["groups"])) { ?>
-   <script src="frontEnd/adminButtons.js" crossorigin="anonymous"></script>
-   <script src="frontEnd/projektSettings.js" crossorigin="anonymous"></script>
-<?php } ?>
-
-
 <script>
 
    // Disable double tap zoom

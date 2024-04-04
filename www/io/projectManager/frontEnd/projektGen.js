@@ -55,7 +55,7 @@ async function generateBigView(project) {
     // Create li elements
     let tasks = document.createElement("li");
     tasks.classList.add("nav-item");
-    tasks.innerHTML = "<button class='nav-link active' id='task-tab' data-bs-toggle='tab' data-bs-target='#task-tab-pane-" + projectID + "' type='button' role='tab' aria-controls='task-tab-pane' aria-selected='true'>" + projectName + "</button>";
+    tasks.innerHTML = `<button class='nav-link active' id='task-tab' data-bs-toggle='tab' data-bs-target='#task-tab-pane-${projectID}' type='button' role='tab' aria-controls='task-tab-pane' aria-selected='true'>${projectName}</button>`;
     nav.appendChild(tasks);
 
     let members = document.createElement("li");
@@ -412,6 +412,77 @@ async function generateProjectBody(project) {
     return projectCard;
 }
 
+// Archived projects
+
+async function showArchivedProjects() {
+    try {
+        let archivedProjects = await fetchProjects(1);
+        if (archivedProjects.length == 0) {
+            alert("Nincs archivált projekt.");
+            return;
+        }
+
+        // Create a new project holder card
+        let projectHolder = document.getElementById("archivedTasks");
+        projectHolder.innerHTML = "";
+
+        for (let i = 0; i < archivedProjects.length; i++) {
+            projectHolder.appendChild(await generateArchivedProjectBody(archivedProjects[i]));
+        }
+
+        $('#taskArchiveModal').modal('show');
+    } catch (error) {
+        console.error("Error showing archived projects:", error);
+    }
+
+}
+
+async function generateArchivedProjectBody(project) {
+    console.log(`Generating archived project body: ${project.Name}`);
+
+    // Create a new project card
+    let projectCard = document.createElement("div");
+    projectCard.classList.add("card", "archivedProjectCard");
+    projectCard.id = project.ID;
+
+    // Create a new project body
+    let projectBody = document.createElement("div");
+    projectBody.classList.add("card-body", "d-flex", "justify-content-between", "align-items-center");
+    projectBody.innerHTML = project.Name;
+    projectCard.appendChild(projectBody);
+
+    // Create button holder div
+    let buttonHolder = document.createElement("div");
+    projectBody.appendChild(buttonHolder);
+
+    // Create restore button
+    let restoreButton = document.createElement("button");
+    restoreButton.classList.add("btn", "btn-success");
+    restoreButton.innerHTML = `<i class="fas fa-undo"></i>`;
+    restoreButton.style.marginRight = "10px";
+    restoreButton.onclick = function () {
+        restoreProject(project.ID);
+    }
+    buttonHolder.appendChild(restoreButton);
+
+    // Create delete button
+    let deleteButton = document.createElement("button");
+    deleteButton.classList.add("btn", "btn-danger");
+    deleteButton.innerHTML = `<i class="fas fa-trash-alt"></i>`;
+    deleteButton.onclick = function () {
+        deleteProject(project.ID);
+    }
+    buttonHolder.appendChild(deleteButton);
+
+
+    return projectCard;
+}
+
+
+
+// Extra
+
+
 function colorCardBasedOnDeadline(projectCard, deadline) {
     if (deadline) {
         let now = new Date();
@@ -454,36 +525,30 @@ async function generateMembers(proj_id) {
     let membersHolder = document.createElement("div");
     membersHolder.classList.add("membersHolder");
 
-    // Fetch the members
-    let userList = await getUsers();
-
-    // Parse the members
-    userList = JSON.parse(userList);
-
     // Load project members
     fetchProjectMembers(proj_id)
         .then(async response => {
             projectMembers = JSON.parse(response);
-            projectMembers = projectMembers.map(member => member.UserID);
-            //console.log(projectMembers);
 
             // Append each member to membersHolder
-            for (let i = 0; i < userList.length; i++) {
-                let member = userList[i];
-
-                if (projectMembers.includes(member.idUsers.toString())) {
-                    membersHolder.appendChild(await createMember(member, proj_id, member.idUsers));
-                }
-            }
+            projectMembers.forEach(async element => {
+                membersHolder.appendChild(await createMember(element, proj_id));
+            });
         })
-        .catch(error => console.error('Error fetching project members:', error));
+        .catch(error => {
+            console.error('Error fetching project members:', error);
+            //serverErrorToast();
+        });
 
     return membersHolder;
 }
 
-async function createMember(member, projectID, memberID) {
+async function createMember(member, projectID) {
     let memberCard = document.createElement("div");
     memberCard.classList.add("card", "memberCard", "mb-2");
+    if (member.isManager) {
+        memberCard.style.border = "2px solid red";
+    }
 
     let memberBody = document.createElement("div");
     memberBody.classList.add("card-body", "memberBody");
@@ -494,7 +559,9 @@ async function createMember(member, projectID, memberID) {
     memberBody.appendChild(memberName);
 
     try {
-        memberBody.appendChild(removeMemberFromProjectButton(projectID, memberID));
+        if (!member.isManager) {
+            memberBody.appendChild(removeMemberFromProjectButton(projectID, member.UserID));
+        }
     } catch (error) {
         ;
     }

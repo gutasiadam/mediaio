@@ -1,3 +1,17 @@
+<!-- Info toast -->
+<div class="toast-container top-50 start-50 translate-middle p-3" style="z-index: 9999;">
+    <div class="toast" id="infoToast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <img src="../logo.ico" class="rounded me-2" alt="..." style="height: 20px; filter: invert(1);">
+            <strong class="me-auto" id="infoToastTitle">Projektek</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+        </div>
+    </div>
+</div>
+
+
 <!-- Are you sure? modal -->
 
 <div class="modal fade" id="areyousureModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
@@ -57,7 +71,8 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-warning" id="archiveButton" data-bs-dismiss="modal">Befejezés (archiválás)</button>
+                <button type="button" class="btn btn-warning" id="archiveButton" data-bs-dismiss="modal">Befejezés
+                    (archiválás)</button>
                 <button type="button" class="btn btn-success" id="saveButton">Mentés</button>
             </div>
         </div>
@@ -102,7 +117,7 @@
                     <div class="mb-1" id="taskData">
                     </div>
                     <div class="mb-3">
-                        <label for="taskMembers" class="col-form-label">Felelősök:</label>
+                        <label for="taskMembers" class="col-form-label">Tagok:</label>
                         <div class="memberSelect" id="taskMembers">
                         </div>
                     </div>
@@ -112,7 +127,7 @@
                         <input type="time" class="form-control" id="taskTime" placeholder="Időpont">
                     </div>
                     <div class="mb-2">
-                        <button type="button" class="btn" data-bs-toggle="button" id="taskSubmittable">Elvégzendő
+                        <button type="button" class="btn" data-bs-toggle="button" id="taskSubmittable">Leadandó
                             feladat</button>
                         <button type="button" class="btn" data-bs-toggle="button" id="singleAnswer" disabled>Csak
                             egyszeri leadás
@@ -176,6 +191,46 @@
     </div>
 </div>
 
+<!-- Answers modal -->
+<div class="modal fade" id="taskAnswersModal" tabindex="-1" aria-labelledby="taskAnswersModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="taskAnswerTitle">Feladat válaszok</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3" id="taskAnswerData">
+                </div>
+            </div>
+            <div class="modal-footer d-flex justify-content-between">
+                <div id="taskFillDeadline">
+                </div>
+                <button type="button" class="btn btn-success" data-bs-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Archive modal -->
+<div class="modal fade" id="taskArchiveModal" tabindex="-1" aria-labelledby="taskArchiveModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Archivált projektek</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3" id="archivedTasks">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" data-bs-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- New member modal -->
 <div class="modal fade" id="addMemberModal" tabindex="-1" aria-labelledby="addMemberModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -205,12 +260,13 @@
 <div class="modal modal-xl fade" id="expandImageModal" tabindex="-1" aria-labelledby="expandImageModalLabel"
     aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
+        <div class="modal-content" style="">
             <div class="modal-body">
-                <img src="" alt="" id="expandedImage" style="width: 100%;">
+                <img src="" alt="" id="expandedImage">
             </div>
             <div class="modal-footer d-flex justify-content-between">
-                <button type="button" class="btn btn-secondary" id="imgDownloadButton"><i class="fas fa-download fa-lg"></i></button>
+                <button type="button" class="btn btn-secondary" id="imgDownloadButton"><i
+                        class="fas fa-download fa-lg"></i></button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bezárás</button>
             </div>
         </div>

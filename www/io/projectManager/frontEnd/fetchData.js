@@ -1,4 +1,4 @@
-async function fetchProjects() {
+async function fetchProjects(archived = 0) {
     //console.log("Fetching projects");
 
     return new Promise(async (resolve, reject) => {
@@ -8,12 +8,12 @@ async function fetchProjects() {
             response = await $.ajax({
                 type: "POST",
                 url: "../projectManager.php",
-                data: { mode: "listProjects" }
+                data: { mode: "listProjects", archived: archived }
             });
 
 
             if (response == 500) {
-                window.location.href = "index.php?serverError";
+                serverErrorToast();
             }
 
             var projects = JSON.parse(response);
@@ -159,7 +159,7 @@ async function fetchUI(task_id) {
             });
 
             if (response == 500) {
-                window.location.href = "index.php?serverError";
+                serverErrorToast();
             }
 
             //console.log(response);
@@ -172,7 +172,7 @@ async function fetchUI(task_id) {
     });
 }
 
-async function userTaskData(task_id, proj_id) {
+async function userTaskData(task_id) {
     //console.info("Loading user task data...");
 
     return new Promise(async (resolve, reject) => {
@@ -182,11 +182,11 @@ async function userTaskData(task_id, proj_id) {
             response = await $.ajax({
                 type: "POST",
                 url: "../projectManager.php",
-                data: { mode: "getUserTaskData", task_id: task_id, proj_id: proj_id }
+                data: { mode: "getUserTaskData", task_id: task_id }
             });
 
             if (response == 500) {
-                window.location.href = "index.php?serverError";
+                serverErrorToast();
             }
 
             //console.log(response);
@@ -236,7 +236,7 @@ async function saveTaskToDB(task, taskMembersArray, image, task_id = null) {
                 window.location.href = "index.php?serverError";
             }
 
-            //console.log(response);
+            console.log(response);
 
             resolve(response);
         } catch (error) {
@@ -358,7 +358,7 @@ async function saveProjectDescriptionToDB(proj_id, projectDescription) {
             });
 
             if (response == 500) {
-                window.location.href = "index.php?serverError";
+                serverErrorToast();
             }
 
             //console.log(response);
@@ -388,7 +388,7 @@ async function saveProjectMembersToDB(proj_id, members) {
             });
 
             if (response == 500) {
-                window.location.href = "index.php?serverError";
+                serverErrorToast();
             }
 
             console.log(response);
@@ -419,7 +419,7 @@ async function deleteProjectFromDB(proj_id) {
             });
 
             if (response == 500) {
-                window.location.href = "index.php?serverError";
+                serverErrorToast();
             }
 
             //console.log(response);
@@ -483,7 +483,7 @@ async function fetchMemberNames(memberIDs) {
                 });
 
                 if (response == 500) {
-                    window.location.href = "index.php?serverError";
+                    serverErrorToast();
                 }
 
                 var member = JSON.parse(response)[0];
@@ -496,6 +496,7 @@ async function fetchMemberNames(memberIDs) {
             resolve(members);
         } catch (error) {
             console.error("Error:", error);
+            serverErrorToast();
             reject(error);
         }
     });
@@ -515,7 +516,7 @@ async function fetchProjectMembers(proj_id) {
             });
 
             if (response == 500) {
-                window.location.href = "index.php?serverError";
+                serverErrorToast();
             }
 
             //console.log(response);
