@@ -172,7 +172,7 @@ async function fetchUI(task_id) {
     });
 }
 
-async function userTaskData(task_id) {
+async function userTaskData(task_id, proj_id = null) {
     //console.info("Loading user task data...");
 
     return new Promise(async (resolve, reject) => {
@@ -182,7 +182,7 @@ async function userTaskData(task_id) {
             response = await $.ajax({
                 type: "POST",
                 url: "../projectManager.php",
-                data: { mode: "getUserTaskData", task_id: task_id }
+                data: { mode: "getUserTaskData", task_id: task_id, proj_id: proj_id }
             });
 
             if (response == 500) {
@@ -305,11 +305,12 @@ async function deleteTaskFromDB(task_id) {
 
 // SAVE PROJECT SETTINGS
 
-async function saveProjectSettingsToDB(proj_id, projectName, projectDeadline, projectVisibility) {
+async function saveProjectSettingsToDB(proj_id, projectName, projectDescription, projectDeadline, projectVisibility) {
     console.info("Saving project settings...");
 
     var settings = {
         "Name": projectName,
+        "Description": projectDescription,
         "Members": "",
         "Deadline": projectDeadline,
         "Visibility_group": projectVisibility
@@ -329,48 +330,20 @@ async function saveProjectSettingsToDB(proj_id, projectName, projectDeadline, pr
                 data: { mode: "saveProjectSettings", id: proj_id, settings: settingsJson }
             });
 
-            if (response == 500) {
-                window.location.href = "index.php?serverError";
-            }
-
-            console.log(response);
-
-            resolve(response);
-        } catch (error) {
-            console.error("Error:", error);
-            reject(error);
-        }
-    });
-}
-
-
-async function saveProjectDescriptionToDB(proj_id, projectDescription) {
-    console.info("Saving project description...");
-
-    return new Promise(async (resolve, reject) => {
-        try {
-            let response;
-
-            response = await $.ajax({
-                type: "POST",
-                url: "../projectManager.php",
-                data: { mode: "saveDescription", id: proj_id, description: projectDescription }
-            });
-
-            if (response == 500) {
+            if (response == 403) {
+                noAccessToast();
+            } else if (response != 200) {
                 serverErrorToast();
             }
 
-            //console.log(response);
-
             resolve(response);
         } catch (error) {
             console.error("Error:", error);
             reject(error);
         }
     });
-
 }
+
 
 async function saveProjectMembersToDB(proj_id, members) {
     console.info("Saving project members...");

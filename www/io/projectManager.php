@@ -254,17 +254,17 @@ class projectManager
         $connection = Database::runQuery_mysqli(self::$schema);
 
         if ($settings['Deadline'] != "NULL") {
-            $sql = "INSERT INTO `project_components` (`ID`, `ProjectId`, `Task_type`, `Task_title`, `Task_data`, `isInteractable`, `fillOutText`, `SingleAnswer`, `AddedByUID`, `Deadline`) 
+            $sql = "INSERT INTO `project_components` (`ID`, `ProjectId`, `Task_type`, `Task_title`, `Task_data`, `isSubmittable`, `fillOutText`, `SingleAnswer`, `AddedByUID`, `Deadline`) 
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
-                    ON DUPLICATE KEY UPDATE `Task_title`=?, `Task_data`=?, `Deadline`=?, `isInteractable`=?, `fillOutText`=?, `SingleAnswer`=?;";
+                    ON DUPLICATE KEY UPDATE `Task_title`=?, `Task_data`=?, `Deadline`=?, `isSubmittable`=?, `fillOutText`=?, `SingleAnswer`=?;";
             $stmt = $connection->prepare($sql);
-            $stmt->bind_param("iisssisiissssisi", $_POST['ID'], $settings['ProjectId'], $settings['Task_type'], $settings['Task_title'], $settings['Task_data'], $settings['isInteractable'], $settings['fillOutText'], $settings['singleAnswer'], $_SESSION['userId'], $settings['Deadline'], $settings['Task_title'], $settings['Task_data'], $settings['Deadline'], $settings['isInteractable'], $settings['fillOutText'], $settings['singleAnswer']);
+            $stmt->bind_param("iisssisiissssisi", $_POST['ID'], $settings['ProjectId'], $settings['Task_type'], $settings['Task_title'], $settings['Task_data'], $settings['isSubmittable'], $settings['fillOutText'], $settings['singleAnswer'], $_SESSION['userId'], $settings['Deadline'], $settings['Task_title'], $settings['Task_data'], $settings['Deadline'], $settings['isSubmittable'], $settings['fillOutText'], $settings['singleAnswer']);
         } else {
-            $sql = "INSERT INTO `project_components` (`ID`, `ProjectId`, `Task_type`, `Task_title`, `Task_data`, `isInteractable`, `fillOutText`, `SingleAnswer`, `AddedByUID`, `Deadline`) 
+            $sql = "INSERT INTO `project_components` (`ID`, `ProjectId`, `Task_type`, `Task_title`, `Task_data`, `isSubmittable`, `fillOutText`, `SingleAnswer`, `AddedByUID`, `Deadline`) 
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NULL) 
-                    ON DUPLICATE KEY UPDATE `Task_title`=?, `Task_data`=?, `Deadline`=NULL, `isInteractable`=?, `fillOutText`=?, `SingleAnswer`=?;";
+                    ON DUPLICATE KEY UPDATE `Task_title`=?, `Task_data`=?, `Deadline`=NULL, `isSubmittable`=?, `fillOutText`=?, `SingleAnswer`=?;";
             $stmt = $connection->prepare($sql);
-            $stmt->bind_param("iisssisiissisi", $_POST['ID'], $settings['ProjectId'], $settings['Task_type'], $settings['Task_title'], $settings['Task_data'], $settings['isInteractable'], $settings['fillOutText'], $settings['singleAnswer'], $_SESSION['userId'], $settings['Task_title'], $settings['Task_data'], $settings['isInteractable'], $settings['fillOutText'], $settings['singleAnswer']);
+            $stmt->bind_param("iisssisiissisi", $_POST['ID'], $settings['ProjectId'], $settings['Task_type'], $settings['Task_title'], $settings['Task_data'], $settings['isSubmittable'], $settings['fillOutText'], $settings['singleAnswer'], $_SESSION['userId'], $settings['Task_title'], $settings['Task_data'], $settings['isSubmittable'], $settings['fillOutText'], $settings['singleAnswer']);
         }
 
         $stmt->execute();
@@ -340,6 +340,19 @@ class projectManager
             $stmt->bind_param("si", $settings['Task_data'], $taskID);
             $stmt->execute();
         }
+
+        $connection->close();
+        echo 200;
+    }
+
+    static function saveCheckOrRadio()
+    {
+        $connection = Database::runQuery_mysqli(self::$schema);
+
+        $sql = "UPDATE `project_components` SET `Task_data`=? WHERE `ID`=?;";
+        $stmt = $connection->prepare($sql);
+        $stmt->bind_param("si", $_POST['Task_data'], $_POST['taskId']);
+        $stmt->execute();
 
         $connection->close();
         echo 200;
@@ -458,37 +471,24 @@ class projectManager
             $connection = Database::runQuery_mysqli(self::$schema);
 
             if ($settings['Deadline'] == "NULL") {
-                $sql = "UPDATE projects SET Name=?, Deadline=NULL, Visibility_group=? WHERE ID=?";
+                $sql = "UPDATE projects SET Name=?, Description=?, Deadline=NULL, Visibility_group=? WHERE ID=?";
             } else {
-                $sql = "UPDATE projects SET Name=?, Deadline=?, Visibility_group=? WHERE ID=?";
+                $sql = "UPDATE projects SET Name=?, Description=?, Deadline=?, Visibility_group=? WHERE ID=?";
             }
 
             $stmt = $connection->prepare($sql);
             if ($settings['Deadline'] == "NULL") {
-                $stmt->bind_param("ssi", $settings['Name'], $settings['Visibility_group'], $_POST['id']);
+                $stmt->bind_param("sssi", $settings['Name'], $settings['Description'], $settings['Visibility_group'], $_POST['id']);
             } else {
-                $stmt->bind_param("sssi", $settings['Name'], $settings['Deadline'], $settings['Visibility_group'], $_POST['id']);
+                $stmt->bind_param("ssssi", $settings['Name'], $settings['Description'], $settings['Deadline'], $settings['Visibility_group'], $_POST['id']);
             }
 
             $stmt->execute();
             $stmt->close();
             $connection->close();
-            echo 200;
-            exit();
+            return 200;
         } else {
-            echo 403;
-        }
-    }
-
-    static function saveDescription()
-    {
-        if (in_array("admin", $_SESSION['groups'])) {
-            $sql = "UPDATE projects SET Description='" . $_POST['description'] . "' WHERE ID=" . $_POST['id'] . ";";
-            $connection = Database::runQuery_mysqli(self::$schema);
-            $connection->query($sql);
-            $connection->close();
-            echo 1;
-            exit();
+            return 403;
         }
     }
 
@@ -667,6 +667,21 @@ class projectManager
         echo 200;
     }
 
+
+    static function changeManager($projectId, $newManagerId)
+    {
+        if (in_array("admin", $_SESSION['groups'])) {
+            $connection = Database::runQuery_mysqli(self::$schema);
+
+            $sql = "UPDATE projects SET managerUID=" . $newManagerId . " WHERE ID=" . $projectId . ";";
+            $connection->query($sql);
+            $connection->close();
+            return 200;
+        } else {
+            return 403;
+        }
+    }
+
     static function removeMemberFromProject($userId, $projectId)
     {
         if (in_array("admin", $_SESSION['groups'])) {
@@ -718,6 +733,9 @@ if (isset($_POST['mode'])) {
         case 'saveTask':
             echo projectManager::saveTask();
             break;
+        case 'saveCheckOrRadio':
+            echo projectManager::saveCheckOrRadio();
+            break;
         case 'saveTaskOrder':
             echo projectManager::saveTaskOrder($_POST['tasks']);
             break;
@@ -738,9 +756,6 @@ if (isset($_POST['mode'])) {
         case 'saveProjectSettings':
             echo projectManager::saveProjectSettings();
             break;
-        case 'saveDescription':
-            echo projectManager::saveDescription();
-            break;
 
         case 'getUsers':
             echo projectManager::getUsers($_POST['ID']);
@@ -756,6 +771,9 @@ if (isset($_POST['mode'])) {
             break;
         case 'saveProjectMembers':
             echo projectManager::saveProjectMembers();
+            break;
+        case 'changeManager':
+            echo projectManager::changeManager($_POST['projectId'], $_POST['newManagerId']);
             break;
         case 'removeMemberFromProject':
             echo projectManager::removeMemberFromProject($_POST['userId'], $_POST['projectId']);

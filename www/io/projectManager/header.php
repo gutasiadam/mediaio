@@ -28,7 +28,6 @@
 
 
   <?php if (in_array("admin", $_SESSION["groups"])) { ?>
-    <script src="frontEnd/projektSettings.js" crossorigin="anonymous"></script>
     <script src="frontEnd/adminButtons.js" crossorigin="anonymous"></script>
   <?php } ?>
 

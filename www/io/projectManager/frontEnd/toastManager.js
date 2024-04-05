@@ -48,3 +48,17 @@ function successToast(message) {
     toastList.querySelector('.toast-body').innerHTML = message;
     toast.show();
 }
+
+function errorToast(message) {
+    //Remove all classes except the toast class
+    toastList.classList.remove('text-bg-danger');
+    toastList.classList.remove('text-bg-warning');
+    toastList.classList.remove('text-bg-info');
+    toastList.classList.remove('text-bg-success');
+
+    toastList.classList.add('text-bg-danger');
+    let toastHeader = toastList.querySelector('.toast-header');
+    toastHeader.querySelector('#infoToastTitle').innerHTML = "Hiba";
+    toastList.querySelector('.toast-body').innerHTML = message;
+    toast.show();
+}

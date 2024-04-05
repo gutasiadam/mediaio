@@ -10,35 +10,6 @@ function changeProjectSettingsButton(projectID) {
 }
 
 
-
-function editDescriptionButton(projectID) {
-    let editDescription = document.createElement("button");
-    editDescription.classList.add("btn", "editDescription");
-    editDescription.innerHTML = "<i class='fas fa-pencil-alt' style='color: #585d65;'></i>";
-    editDescription.onclick = function () {
-        editProjectDescription(projectID);
-    }
-    return editDescription;
-}
-
-async function editProjectDescription(proj_id) {
-
-    // Fetch the project settings
-    var projectSettings = await fetchProject(proj_id);
-
-    // Set the project description
-    var projectDescription = projectSettings.Description;
-    document.getElementById("projectDescription").value = projectDescription;
-
-    // Create save button
-    var saveButton = document.getElementById("saveDescButton");
-    saveButton.onclick = function () {
-        saveProjectDescription(proj_id);
-    }
-
-    $('#projectDescModal').modal('show');
-}
-
 async function saveProjectDescription(proj_id) {
 
     // Get the project description
@@ -71,6 +42,7 @@ function removeMemberFromProjectButton(projectID, memberID) {
         const response = await removeMemberFromProject(projectID, memberID);
         if (response == 200) {
             this.parentElement.parentElement.remove();
+            successToast(`${this.parentElement.textContent} sikeresen eltávolítotva a projektből!`);
         } else if (response == 500) {
             console.error("Error: 500");
             return;
@@ -111,38 +83,41 @@ async function editProjectMembers(projectID) {
     $('#addMemberModal').modal('show');
 
     // Load project members
-    var projectMembers = await fetchProjectMembers(projectID);
+    let projectMembers = await fetchProjectMembers(projectID);
     projectMembers = JSON.parse(projectMembers);
-    projectMembers = projectMembers.map(member => member.UserID);
 
-    var membersList = await getUsers();
-    membersList = JSON.parse(membersList);
+    let membersList = JSON.parse(await getUsers());
 
-    var members = document.getElementById("projectMembersSelect");
+    let members = document.getElementById("projectMembersSelect");
     members.innerHTML = "";
-    for (let i = 0; i < membersList.length; i++) {
-        var member = membersList[i];
 
-        var option = document.createElement("div");
+    membersList.forEach(member => {
+        let projectMember = projectMembers.find(pm => pm.UserID == member.idUsers);
+
+        let option = document.createElement("div");
         option.classList.add("availableMember");
         option.style.cursor = "pointer";
         option.id = member.idUsers;
-        option.innerHTML = member.lastName + " " + member.firstName;
+        option.innerHTML = `${member.lastName} ${member.firstName}`;
         option.onclick = function () {
-            if (this.classList.contains("selectedMember")) {
-                this.classList.remove("selectedMember");
-            }
-            else {
-                this.classList.add("selectedMember");
-            }
+            this.classList.toggle("selectedMember");
         }
 
-        if (projectMembers && projectMembers.includes(member.idUsers.toString())) {
+
+
+        if (projectMember) {
             option.classList.add("selectedMember");
-        }
 
+            // Check if the user is a manager
+            if (projectMember.isManager) {
+                option.classList.add("manager");
+                option.onclick = function () {
+                    errorToast("A projektfelelős nem távolítható el a projektről!");
+                }
+            }
+        }
         members.appendChild(option);
-    }
+    });
 
     // Create save button
     var saveButton = document.getElementById("saveProjectMembers");
@@ -151,6 +126,50 @@ async function editProjectMembers(projectID) {
     }
 }
 
+
+async function changeManager(projectID, memberID) {
+    console.log("Changing project manager");
+
+    document.getElementById('deleteTaskSure').innerHTML = "Felelős megváltoztatása";
+    document.getElementById('deleteTaskSure').classList.remove("btn-danger");
+    document.getElementById('deleteTaskSure').classList.add("btn-warning");
+
+    $('#areyousureModal').modal('show');
+
+    // Create a new Promise that resolves when the button is clicked
+    let buttonClicked = new Promise((resolve, reject) => {
+        document.getElementById('deleteTaskSure').addEventListener('click', resolve);
+        document.getElementById('cancelButton').addEventListener('click', reject);
+    });
+
+    return buttonClicked.then(async () => {
+
+        response = await $.ajax({
+            type: "POST",
+            url: "../projectManager.php",
+            data: { mode: "changeManager", projectId: projectID, newManagerId: memberID },
+        });
+
+        if (response == 200) {
+            $('#areyousureModal').modal('hide');
+            const memberCard = document.getElementById(projectID).querySelector(".manager");
+            memberCard.classList.remove("manager");
+            memberCard.querySelector(".memberBody").appendChild(removeMemberFromProjectButton(projectID, memberID));
+            successToast("Sikeresen megváltoztattad a projekt vezetőjét!");
+            return 200;
+        } else if (response == 403) {
+            noAccessToast();
+            return 403;
+        }
+        else {
+            serverErrorToast();
+        }
+    }).catch(() => {
+        // Do nothing
+        console.log("Changing manager cancelled");
+        return;
+    });
+}
 
 async function saveProjectMemberSettings(projectID) {
     var members = document.getElementsByClassName("selectedMember");
@@ -177,10 +196,75 @@ async function saveProjectMemberSettings(projectID) {
 
 // Save project settings
 
+// Main settings modal 
+
+async function openSettings(proj_id) {
+
+    // Fetch the project settings
+    var projectSettings = await fetchProject(proj_id);
+
+    // Set the project name
+    var projectName = projectSettings.Name;
+    document.getElementById("projectName").value = projectName;
+
+    // Set the project description
+    var projectDescription = projectSettings.Description;
+    document.getElementById("projectDescription").value = projectDescription;
+
+
+    // Load deadline
+    if (projectSettings.Deadline == null) {
+        document.getElementById("projectDate").value = "";
+        document.getElementById("projectTime").value = "";
+    } else {
+        var deadline = projectSettings.Deadline;
+        var parts = deadline.split(' ');
+
+        // Stripping seconds from the time
+        parts[1] = parts[1].split(':').slice(0, 2).join(':');
+
+        document.getElementById("projectDate").value = parts[0];
+        document.getElementById("projectTime").value = parts[1];
+    }
+
+    // Load project visibility
+    var projectVisibility = projectSettings.Visibility_group;
+    document.getElementById("projectVisibility").value = projectVisibility;
+
+    // Create save button
+    var saveButton = document.getElementById("saveButton");
+    saveButton.onclick = function () {
+        saveProjectSettings(proj_id);
+    }
+
+    // Create delete button
+    var deleteText = document.getElementById("deleteText");
+    deleteText.placeholder = projectName;
+
+    var deleteButton = document.getElementById("deleteButton");
+    deleteButton.onclick = function () {
+        deleteProject(proj_id);
+    }
+
+    // Create archive button
+    var archiveButton = document.getElementById("archiveButton");
+    archiveButton.onclick = function () {
+        $('#areyousureModal').modal('show');
+        archiveProject(proj_id);
+    }
+
+    $('#projectSettingsModal').modal('show');
+
+}
+
+
 async function saveProjectSettings(proj_id) {
 
     // Get the project name
     var projectName = document.getElementById("projectName").value;
+
+    // Get the project description
+    var projectDescription = document.getElementById("projectDescription").value;
 
     // Get the project deadline
     var projectDate = document.getElementById("projectDate").value;
@@ -199,12 +283,9 @@ async function saveProjectSettings(proj_id) {
     var projectVisibility = document.getElementById("projectVisibility").value;
 
     // Save the project settings
-    var response = await saveProjectSettingsToDB(proj_id, projectName, projectDeadline, projectVisibility);
+    var response = await saveProjectSettingsToDB(proj_id, projectName, projectDescription, projectDeadline, projectVisibility);
 
-    if (response == 500) {
-        console.error("Error: 500");
-        return;
-    } else if (response == 200) {
+    if (response == 200) {
         location.reload();
     }
 

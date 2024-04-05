@@ -271,7 +271,8 @@ async function generateProjectBody(project) {
     // Create li elements
     let tasks = document.createElement("li");
     tasks.classList.add("nav-item");
-    tasks.innerHTML = "<button class='nav-link active' id='task-tab' data-bs-toggle='tab' data-bs-target='#task-tab-pane-" + projectID + "' type='button' role='tab' aria-controls='task-tab-pane' aria-selected='true'>" + projectName + "</button>";
+    tasks.innerHTML = `<button class="nav-link active" id="task-tab" data-bs-toggle="tab" data-bs-target="#task-tab-pane-${projectID}" type="button" role='tab' aria-controls='task-tab-pane' aria-selected='true'>
+    <a data-bs-toggle="tooltip" data-bs-title="${project.Description}">${projectName}</a></button>`;
     nav.appendChild(tasks);
 
     let members = document.createElement("li");
@@ -288,7 +289,7 @@ async function generateProjectBody(project) {
         var deadlineText = await getDeadline(project.Deadline);
         let deadline = document.createElement("span");
         deadline.classList.add("badge", "bg-secondary", "text-white", "ms-2");
-        deadline.innerHTML = deadlineText;
+        deadline.innerHTML = `<a data-bs-toggle="tooltip" data-bs-title="${project.Deadline.slice(0, -3)}">${deadlineText}</a>`;
         if (deadlineText == "Lejárt" || deadlineText.includes("perc") || deadlineText == "Épp most") {
             deadline.classList.add("bg-danger");
         } else if (deadlineText.includes("óra")) {
@@ -325,7 +326,7 @@ async function generateProjectBody(project) {
 
 
     // Create a new project description
-    projectBody.appendChild(createDiscription(projectID, project.Description));
+    //projectBody.appendChild(createDiscription(projectID, project.Description));
 
     // Generating the project tasks
     projectBody.appendChild(await generateTasks(projectID, project.canEdit));
@@ -390,7 +391,7 @@ async function generateProjectBody(project) {
     }
     // Create Body for members
     let membersBody = document.createElement("div");
-    membersBody.classList.add("card-body", "projectBody", "tab-pane", "fade");
+    membersBody.classList.add("card-body", "projectMembers", "tab-pane", "fade");
     membersBody.id = "users-tab-pane-" + projectID;
     membersBody.role = "tabpanel";
     membersBody.ariaLabelledby = "users-tab";
@@ -547,7 +548,7 @@ async function createMember(member, projectID) {
     let memberCard = document.createElement("div");
     memberCard.classList.add("card", "memberCard", "mb-2");
     if (member.isManager) {
-        memberCard.style.border = "2px solid red";
+        memberCard.classList.add("manager");
     }
 
     let memberBody = document.createElement("div");
@@ -562,6 +563,38 @@ async function createMember(member, projectID) {
         if (!member.isManager) {
             memberBody.appendChild(removeMemberFromProjectButton(projectID, member.UserID));
         }
+        memberCard.oncontextmenu = async function (e) {
+            if (this.classList.contains("manager")) {
+                return;
+            }
+            e.preventDefault();
+            if (await changeManager(projectID, member.UserID) == 200) {
+                this.classList.add("manager");
+                this.getElementsByClassName("memberBody")[0].querySelector(".removeMemberButton").remove();
+            }
+        }
+
+        let touchCount = 0;
+        //MOBILE DOUBLE TAP
+        memberCard.addEventListener('touchend', function (event) {
+            const memberCard = this;
+            touchCount++;
+            if (touchCount === 1) {
+                setTimeout(async function () {
+                    if (touchCount === 2) {
+                        if (memberCard.classList.contains("manager")) {
+                            return;
+                        }
+                        navigator.vibrate(100);
+                        if (await changeManager(projectID, member.UserID) == 200) {
+                            memberCard.classList.add("manager");
+                            memberCard.getElementsByClassName("memberBody")[0].querySelector(".removeMemberButton").remove();
+                        }
+                    }
+                    touchCount = 0;
+                }, 300); // 300 milliseconds = 0.3 seconds
+            }
+        });
     } catch (error) {
         ;
     }

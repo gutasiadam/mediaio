@@ -35,7 +35,9 @@ function documentReady() {
             e.preventDefault();
             const afterElement = getDragAfterElement(taskHolder, e.clientY);
             if (afterElement == null) {
-                taskHolder.appendChild(dragging);
+                if (taskHolder.lastElementChild !== dragging) {
+                    taskHolder.appendChild(dragging);
+                }
             } else {
                 taskHolder.insertBefore(dragging, afterElement);
             }

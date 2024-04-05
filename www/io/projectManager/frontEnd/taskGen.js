@@ -18,7 +18,7 @@ async function generateTasks(projectID, canEdit) {
 }
 
 async function createTask(task, projectID, canEdit) {
-    var uData = await userTaskData(task.ID);
+    var uData = await userTaskData(task.ID, projectID);
 
     let taskCard = document.createElement("div");
     taskCard.classList.add("card", "taskCard");
@@ -160,7 +160,7 @@ async function createTask(task, projectID, canEdit) {
     // check deadline and color the card accordingly
     if (task.Deadline) {
         var deadlineText = await getDeadline(task.Deadline);
-        if (task.isInteractable && uData == 100 || !task.isInteractable) {
+        if (task.isSubmittable && uData == 100 || !task.isSubmittable) {
             colorTaskCard(taskHeader, task.Deadline);
             let deadline = document.createElement("span");
             deadline.classList.add("badge");
@@ -182,25 +182,28 @@ async function createTask(task, projectID, canEdit) {
     }
 
     // Check if task is filled out
-
-    if (task.isInteractable == 1 && uData != 404) {
-        if (uData == 100 || task.SingleAnswer == 0) {
-            // ADD  fill out button to task
-            let fillOutButton = document.createElement("button");
-            fillOutButton.classList.add("btn", "btn-sm", "fillOutButton");
-            fillOutButton.innerHTML = "Kitöltés";
-            if (uData != 100) {
-                fillOutButton.innerHTML = "Módosítás";
-                fillOutButton.classList.add("btn-warning");
-            } else {
-                fillOutButton.classList.add("btn-primary");
+    if (task.isSubmittable == 1 && uData != 404) {
+        if (uData != 100) {
+            // Add show answers button
+            let showAnswersButton = document.createElement("button");
+            showAnswersButton.classList.add("btn", "btn-sm", "showAnswersButton");
+            showAnswersButton.innerHTML = `<i class="fas fa-stream fa-lg"></i>`;
+            showAnswersButton.onclick = function () {
+                openTaskAnswers(task.ID, projectID);
             }
+            cardFooter.appendChild(showAnswersButton);
+            cardFooter.style.justifyContent = "space-between";
+        }
+        if (uData == 100 || task.SingleAnswer == 0) {
+            // ADD fill out button to task
+            let fillOutButton = document.createElement("button");
+            fillOutButton.classList.add("btn", "btn-sm", "fillOutButton", uData != 100 ? "btn-warning" : "btn-primary");
+            fillOutButton.innerHTML = uData != 100 ? "Módosítás" : "Kitöltés";
             fillOutButton.onclick = function () {
                 fillOutTask(task.ID);
             }
             cardFooter.appendChild(fillOutButton);
         } else {
-            //console.log("Task not filled out yet" + task.ID);
             // Add "Leadva" text
             let filledOutText = document.createElement("p");
             filledOutText.classList.add("card-text", "taskText");
@@ -329,9 +332,9 @@ async function openTask(TaskId, projectID) {
     }
 
     // Set the task submittable checkbox
-    //console.log(task.isInteractable);
-    //document.getElementById("taskSubmittable").setAttribute("aria-pressed", task.isInteractable == 1 ? "true" : "false");
-    if (task.isInteractable == 1) {
+    //console.log(task.isSubmittable);
+    //document.getElementById("taskSubmittable").setAttribute("aria-pressed", task.isSubmittable == 1 ? "true" : "false");
+    if (task.isSubmittable == 1) {
         document.getElementById("taskSubmittable").classList.add("active");
         document.getElementById("singleAnswer").disabled = false;
     } else {
@@ -649,123 +652,89 @@ async function addNewTask(projectID, taskType) {
 async function saveTaskSettings(task_id, taskType, projectID = null) {
 
     // Get the task name
-    var taskName = document.getElementById("textTaskName").value;
+    let taskName = document.getElementById("textTaskName").value;
 
     // Get the task deadline
-    var taskDate = document.getElementById("taskDate").value;
-    var taskTime = document.getElementById("taskTime").value;
+    let taskDate = document.getElementById("taskDate").value;
+    let taskTime = document.getElementById("taskTime").value;
 
     // Combine the date and time
-    let taskDeadline = "NULL";
-
-    if (taskDate && taskTime) {
-        taskDeadline = taskDate + " " + taskTime;
-    } else if (taskDate) {
-        taskDeadline = taskDate + " 23:59:59";
-    }
+    let taskDeadline = taskDate ? (taskTime ? `${taskDate} ${taskTime}` : `${taskDate} 23:59:59`) : "NULL";
 
     // Get the task data
-    var taskDataHolder = document.getElementById("taskData");
+    let taskDataHolder = document.getElementById("taskData");
 
     // Check if the task is interactable
-    var isInteractable = document.getElementById("taskSubmittable");
-    isInteractable = isInteractable.classList.contains("active") ? 1 : 0;
+    let isSubmittable = document.getElementById("taskSubmittable").classList.contains("active") ? 1 : 0;
 
     // Check if the task is single answer
-    var singleAnswer = document.getElementById("singleAnswer");
-    singleAnswer = singleAnswer.classList.contains("active") ? 1 : 0;
+    let singleAnswer = document.getElementById("singleAnswer").classList.contains("active") ? 1 : 0;
 
-    var imageToUpload = null;
-    //
-    var fillOutText = null;
+    let imageToUpload = null;
+    let fillOutText = null;
+    let taskData;
+
     switch (taskType) {
         case "text":
-            var taskData = taskDataHolder.querySelector("#textTaskData").value;
+            taskData = taskDataHolder.querySelector("#textTaskData").value;
             fillOutText = document.getElementById('fillOutText').value;
             break;
         case "image":
             fillOutText = document.getElementById('fillOutText').value;
             var caption = taskDataHolder.querySelector("#textTaskData").value;
-            var imageLink = taskDataHolder.querySelector("#imageLink").value;
-            var uploadImage = taskDataHolder.querySelector("#imageUpload").files[0];
+            let imageLink = taskDataHolder.querySelector("#imageLink").value;
+            let uploadImage = taskDataHolder.querySelector("#imageUpload").files[0];
             if (uploadImage) {
                 imageToUpload = uploadImage;
             }
-            var taskData = {
+            taskData = {
                 text: caption,
                 image: imageLink
             }
             break;
         case "checklist":
-            // Get caption data
-            var caption = taskDataHolder.querySelector("#textTaskData").value;
-            var checklistItems = taskDataHolder.getElementsByClassName("checklistItem");
-            var checklistData = [];
-
-            for (let i = 0; i < checklistItems.length; i++) {
-                var checklistItem = {
-                    pos: i,
-                    value: checklistItems[i].value,
-                }
-                checklistData.push(checklistItem);
-            }
-            var taskData = {
-                text: caption,
-                checklist: checklistData
-            }
-            break;
         case "radio":
             var caption = taskDataHolder.querySelector("#textTaskData").value;
-            var radioItems = taskDataHolder.getElementsByClassName("radioItem");
-            var radioData = [];
-
-            for (let i = 0; i < radioItems.length; i++) {
-                var radioItem = {
-                    pos: i,
-                    value: radioItems[i].value,
-                }
-                radioData.push(radioItem);
-            }
-            var taskData = {
+            let items = taskDataHolder.getElementsByClassName(taskType + "Item");
+            let itemData = Array.from(items).map((item, i) => ({
+                pos: i,
+                value: item.value,
+                checked: false,
+            }));
+            taskData = {
                 text: caption,
-                checklist: radioData
+                checklist: itemData
             }
             break;
     }
 
     // Getting assigned users
-    let taskMembers = document.getElementById("taskMembers").getElementsByClassName("availableMember");
-    let taskMembersArray = [];
-    for (let i = 0; i < taskMembers.length; i++) {
-        if (taskMembers[i].classList.contains("selectedMember")) {
-            taskMembersArray.push(taskMembers[i].id);
-        }
-    }
-    //console.log(taskMembersArray);
+    let taskMembers = Array.from(document.getElementById("taskMembers").getElementsByClassName("availableMember"));
+    let taskMembersArray = taskMembers.filter(member => member.classList.contains("selectedMember")).map(member => member.id);
 
     let task = {
         "ProjectId": projectID,
         "Task_type": taskType,
         "Task_title": taskName,
         "Task_data": taskData,
-        "isInteractable": isInteractable,
+        "isSubmittable": isSubmittable,
         "fillOutText": fillOutText,
         "singleAnswer": singleAnswer,
         "Deadline": taskDeadline
     }
-    //console.log(task);
 
     // Save the task settings
-    var response = await saveTaskToDB(task, taskMembersArray, imageToUpload, task_id);
-    if (response == 200) {
-        console.log("Task saved successfully");
-        //let taskHolder = document.getElementById(projectID + "-taskHolder"); // TODO
-        //taskHolder.appendChild(await createTask(task, projectID, true));
-
-        location.reload();
-        $('#taskEditorModal').modal('hide');
-    } else {
-        console.error("Error: " + response);
+    try {
+        let response = await saveTaskToDB(task, taskMembersArray, imageToUpload, task_id);
+        if (response == 200) {
+            console.log("Task saved successfully");
+            location.reload();
+            $('#taskEditorModal').modal('hide');
+        } else {
+            throw new Error(response);
+        }
+    } catch (error) {
+        console.error(`Error: ${error}`);
         errorToast();
     }
 
@@ -811,70 +780,33 @@ async function deleteTask(taskId) {
 // Task submission
 
 async function submitTask(taskId, taskType) {
-    console.log("Submitting task: " + taskId);
+    console.log(`Submitting task: ${taskId}`);
 
     // Get the task data
     let taskDataHolder = document.getElementById("taskFillData");
-
     let taskData = [];
 
     switch (taskType) {
         case "text":
-            var done = document.getElementById("fillOutCheckbox").checked;
-            if (done) {
-                taskData.push('done');
-            } else {
-                var fillOutText = taskDataHolder.querySelector("#fillOutText").innerHTML;
-                alert(fillOutText);
-                return;
-            }
-            break;
         case "image":
-            var done = document.getElementById("fillOutCheckbox").checked;
-            if (done) {
-                taskData.push('done');
-            } else {
-                var fillOutText = taskDataHolder.querySelector("#fillOutText").innerHTML;
-                alert(fillOutText);
-                return;
-            }
+            let done = document.getElementById("fillOutCheckbox").checked;
+            taskData = done ? ['done'] : null;
             break;
         case "checklist":
-            let checklistItems = taskDataHolder.getElementsByClassName("form-check");
-            var noneChecked = true;
-
-            for (let i = 0; i < checklistItems.length; i++) {
-                if (checklistItems[i].querySelector("input").checked) {
-                    noneChecked = false;
-                }
-                let checklistItem = {
-                    pos: i,
-                    value: checklistItems[i].querySelector("label").innerHTML,
-                    checked: checklistItems[i].querySelector("input").checked
-                }
-                taskData.push(checklistItem);
-            }
-            // if none selected taskData = null
-            if (noneChecked) {
-                taskData = null;
-            }
-            break;
         case "radio":
-            let radioItems = taskDataHolder.getElementsByClassName("form-check");
-            var noneChecked = true;
+            let items = Array.from(taskDataHolder.getElementsByClassName("form-check"));
+            let noneChecked = true;
 
-            for (let i = 0; i < radioItems.length; i++) {
-                if (radioItems[i].querySelector("input").checked) {
-                    noneChecked = false;
-                }
-                let radioItem = {
+            taskData = items.map((item, i) => {
+                let isChecked = item.querySelector("input").checked;
+                noneChecked = noneChecked && !isChecked;
+                return {
                     pos: i,
-                    value: radioItems[i].querySelector("label").innerHTML,
-                    checked: radioItems[i].querySelector("input").checked
-                }
-                taskData.push(radioItem);
-            }
-            // if none selected taskData = null
+                    value: item.querySelector("label").innerHTML,
+                    checked: isChecked
+                };
+            });
+
             if (noneChecked) {
                 taskData = null;
             }
@@ -882,13 +814,16 @@ async function submitTask(taskId, taskType) {
     }
 
     // Save the task settings
-    let response = await submitTaskToDB(taskId, taskData);
-    if (response == 500) {
-        console.error("Error: 500");
-        return;
-    }
-    if (response == 200) {
-        location.reload();
+    try {
+        let response = await submitTaskToDB(taskId, taskData);
+        if (response == 200) {
+            location.reload();
+        } else {
+            throw new Error(response);
+        }
+    } catch (error) {
+        console.error(`Error: ${error}`);
+        serverErrorToast();
     }
 }
 
@@ -1186,24 +1121,37 @@ async function cardCheckOrRadio(taskBody, task, type) {
         } else {
             input.type = "radio";
         }
-        input.disabled = true;
+        input.disabled = task.isSubmittable == 0 ? false : true;
         input.id = checklistItems[i].pos;
-        checklistItem.appendChild(input);
 
-        let selectedCount = 0;
-        for (let j = 0; j < UIData.length; j++) {
-            if (UIData[j].length <= i) {
-                continue;
-            }
-            if (UIData[j][i].checked && decodeHtml(UIData[j][i].value) == checklistItems[i].value) {
-                selectedCount += 1;
+        if (task.isSubmittable == 0) {
+            input.checked = checklistItems[i].checked;
+            input.onclick = function () {
+                saveCheckOrRadio(task.ID);
             }
         }
 
+        checklistItem.appendChild(input);
+
+        var selectedCount = 0;
+        if (task.isSubmittable == 1) {
+            for (let j = 0; j < UIData.length; j++) {
+                if (UIData[j].length <= i) {
+                    continue;
+                }
+                if (UIData[j][i].checked && decodeHtml(UIData[j][i].value) == checklistItems[i].value) {
+                    selectedCount += 1;
+                }
+            }
+        }
         let label = document.createElement("label");
         label.classList.add("form-check-label");
         label.htmlFor = checklistItems[i].pos;
-        label.innerHTML = checklistItems[i].value + " (" + selectedCount + ")";
+        if (task.isSubmittable == 1) {
+            label.innerHTML = checklistItems[i].value + " (" + selectedCount + ")";
+        } else {
+            label.innerHTML = checklistItems[i].value;
+        }
         checklistItem.appendChild(label);
 
         checklist.appendChild(checklistItem);
@@ -1262,6 +1210,39 @@ async function generateCheckOrRadioFillOut(taskBody, task, type) {
     }
     taskBody.appendChild(checklist);
 
+}
+
+async function saveCheckOrRadio(taskId) {
+
+    let taskCard = document.getElementById(`task-${taskId}`);
+    let checklistItems = Array.from(taskCard.getElementsByClassName("form-check"));
+
+    let taskData = {
+        text: taskCard.querySelector(".taskText").innerHTML,
+        checklist: checklistItems.map((item, i) => ({
+            pos: i,
+            value: item.querySelector("label").innerHTML,
+            checked: item.querySelector("input").checked
+        }))
+    }
+
+    try {
+        let response = await $.post('../projectManager.php', {
+            taskId: taskId,
+            Task_data: JSON.stringify(taskData),
+            mode: 'saveCheckOrRadio',
+        });
+
+        if (response == 200) {
+            console.log("Checklist saved successfully");
+            successToast(`Sikeres mentés!`);
+        } else {
+            throw new Error(response);
+        }
+    } catch (error) {
+        console.error("Error: " + error);
+        serverErrorToast();
+    }
 }
 
 

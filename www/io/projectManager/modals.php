@@ -1,5 +1,5 @@
 <!-- Info toast -->
-<div class="toast-container top-50 start-50 translate-middle p-3" style="z-index: 9999;">
+<div class="toast-container bottom-0 start-50 translate-middle-x p-3" style="z-index: 9999;">
     <div class="toast" id="infoToast" role="alert" aria-live="assertive" aria-atomic="true">
         <div class="toast-header">
             <img src="../logo.ico" class="rounded me-2" alt="..." style="height: 20px; filter: invert(1);">
@@ -44,9 +44,12 @@
             </div>
             <div class="modal-body">
                 <form>
+                    <div class="mb-3 input-group">
+                        <span class="input-group-text">Projekt neve: </span>
+                        <input type="text" class="form-control" id="projectName" placeholder="Projekt leírása...">
+                    </div>
                     <div class="mb-3">
-                        <label for="projectName" class="col-form-label">Projekt neve:</label>
-                        <input type="text" class="form-control" id="projectName">
+                        <textarea class="form-control" id="projectDescription"></textarea>
                     </div>
                     <div class="mb-3">
                         <label for="projectVisibility" class="col-form-label">Projekt láthatósága:</label>
@@ -79,27 +82,6 @@
     </div>
 </div>
 
-
-<!-- Description modal -->
-<div class="modal fade" id="projectDescModal" tabindex="-1" aria-labelledby="projectDescModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Leírás</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form>
-                    <textarea class="form-control" id="projectDescription"></textarea>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-success" id="saveDescButton">Mentés</button>
-            </div>
-        </div>
-    </div>
-</div>
-
 <!-- Task modal -->
 <div class="modal fade" id="taskEditorModal" tabindex="-1" aria-labelledby="taskEditorModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -108,10 +90,10 @@
                 <h5 class="modal-title" id="taskTitle">Új feladat hozzáadása</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body" style="padding-top: 0;">
+            <div class="modal-body">
                 <form>
-                    <div class="mb-1" id="taskName">
-                        <label for="textTaskName" class="col-form-label">Feladat neve:</label>
+                    <div class="mb-1 input-group" id="taskName">
+                        <span class="input-group-text">Feladat neve: </span>
                         <input type="text" class="form-control" id="textTaskName">
                     </div>
                     <div class="mb-1" id="taskData">
@@ -129,8 +111,7 @@
                     <div class="mb-2">
                         <button type="button" class="btn" data-bs-toggle="button" id="taskSubmittable">Leadandó
                             feladat</button>
-                        <button type="button" class="btn" data-bs-toggle="button" id="singleAnswer" disabled>Csak
-                            egyszeri leadás
+                        <button type="button" class="btn" data-bs-toggle="button" id="singleAnswer" disabled>Egyszer leadható
                         </button>
                         <script>
                             let taskSubmittable = document.getElementById('taskSubmittable');

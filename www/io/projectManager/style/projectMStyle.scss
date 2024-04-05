@@ -108,6 +108,15 @@
 }
 
 .projectBody {
+    //padding-top: 10px;
+    padding-bottom: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+}
+
+.projectMembers {
     padding-top: 10px;
     padding-bottom: 10px;
     display: flex;
@@ -184,14 +193,15 @@
 
 
 .taskHolder {
-    border-top: 1px solid rgb(175, 175, 175);
+    /* border-top: 1px solid rgb(175, 175, 175); */
 
     &>div {
         margin-bottom: 10px;
         margin-top: 10px;
     }
 
-    overflow: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
     max-height: 100%;
     width: 100%;
 
@@ -261,6 +271,21 @@
 
 .dragging {
     opacity: 0.5;
+    /* animation: shake 1s infinite; */
+}
+
+@keyframes shake {
+    0% { transform: translate(1px, 1px) rotate(0deg); }
+    10% { transform: translate(-1px, -2px) rotate(-1deg); }
+    20% { transform: translate(-3px, 0px) rotate(1deg); }
+    30% { transform: translate(3px, 2px) rotate(0deg); }
+    40% { transform: translate(1px, -1px) rotate(1deg); }
+    50% { transform: translate(-1px, 2px) rotate(-1deg); }
+    60% { transform: translate(-3px, 1px) rotate(0deg); }
+    70% { transform: translate(3px, 1px) rotate(-1deg); }
+    80% { transform: translate(-1px, -1px) rotate(1deg); }
+    90% { transform: translate(1px, 2px) rotate(0deg); }
+    100% { transform: translate(1px, -2px) rotate(-1deg); }
 }
 
 
@@ -276,6 +301,10 @@
     max-height: 85dvh;
     width: 100%;
     object-fit: contain;
+}
+
+.manager {
+    border: 2px solid red;
 }
 
 /* Deadline states */
@@ -324,3 +353,4 @@
         border-color: rgba(0, 0, 0, .125);
     }
 }
+
