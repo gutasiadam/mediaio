@@ -1,7 +1,7 @@
 
 // Drag and Drop Functionality
 
-function documentReady() {
+function dragAndDropReady() {
     const taskHandles = document.querySelectorAll('.dragHandle');
     const taskHolders = document.querySelectorAll('.taskHolder');
 
@@ -42,7 +42,6 @@ function documentReady() {
                 taskHolder.insertBefore(dragging, afterElement);
             }
         });
-
     });
 }
 
@@ -83,15 +82,15 @@ async function updateTaksOrder(taskHolder) {
             data: { mode: "saveTaskOrder", tasks: taskOrder }
         });
 
-        if (response == 500) {
-            window.location.href = "index.php?serverError";
-        }
-
         if (response == 200) {
             console.log("Task order saved successfully");
+            simpleToast("Sorrend frissítve!");
+        } else {
+            errorToast("Hiba a sorrend mentésekor!");
         }
+
         //console.log(response);
     } catch (error) {
-        console.error("Error:", error);
+        serverErrorToast();
     }
 }

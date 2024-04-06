@@ -49,8 +49,8 @@ if (!isset($_SESSION["userId"])) {
    </div>
 </nav>
 
-<body>
-
+<body class="background">
+   <!-- <button class="btn btn-secondary" onclick=testNAS()>NAS LOFASZ</button> -->
    <?php include "modals.php"; ?>
    <h1 class="rainbow">
       <?php if (isset($_SESSION["userId"]) && in_array("admin", $_SESSION["groups"])) { ?>
@@ -75,6 +75,19 @@ if (!isset($_SESSION["userId"])) {
 </body>
 <script>
 
+   function testNAS() {
+      $.ajax({
+         url: 'nasCommunication.php',
+         type: 'GET',
+         data: {
+            mode: 'getRootFolderData'
+         },
+         success: function (data) {
+            console.log(data);
+         }
+      });
+   }
+
    // Disable double tap zoom
    document.addEventListener('dblclick', function (event) {
       event.preventDefault();
@@ -82,29 +95,37 @@ if (!isset($_SESSION["userId"])) {
 
 
    $(document).ready(function () {
-
-      async function loadPage(mobile = false) {
-         if (mobile) {
-            let projects = await fetchProjects();
-            await generateProjects(projects, true);
-         }
-         else {
-            let projects = await fetchProjects();
-            await generateProjects(projects);
-         }
-         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-         var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-            return new bootstrap.Tooltip(tooltipTriggerEl)
-         })
-         documentReady();
-      }
-
-      if (window.innerWidth < 768) {
-         loadPage(true);
-      } else {
-         loadPage();
-      }
+      refreshProjects();
    });
+
+   setInterval(() => {  
+      // If any bootstrap modal is open, don't refresh
+      if ($('.modal').hasClass('show')) {
+         return;
+      }
+      refreshProjects();
+      simpleToast("Projektek frissítve!");
+   }, 60000);
+
+   async function refreshProjects() {
+      let mobile = window.innerWidth <= 768;
+
+      let projectHolder = document.getElementById('projectHolder');
+      projectHolder.innerHTML = '';
+
+      //Make a spinner
+      let spinner = document.createElement('div');
+      spinner.classList.add('spinner-grow', 'text-secondary');
+      spinner.innerHTML = '<span class="visually-hidden">Loading...</span>';
+      projectHolder.appendChild(spinner);
+
+      let projects = await fetchProjects();
+      await generateProjects(projects, mobile);
+      await dragAndDropReady();
+      await toolTipRender();
+
+      projectHolder.removeChild(spinner);
+   }
 
 </script>
 

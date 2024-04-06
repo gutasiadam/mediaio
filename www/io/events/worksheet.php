@@ -213,6 +213,30 @@ if (isset($_SESSION['UserUserName'])) {
   });
 
 
+    return new Promise((resolve, reject) => {
+      generateShareLink(folderName, date)
+        .then(sharingLink => {
+          // Continue with the rest of your code using the sharingLink
+          // For example:
+          if (sharingLink !== null) {
+            // Do something with the sharingLink
+            resolve(sharingLink);
+          } else {
+            // Handle the case where there was an error generating the link
+            reject("Error obtaining sharing link");
+          }
+        })
+        .catch(error => {
+          // Handle errors thrown during the async operation
+          console.error("Error obtaining sharing link:", error);
+          reject(error);
+        });
+    });
+  }
+
+
+
+  $('#addWorkSheetData').on('su
   document.addEventListener("DOMContentLoaded", function() {
     // Wait for the document to be fully loaded
     var serverFileSwitch = document.getElementById("serverFileSwitch_edit");
@@ -238,31 +262,7 @@ if (isset($_SESSION['UserUserName'])) {
     document.getElementsByClassName("folderSelectSection")[0].style.display = "none";
   });
 
-  function obtainSharingLink(folderName, date) {
-    return new Promise((resolve, reject) => {
-      generateShareLink(folderName, date)
-        .then(sharingLink => {
-          // Continue with the rest of your code using the sharingLink
-          // For example:
-          if (sharingLink !== null) {
-            // Do something with the sharingLink
-            resolve(sharingLink);
-          } else {
-            // Handle the case where there was an error generating the link
-            reject("Error obtaining sharing link");
-          }
-        })
-        .catch(error => {
-          // Handle errors thrown during the async operation
-          console.error("Error obtaining sharing link:", error);
-          reject(error);
-        });
-    });
-  }
-
-
-
-  $('#addWorkSheetData').on('submit', async function(e) {
+  function obtainSharingLink(folderName, date) {bmit', async function(e) {
     e.preventDefault();
     $('#addWorkSheetData').modal('hide');
     var wType = $("#workTypeSelect").val();

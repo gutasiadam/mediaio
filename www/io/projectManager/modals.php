@@ -24,7 +24,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="cancelButton">Mégse</button>
-                <button type="button" class="btn btn-danger" id="deleteTaskSure">Törlés</button>
+                <button type="button" class="btn btn-danger" id="sureButton">Törlés</button>
             </div>
         </div>
     </div>
@@ -100,7 +100,7 @@
                     </div>
                     <div class="mb-3">
                         <label for="taskMembers" class="col-form-label">Tagok:</label>
-                        <div class="memberSelect" id="taskMembers">
+                        <div class="memberSelect" id="taskMembers" style="max-height: 90px;">
                         </div>
                     </div>
                     <div class="mb-3 input-group">

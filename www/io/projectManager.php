@@ -197,6 +197,12 @@ class projectManager
                 }
             }
 
+            // Add the project deadline to the task
+            $sql = "SELECT `Deadline` FROM `projects` WHERE `ID`=" . $row['ProjectId'] . ";";
+            $result = $connection->query($sql);
+            $row['ProjectDeadline'] = $result->fetch_assoc()['Deadline'];
+
+
             // Check if the task is a single answer task and the user is trying to edit it
             if ($row['SingleAnswer'] == 1 && $_POST['fillOut'] == 'false' && !in_array("admin", $_SESSION['groups'])) {
                 // If the task is a checklist or radio task, only the creator can edit it (unless the user is an admin)

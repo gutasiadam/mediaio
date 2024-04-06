@@ -33,7 +33,7 @@ async function generateBigView(project) {
     let projectID = project.ID;
 
     // Create a new project holder card
-    let projectCard = document.getElementById("projectHolder")
+    let projectCard = document.getElementsByClassName("projectHolder")[0];
     projectCard.id = projectID;
     projectCard.style.flexDirection = "column";
     //colorCardBasedOnDeadline(projectCard, project.Deadline);
@@ -288,14 +288,19 @@ async function generateProjectBody(project) {
     if (project.Deadline) {
         var deadlineText = await getDeadline(project.Deadline);
         let deadline = document.createElement("span");
-        deadline.classList.add("badge", "bg-secondary", "text-white", "ms-2");
+        deadline.classList.add("badge", "ms-2");
         deadline.innerHTML = `<a data-bs-toggle="tooltip" data-bs-title="${project.Deadline.slice(0, -3)}">${deadlineText}</a>`;
-        if (deadlineText == "Lejárt" || deadlineText.includes("perc") || deadlineText == "Épp most") {
-            deadline.classList.add("bg-danger");
-        } else if (deadlineText.includes("óra")) {
-            deadline.classList.add("bg-warning", "text-dark");
-        } else {
-            deadline.classList.add("bg-success", "text-dark");
+        let deadlineColor = getDeadlineColor(project.Deadline);
+        switch (deadlineColor) {
+            case "overdue":
+                deadline.classList.add("bg-danger");
+                break;
+            case "soon":
+                deadline.classList.add("bg-warning", "text-dark");
+                break;
+            case "future":
+                deadline.classList.add("bg-success", "text-white");
+                break;
         }
         infoDiv.appendChild(deadline);
     }
@@ -349,7 +354,7 @@ async function generateProjectBody(project) {
         text.innerHTML = "<i class='fas fa-paragraph fa-sm'></i> Szöveg";
         text.style.cursor = "pointer";
         text.onclick = function () {
-            addNewTask(projectID, "text");
+            addNewTask(projectID, "text", project.Deadline);
         }
         ul.appendChild(text);
 
@@ -358,7 +363,7 @@ async function generateProjectBody(project) {
         image.innerHTML = "<i class='far fa-image fa-sm'></i> Kép";
         image.style.cursor = "pointer";
         image.onclick = function () {
-            addNewTask(projectID, "image");
+            addNewTask(projectID, "image", project.Deadline);
         }
         ul.appendChild(image);
 
@@ -367,7 +372,7 @@ async function generateProjectBody(project) {
         file.innerHTML = "<i class='fas fa-file-alt'></i> Fájl";
         file.style.cursor = "pointer";
         file.onclick = function () {
-            addNewTask(projectID, "file");
+            addNewTask(projectID, "file", project.Deadline);
         }
         ul.appendChild(file);
 
@@ -376,7 +381,7 @@ async function generateProjectBody(project) {
         checklist.innerHTML = "<i class='fas fa-list fa-sm'></i> Lista";
         checklist.style.cursor = "pointer";
         checklist.onclick = function () {
-            addNewTask(projectID, "checklist");
+            addNewTask(projectID, "checklist", project.Deadline);
         }
         ul.appendChild(checklist);
 
@@ -385,7 +390,7 @@ async function generateProjectBody(project) {
         radio.innerHTML = "<i class='fas fa-dot-circle fa-sm'></i> Választós lista";
         radio.style.cursor = "pointer";
         radio.onclick = function () {
-            addNewTask(projectID, "radio");
+            addNewTask(projectID, "radio", project.Deadline);
         }
         ul.appendChild(radio);
     }
@@ -489,18 +494,33 @@ function colorCardBasedOnDeadline(projectCard, deadline) {
         let now = new Date();
         let projectDeadline = new Date(deadline);
 
-        let diff = projectDeadline - now;
-
-        if (diff < 0) {
+        if (projectDeadline < now) {
             projectCard.classList.add("overdue");
-        } else if (diff < (1000 * 60 * 60 * 48)) {   // 48 hours
+            return "overdue";
+        } else if (projectDeadline - now < (1000 * 60 * 60 * 48)) {   // 48 hours
             projectCard.classList.add("soon");
+            return "soon";
         } else {
             projectCard.classList.add("future");
+            return "future";
         }
     }
 }
 
+function getDeadlineColor(deadline) {
+    if (deadline) {
+        let now = new Date();
+        let projectDeadline = new Date(deadline);
+
+        if (projectDeadline < now) {
+            return "overdue";
+        } else if (projectDeadline - now < (1000 * 60 * 60 * 48)) {   // 48 hours
+            return "soon";
+        } else {
+            return "future";
+        }
+    }
+}
 
 function createDiscription(projectID, Description) {
     // Create a new project description

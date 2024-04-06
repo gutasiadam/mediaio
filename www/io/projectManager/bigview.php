@@ -73,25 +73,36 @@ if (!isset($_SESSION["userId"])) {
 
    $(document).ready(function () {
 
-      async function loadPage() {
-         let project = await fetchProject(<?php echo $_GET['projectID']; ?>);
-         /* document.getElementById('projectTitle').textContent = project.Name; */
-
-         await generateBigView(project);
-
-         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-         var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-            return new bootstrap.Tooltip(tooltipTriggerEl)
-         })
-
-         documentReady();
-      }
-
       if (window.innerWidth > 768) {
          window.location.href = "./index.php";
       }
 
-      loadPage();
+      refreshProjects();
    });
+
+   setInterval(function () {
+      refreshProjects();
+      simpleToast("Projekt frissítve");
+   }, 60000);
+
+   async function refreshProjects() {
+      let project = await fetchProject(<?php echo $_GET['projectID']; ?>);
+
+      let projectHolder = document.getElementsByClassName('projectHolder')[0];
+      projectHolder.innerHTML = '';
+
+      //Make a spinner
+      let spinner = document.createElement('div');
+      spinner.classList.add('spinner-grow', 'text-secondary');
+      spinner.innerHTML = '<span class="visually-hidden">Loading...</span>';
+      projectHolder.appendChild(spinner);
+
+      await generateBigView(project);
+      //TODO: ORDER FUNCTIONALITY NEEDED HERE
+      await toolTipRender();
+
+      //Remove spinner
+      projectHolder.removeChild(spinner);
+   }
 
 </script>

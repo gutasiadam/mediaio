@@ -139,9 +139,8 @@ if (!isset($_SESSION['userId'])) {
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <?php if ($_SESSION['role'] >= 3) {
+          <?php if (in_array("admin", $_SESSION["groups"])) {
             echo ' <form id="sendDelEvent">
-        <input type="submit" class="btn btn-danger" value="Törlés"></button>
         <input type="hidden" id="delEventId"></input>
         <input type="hidden" id="delEventTitle"></input>
         </form>';

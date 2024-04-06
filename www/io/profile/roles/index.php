@@ -230,7 +230,7 @@ if (!in_array("system", $_SESSION["groups"])) {
     let roles = [
       { value: 'média', text: 'Médiás' },
       { value: 'studio', text: 'Stúdiós' },
-      { value: 'event', text: 'Eventes csicska'},
+      { value: 'event', text: 'Eventes csicska' },
       { value: 'admin', text: 'Vezetőségi tag' },
       { value: 'teacher', text: 'Tanár' },
       { value: 'system', text: 'SysAdmin' }
@@ -289,7 +289,7 @@ if (!in_array("system", $_SESSION["groups"])) {
     }
     else if (userGroups.includes('teacher')) {
       card.classList.add('border-info');
-    } 
+    }
     else if (userGroups.includes('admin')) {
       card.classList.add('border-warning');
     }
@@ -298,7 +298,7 @@ if (!in_array("system", $_SESSION["groups"])) {
     }
     else if (userGroups.includes('studio')) {
       card.classList.add('border-primary');
-    } 
+    }
     else if (userGroups.includes('média')) {
       card.classList.add('border-secondary');
     }

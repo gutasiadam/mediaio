@@ -130,15 +130,15 @@ async function editProjectMembers(projectID) {
 async function changeManager(projectID, memberID) {
     console.log("Changing project manager");
 
-    document.getElementById('deleteTaskSure').innerHTML = "Felelős megváltoztatása";
-    document.getElementById('deleteTaskSure').classList.remove("btn-danger");
-    document.getElementById('deleteTaskSure').classList.add("btn-warning");
+    document.getElementById('sureButton').innerHTML = "Felelős megváltoztatása";
+    document.getElementById('sureButton').classList.remove("btn-danger");
+    document.getElementById('sureButton').classList.add("btn-warning");
 
     $('#areyousureModal').modal('show');
 
     // Create a new Promise that resolves when the button is clicked
     let buttonClicked = new Promise((resolve, reject) => {
-        document.getElementById('deleteTaskSure').addEventListener('click', resolve);
+        document.getElementById('sureButton').addEventListener('click', resolve);
         document.getElementById('cancelButton').addEventListener('click', reject);
     });
 
@@ -164,8 +164,9 @@ async function changeManager(projectID, memberID) {
         else {
             serverErrorToast();
         }
-    }).catch(() => {
+    }).catch((error) => {
         // Do nothing
+        console.error(error);
         console.log("Changing manager cancelled");
         return;
     });
@@ -181,15 +182,16 @@ async function saveProjectMemberSettings(projectID) {
     console.log(projectMembers);
     var response = await saveProjectMembersToDB(projectID, projectMembers);
 
-    if (response == 500) {
-        console.error("Error: 500");
-        return;
-    } else if (response == 200) {
-        location.reload();
+    if (response == 200) {
+        await refreshProjects();
+        simpleToast("Projekt tagok sikeresen mentve!");
+        // Close the modal
+        $('#addMemberModal').modal('hide');
+    } else {
+        serverErrorToast();
+        console.error(response);
     }
 
-    // Close the modal
-    $('#addMemberModal').modal('hide');
 
 }
 
@@ -286,13 +288,13 @@ async function saveProjectSettings(proj_id) {
     var response = await saveProjectSettingsToDB(proj_id, projectName, projectDescription, projectDeadline, projectVisibility);
 
     if (response == 200) {
-        location.reload();
+        await refreshProjects();
+        successToast("Projekt beállítások sikeresen mentve!");
+        $('#projectSettingsModal').modal('hide');
+    } else {
+        serverErrorToast();
+
     }
-
-    // Close the modal
-    $('#projectSettingsModal').modal('hide');
-
-
 }
 
 
@@ -312,11 +314,13 @@ async function deleteProject(proj_id) {
         // Delete the project
         await deleteProjectFromDB(proj_id);
 
+        // Reload the page
+        refreshProjects();
+
+        successToast("Projekt sikeresen törölve!");
+
         // Close the modal
         $('#projectSettingsModal').modal('hide');
-
-        // Reload the page
-        location.reload();
 
     } else {
         console.error("Error: Project name does not match");
@@ -329,15 +333,15 @@ async function deleteProject(proj_id) {
 async function archiveProject(projectID) {
     console.log("Archiving project: " + projectID);
 
-    document.getElementById('deleteTaskSure').innerHTML = "Archiválás";
-    document.getElementById('deleteTaskSure').classList.remove("btn-danger");
-    document.getElementById('deleteTaskSure').classList.add("btn-warning");
+    document.getElementById('sureButton').innerHTML = "Archiválás";
+    document.getElementById('sureButton').classList.remove("btn-danger");
+    document.getElementById('sureButton').classList.add("btn-warning");
 
 
 
     // Create a new Promise that resolves when the button is clicked
     let buttonClicked = new Promise((resolve, reject) => {
-        document.getElementById('deleteTaskSure').addEventListener('click', resolve);
+        document.getElementById('sureButton').addEventListener('click', resolve);
         document.getElementById('cancelButton').addEventListener('click', reject);
     });
 

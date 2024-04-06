@@ -101,9 +101,9 @@ async function fetchTask(proj_id = null, task_id = null, fillOut = false) {
                 data: { mode: "getProjectTask", proj_id: proj_id, task_id: task_id, fillOut: fillOut }
             });
 
-            if (response == 500) {
-                window.location.href = "index.php?serverError";
-            }
+           /*  if (response != 200) {
+                serverErrorToast();
+            } */
 
             //console.log(response);
 
@@ -262,8 +262,8 @@ async function submitTaskToDB(task_id, taskData) {
                 data: { mode: "submitTask", ID: task_id, task: taskJson }
             });
 
-            if (response == 500) {
-                window.location.href = "index.php?serverError";
+            if (response != 200) {
+                serverErrorToast();
             }
 
             console.log(response);

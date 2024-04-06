@@ -1,4 +1,6 @@
 
+
+
 async function generateTasks(projectID, canEdit) {
     let taskHolder = document.createElement("div");
     taskHolder.classList.add("taskHolder");
@@ -76,14 +78,15 @@ async function createTask(task, projectID, canEdit) {
     taskHeader.appendChild(creatorSpan);
 
     // Create drag handle
-    let dragHandle = document.createElement("span");
-    dragHandle.classList.add("dragHandle");
-    dragHandle.innerHTML = "<i class='fas fa-grip-vertical'></i>";
-    dragHandle.style.marginLeft = "5px";
-    dragHandle.style.cursor = "grab";
-    dragHandle.draggable = true;
-    creatorSpan.appendChild(dragHandle);
-
+    if (window.innerWidth > 768) {
+        let dragHandle = document.createElement("span");
+        dragHandle.classList.add("dragHandle");
+        dragHandle.innerHTML = "<i class='fas fa-grip-vertical'></i>";
+        dragHandle.style.marginLeft = "5px";
+        dragHandle.style.cursor = "grab";
+        dragHandle.draggable = true;
+        creatorSpan.appendChild(dragHandle);
+    }
 
     taskCard.appendChild(taskHeader);
 
@@ -165,12 +168,18 @@ async function createTask(task, projectID, canEdit) {
             let deadline = document.createElement("span");
             deadline.classList.add("badge");
             deadline.innerHTML = deadlineText;
-            if (deadlineText == "Lejárt" || deadlineText.includes("perc") || deadlineText == "Épp most") {
-                deadline.classList.add("bg-danger");
-            } else if (deadlineText.includes("óra")) {
-                deadline.classList.add("bg-warning", "text-dark");
-            } else {
-                deadline.classList.add("bg-success");
+            //deadline.innerHTML = `<a data-bs-toggle="tooltip" data-bs-title="${task.Deadline.slice(0, -3)}">${deadlineText}</a>`;
+            let deadlineColor = getDeadlineColor(task.Deadline);
+            switch (deadlineColor) {
+                case "overdue":
+                    deadline.classList.add("bg-danger");
+                    break;
+                case "soon":
+                    deadline.classList.add("bg-warning", "text-dark");
+                    break;
+                case "future":
+                    deadline.classList.add("bg-success", "text-white");
+                    break;
             }
             cardFooter.appendChild(deadline);
         }
@@ -247,6 +256,7 @@ async function openTask(TaskId, projectID) {
 
     document.getElementById("fillOutText").style.display = "none";
     document.getElementById("fillOutText").value = task.fillOutText;
+
     switch (task.Task_type) {
         case "text":
             textEditor(taskDataHolder, taskData, "150px");
@@ -289,10 +299,10 @@ async function openTask(TaskId, projectID) {
             taskDataHolder.appendChild(uploadDiv);
             break;
         case "checklist":
-            generateCheckOrRadioEditor(taskDataHolder, taskData, "checklist");
-            break;
         case "radio":
-            generateCheckOrRadioEditor(taskDataHolder, taskData, "radio");
+            generateCheckOrRadioEditor(taskDataHolder, taskData, task.Task_type);
+            document.getElementById('taskSubmittable').classList.add('active');
+            break;
     }
 
     // Get task assigned users
@@ -306,21 +316,14 @@ async function openTask(TaskId, projectID) {
 
     if (taskMembers != null) {
         taskMembersHolder.innerHTML = "";
-        for (let i = 0; i < taskMembers.length; i++) {
-            var member = taskMembers[i];
-
+        taskMembers.forEach(member => {
             var option = document.createElement("div");
             option.classList.add("availableMember");
             option.style.cursor = "pointer";
             option.id = member.UserId;
-            option.innerHTML = member.lastName + " " + member.firstName;
+            option.innerHTML = `${member.lastName} ${member.firstName}`;
             option.onclick = function () {
-                if (this.classList.contains("selectedMember")) {
-                    this.classList.remove("selectedMember");
-                }
-                else {
-                    this.classList.add("selectedMember");
-                }
+                this.classList.toggle("selectedMember");
             }
 
             if (member.assignedToTask) {
@@ -328,12 +331,10 @@ async function openTask(TaskId, projectID) {
             }
 
             taskMembersHolder.appendChild(option);
-        }
+        });
     }
 
     // Set the task submittable checkbox
-    //console.log(task.isSubmittable);
-    //document.getElementById("taskSubmittable").setAttribute("aria-pressed", task.isSubmittable == 1 ? "true" : "false");
     if (task.isSubmittable == 1) {
         document.getElementById("taskSubmittable").classList.add("active");
         document.getElementById("singleAnswer").disabled = false;
@@ -350,18 +351,16 @@ async function openTask(TaskId, projectID) {
 
     // Get the task deadline
     let deadline = task.Deadline;
-    if (deadline) {
-        let date = deadline.split(" ")[0];
-        let time = deadline.split(" ")[1];
+    let [date, time] = deadline ? deadline.split(" ") : ["", ""];
+    time = time ? time.split(':').slice(0, 2).join(':') : "";
 
-        // strip seconds from time
-        time = time.split(':').slice(0, 2).join(':');
+    document.getElementById("taskDate").value = date;
+    document.getElementById("taskTime").value = time;
 
-        document.getElementById("taskDate").value = date;
-        document.getElementById("taskTime").value = time;
-    } else {
-        document.getElementById("taskDate").value = "";
-        document.getElementById("taskTime").value = "";
+    // Set max date to project deadline
+    let projectDeadline = task.ProjectDeadline;
+    if (projectDeadline) {
+        document.getElementById("taskDate").max = projectDeadline.split(" ")[0];
     }
 
 
@@ -510,10 +509,11 @@ async function addFillOutText(taskBody, fillOutText, taskId) {
 
 // Task settings modal
 
-async function addNewTask(projectID, taskType) {
+async function addNewTask(projectID, taskType, deadline = null) {
     console.log("Adding new " + taskType + " task to project: " + projectID);
 
     let modalTitle = document.getElementById("taskTitle");
+    document.getElementById("textTaskName").value = "";
 
     let taskDataHolder = document.getElementById("taskData");
     taskDataHolder.innerHTML = "";
@@ -597,13 +597,11 @@ async function addNewTask(projectID, taskType) {
             break;
 
         case "checklist":
-            modalTitle.innerHTML = "Új lista hozzáadása (checklist)";
-            generateNewCheckOrRadioEditor(taskDataHolder, "checklist");
-            break;
-
         case "radio":
-            modalTitle.innerHTML = "Új lista hozzáadása (radio)";
-            generateNewCheckOrRadioEditor(taskDataHolder, "radio");
+            modalTitle.innerHTML = `Új lista hozzáadása (${taskType})`;
+            generateNewCheckOrRadioEditor(taskDataHolder, taskType);
+            document.getElementById('taskSubmittable').classList.add('active');
+            break;
     }
 
     // Get task assigned users
@@ -615,12 +613,12 @@ async function addNewTask(projectID, taskType) {
     let taskMembersHolder = document.getElementById("taskMembers");
     taskMembersHolder.innerHTML = "";
 
-
+    console.log(taskMembers);
     taskMembers.forEach(member => {
         let option = document.createElement("div");
         option.classList.add("availableMember");
         option.style.cursor = "pointer";
-        option.id = member.UserId;
+        option.id = member.UserID;
         option.innerHTML = `${member.lastName} ${member.firstName}`;
         option.onclick = function () {
             this.classList.toggle("selectedMember");
@@ -628,6 +626,12 @@ async function addNewTask(projectID, taskType) {
         option.classList.add("selectedMember");
         taskMembersHolder.appendChild(option);
     });
+
+    // Set the max date to project deadline
+    if (deadline) {
+        document.getElementById("taskDate").max = deadline.split(" ")[0];
+    }
+
 
     // Hide delete button if shown
     let deleteButton = document.getElementById("deleteTask");
@@ -728,7 +732,8 @@ async function saveTaskSettings(task_id, taskType, projectID = null) {
         let response = await saveTaskToDB(task, taskMembersArray, imageToUpload, task_id);
         if (response == 200) {
             console.log("Task saved successfully");
-            location.reload();
+            refreshProjects();
+            successToast("Feladat mentve!");
             $('#taskEditorModal').modal('hide');
         } else {
             throw new Error(response);
@@ -745,14 +750,14 @@ async function saveTaskSettings(task_id, taskType, projectID = null) {
 async function deleteTask(taskId) {
     console.log("Deleting task: " + taskId);
 
-    document.getElementById('deleteTaskSure').innerHTML = "Törlés";
-    document.getElementById('deleteTaskSure').classList.remove("btn-warning");
-    document.getElementById('deleteTaskSure').classList.add("btn-danger");
+    document.getElementById('sureButton').innerHTML = "Törlés";
+    document.getElementById('sureButton').classList.remove("btn-warning");
+    document.getElementById('sureButton').classList.add("btn-danger");
 
 
     // Create a new Promise that resolves when the button is clicked
     let buttonClicked = new Promise((resolve, reject) => {
-        document.getElementById('deleteTaskSure').addEventListener('click', resolve);
+        document.getElementById('sureButton').addEventListener('click', resolve);
         document.getElementById('cancelButton').addEventListener('click', reject);
     });
 
@@ -761,7 +766,7 @@ async function deleteTask(taskId) {
         let res = await deleteTaskFromDB(taskId)
         if (res == 200) {
             console.log("Task deleted successfully");
-            successToast("Feladat törölve");
+            simpleToast("Feladat törölve");
             document.getElementById("task-" + taskId).remove();
             $('#areyousureModal').modal('hide');
         } else if (res == 403) {
@@ -817,7 +822,9 @@ async function submitTask(taskId, taskType) {
     try {
         let response = await submitTaskToDB(taskId, taskData);
         if (response == 200) {
-            location.reload();
+            refreshProjects();
+            successToast("Feladat leadva");
+            $('#taskFillModal').modal('hide');
         } else {
             throw new Error(response);
         }
@@ -1217,8 +1224,10 @@ async function saveCheckOrRadio(taskId) {
     let taskCard = document.getElementById(`task-${taskId}`);
     let checklistItems = Array.from(taskCard.getElementsByClassName("form-check"));
 
+    let taskTextElement = taskCard.querySelector(".taskText");
+    let taskText = taskTextElement ? taskTextElement.innerHTML : null;
     let taskData = {
-        text: taskCard.querySelector(".taskText").innerHTML,
+        text: taskText,
         checklist: checklistItems.map((item, i) => ({
             pos: i,
             value: item.querySelector("label").innerHTML,
@@ -1235,7 +1244,7 @@ async function saveCheckOrRadio(taskId) {
 
         if (response == 200) {
             console.log("Checklist saved successfully");
-            successToast(`Sikeres mentés!`);
+            simpleToast(`Sikeres mentés!`);
         } else {
             throw new Error(response);
         }
@@ -1266,7 +1275,7 @@ async function deleteImage(taskId) {
         success: function (data) {
             console.log(data);
             if (data == 200) {
-                successToast("Kép törölve");
+                simpleToast("Kép törölve");
             }
         }
     });
