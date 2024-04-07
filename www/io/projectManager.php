@@ -709,6 +709,22 @@ class projectManager
             return 403;
         }
     }
+
+    // NAS THINGS
+
+    static function saveNASPath($path, $projectID)
+    {
+        if (in_array("admin", $_SESSION['groups'])) {
+            $connection = Database::runQuery_mysqli(self::$schema);
+
+            $sql = "UPDATE projects SET NAS_path='" . $path . "' WHERE ID=" . $projectID . ";";
+            $connection->query($sql);
+            $connection->close();
+            return 200;
+        } else {
+            return 403;
+        }
+    }
 }
 
 if (isset($_POST['mode'])) {
@@ -783,6 +799,10 @@ if (isset($_POST['mode'])) {
             break;
         case 'removeMemberFromProject':
             echo projectManager::removeMemberFromProject($_POST['userId'], $_POST['projectId']);
+            break;
+
+        case 'saveNASPath':
+            echo projectManager::saveNASPath($_POST['path'], $_POST['projectID']);
             break;
     }
     exit();

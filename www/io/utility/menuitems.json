@@ -3,7 +3,7 @@
         {"name": "index","icon": "fas fa-home fa-lg", "href": "index.php", "displayName": "Kezdőlap"},
         {"name": "takeout","icon": "fas fa-upload fa-lg", "href": "takeout.php", "displayName": "Kivétel"},
         {"name": "retrieve","icon": "fas fa-download fa-lg", "href": "retrieve.php", "displayName": "Visszahozás"},
-        {"name": "projectmanager", "icon": "fas fa-tasks fa-lg", "href": "projectManager/index.php",  "displayName": "Projekt menedzser"},
+        {"name": "projectmanager", "icon": "fas fa-tasks fa-lg", "href": "projectManager/index.php",  "displayName": "Projektek"},
         {"name": "adatok","icon": "fas fa-database fa-lg", "href": "adatok.php?Out=4&orderByField=Nev&order=ASC", "displayName": "Adatok"},
         {"name": "pathfinder","icon": "fas fa-project-diagram fa-lg", "href": "pathfinder.php", "displayName": "PathFinder"},
         {"name": "events","icon": "fas fa-calendar-alt fa-lg", "href": "events/", "displayName": "Naptár"},

@@ -1057,21 +1057,58 @@ function generateCheckOrRadioEditor(taskDataHolder, taskData, type) {
     checklist.classList.add("list-group", "list-group-flush");
     checklist.id = type;
 
-    for (let i = 0; i < checklistItems.length; i++) {
+    checklistItems.forEach(item => {
         let checklistItem = document.createElement("li");
-        checklistItem.classList.add("list-group-item");
-        checklistItem.innerHTML = "<input type='text' class='form-control " + type + "Item' value='" + checklistItems[i].value + "'>";
+        checklistItem.classList.add("list-group-item", "d-flex");
+
+        let input = document.createElement("input");
+        input.classList.add("form-control", type + "Item");
+        input.value = item.value;
+        checklistItem.appendChild(input);
+
+        let deleteButton = document.createElement("button");
+        deleteButton.classList.add("btn", "btn-danger", "btn-sm");
+        deleteButton.innerHTML = `<i class="fas fa-trash-alt"></i>`;
+        deleteButton.style.marginLeft = "5px";
+        deleteButton.addEventListener('click', function (event) {
+            event.preventDefault();
+            // If only one item is left return
+            if (this.parentElement.parentElement.childElementCount == 1) {
+                errorToast("Legalább egy elemnek kell lennie!");
+            } else {
+                checklistItem.remove();
+            }
+        });
+        checklistItem.appendChild(deleteButton);
         checklist.appendChild(checklistItem);
-    }
+    });
 
     let newChecklistItem = document.createElement("button");
     newChecklistItem.classList.add("btn", "btn-success", "btn-sm");
     newChecklistItem.innerHTML = "Új elem";
     newChecklistItem.onclick = function () {
-        let checklist = document.getElementById(type);
         let checklistItem = document.createElement("li");
-        checklistItem.classList.add("list-group-item");
-        checklistItem.innerHTML = "<input type='text' class='form-control " + type + "Item' placeholder='Új elem'>";
+        checklistItem.classList.add("list-group-item", "d-flex");
+
+        let input = document.createElement("input");
+        input.classList.add("form-control", type + "Item");
+        input.placeholder = "Új elem";
+        checklistItem.appendChild(input);
+
+        let deleteButton = document.createElement("button");
+        deleteButton.classList.add("btn", "btn-danger", "btn-sm");
+        deleteButton.innerHTML = `<i class="fas fa-trash-alt"></i>`;
+        deleteButton.style.marginLeft = "5px";
+        deleteButton.addEventListener('click', function (event) {
+            event.preventDefault();
+            // If only one item is left return
+            if (this.parentElement.parentElement.childElementCount == 1) {
+                errorToast("Legalább egy elemnek kell lennie!");
+            } else {
+                checklistItem.remove();
+            }
+        });
+        checklistItem.appendChild(deleteButton);
         checklist.appendChild(checklistItem);
     }
 
@@ -1082,7 +1119,6 @@ function generateCheckOrRadioEditor(taskDataHolder, taskData, type) {
 
     taskDataHolder.appendChild(checklist);
     taskDataHolder.appendChild(newChecklistItem);
-
 }
 
 

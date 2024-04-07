@@ -30,6 +30,29 @@
     </div>
 </div>
 
+<!-- FILE SELECTOR modal -->
+
+<div class="modal fade" id="filebrowserModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="filebrowserModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="d-flex">
+                    <button type="button" class="btn" id="backButton"><i class="fas fa-undo"></i></button>
+                    <h5 class="modal-title" id="currentFolder">Munka</h5>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="fileExplorer">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-target="#projectSettingsModal" data-bs-toggle="modal" data-bs-dismiss="modal">Mégse</button>
+                <button type="button" class="btn btn-success" id="setRootFolder">Beállítás</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 
 <!-- Project settings modal -->
@@ -67,10 +90,16 @@
                         <input type="time" class="form-control" id="projectTime">
                     </div>
                     <div class="mb-3 input-group">
+                        <span class="input-group-text">NAS elérési út: </span>
+                        <input type="text" class="form-control" id="pathToProject" disabled>
+                        <button type="button" class="btn btn-outline-secondary" id="browseRootFolder"><i
+                                class="fas fa-folder-open"></i></button>
+                    </div>
+                    <!-- <div class="mb-3 input-group">
                         <span class="input-group-text">Projekt törlése: </span>
                         <input type="text" class="form-control" id="deleteText">
                         <button type="button" class="btn btn-outline-danger" id="deleteButton">Törlés</button>
-                    </div>
+                    </div> -->
                 </form>
             </div>
             <div class="modal-footer">
@@ -111,7 +140,8 @@
                     <div class="mb-2">
                         <button type="button" class="btn" data-bs-toggle="button" id="taskSubmittable">Leadandó
                             feladat</button>
-                        <button type="button" class="btn" data-bs-toggle="button" id="singleAnswer" disabled>Egyszer leadható
+                        <button type="button" class="btn" data-bs-toggle="button" id="singleAnswer" disabled>Egyszer
+                            leadható
                         </button>
                         <script>
                             let taskSubmittable = document.getElementById('taskSubmittable');

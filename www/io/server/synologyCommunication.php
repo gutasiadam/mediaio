@@ -117,8 +117,8 @@ class synologyAPICommunicationManager
 		$err = curl_error($curl);
 		curl_close($curl);
 
-		echo $response;
-		echo $err;
+		//echo $response;
+		//echo $err;
 	}
 
 	function getSid()

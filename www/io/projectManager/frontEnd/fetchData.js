@@ -16,6 +16,8 @@ async function fetchProjects(archived = 0) {
                 serverErrorToast();
             }
 
+            //console.log(response);
+
             var projects = JSON.parse(response);
 
             //console.log(projects);

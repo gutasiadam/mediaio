@@ -83,6 +83,7 @@ async function openTaskAnswers(taskId, projectId) {
                     userAnswer.forEach(answer => {
                         if (answer.checked == false) return;
                         var optionDiv = workingArea.querySelector(`div[data-option="${answer.value}"]`);
+                        if (!optionDiv) return;
                         var clonedMemberDiv = memberDiv.cloneNode(true); // clone the memberDiv
                         optionDiv.appendChild(clonedMemberDiv);
                     });

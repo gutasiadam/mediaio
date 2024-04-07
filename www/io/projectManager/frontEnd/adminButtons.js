@@ -239,14 +239,26 @@ async function openSettings(proj_id) {
         saveProjectSettings(proj_id);
     }
 
-    // Create delete button
-    var deleteText = document.getElementById("deleteText");
-    deleteText.placeholder = projectName;
+    // NAS root folder settings
+    var projectFolder = projectSettings.NAS_path ? projectSettings.NAS_path : "/Munka";
+    document.getElementById("pathToProject").value = projectFolder;
 
-    var deleteButton = document.getElementById("deleteButton");
-    deleteButton.onclick = function () {
-        deleteProject(proj_id);
+    //Create browse button
+    var browseButton = document.getElementById("browseRootFolder");
+    browseButton.onclick = function () {
+        $('#filebrowserModal').modal('show');
+        $('#projectSettingsModal').modal('hide');
+        browseNASFolder(proj_id, document.getElementById("pathToProject").value);
     }
+
+    // Create delete button
+    //var deleteText = document.getElementById("deleteText");
+    //deleteText.placeholder = projectName;
+
+    //var deleteButton = document.getElementById("deleteButton");
+    //deleteButton.onclick = function () {
+    //    deleteProject(proj_id);
+    //}
 
     // Create archive button
     var archiveButton = document.getElementById("archiveButton");
@@ -367,5 +379,104 @@ async function archiveProject(projectID) {
         return;
     });
 
+
+}
+
+
+// FILE MANAGEMENT
+
+async function browseNASFolder(projectID, path = '/Munka') {
+    console.log("Browsing NAS folder: " + path);
+    const currentFolderTitle = document.getElementById("currentFolder");
+    currentFolderTitle.innerHTML = path;
+
+    const fileExplorer = document.getElementById("fileExplorer");
+    fileExplorer.innerHTML = "";
+
+    // Add spinner
+    let spinner = document.createElement("div");
+    spinner.classList.add("spinner-grow", "text-secondary");
+    spinner.id = "loadingSpinner";
+    spinner.style.margin = "auto";
+    spinner.style.display = "block";
+    fileExplorer.appendChild(spinner);
+
+    // Load folders
+    let response = await listDir(path);
+    response = JSON.parse(response);
+    console.log(response);
+
+    // Remove spinner
+    document.getElementById("loadingSpinner").remove();
+
+    let arrayOfFiles = response.data.files;
+
+    arrayOfFiles.forEach(file => {
+        let fileElement = document.createElement("div");
+        fileElement.classList.add("fileElement");
+        fileElement.innerHTML = `<i class="fas ${file.isdir ? 'fa-folder-open' : 'fa-file'}"></i> ${file.name}`;
+        fileElement.style.cursor = "pointer";
+        fileElement.onclick = function () {
+            if (file.isdir == true) {
+                browseNASFolder(projectID, file.path);
+            } else {
+                //saveNASPath(projectID, file.path);
+            }
+        }
+        fileExplorer.appendChild(fileElement);
+    });
+
+    // Previous folder button
+    const backButton = document.getElementById("backButton");
+    if (path == "/Munka") {
+        backButton.style.display = "none";
+    } else {
+        backButton.style.display = "block";
+    }
+    backButton.onclick = function () {
+        let pathArray = path.split("/");
+        pathArray.pop();
+        let newPath = pathArray.join("/");
+        browseNASFolder(projectID, newPath);
+    }
+
+    // Set button update
+    const saveButton = document.getElementById("setRootFolder");
+    saveButton.onclick = function () {
+        saveNASPath(projectID, path);
+    }
+}
+
+async function saveNASPath(projectID, path) {
+    console.log("Saving NAS path: " + path);
+
+    let response = await $.ajax({
+        type: "POST",
+        url: "../projectManager.php",
+        data: { mode: "saveNASPath", projectID: projectID, path: path },
+    });
+
+    if (response == 200) {
+        console.log("Path saved successfully");
+        successToast("Útvonal sikeresen mentve!");
+
+        document.getElementById("pathToProject").value = path;
+        $('#filebrowserModal').modal('hide');
+        $('#projectSettingsModal').modal('show');
+    } else {
+        console.error("Error: " + response);
+        serverErrorToast();
+    }
+}
+
+async function listDir(path = '/Munka') {
+
+    let response = await $.ajax({
+        type: "GET",
+        url: "./nasCommunication.php",
+        data: { mode: "listDir", path: path },
+    });
+
+    return response;
 
 }

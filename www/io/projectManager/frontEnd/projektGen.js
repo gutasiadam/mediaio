@@ -46,7 +46,7 @@ async function generateBigView(project) {
     // Add back button
     let backButton = document.createElement("button");
     backButton.classList.add("btn");
-    backButton.innerHTML = '<i class="far fa-arrow-alt-circle-left fa-lg"></i>';
+    backButton.innerHTML = '<i class="fas fa-compress-alt fa-lg"></i>';
     backButton.onclick = function () {
         window.location.href = "index.php";
     }
