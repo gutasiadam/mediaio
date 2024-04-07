@@ -4,4 +4,5 @@ nginx/arpadmedia.hu.crt
 nginx/arpadmedia.hu.key
 **/.DS_Store
 example.env
+www/io/projectManager/pictures/*
 www/io/Mailer.php

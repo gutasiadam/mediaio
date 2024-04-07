@@ -1,4 +1,4 @@
-<?php 
+<?php
 // ini_set('display_errors', 'On');
 // ini_set('log_errors', 'On');
 // echo __DIR__;
@@ -9,14 +9,16 @@ use Mediaio\Database;
 use Mediaio\MailService;
 
 require __DIR__ . '/../vendor/autoload.php';
-require_once __DIR__.'/../Core.php';
-require_once __DIR__.'/../Database.php';
-require_once __DIR__.'/../Mailer.php';
+require_once __DIR__ . '/../Core.php';
+require_once __DIR__ . '/../Database.php';
+require_once __DIR__ . '/../Mailer.php';
 
 putenv('GOOGLE_APPLICATION_CREDENTIALS=../utility/credentials.json');
-class EventManager{
-    // const ip_address='192.168.0.24';
-    static function loadEvents(){
+class EventManager
+{
+  // const ip_address='192.168.0.24';
+  static function loadEvents()
+  {
     putenv('GOOGLE_APPLICATION_CREDENTIALS=./../utility/credentials.json'); // beállítjuk az elérési útvonalat a credentials.json fájlhoz
     $client = new Google_Client();
     $client->useApplicationDefaultCredentials();
@@ -33,8 +35,8 @@ class EventManager{
     $optParams = array(
       'maxResults' => 200,
       'orderBy' => 'startTime',
-        'singleEvents' => true,
-        'timeMin' => $oneYearAgo->format(DateTime::RFC3339)
+      'singleEvents' => true,
+      'timeMin' => $oneYearAgo->format(DateTime::RFC3339)
     );
     $results = $service->events->listEvents($calendarId, $optParams);
     $events = $results->getItems();
@@ -45,53 +47,64 @@ class EventManager{
     } else {
       //print "Események:\n";
       foreach ($events as $event) {
+        //var_dump($event->start->date);     
+        $start = $event->start->dateTime;
+        $end = $event->end->dateTime;
+
+        //Egésznapos esemény
+        if (empty($start)) {
+          $start = new DateTime($event->start->date);
+
+          //Convert to RFC3339 format for JS Calendar
+          $start = $start->format(DateTime::RFC3339);
+          $end = new DateTime($event->end->date);
+          $end = $end->format(DateTime::RFC3339);
+        }
         $data[] = array(
           'id'   => $event->id,
           'title'   => $event->getSummary(),
-          'start'   => $event->start->dateTime,
-          'end'   => $event->end->dateTime,
+          'start'   => $start,
+          'end'   => $end,
           'backgroundColor' => "#0e6ab5",
           'textColor' => "#ffffff",
           'borderColor' => "#ffffff"
         );
-        $start = $event->start->dateTime;
-        if (empty($start)) {
-          $start = $event->start->date;
-        }
-        //echo $event->getSummary()." ".$event->start->date." ".$event->description."\n";
-        //printf("%s (%s) - %s\n\n", $event->getSummary(), $start ,$event->getDescription());
       }
-    //Vezetőségi naptár
-    if((in_array("admin", $_SESSION["groups"]))){
+
+      //Vezetőségi naptár
+      if ((in_array("admin", $_SESSION["groups"]))) {
         $calendarId = 'hq37buvra0ju1sci457sk66pfk@group.calendar.google.com'; // Vez naptár
         $optParams = array(
-        'maxResults' => 200,
-        'orderBy' => 'startTime',
-        'singleEvents' => true,
-        'timeMin' => $oneYearAgo->format(DateTime::RFC3339)
+          'maxResults' => 200,
+          'orderBy' => 'startTime',
+          'singleEvents' => true,
+          'timeMin' => $oneYearAgo->format(DateTime::RFC3339)
         );
-    $results = $service->events->listEvents($calendarId, $optParams);
-    $events = $results->getItems();
-          foreach ($events as $event) {
-        $data[] = array(
-          'id'   => $event->id,
-          'title'   => $event->getSummary(),
-          'start'   => $event->start->dateTime,
-          'end'   => $event->end->dateTime,
-          'backgroundColor' => "#20295E",
-          'textColor' => "#ffffff",
-          'borderColor' => "#ffffff"
-        );
-        $start = $event->start->dateTime;
-        if (empty($start)) {
-          $start = $event->start->date;
-        }
-      }
-    }
+        $results = $service->events->listEvents($calendarId, $optParams);
+        $events = $results->getItems();
+        foreach ($events as $event) {
+          //var_dump($event->start->date);     
+          $start = $event->start->dateTime;
+          $end = $event->end->dateTime;
+          if (empty($start)) {
+            $start = new DateTime($event->start->date);
+            $start = $start->format(DateTime::RFC3339);
+            $end = new DateTime($event->end->date);
+            $end = $end->format(DateTime::RFC3339);
+          }
+          $data[] = array(
+            'id'   => $event->id,
+            'title'   => $event->getSummary(),
+            'start'   => $start,
+            'end'   => $end,
+            'backgroundColor' => "#0e6ab5",
+            'textColor' => "#ffffff",
+            'borderColor' => "#ffffff"
+           );
+          }
+       }
     }
 
-
-    
     // $query = "SELECT * FROM events ORDER BY id";
     // $result = Database::runQuery($query);
     // foreach($result as $row){
@@ -105,16 +118,17 @@ class EventManager{
     //     );
     // }
     return json_encode($data);
-    }
+  }
 
-    static function prepareNewEvent($postData){
+  static function prepareNewEvent($postData)
+  {
     //     $log=fopen('Logger.txt','w');
     //     $date = date("Y-m-d");
     //     $userName= $postData["username"];
     //     function generateRandomString($length = 10) {
     //         return substr(str_shuffle(str_repeat($x='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil($length/strlen($x)) )),1,$length);
     //     }
-        
+
     //     $secureId = generateRandomString();
     //     $query = "SELECT secureId FROM eventrep WHERE secureId = '$secureId' ";
     //     $result = Database::runQuery($query);
@@ -167,7 +181,7 @@ class EventManager{
     //         </body>
     //         </html>
     //         ';
-            
+
     //        try{
     //         fwrite($log,"mailing now.");
     //         MailService::sendContactMail('MediaIO',$_SESSION['email'],'Esemény hozzáadása - '.$postData['title'],$content);
@@ -177,81 +191,84 @@ class EventManager{
     //         fwrite($log,"Mailing completed.");
     //         fclose($log);
     //         return 1;
-           
+
     //     }else{
     //         fwrite($log,"failed.");
     //         fclose($log);
     //         return 0;
     //     }
-    }
-    static function finalizeEvent(){
-        // $secureId = $_GET['secureId'];
-        // if($_GET['mode']=="add"){
-        //     $query = "SELECT title, start_event, end_event, borderColor FROM `eventprep` WHERE secureId = '$secureId'";
-        //     $result = Database::runQuery($query);
-        //     if ($result and $result->num_rows == 1){
-        //         foreach($result as $row){
-        //             $eventTitle=$row["title"];
-        //             $eventStart=$row["start_event"];
-        //             $eventEnd=$row["end_event"];
-        //             $eventColor=$row["borderColor"];
-        //     }
-        //     $sql1 = "INSERT INTO events (title, start_event, end_event, borderColor) VALUES ('".$eventTitle."','".$eventStart."',
-        //     '".$eventEnd."','".$eventColor."')"; 
-        //     $sql2= "DELETE FROM eventprep WHERE secureId = '".$secureId."';";
-        //     //echo $sql1; echo $sql2;
-        //     $res = Database::runQuery($sql1);
-        //     $res = Database::runQuery($sql2);
-        //     if($res){
-        //         echo "<h1><strong>Sikeresen megerősítetted az eseményt! 🎉</strong></h1>";}
-        //     } 
-        //     else{
-        //         echo "<h1>Az esemény kódja érvénytelen! Nem lehet, hogy már megerősítetted?</h1>";}
-        //     }
+  }
+  static function finalizeEvent()
+  {
+    // $secureId = $_GET['secureId'];
+    // if($_GET['mode']=="add"){
+    //     $query = "SELECT title, start_event, end_event, borderColor FROM `eventprep` WHERE secureId = '$secureId'";
+    //     $result = Database::runQuery($query);
+    //     if ($result and $result->num_rows == 1){
+    //         foreach($result as $row){
+    //             $eventTitle=$row["title"];
+    //             $eventStart=$row["start_event"];
+    //             $eventEnd=$row["end_event"];
+    //             $eventColor=$row["borderColor"];
+    //     }
+    //     $sql1 = "INSERT INTO events (title, start_event, end_event, borderColor) VALUES ('".$eventTitle."','".$eventStart."',
+    //     '".$eventEnd."','".$eventColor."')"; 
+    //     $sql2= "DELETE FROM eventprep WHERE secureId = '".$secureId."';";
+    //     //echo $sql1; echo $sql2;
+    //     $res = Database::runQuery($sql1);
+    //     $res = Database::runQuery($sql2);
+    //     if($res){
+    //         echo "<h1><strong>Sikeresen megerősítetted az eseményt! 🎉</strong></h1>";}
+    //     } 
+    //     else{
+    //         echo "<h1>Az esemény kódja érvénytelen! Nem lehet, hogy már megerősítetted?</h1>";}
+    //     }
 
-        //     if($_GET['mode']=="del"){
-        //         $query = "DELETE FROM eventprep WHERE secureId = '$secureId'";
-        //         $res = Database::runQuery($query);
-        //         if ($res){   
-        //             echo "<h1>Törölve.</h1>";
-        //         }else{
-        //             echo "<h1>Hiba.</h1>";
-        //         }
-        //     }
-        
-        // return;
-    }
-    static function deleteEvent(){
-        //  $query = "DELETE from events WHERE id='".$_POST['id']."'";
-        //  $res = Database::runQuery($query);
-        //  return;
-    }
+    //     if($_GET['mode']=="del"){
+    //         $query = "DELETE FROM eventprep WHERE secureId = '$secureId'";
+    //         $res = Database::runQuery($query);
+    //         if ($res){   
+    //             echo "<h1>Törölve.</h1>";
+    //         }else{
+    //             echo "<h1>Hiba.</h1>";
+    //         }
+    //     }
 
-    static function rescheduleEvent(){
+    // return;
+  }
+  static function deleteEvent()
+  {
+    //  $query = "DELETE from events WHERE id='".$_POST['id']."'";
+    //  $res = Database::runQuery($query);
+    //  return;
+  }
 
-    }
-
+  static function rescheduleEvent()
+  {
+  }
 }
 
-if(isset($_POST['o'])){
-    if($_POST['o']=='prepare'){
-        $postData=array('title'=>$_POST['title'],'start'=>$_POST['start'],'end'=>$_POST['end'],'type'=>$_POST['type'],
-        'username'=>$_SESSION['UserUserName']);
-        echo EventManager::prepareNewEvent($postData);
-    }
-    if($_POST['o']=='delete'){
-        $postData=array('title'=>$_POST['title'],'start'=>$_POST['start'],'end'=>$_POST['end'],'type'=>$_POST['type'],
-        'username'=>$_SESSION['UserUserName']);
-        echo EventManager::deleteEvent();
-    }
+if (isset($_POST['o'])) {
+  if ($_POST['o'] == 'prepare') {
+    $postData = array(
+      'title' => $_POST['title'], 'start' => $_POST['start'], 'end' => $_POST['end'], 'type' => $_POST['type'],
+      'username' => $_SESSION['UserUserName']
+    );
+    echo EventManager::prepareNewEvent($postData);
+  }
+  if ($_POST['o'] == 'delete') {
+    $postData = array(
+      'title' => $_POST['title'], 'start' => $_POST['start'], 'end' => $_POST['end'], 'type' => $_POST['type'],
+      'username' => $_SESSION['UserUserName']
+    );
+    echo EventManager::deleteEvent();
+  }
 }
-if(isset($_GET['mode'])){
-    EventManager::finalizeEvent();
+if (isset($_GET['mode'])) {
+  EventManager::finalizeEvent();
 }
-if(isset($_GET['o'])){
-    if($_GET['o']='load'){
-        echo EventManager::loadEvents();
-    }
+if (isset($_GET['o'])) {
+  if ($_GET['o'] = 'load') {
+    echo EventManager::loadEvents();
+  }
 }
-
-?>

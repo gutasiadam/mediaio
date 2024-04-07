@@ -1,20 +1,17 @@
-    FROM php:7.3-fpm  
-	RUN docker-php-ext-install mysqli pdo pdo_mysql && docker-php-ext-enable pdo_mysql
-	RUN apt-get update; apt-get install -y libmagickwand-dev; pecl install imagick; docker-php-ext-enable imagick;
-	RUN apt-get update && apt-get install -y zip
-	
-	# Install zip
-	#install some base extensions
-	RUN apt-get install -y zip libzip-dev \
-	&& docker-php-ext-configure zip --with-libzip \
-	&& docker-php-ext-install zip
-	RUN docker-php-ext-install zip
-	
-	RUN apt-get update && apt-get install -y libfreetype6-dev libjpeg62-turbo-dev libpng-dev && docker-php-ext-configure gd && docker-php-ext-install -j$(nproc) gd
-	RUN docker-php-ext-install exif
-	
-	
-	RUN apt-get install -y libicu-dev && docker-php-ext-configure intl && docker-php-ext-install intl
-	
-	# Clear cache
-	RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+FROM php:8.2-fpm
+
+# Install required extensions
+RUN apt-get update && apt-get install -y \
+    libmagickwand-dev \
+    libfreetype6-dev \
+    libjpeg62-turbo-dev \
+    libpng-dev \
+    libzip-dev \
+    libicu-dev
+
+# Install and enable PHP extensions
+RUN docker-php-ext-install mysqli pdo pdo_mysql zip gd exif intl
+RUN pecl install imagick && docker-php-ext-enable imagick
+
+# Clear cache
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*

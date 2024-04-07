@@ -5,16 +5,14 @@ $username = $_SESSION['userId'];
 if (isset($_SESSION['userId'])) { ?>
   <html>
   <?php if (isset($_SESSION["userId"])) { ?>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-dark">
       <a class="navbar-brand" href="index.php">
         <img src="../utility/logo2.png" height="50">
       </a>
-      <!-- Breadcrumb for mobilne navigation -->
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
         aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
-
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto navbarUl">
           <script>
@@ -32,7 +30,8 @@ if (isset($_SESSION['userId'])) { ?>
           </li>
         </ul>
         <form method='post' class="form-inline my-2 my-lg-0" action=../utility/userLogging.php>
-          <button class="btn btn-danger my-2 my-sm-0" name='logout-submit' type="submit">Kijelentkezés</button>
+          <button id="logoutBtn" class="btn btn-danger my-2 my-sm-0 logout-button" name='logout-submit'
+            type="submit">Kijelentkezés</button>
           <script type="text/javascript">
             window.onload = function () {
               display = document.querySelector('#time');
@@ -68,10 +67,7 @@ if (isset($_SESSION['userId'])) { ?>
     } else if ($_GET['error'] == 'OldPwdError') {
       echo '<tr><td><h5 class="registererror text-danger">Hibásan adtad meg a jelenlegi jelszavadat!</h5></td></tr>';
     } else if ($_GET['error'] == 'none') {
-      echo '<tr><td><p class="success">Successfully changed password! Please log out in order to use your brand new, shiny password! </p></td></tr>';
-      session_unset();
-      session_destroy();
-      header("Location: ../utility/userLogging.php?logout-submit=1");
+      //Obsolte branch, Core.php handles the redirection
     }
   }
   echo "</table>";

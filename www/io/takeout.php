@@ -10,8 +10,8 @@ include "header.php";
 
 
 
-if (!isset($_SESSION['userId'])) {
-  header("Location: index.php?error=AccessViolation");
+if (!isset ($_SESSION["userId"])) {
+  echo "<script>window.location.href = '../index.php?error=AccessViolation';</script>";
   exit();
 }
 
@@ -25,12 +25,11 @@ error_reporting(E_ALL ^ E_NOTICE);
 
 
 <script src="utility/jstree.js"></script>
-<link href='main.css' rel='stylesheet' />
 <link href="utility/themes/default/style.min.css" rel="stylesheet" />
 <html>
 <title>MediaIo - takeout</title>
 <?php if (isset($_SESSION["userId"])) { ?>
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-dark">
     <a class="navbar-brand" href="index.php">
       <img src="./utility/logo2.png" height="50">
     </a>
@@ -101,33 +100,99 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
   </div>
   <!-- End of GivetoAnotherperson Modal -->
 <?php } ?>
-<!-- Presets Modal -->
-<div class="modal fade" id="presets_Modal" tabindex="-1" role="dialog" aria-labelledby="presets_ModalLabel"
-  aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Elérhető presetek</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <div id="presetsLoading" class="spinner-grow text-info" role="status"></div>
-        <div id="presetsContainer"></div>
 
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+<body style="user-select: none;">
+  <!-- Presets Modal -->
+  <div class="modal fade" id="presets_Modal" tabindex="-1" role="dialog" aria-labelledby="presets_ModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Elérhető presetek</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div id="presetsLoading" class="spinner-grow text-info" role="status"></div>
+          <div id="presetsContainer"></div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+        </div>
       </div>
     </div>
   </div>
-</div>
-</div>
-</div>
-<!-- End of Presets Modal -->
+  <!-- End of Presets Modal -->
+
+  <!-- Clear Modal -->
+  <div class="modal fade" id="clear_Modal" tabindex="-1" role="dialog" aria-labelledby="clear_ModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Összes törlése</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <a>Biztosan ki akarsz törölni mindent?</a>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-danger col-lg-auto mb-1" id="clear" data-bs-dismiss="modal"
+            onclick="deselect_all()">Összes törlése</button>
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Mégse</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- End of Clear Modal -->
+
+  <!-- Scanner Modal -->
+  <div class="modal fade" id="scanner_Modal" tabindex="-1" role="dialog" aria-labelledby="scanner_ModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Szkenner</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" onclick="pauseCamera()"
+            aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="scanner_body">
+          <div id="reader" width="600px"></div>
+          <!-- Toasts -->
+          <div class="toast align-items-center" id="scan_toast" role="alert" aria-live="assertive" aria-atomic="true"
+            style="z-index: 99; display:none;">
+            <div class="d-flex">
+              <div class="toast-body" id="scan_result">
+              </div>
+              <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer" id="scanner_footer">
+          <button type="button" class="btn btn-outline-dark" id="ext_scanner" onclick="ExternalScan()">Külső
+            olvasó</button>
+          <button type="button" class="btn btn-info" id="zoom_btn" onclick="zoomCamera()">Zoom: 2x</button>
+          <button type="button" class="btn btn-info" id="torch_btn" onclick="startTorch()">Vaku</button>
+          <div class="dropdown dropup">
+            <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown"
+              aria-expanded="true">
+              Kamerák
+            </button>
+            <ul class="dropdown-menu" id="av_cams"></ul>
+          </div>
+          <!-- <input type="checkbox" class="btn-check btn-light" id="btncheck1" autocomplete="off" wfd-id="id0"
+          onclick="startTorch()">
+        <label class="btn btn-outline-primary" for="btncheck1"><i class="fas fa-lightbulb"></i></label> -->
+          <button type="button" class="btn btn-success" onclick="pauseCamera()" data-bs-dismiss="modal">Kész</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- End of Scanner Modal -->
 
 
 
-<body>
+
   <h2 class="rainbow" id="doTitle">Tárgy kivétel</h2>
   <div class="container">
     <div class="row align-items-start" id="takeout-container">
@@ -138,21 +203,38 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
       <div class="col">
         Keresés: <input type="text" id="search" style='margin-bottom: 10px'
           placeholder="Kezdd el ide írni, mit vinnél el.." autocomplete="off" />
-        <div class="row optionsButtons" id="takeout-option-buttons">
-          <!-- <button class="btn btn-warning col-2 mx-1" id="clear" style='margin-bottom: 6px'>Törlés</button> -->
-          <button class="btn btn-sm btn-danger col-lg-auto mb-1 text-nowrap" id="clear" style='margin-bottom: 6px'
-            onclick="deselect_all()">Összes törlése</button>
-          <button class="btn btn-sm btn-success col-lg-auto mb-1" id="takeout2BTN"
-            style='margin-bottom: 6px'>Mehet</button>
-          <button class="btn btn-sm btn-info col-lg-auto mb-1" onclick="showPresetsModal()"
-            style='margin-bottom:6px'>Presetek</button>
-          <button class="btn btn-sm btn-dark col-lg-auto mb-1 text-nowrap" id="givetoAnotherPerson_Button" type="button"
-            data-bs-toggle="modal" data-bs-target="#givetoAnotherPerson_Modal" style="margin-bottom: 6px">Másnak veszek
-            ki</button>
+        <div class="row" id="takeout-option-buttons">
           <button href="#sidebar" class="btn btn-sm btn-success mb-1" id="show_selected" data-bs-toggle="offcanvas"
             role="button" aria-controls="sidebar">Kiválasztva
             <span id="selectedCount" class="badge bg-danger">0</span>
           </button>
+          <button class="btn btn-sm btn-success col-lg-auto mb-1" id="takeout2BTN"
+            style='margin-bottom: 6px'>Mehet</button>
+          <button class="btn btn-sm btn-danger col-lg-auto mb-1 text-nowrap" id="clear" style='margin-bottom: 6px'
+            onclick="showClearModal()">Összes törlése</button>
+          <button class="btn btn-sm btn-info col-lg-auto mb-1" onclick="showPresetsModal()"
+            style='margin-bottom:6px'>Presetek</button>
+          <button type="button" class="btn btn-sm btn-warning col-lg-auto mb-1" onclick="showScannerModal()"
+            style='margin-bottom:6px'>Szkenner <i class="fas fa-qrcode"></i></button>
+
+          <!-- GivetoAnotherperson button -->
+          <button class="btn btn-sm btn-dark col-lg-auto mb-1 text-nowrap" id="givetoAnotherPerson_Button" type="button"
+            data-bs-toggle="modal" data-bs-target="#givetoAnotherPerson_Modal" style="margin-bottom: 6px">Másnak veszek
+            ki</button>
+
+          <button class="btn btn-sm btn-secondary col-lg-auto mb-1 text-nowrap" id="show_unavailable" type="button"
+            onclick="ShowUnavailable()" style="margin-bottom: 6px">Csak elérhető tárgyak</button>
+
+
+
+          <!-- TODO!!! -->
+          <!-- <select class="form-select col-lg-auto mb-1" style='margin-bottom:6px; width: fit-content'
+            aria-label="Filter">
+            <option selected>Szűrés</option>
+            <option value="1">Médiás</option>
+            <option value="2">Stúdiós</option>
+            <option value="3">Event</option>
+          </select> -->
 
           <!-- Belső használatra kivétel - későbbi release -->
           <!-- <div class="form-check form-switch col-2">
@@ -176,12 +258,15 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
             <div class="col-12">
               <ul class="selectedItemsDisplay" id="output-mobile"></ul>
             </div>
-            <button class="btn btn-sm btn-success col-lg-auto mb-1" data-bs-dismiss="offcanvas" id="takeout2BTN-mobile">Mehet</button>
+            <button class="btn btn-sm btn-success col-lg-auto mb-1" data-bs-dismiss="offcanvas"
+              id="takeout2BTN-mobile">Mehet</button>
           </div>
         </div>
       </div>
     </div>
   </div>
+  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+  <script src="utility/qr_scanner/io_qr_scanner.js" type="text/javascript"></script>
 </body>
 
 
@@ -193,20 +278,51 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
   //Selected items badge counter
   var badge = document.getElementById("selectedCount");
 
+  //Hiding desktop checked list till no item selected
+  var badge_obserber = new MutationObserver(function (mutations) {
+    mutations.forEach(function (mutation) {
+      var selectedDesktop = document.getElementById("output-desktop");
+      /* console.log('Badge content:', badge.innerHTML); */
+      if (badge.innerHTML !== "0" && window.innerWidth > 575) {
+        selectedDesktop.style.display = "block";
+      } else {
+        selectedDesktop.style.display = "none";
+      }
+    });
+  });
+
+  badge_obserber.observe(badge, { childList: true });
+
   //Preventing double click zoom
   document.addEventListener('dblclick', function (event) {
     event.preventDefault();
   }, { passive: false });
 
+
   function reloadSavedSelections() {
     //Try re-selectiong items that are saved in the takeOutItems cookie.
-    var selecteditems = getCookie("selectedItems").split(',');
-    console.log("items that are reloading are :" + selecteditems)
+
+
+    var selecteditems = getCookie("selectedItems")
+    if (!selecteditems) {
+      return;
+    }
+    selecteditems = selecteditems.split(",");
+    if (selecteditems[0] === "") {
+      badge.textContent = 0;
+      console.log("No items to reload");
+    }
     selecteditems.forEach(element => {
+      console.log("Reloading item: " + element);
       $('#jstree').jstree().select_node(element);
     });
   }
 
+  function showClearModal() {
+    $('#clear_Modal').modal('show');
+  }
+
+  var presetStates = [];
   function showPresetsModal() {
     $('#presets_Modal').modal('show');
 
@@ -233,8 +349,9 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
           console.log(presets[i]);
           takeoutPresets.push(presets[i]);
           $("#presetsContainer").append('<button class="btn mediaBlue position-relative" id="presetButton' + i + '" onclick="addItems(' + i + ')">' + presets[i].Name +
-            '<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">99+<span class="visually-hidden">unread messages</span></span></button></br></br>');
+            '<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">99+<span class="visually-hidden">unread messages</span></span></button>');
           //Hide preset badges
+          presetStates.push(false);
         }
 
         for (var i = 0; i < takeoutPresets.length; i++) {
@@ -338,12 +455,6 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
       }
     }
 
-    setTimeout(function() {
-      reloadSavedSelections()
-    }, 300);
-
-
-
     d[i].originalName = d[i].text;
     d[i].childFlag = false;
     d[i].activeRelatedItems = d[i].relatedItems;
@@ -361,19 +472,32 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
 
   //Invoked after JStree is loaded
   $('#jstree').bind('loaded.jstree', function (e, data) {
-    console.log("Loaded!")
+    console.log("JSTREE Loaded!")
+
+
 
     setTimeout(function () {
+      for (a = 1; a <= d.length; a++) {
+        if ($('#jstree').jstree().is_disabled(a) == true) {
+          $("#jstree ul li:nth-child(" + a + ")").css({
+            "display": "none",
+          });
+          $("#jstree ul li:nth-child(" + a + ") a").removeClass("jstree-search");
+        }
+        if ($('#jstree').jstree().get_node(a).original.Status == '2' || $('#jstree').jstree().get_node(a).original.Status == '0') {
+          $("#jstree ul li:nth-child(" + a + ") a").attr('takeout', 'true');
+          $("#jstree ul li:nth-child(" + a + ") a").css({
+            "font-size": "17px",
+            "color": "#ebcc83",
+            "text-decoration": "line-through !important",
+            "font-weight": "normal !important"
+          });
+          $("#jstree ul li:nth-child(" + a + ") a").removeClass("jstree-search");
+          deselect_node(a);
+        }
+      }
       reloadSavedSelections()
     }, 300);
-  });
-
-
-  //Invoked after JStree is loaded
-  $('#jstree').bind('loaded.jstree', function(e, data) {
-    console.log("Loaded!")
-
-
   });
 
   $('#jstree').jstree({
@@ -393,11 +517,15 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
     }
   });
 
+  var searchTimeout;
   $('#search').on("keyup change", function () {
-    $('#jstree').jstree(true).search($(this).val())
-    colorTakenItems();
-
-
+    var v = $(this).val();
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(function () {
+      $('#jstree').jstree(true).search(v)
+      console.log("searching for: " + v);
+    }, 100);
+    //colorTakenItems();
   })
 
   //JSON Object of selectted Items:
@@ -429,52 +557,81 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
   //Add Preset Items to the selection
   //ID: takeout preset ID
   function addItems(id) {
-    var alreadyTakenCount = 0;
-    selectionArray = [];
-    takenArray = [];
-    addArray = JSON.parse(takeoutPresets[id].Items).items;
-    addArray.forEach(element => {
-      for (j = 1; j <= d.length; j++) {
-        if ($('#jstree').jstree().get_node(j).original.uid == element & $('#jstree').jstree().get_node(j).state.disabled == false) {
-          selectionArray.push(j);
-        } else if ($('#jstree').jstree().get_node(j).original.uid == element & $('#jstree').jstree().get_node(j).state.disabled == true) {
-          takenArray.push($('#jstree').jstree().get_node(j));
-          alreadyTakenCount++;
+    if (presetStates[id] == false) {
+      var alreadyTakenCount = 0;
+      selectionArray = [];
+      takenArray = [];
+      addArray = JSON.parse(takeoutPresets[id].Items).items;
+      addArray.forEach(element => {
+        for (j = 1; j <= d.length; j++) {
+          if ($('#jstree').jstree().get_node(j).original.uid == element & $('#jstree').jstree().get_node(j).state.disabled == false) {
+            selectionArray.push(j);
+          } else if ($('#jstree').jstree().get_node(j).original.uid == element & $('#jstree').jstree().get_node(j).state.disabled == true) {
+            takenArray.push($('#jstree').jstree().get_node(j));
+            alreadyTakenCount++;
+          }
         }
+        $('#jstree').jstree().select_node(selectionArray);
+
+      })
+      console.log(takenArray);
+
+      //Update badge to display how many items are already taken
+      $('#presetButton' + id + ' span')[0].innerHTML = (() => {
+        if (alreadyTakenCount > 0) {
+          return alreadyTakenCount;
+        } else {
+          return '';
+        }
+      })();
+
+      //Id the presetscontainer alredy has a list of taken items, remove it.
+      $('#presetsContainer ul').html('');
+
+      //If a h4 already exists, remove it.
+      if ($('#presetsContainer h6').length > 0) {
+        $('#presetsContainer h6').remove();
       }
-      $('#jstree').jstree().select_node(selectionArray);
-    })
-    console.log(takenArray);
 
-    //Update badge to display how many items are already taken
-    $('#presetButton' + id + ' span')[0].innerHTML = (() => {
-      if (alreadyTakenCount > 0) {
-        return alreadyTakenCount;
-      } else {
-        return '';
+      //Inside the presetscontainer, create an unordered list of the taken items
+      var takenItemsTitle = $('<h6>Az általad választott presetből a következő tárgyak már ki vannak véve:</h6>');
+      var takenItemsList = $('<ul></ul>');
+      takenArray.forEach(element => {
+        takenItemsList.append('<li>' + element.original.uid + ' - ' + element.original.originalName + '</li>');
+      });
+      if (takenArray.length > 0) {
+        $('#presetsContainer').append(takenItemsTitle);
+        $('#presetsContainer').append(takenItemsList);
       }
-    })();
+      presetStates[id] = true;
+      button = '#presetButton' + id;
+      $(button).removeClass('mediaBlue');
+      $(button).addClass('btn-outline-success');
+    } else {
+      console.log("Deselecting preset " + id);
+      selectionArray = [];
+      takenArray = [];
+      addArray = JSON.parse(takeoutPresets[id].Items).items;
+      addArray.forEach(element => {
+        for (j = 1; j <= d.length; j++) {
+          if ($('#jstree').jstree().get_node(j).original.uid == element & $('#jstree').jstree().get_node(j).state.disabled == false) {
+            selectionArray.push(j);
+            break;
+          } else if ($('#jstree').jstree().get_node(j).original.uid == element & $('#jstree').jstree().get_node(j).state.disabled == true) {
+            takenArray.push($('#jstree').jstree().get_node(j));
+            break;
+          }
+        }
+        $('#jstree').jstree().deselect_node(selectionArray);
 
-    //Id the presetscontainer alredy has a list of taken items, remove it.
-    $('#presetsContainer ul').html('');
-
-    //If a h4 already exists, remove it.
-    if ($('#presetsContainer h6').length > 0) {
-      $('#presetsContainer h6').remove();
+      })
+      console.log(takenArray);
+      $('#presetButton' + id + ' span')[0].innerHTML = '';
+      presetStates[id] = false;
+      button = '#presetButton' + id;
+      $(button).removeClass('btn-outline-success');
+      $(button).addClass('mediaBlue');
     }
-
-    //Inside the presetscontainer, create an unordered list of the taken items
-    var takenItemsTitle = $('<h6>Az általad választott presetből a következő tárgyak már ki vannak véve:</h6>');
-    var takenItemsList = $('<ul></ul>');
-    takenArray.forEach(element => {
-      takenItemsList.append('<li>' + element.original.uid + ' - ' + element.original.originalName + '</li>');
-    });
-    if (takenArray.length > 0) {
-      $('#presetsContainer').append(takenItemsTitle);
-      $('#presetsContainer').append(takenItemsList);
-    }
-
-
 
   };
 
@@ -484,6 +641,7 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
       itemArr = {};
       itemArr.id = data.node.id;
       itemArr.name = data.node.original.originalName;
+      itemArr.uid = data.node.original.uid;
       takeOutPrepJSON.items.push(itemArr);
       selectionArray = [];
       objects = JSON.parse($('#jstree').jstree().get_node(data.node.id).original.activeRelatedItems);
@@ -498,8 +656,9 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
       }
       //Run selection
 
+      console.log("selected:" + selectionArray);
       $('#jstree').jstree().select_node(selectionArray);
-      parseInt(badge.textContent++);
+      badge.textContent++;
 
       updateSelectionCookie();
     } else if (data.action == "deselect_node") {
@@ -591,7 +750,17 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
         $("#jstree ul li:nth-child(" + a + ") a").removeClass("jstree-search");
         deselect_node(a);
       }
+    }
+  }
 
+  function hideUnavailableItems() {
+    for (a = 1; a <= d.length; a++) {
+      if ($('#jstree').jstree().is_disabled(a) == true) {
+        $("#jstree ul li:nth-child(" + a + ")").css({
+          "display": "none",
+        });
+        $("#jstree ul li:nth-child(" + a + ") a").removeClass("jstree-search");
+      }
     }
   }
 
@@ -607,21 +776,16 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
     return true;
   }
 
-  $(document).ready(function() {
-    //Color taken items
-    setTimeout(function() {
-      colorTakenItems();
-    }, 500);
+  $(document).ready(function () {
 
     //Back to top button
-    $(window).scroll(function() {
+    $('#jstree').scroll(function () {
       if ($(this).scrollTop()) {
         $('#toTop').fadeIn();
       } else {
         $('#toTop').fadeOut();
       }
     });
-
 
     //get Users
     $.ajax({
@@ -646,9 +810,9 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
     });
 
     $("#toTop").click(function () {
-      $("html, body").animate({
+      $("#jstree").animate({
         scrollTop: 0
-      }, 1000);
+      }, 700);
     });
 
     //Takout gomb a sidebaros listahoz
@@ -679,6 +843,7 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
             setTimeout(() => {
               window.location.href = window.location.href
             }, 1000);
+            deselect_all();
           } else {
             //console.log(response);
             displayMessageInTitle("#doTitle", "Hiba történt.");
@@ -705,6 +870,7 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
           takeoutAsUser: $('#givetoAnotherPerson_UserName').val()
         },
         success: function (response) {
+          console.log(response);
           if (response == '200') {
             displayMessageInTitle("#doTitle", "Sikeres kivétel! \nAz oldal hamarosan újratölt");
             $('#jstree').jstree(true).settings.core.data = d;
@@ -715,6 +881,7 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
             setTimeout(() => {
               window.location.href = window.location.href
             }, 1000);
+            deselect_all();
           } else {
             //console.log(response);
             displayMessageInTitle("#doTitle", "Hiba történt.");
@@ -729,7 +896,7 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
         url: "name.php",
         method: "POST",
         data: $('#add_name').serialize(),
-        success: function(data) {
+        success: function (data) {
           //alert(data);
           $('#add_name')[0].reset();
         }
@@ -737,25 +904,91 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
     });
   });
 
-  function loadFile(filePath) {
-    var result = null;
-    var xmlhttp = new XMLHttpRequest();
-    xmlhttp.open("GET", filePath, false);
-    xmlhttp.send();
-    if (xmlhttp.status == 200) {
-      result = xmlhttp.responseText;
+  /*  function loadFile(filePath) {
+      var result = null;
+      var xmlhttp = new XMLHttpRequest();
+      xmlhttp.open("GET", filePath, false);
+      xmlhttp.send();
+      if (xmlhttp.status == 200) {
+        result = xmlhttp.responseText;
+      }
+      return result.split("\n");
+  
     }
-    return result.split("\n");
-
-  }
-
-  var dbItems = (loadFile("./utility/DB_Elements.txt"));
+  
+    var dbItems = (loadFile("./utility/DB_Elements.txt"));*/
   // dbItem remover tool - Prevents an item to be added twice to the list
   function arrayRemove(arr, value) {
 
-    return arr.filter(function(ele) {
+    return arr.filter(function (ele) {
       return ele != value;
     });
 
   }
+
+  //Scanner
+
+  const qrOnSuccess = (decodedText, decodedResult) => {
+    console.log(`Code matched = ${decodedText}`, decodedResult);
+    selectionArray = [];
+    var ItemFound = false;
+    for (j = 1; j <= d.length; j++) {
+      if ($('#jstree').jstree().get_node(j).original.uid == decodedText && $('#jstree').jstree().get_node(j).state.disabled == false) {
+        showToast(decodedText, "green");
+        scan_succes_sfx.play();
+        selectionArray.push(j);
+        ItemFound = true;
+      }
+      if ($('#jstree').jstree().get_node(j).original.uid == decodedText && $('#jstree').jstree().get_node(j).state.disabled == true) {
+        showToast("Ez az eszköz nem elérhető!", "red");
+        scan_fail_sfx.play();
+        console.log("Not available!");
+        ItemFound = true;
+      }
+    }
+    if (ItemFound == true) {
+      $('#jstree').jstree().select_node(selectionArray);
+    } else {
+      showToast("Nem található ilyen eszköz!", "red");
+      scan_fail_sfx.play();
+    }
+  };
+
+
+  // Filtering
+
+  //Showing only available items
+
+  function ShowUnavailable() {
+    $(".UI_loading").fadeIn("fast");
+
+    if ($('#show_unavailable').hasClass('btn-outline-secondary')) {
+      console.log("Checked");
+      for (a = 1; a <= d.length; a++) {
+        if ($('#jstree').jstree().is_disabled(a) == true) {
+          $("#jstree ul li:nth-child(" + a + ")").css({
+            "display": "none",
+          });
+          $("#jstree ul li:nth-child(" + a + ") a").removeClass("jstree-search");
+          deselect_node(a);
+        }
+      }
+      $('#show_unavailable').removeClass('btn-outline-secondary');
+      $('#show_unavailable').addClass('btn-secondary');
+
+    } else {
+      console.log("Unchecked");
+      for (a = 1; a <= d.length; a++) {
+        if ($('#jstree').jstree().is_disabled(a) == true) {
+          $("#jstree ul li:nth-child(" + a + ")").css({
+            "display": "block",
+          });
+          $("#jstree ul li:nth-child(" + a + ") a").removeClass("jstree-search");
+          deselect_node(a);
+        }
+      }
+      $('#show_unavailable').removeClass('btn-secondary');
+      $('#show_unavailable').addClass('btn-outline-secondary');
+    }
+  };
 </script>

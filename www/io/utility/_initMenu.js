@@ -128,10 +128,10 @@ function drawIndexTable(menuItems, jumpupFolderStruct = 1) {
     for (i = 0; i < menuItems.indexTable.length; i++) {
       //console.log(i,menuItems.indexTable[i])
       if (i % 2 == 0) {
-        $('.mainRow' + Math.round((i + 1) / 2)).append(`<div class="col-6 col-sm-2 menuTable"><a class="nav-link ab"  href="${(".").repeat(jumpupFolderStruct) + menuItems.indexTable[i].href}"><i class="${menuItems.indexTable[i].icon}"></i><br><h5>${menuItems.indexTable[i].displayName}</h5></a></div>`);
+        $('.mainRow' + Math.round((i + 1) / 2)).append(`<div class="col-6 col-sm-2 menuTable"><a class="nav-link ab"  href="${(".").repeat(jumpupFolderStruct) + menuItems.indexTable[i].href}"><i class="${menuItems.indexTable[i].icon} mt-2"></i><br><h5>${menuItems.indexTable[i].displayName}</h5></a></div>`);
         //$('.mainRow'+Math.round(i/2)).append('<div class="col-6 col-sm-2"><a class="nav-link ab" href="./takeout.php"><i class="fas fa-upload fa-3x"></i><br><h5>Debug</h5></a></div>');
       } else {
-        $('.mainRow' + Math.round((i + 1) / 2)).append(`<div class="col-6 col-sm-2 menuTable offset-md-1"><a class="nav-link ab" href="${(".").repeat(jumpupFolderStruct) + menuItems.indexTable[i].href}"><i class="${menuItems.indexTable[i].icon}"></i><br><h5>${menuItems.indexTable[i].displayName}</h5></a></div>`);
+        $('.mainRow' + Math.round((i + 1) / 2)).append(`<div class="col-6 col-sm-2 menuTable offset-md-1"><a class="nav-link ab" href="${(".").repeat(jumpupFolderStruct) + menuItems.indexTable[i].href}"><i class="${menuItems.indexTable[i].icon} mt-2"></i><br><h5>${menuItems.indexTable[i].displayName}</h5></a></div>`);
         //$('.mainRow'+Math.round(i/2)).append('<div class="col-6 col-sm-2"><a class="nav-link ab" href="./takeout.php"><i class="fas fa-upload fa-3x"></i><br><h5>Debug</h5></a></div>');
       }
       console.log(menuItems.indexTable[i].displayName);
