@@ -87,6 +87,33 @@ async function createNewProject() {
     });
 }
 
+async function fetchProjectRoot(proj_id) {
+    //console.log("Fetching project root");
+
+    return new Promise(async (resolve, reject) => {
+        try {
+            let response;
+
+            response = await $.ajax({
+                type: "POST",
+                url: "../projectManager.php",
+                data: { mode: "getProjectRoot", id: proj_id }
+            });
+
+            if (response == 500) {
+                serverErrorToast();
+            }
+
+            //console.log(response);
+
+            resolve(response);
+        } catch (error) {
+            console.error("Error:", error);
+            reject(error);
+        }
+    });
+}
+
 
 // FETCH PROJECT TASKS
 
@@ -103,9 +130,9 @@ async function fetchTask(proj_id = null, task_id = null, fillOut = false) {
                 data: { mode: "getProjectTask", proj_id: proj_id, task_id: task_id, fillOut: fillOut }
             });
 
-           /*  if (response != 200) {
-                serverErrorToast();
-            } */
+            /*  if (response != 200) {
+                 serverErrorToast();
+             } */
 
             //console.log(response);
 
@@ -233,10 +260,6 @@ async function saveTaskToDB(task, taskMembersArray, image, task_id = null) {
                 processData: false,
                 contentType: false
             });
-
-            if (response == 500) {
-                window.location.href = "index.php?serverError";
-            }
 
             console.log(response);
 

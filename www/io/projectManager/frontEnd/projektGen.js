@@ -112,32 +112,14 @@ async function generateBigView(project) {
         projectBody.appendChild(ul);
 
         // create li elements
-        let text = document.createElement("li");
-        text.classList.add("dropdown-item");
-        text.innerHTML = "<i class='fas fa-paragraph fa-sm'></i> Szöveg";
-        text.style.cursor = "pointer";
-        text.onclick = function () {
-            addNewTask(projectID, "text");
+        let task = document.createElement("li");
+        task.classList.add("dropdown-item");
+        task.innerHTML = "<i class='fas fa-stream fa-sm'></i> Feladat";
+        task.style.cursor = "pointer";
+        task.onclick = function () {
+            addNewTask(projectID, "task", project.Deadline);
         }
-        ul.appendChild(text);
-
-        let image = document.createElement("li");
-        image.classList.add("dropdown-item");
-        image.innerHTML = "<i class='far fa-image fa-sm'></i> Kép";
-        image.style.cursor = "pointer";
-        image.onclick = function () {
-            addNewTask(projectID, "image");
-        }
-        ul.appendChild(image);
-
-        let file = document.createElement("li");
-        file.classList.add("dropdown-item");
-        file.innerHTML = "<i class='fas fa-file-alt'></i> Fájl";
-        file.style.cursor = "pointer";
-        file.onclick = function () {
-            addNewTask(projectID, "file");
-        }
-        ul.appendChild(file);
+        ul.appendChild(task);
 
         let checklist = document.createElement("li");
         checklist.classList.add("dropdown-item");
@@ -349,32 +331,14 @@ async function generateProjectBody(project) {
         projectBody.appendChild(ul);
 
         // create li elements
-        let text = document.createElement("li");
-        text.classList.add("dropdown-item");
-        text.innerHTML = "<i class='fas fa-paragraph fa-sm'></i> Szöveg";
-        text.style.cursor = "pointer";
-        text.onclick = function () {
-            addNewTask(projectID, "text", project.Deadline);
+        let task = document.createElement("li");
+        task.classList.add("dropdown-item");
+        task.innerHTML = "<i class='fas fa-stream fa-sm'></i> Feladat";
+        task.style.cursor = "pointer";
+        task.onclick = function () {
+            addNewTask(projectID, "task", project.Deadline);
         }
-        ul.appendChild(text);
-
-        let image = document.createElement("li");
-        image.classList.add("dropdown-item");
-        image.innerHTML = "<i class='far fa-image fa-sm'></i> Kép";
-        image.style.cursor = "pointer";
-        image.onclick = function () {
-            addNewTask(projectID, "image", project.Deadline);
-        }
-        ul.appendChild(image);
-
-        let file = document.createElement("li");
-        file.classList.add("dropdown-item");
-        file.innerHTML = "<i class='fas fa-file-alt'></i> Fájl";
-        file.style.cursor = "pointer";
-        file.onclick = function () {
-            addNewTask(projectID, "file", project.Deadline);
-        }
-        ul.appendChild(file);
+        ul.appendChild(task);
 
         let checklist = document.createElement("li");
         checklist.classList.add("dropdown-item");

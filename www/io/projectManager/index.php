@@ -85,31 +85,8 @@ if (!isset($_SESSION["userId"])) {
       refreshProjects();
    });
 
-   // Latest mouse position
-   //var latestMousePosition = {
-   //   x: 0,
-   //   y: 0
-   //};
-   //
-   //var currentMousePosition = {
-   //   x: 0,
-   //   y: 0
-   //};
-   //
-   //// Update latestMousePosition whenever the mouse moves
-   //document.addEventListener('mousemove', function (event) {
-   //   currentMousePosition.x = event.clientX;
-   //   currentMousePosition.y = event.clientY;
-   //});
-
 
    setInterval(() => {
-      // If mouse is not moving don't refresh
-      //if (latestMousePosition.x == currentMousePosition.x && latestMousePosition.y == currentMousePosition.y) {
-      //   console.log(latestMousePosition);
-      //   return;
-      //}
-      // If any bootstrap modal is open, don't refresh
       if ($('.modal').hasClass('show')) {
          return;
       }
@@ -117,8 +94,6 @@ if (!isset($_SESSION["userId"])) {
       document.querySelectorAll('.tooltip').forEach(e => e.style.display = 'none');
       refreshProjects();
       simpleToast("Projektek frissítve!");
-      //latestMousePosition.x = currentMousePosition.x;
-      //latestMousePosition.y = currentMousePosition.y;
    }, 60000);
 
    async function refreshProjects() {
@@ -139,7 +114,11 @@ if (!isset($_SESSION["userId"])) {
       await dragAndDropReady();
       await toolTipRender();
 
-      projectHolder.removeChild(spinner);
+      try {
+         projectHolder.removeChild(spinner);
+      } catch (error) {
+         console.log('Spinner not found');
+      }
    }
 
 </script>

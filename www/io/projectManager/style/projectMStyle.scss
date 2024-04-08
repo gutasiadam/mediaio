@@ -383,6 +383,19 @@
             background-color: rgb(191, 235, 253);
         }
     }
+
+    .selected {
+        background-color: rgb(191, 235, 253);
+    }
+}
+
+#taskFiles {
+    .fileElement {
+        border: 1px solid rgb(179, 179, 179);
+        border-radius: 3px;
+        background-color: rgb(255, 255, 255);
+        padding: 3px;
+    }
 }
 
 #projectSpinner {

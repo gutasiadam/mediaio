@@ -154,6 +154,16 @@ class projectManager
         exit();
     }
 
+    static function getProjectRoot()
+    {
+        $sql = "SELECT `NAS_path` FROM `projects` WHERE `ID`=" . $_POST['id'] . ";";
+        $connection = Database::runQuery_mysqli(self::$schema);
+        $result = $connection->query($sql);
+        $path = $result->fetch_assoc()['NAS_path'];
+        $connection->close();
+        echo $path;
+    }
+
     // TASKS
 
     static function getProjectTask()
@@ -252,10 +262,8 @@ class projectManager
     static function saveTask()
     {
         $settings = json_decode($_POST['task'], true);
+        $settings['Task_data'] = json_encode($settings['Task_data']);
 
-        if ($settings['Task_type'] == "checklist" || $settings['Task_type'] == "radio" || $settings['Task_type'] == "image") {
-            $settings['Task_data'] = json_encode($settings['Task_data']);
-        }
 
         $connection = Database::runQuery_mysqli(self::$schema);
 
@@ -322,7 +330,7 @@ class projectManager
             // Do nothing
         }
 
-        if ($settings['Task_type'] == "image" && $_FILES['image']['name'] != "") {
+        if ($_FILES['image']['name'] != "") {
 
             // If the task is an image task, upload the image
             $uploadResult = projectPictureManager::uploadImage($taskID, $_FILES['image']);
@@ -434,9 +442,9 @@ class projectManager
         $connection = Database::runQuery_mysqli(self::$schema);
 
         // If task was picture task, delete the picture
-        $sql = "SELECT `Task_type` FROM `project_components` WHERE `ID`=" . $_POST['ID'] . ";";
+        $sql = "SELECT `Task_data` FROM `project_components` WHERE `ID`=" . $_POST['ID'] . ";";
         $result = $connection->query($sql);
-        $taskType = $result->fetch_assoc()['Task_type'];
+        $taskData = json_decode($result->fetch_assoc()['Task_data'], true);
 
         if (in_array("admin", $_SESSION['groups'])) {
             $sql = "DELETE FROM project_components WHERE ID=" . $_POST['ID'] . ";";
@@ -455,7 +463,7 @@ class projectManager
             }
         }
 
-        if ($taskType == "image") {
+        if ($taskData['image'] != '') {
             try {
                 projectPictureManager::deleteImage($_POST['ID']);
             } catch (\Exception $e) {
@@ -750,6 +758,10 @@ if (isset($_POST['mode'])) {
 
         case 'getProjectTask':
             echo projectManager::getProjectTask();
+            break;
+
+        case 'getProjectRoot':
+            echo projectManager::getProjectRoot();
             break;
 
         case 'saveTask':

@@ -46,7 +46,7 @@
             <div class="modal-body" id="fileExplorer">
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-target="#projectSettingsModal" data-bs-toggle="modal" data-bs-dismiss="modal">Mégse</button>
+                <button type="button" class="btn btn-secondary" id="cancelBrowser" data-bs-dismiss="modal" data-bs-toggle="modal">Mégse</button>
                 <button type="button" class="btn btn-success" id="setRootFolder">Beállítás</button>
             </div>
         </div>
@@ -126,6 +126,17 @@
                         <input type="text" class="form-control" id="textTaskName">
                     </div>
                     <div class="mb-1" id="taskData">
+                    </div>
+                    <div class="mb-1" id="taskFileManager">
+                        <div class="d-flex">
+                            <label for="taskFiles" class="col-form-label">NAS fájlok: </label>
+                            <button class="btn btn-outline-success" data-bs-dismiss="modal"
+                                data-bs-target="#filebrowserModal" data-bs-toggle="modal" id="browseProjectFiles"><i
+                                    class="far fa-plus-square"></i></button>
+                        </div>
+                        <div class="memberSelect" id="taskFiles" style="max-height: 90px;">
+
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label for="taskMembers" class="col-form-label">Tagok:</label>
@@ -207,7 +218,7 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="taskAnswerTitle">Feladat válaszok</h5>
+                <h5 class="modal-title" id="taskAnswerTitle">Válaszok</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">

@@ -25,6 +25,7 @@
   <script src="frontEnd/taskAnswers.js" crossorigin="anonymous"></script>
   <script src="frontEnd/dragAndDrop.js" crossorigin="anonymous" defer></script>
   <script src="frontEnd/toastManager.js" crossorigin="anonymous" defer></script>
+  <script src="frontEnd/nasCommunication.js" crossorigin="anonymous" defer></script>
 
 
   <?php if (in_array("admin", $_SESSION["groups"])) { ?>

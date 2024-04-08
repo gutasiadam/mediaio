@@ -97,54 +97,55 @@ async function createTask(task, projectID, canEdit) {
 
     switch (task.Task_type) {
 
-        case "text":
-            let text = document.createElement("p");
-            text.classList.add("card-text", "taskText");
-            text.innerHTML = makeFormatting(task.Task_data);
-            taskBody.appendChild(text);
-            break;
-
-        case 'image':
+        case "task":
             var taskData = JSON.parse(task.Task_data);
 
-            let imageContainer = document.createElement("div");
-            imageContainer.style.position = "relative";
+            if (taskData.image == '') {
+                let caption = document.createElement("p");
+                caption.classList.add("card-text", "taskText");
+                caption.innerHTML = makeFormatting(taskData.text);
+                taskBody.appendChild(caption);
+            } else {
 
-            let image = document.createElement("img");
-            image.classList.add("card-img-top", "taskImage");
-            image.src = taskData.image;
-            imageContainer.appendChild(image);
+                let imageContainer = document.createElement("div");
+                imageContainer.style.position = "relative";
 
-            var expandButton = document.createElement("button");
-            expandButton.classList.add("btn", "btn-sm", "expandButton");
-            expandButton.style.position = "absolute";
-            expandButton.style.top = "10px";
-            expandButton.style.right = "10px";
-            expandButton.style.color = "white";
-            expandButton.innerHTML = "<i class='fas fa-expand-alt'></i>";
-            expandButton.onclick = function () {
-                document.getElementById('expandedImage').src = taskData.image;
-                document.getElementById('imgDownloadButton').onclick = function () {
-                    // Download the image
-                    let imageUrl = taskData.image;
-                    let imageName = "image.jpg";
-                    let a = document.createElement("a");
-                    a.href = imageUrl;
-                    a.download = imageName;
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
+                let image = document.createElement("img");
+                image.classList.add("card-img-top", "taskImage");
+                image.src = taskData.image;
+                imageContainer.appendChild(image);
+
+                var expandButton = document.createElement("button");
+                expandButton.classList.add("btn", "btn-sm", "expandButton");
+                expandButton.style.position = "absolute";
+                expandButton.style.top = "10px";
+                expandButton.style.right = "10px";
+                expandButton.style.color = "white";
+                expandButton.innerHTML = "<i class='fas fa-expand-alt'></i>";
+                expandButton.onclick = function () {
+                    document.getElementById('expandedImage').src = taskData.image;
+                    document.getElementById('imgDownloadButton').onclick = function () {
+                        // Download the image
+                        let imageUrl = taskData.image;
+                        let imageName = "image.jpg";
+                        let a = document.createElement("a");
+                        a.href = imageUrl;
+                        a.download = imageName;
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                    }
+                    $('#expandImageModal').modal('show');
                 }
-                $('#expandImageModal').modal('show');
+                imageContainer.appendChild(expandButton);
+
+                taskBody.appendChild(imageContainer);
+
+                let caption = document.createElement("p");
+                caption.classList.add("card-text", "taskText");
+                caption.innerHTML = makeFormatting(taskData.text);
+                taskBody.appendChild(caption);
             }
-            imageContainer.appendChild(expandButton);
-
-            taskBody.appendChild(imageContainer);
-
-            let caption = document.createElement("p");
-            caption.classList.add("card-text", "taskText");
-            caption.innerHTML = makeFormatting(taskData.text);
-            taskBody.appendChild(caption);
             break;
         case 'checklist':
             cardCheckOrRadio(taskBody, task, "checklist");
@@ -258,45 +259,8 @@ async function openTask(TaskId, projectID) {
     document.getElementById("fillOutText").value = task.fillOutText;
 
     switch (task.Task_type) {
-        case "text":
-            textEditor(taskDataHolder, taskData, "150px");
-            document.getElementById("fillOutText").style.display = "block";
-            break;
-        case "image":
-            taskData = JSON.parse(taskData);
-            textEditor(taskDataHolder, taskData.text, "100px");
-            document.getElementById("fillOutText").style.display = "block";
-
-
-            let imageInput = document.createElement("input");
-            imageInput.classList.add("form-control", "mb-2");
-            imageInput.id = "imageLink";
-            imageInput.value = taskData.image;
-            imageInput.placeholder = "Kép URL...";
-            taskDataHolder.appendChild(imageInput);
-
-            let uploadDiv = document.createElement("div");
-            uploadDiv.classList.add("input-group");
-
-            let uploadImage = document.createElement("input");
-            uploadImage.type = "file";
-            uploadImage.classList.add("form-control");
-            uploadImage.placeholder = "Kép feltöltése";
-            uploadImage.name = "fileToUpload";
-            uploadImage.id = "imageUpload";
-            uploadImage.accept = "image/*";
-            uploadDiv.appendChild(uploadImage);
-
-            let resetButton = document.createElement("button");
-            resetButton.classList.add("btn", "btn-outline-danger");
-            resetButton.type = "button";
-            resetButton.innerHTML = "Törlés";
-            resetButton.onclick = function () {
-                deleteImage(TaskId);
-            }
-            uploadDiv.appendChild(resetButton);
-
-            taskDataHolder.appendChild(uploadDiv);
+        case "task":
+            await taskBodyGenerator(projectID, TaskId, taskDataHolder, taskData);
             break;
         case "checklist":
         case "radio":
@@ -378,12 +342,31 @@ async function openTask(TaskId, projectID) {
 
     // Add save button
     let saveButton = document.getElementById("saveNewTask");
-    saveButton.onclick = function () {
-        saveTaskSettings(TaskId, task.Task_type, projectID);
+
+    // Enable the button and remove the previous event listener
+    saveButton.disabled = false;
+    try {
+        saveButton.removeEventListener('click', saveButtonHandler);
+    } catch (error) {
+        console.log("No event listener to remove");
     }
+    // Create a new event handler with the current TaskId, taskType, and projectID
+    saveButtonHandler = createSaveButtonHandler(TaskId, task.Task_type, projectID);
+
+    // Add the new event listener
+    saveButton.addEventListener('click', saveButtonHandler);
 
     // Display task editor modal
     $('#taskEditorModal').modal('show');
+}
+
+// Define the event handler function outside of the settings function
+function createSaveButtonHandler(TaskId, taskType, projectID) {
+    return async function saveButtonHandler(e) {
+        e.preventDefault();
+        this.disabled = true;
+        saveTaskSettings(TaskId, taskType, projectID);
+    };
 }
 
 function fillOutTask(TaskId) {
@@ -526,74 +509,9 @@ async function addNewTask(projectID, taskType, deadline = null) {
 
     document.getElementById("fillOutText").style.display = "none";
     switch (taskType) {
-        case "text":
+        case "task":
             modalTitle.innerHTML = "Új feladat hozzáadása";
-            document.getElementById("fillOutText").style.display = "block";
-            textEditor(taskDataHolder);
-            break;
-
-        case "image":
-            modalTitle.innerHTML = "Új kép hozzáadása";
-            document.getElementById("fillOutText").style.display = "block";
-            textEditor(taskDataHolder, "", "100px");
-
-            var imageInput = document.createElement("input");
-            imageInput.classList.add("form-control", "mb-2");
-            imageInput.id = "imageLink";
-            imageInput.placeholder = "Kép URL...";
-            taskDataHolder.appendChild(imageInput);
-
-            var uploadDiv = document.createElement("div");
-            uploadDiv.classList.add("input-group");
-
-            var uploadImage = document.createElement("input");
-            uploadImage.type = "file";
-            uploadImage.classList.add("form-control");
-            uploadImage.placeholder = "Kép feltöltése";
-            uploadImage.name = "fileToUpload";
-            uploadImage.id = "imageUpload";
-            uploadImage.accept = "image/*";
-            uploadDiv.appendChild(uploadImage);
-
-            var resetButton = document.createElement("button");
-            resetButton.classList.add("btn", "btn-outline-danger");
-            resetButton.type = "button";
-            resetButton.innerHTML = "Törlés";
-            resetButton.onclick = function () {
-                deleteImage(TaskId);
-            }
-            uploadDiv.appendChild(resetButton);
-
-            taskDataHolder.appendChild(uploadDiv);
-            break;
-
-        case "file":
-            modalTitle.innerHTML = "Új fájl hozzáadása";
-
-            textEditor(taskDataHolder, "", "100px");
-
-            var uploadDiv = document.createElement("div");
-            uploadDiv.classList.add("input-group");
-
-            var uploadFile = document.createElement("input");
-            uploadFile.type = "file";
-            uploadFile.classList.add("form-control");
-            uploadFile.placeholder = "Fájl feltöltése";
-            uploadFile.name = "fileToUpload";
-            uploadFile.id = "fileUpload";
-            uploadFile.accept = "*";
-            uploadDiv.appendChild(uploadFile);
-
-            var resetButton = document.createElement("button");
-            resetButton.classList.add("btn", "btn-outline-danger");
-            resetButton.type = "button";
-            resetButton.innerHTML = "Törlés";
-            resetButton.onclick = function () {
-                deleteFile(TaskId);
-            }
-            uploadDiv.appendChild(resetButton);
-
-            taskDataHolder.appendChild(uploadDiv);
+            await taskBodyGenerator(projectID, null, taskDataHolder);
             break;
 
         case "checklist":
@@ -613,7 +531,6 @@ async function addNewTask(projectID, taskType, deadline = null) {
     let taskMembersHolder = document.getElementById("taskMembers");
     taskMembersHolder.innerHTML = "";
 
-    console.log(taskMembers);
     taskMembers.forEach(member => {
         let option = document.createElement("div");
         option.classList.add("availableMember");
@@ -644,13 +561,13 @@ async function addNewTask(projectID, taskType, deadline = null) {
     let saveButton = document.getElementById('saveNewTask');
 
     // Add a click event listener to the button
-    saveButton.addEventListener('click', async function () {
+    saveButton.addEventListener('click', async function (e) {
+        e.preventDefault();
         saveTaskSettings(null, taskType, projectID);
         this.disabled = true;
     });
 
 }
-
 
 
 async function saveTaskSettings(task_id, taskType, projectID = null) {
@@ -679,11 +596,7 @@ async function saveTaskSettings(task_id, taskType, projectID = null) {
     let taskData;
 
     switch (taskType) {
-        case "text":
-            taskData = taskDataHolder.querySelector("#textTaskData").value;
-            fillOutText = document.getElementById('fillOutText').value;
-            break;
-        case "image":
+        case "task":
             fillOutText = document.getElementById('fillOutText').value;
             var caption = taskDataHolder.querySelector("#textTaskData").value;
             let imageLink = taskDataHolder.querySelector("#imageLink").value;
@@ -691,9 +604,19 @@ async function saveTaskSettings(task_id, taskType, projectID = null) {
             if (uploadImage) {
                 imageToUpload = uploadImage;
             }
+
+            let files = Array.from(document.getElementById("taskFiles").childNodes);
+            let fileArray = files.map(file => {
+                return {
+                    name: file.innerText,
+                    link: file.getAttribute("data-link")
+                };
+            });
+
             taskData = {
                 text: caption,
-                image: imageLink
+                image: imageLink,
+                files: fileArray,
             }
             break;
         case "checklist":
@@ -740,7 +663,7 @@ async function saveTaskSettings(task_id, taskType, projectID = null) {
         }
     } catch (error) {
         console.error(`Error: ${error}`);
-        errorToast();
+        serverErrorToast();
     }
 
 
@@ -1006,6 +929,93 @@ function textEditor(taskDataHolder, taskData = "", height = "250px") {
 
     taskDataHolder.appendChild(textArea);
 }
+
+async function taskBodyGenerator(projectID, TaskId, taskDataHolder, taskData = null) {
+    taskData = taskData ? JSON.parse(taskData) : null;
+
+    document.getElementById("fillOutText").style.display = "block";
+    textEditor(taskDataHolder, taskData ? taskData.text : "", "150px");
+
+    var pictureDiv = document.createElement("div");
+    pictureDiv.classList.add("input-group");
+
+    let label = document.createElement("span");
+    label.classList.add("input-group-text");
+    label.innerHTML = "Kép:";
+    pictureDiv.appendChild(label);
+
+    var imageInput = document.createElement("input");
+    imageInput.classList.add("form-control");
+    imageInput.id = "imageLink";
+    if (taskData) {
+        imageInput.value = taskData.image;
+    }
+    imageInput.placeholder = "Kép URL...";
+    pictureDiv.appendChild(imageInput);
+
+    var uploadImage = document.createElement("input");
+    uploadImage.type = "file";
+    uploadImage.style.display = "none"; // Hide the file input
+    uploadImage.accept = "image/*";
+    uploadImage.name = "fileToUpload";
+    uploadImage.id = "imageUpload";
+
+    // Add an onchange event listener to the file input
+    uploadImage.addEventListener("change", function () {
+        if (this.files && this.files[0]) {
+            imageInput.value = this.files[0].name;
+        }
+    });
+
+    var uploadButton = document.createElement("button");
+    uploadButton.type = "button";
+    uploadButton.classList.add("btn", "btn-outline-success");
+    uploadButton.innerHTML = `<i class="fas fa-upload"></i>`;
+
+    // Trigger the file input when the button is clicked
+    uploadButton.addEventListener("click", function () {
+        uploadImage.click();
+    });
+
+    pictureDiv.appendChild(uploadImage);
+    pictureDiv.appendChild(uploadButton);
+
+    var resetButton = document.createElement("button");
+    resetButton.classList.add("btn", "btn-outline-danger");
+    resetButton.type = "button";
+    resetButton.innerHTML = `<i class="fas fa-trash-alt"></i>`;
+    if (TaskId == null) {
+        resetButton.disabled = true;
+    }
+    resetButton.onclick = function () {
+        deleteImage(TaskId);
+    }
+    pictureDiv.appendChild(resetButton);
+
+    taskDataHolder.appendChild(pictureDiv);
+
+    // Create file linker from NAS
+
+    const filediv = document.getElementById("taskFileManager");
+    filediv.style.display = "block";
+
+    const fileHolder = document.getElementById("taskFiles");
+    fileHolder.innerHTML = "";
+
+    if (taskData && taskData.files) {
+        console.log(taskData.files);
+    }
+
+    const projectRoot = await fetchProjectRoot(projectID);
+
+    const openBrowserButton = document.getElementById("browseProjectFiles");
+    openBrowserButton.addEventListener("click", function (event) {
+        event.preventDefault();
+        browseNASFolder(projectID, TaskId, "selectFiles", projectRoot);
+    });
+
+}
+
 
 function generateNewCheckOrRadioEditor(taskDataHolder, type) {
     taskDataHolder.innerHTML = "";
@@ -1312,6 +1322,10 @@ async function deleteImage(taskId) {
             console.log(data);
             if (data == 200) {
                 simpleToast("Kép törölve");
+            } else if (data == 404) {
+                errorToast("Nincs feltöltött kép");
+            } else {
+                serverErrorToast();
             }
         }
     });

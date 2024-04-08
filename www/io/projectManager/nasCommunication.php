@@ -42,6 +42,19 @@ class NasCommunication
         return $response;
     }
 
+    function getLink($path)
+    {
+        $this->checklogin();
+
+        if ($path == null) {
+            return 500;
+        }
+
+        $url = '/webapi/entry.cgi?api=SYNO.FileStation.Sharing&version=3&method=create&path=' . urlencode($path);// . '&additional=%5B%22real_path%22%2C%22owner%2Ctime%22%5D';
+        $response = $this->apiConnection->runRequest($url, array(), "GET");
+        return $response;
+    }
+
     function downloadFile($path)
     {
         $this->checklogin();
@@ -87,6 +100,9 @@ if (isset($_GET['mode'])) {
             break;
         case 'listDir':
             echo $nas->listDir($_GET['path']);
+            break;
+        case 'getLink':
+            echo $nas->getLink($_GET['path']);
             break;
         case 'downloadFile':
             echo $nas->downloadFile($_GET['path']);
