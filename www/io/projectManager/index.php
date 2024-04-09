@@ -3,13 +3,6 @@ session_start();
 include ("header.php");
 include ("../translation.php"); ?>
 
-<?php
-if (!isset($_SESSION["userId"])) {
-   echo "<script>window.location.href = '../index.php?error=AccessViolation';</script>";
-   exit();
-}
-?>
-
 <body>
    <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-dark">
       <a class="navbar-brand" href="../index.php">
@@ -62,7 +55,7 @@ if (!isset($_SESSION["userId"])) {
       <?php } ?>
    </h1>
 
-   <!-- <button type="button" class="btn custom-kurva-anyja">LOFASZ</button> -->
+   <!-- <button type="button" class="btn custom-kurva-anyja" onclick="unsetNAS()">LOFASZ</button> -->
 
    <div class="container">
 

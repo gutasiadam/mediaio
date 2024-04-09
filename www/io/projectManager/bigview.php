@@ -3,15 +3,6 @@ session_start();
 include ("header.php");
 include ("../translation.php"); ?>
 
-<html>
-<?php
-if (!isset($_SESSION["userId"])) {
-   echo "<script>window.location.href = '../index.php?error=AccessViolation';</script>";
-   exit();
-}
-?>
-
-
 <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-dark">
    <a class="navbar-brand" href="./index.php">
       <img src="../utility/logo2.png" height="50">

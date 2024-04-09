@@ -42,7 +42,7 @@ async function browseNASFolder(projectID, taskId, type, path = '/Munka') {
     // Load folders
     let response = await listDir(path);
     response = JSON.parse(response);
-    //console.log(response);
+    console.log(response);
 
     // Remove spinner
     document.getElementById("loadingSpinner").remove();
@@ -101,7 +101,7 @@ async function selectFiles() {
     let selectedFiles = browser.getElementsByClassName("selected");
 
     const editorFileHolder = document.getElementById("taskFiles");
-    console.log(selectedFiles);
+    //console.log(selectedFiles);
     Array.from(selectedFiles).forEach(async file => {
         let fileElement = document.createElement("div");
         fileElement.classList.add("fileElement");
@@ -127,7 +127,7 @@ async function selectFiles() {
 }
 
 
-async function getLink(path){
+async function getLink(path) {
 
     let response = await $.ajax({
         type: "GET",
@@ -140,13 +140,13 @@ async function getLink(path){
 }
 
 
-async function getDownloadLink(path){
+async function getDownloadLink(path) {
 
     let response = await $.ajax({
         type: "GET",
         url: "./nasCommunication.php",
         data: { mode: "downloadFile", path: path },
     });
-    
-    window.open(response, "_blank");
+
+    await window.open(response, "_blank");
 }

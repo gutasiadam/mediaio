@@ -97,20 +97,20 @@ class Core
 
                 $sql = "SELECT * from users WHERE usernameUsers=? OR emailUsers=?;";
                 //echo binded statement
-                
+
                 $connection = Database::runQuery_mysqli();
                 $stmt = $connection->prepare($sql);
                 $stmt->bind_param("ss", $userName, $userName);
                 $stmt->execute();
                 $result = $stmt->get_result();
-                        if($row = mysqli_fetch_assoc($result)){
-                            $pwdcheck = password_verify($password, $row['pwdUsers']);
-                            if ($pwdcheck == false){
-                                if($RESTAPImode==true){
-                                    //echo "Wrong pass";
-                                    return array('code' => 401);
-                                    exit();
-                                }
+                if ($row = mysqli_fetch_assoc($result)) {
+                    $pwdcheck = password_verify($password, $row['pwdUsers']);
+                    if ($pwdcheck == false) {
+                        if ($RESTAPImode == true) {
+                            //echo "Wrong pass";
+                            return array('code' => 401);
+                            exit();
+                        }
 
                         Accounting::logEvent($row['idUsers'], "login_WrongPass");
                         header("Location: ../index.php?error=WrongPass");
@@ -160,6 +160,7 @@ class Core
                         $_SESSION['AdditionalData'] = $row['AdditionalData'];
                         $additionalData = json_decode($_SESSION['AdditionalData'], true);
                         $_SESSION['groups'] = $additionalData['groups'];
+                        $_SESSION['nas'] = null;
 
                         Accounting::logEvent($row['idUsers'], "login_Success");
                         header("Location: ../index.php?login=success");
@@ -203,26 +204,26 @@ class Core
 
 
             $sql = "SELECT * FROM users WHERE usernameUsers=?;";
-            $connection=Database::runQuery_mysqli(); 
+            $connection = Database::runQuery_mysqli();
             $stmt = $connection->prepare($sql);
             $stmt->bind_param("s", $postData['username']);
             $stmt->execute();
             $result = $stmt->get_result();
-                if($row = mysqli_fetch_assoc($result)){
-                    $pwdcheck = password_verify($postData['oldpwd'], $row['pwdUsers']);
-                    if ($pwdcheck == false){
-                        header("Location: ./profile/chPwd.php?error=OldPwdError");
-                    }else if ($pwdcheck == true){
-                        $hashedpwd = password_hash($postData['password'], PASSWORD_BCRYPT); 
-                        $sql = "UPDATE users SET pwdUsers=? WHERE usernameUsers=?;";
-                        $connection=Database::runQuery_mysqli(); 
-                        $stmt = $connection->prepare($sql);
-                        $stmt->bind_param("ss", $hashedpwd, $postData['username']);
-                        $stmt->execute();
-                        $result = $stmt->get_result();
-                        //$result=Database::runQuery($sql);
-                                //E-mail küldése a felhasználónak
-                                $content = '
+            if ($row = mysqli_fetch_assoc($result)) {
+                $pwdcheck = password_verify($postData['oldpwd'], $row['pwdUsers']);
+                if ($pwdcheck == false) {
+                    header("Location: ./profile/chPwd.php?error=OldPwdError");
+                } else if ($pwdcheck == true) {
+                    $hashedpwd = password_hash($postData['password'], PASSWORD_BCRYPT);
+                    $sql = "UPDATE users SET pwdUsers=? WHERE usernameUsers=?;";
+                    $connection = Database::runQuery_mysqli();
+                    $stmt = $connection->prepare($sql);
+                    $stmt->bind_param("ss", $hashedpwd, $postData['username']);
+                    $stmt->execute();
+                    $result = $stmt->get_result();
+                    //$result=Database::runQuery($sql);
+                    //E-mail küldése a felhasználónak
+                    $content = '
                                 <html>
                                 <head>
                                 <title>Arpad Media IO</title>
@@ -398,8 +399,8 @@ class Core
             exit();
         } else {
             //Check if this user already exists
-            $sql = "SELECT usernameUsers FROM users WHERE usernameUsers=?" /*AND pwdUsers=?*/;
-            $connection=Database::runQuery_mysqli(); 
+            $sql = "SELECT usernameUsers FROM users WHERE usernameUsers=?" /*AND pwdUsers=?*/ ;
+            $connection = Database::runQuery_mysqli();
             $stmt = $connection->prepare($sql);
             $stmt->bind_param("s", $postData['username']);
             $stmt->execute();
@@ -482,7 +483,7 @@ class Core
         } else {
             //Check if password is correct.
             $sql = "UPDATE users SET TOKEN=? WHERE usernameUsers=? AND emailUsers=?";
-            $connection=Database::runQuery_mysqli(); 
+            $connection = Database::runQuery_mysqli();
             $stmt = $connection->prepare($sql);
             $stmt->bind_param("sss", $TOKEN, $username, $emailAddr);
             $stmt->execute();

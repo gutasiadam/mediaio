@@ -150,14 +150,15 @@ async function createTask(task, projectID, canEdit) {
             if (taskData.files) {
                 let files = taskData.files;
                 let filesContainer = document.createElement("div");
-                filesContainer.classList.add("taskFiles");
+                filesContainer.classList.add("taskCardFiles");
                 files.forEach(file => {
                     let fileDiv = document.createElement("div");
                     fileDiv.classList.add("fileElement");
                     fileDiv.innerHTML = `<i class="fas fa-file"></i> <a href="${file.link}" target="_blank">${file.name}</a>`;
 
                     let downloadButton = document.createElement("button");
-                    downloadButton.classList.add("btn", "btn-sm", "btn-primary", "float-end");
+                    downloadButton.classList.add("btn", "btn-sm", "btn-secondary", "float-end");
+                    downloadButton.style.marginLeft = "5px";
                     downloadButton.innerHTML = '<i class="fas fa-download"></i>';
                     downloadButton.onclick = function (event) {
                         event.preventDefault();
@@ -1026,8 +1027,27 @@ async function taskBodyGenerator(projectID, TaskId, taskDataHolder, taskData = n
     const fileHolder = document.getElementById("taskFiles");
     fileHolder.innerHTML = "";
 
-    if (taskData && taskData.files) {
-        console.log(taskData.files);
+    if (taskData.files != '') {
+        
+        taskData.files.forEach(file => {
+            let fileDiv = document.createElement("div");
+            fileDiv.classList.add("fileElement");
+            fileDiv.innerHTML = `<i class="fas fa-file"></i> ${file.name}`;
+            fileDiv.setAttribute("data-link", file.link);
+            fileDiv.setAttribute("data-path", file.path);
+
+            let deleteButton = document.createElement("button");
+            deleteButton.classList.add("btn", "btn-danger", "btn-sm", "float-end");
+            deleteButton.innerHTML = '<i class="fas fa-trash-alt"></i>';
+            deleteButton.style.marginLeft = "5px";
+            deleteButton.onclick = function (event) {
+                event.preventDefault();
+                this.parentElement.remove();
+            }
+
+            fileDiv.appendChild(deleteButton);
+            fileHolder.appendChild(fileDiv);
+        });
     }
 
     const projectRoot = await fetchProjectRoot(projectID);
