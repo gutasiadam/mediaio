@@ -146,6 +146,29 @@ async function createTask(task, projectID, canEdit) {
                 caption.innerHTML = makeFormatting(taskData.text);
                 taskBody.appendChild(caption);
             }
+
+            if (taskData.files) {
+                let files = taskData.files;
+                let filesContainer = document.createElement("div");
+                filesContainer.classList.add("taskFiles");
+                files.forEach(file => {
+                    let fileDiv = document.createElement("div");
+                    fileDiv.classList.add("fileElement");
+                    fileDiv.innerHTML = `<i class="fas fa-file"></i> <a href="${file.link}" target="_blank">${file.name}</a>`;
+
+                    let downloadButton = document.createElement("button");
+                    downloadButton.classList.add("btn", "btn-sm", "btn-primary", "float-end");
+                    downloadButton.innerHTML = '<i class="fas fa-download"></i>';
+                    downloadButton.onclick = function (event) {
+                        event.preventDefault();
+                        getDownloadLink(file.path);
+                    }
+
+                    fileDiv.appendChild(downloadButton);
+                    filesContainer.appendChild(fileDiv);
+                });
+                taskBody.appendChild(filesContainer);
+            }
             break;
         case 'checklist':
             cardCheckOrRadio(taskBody, task, "checklist");
@@ -609,7 +632,8 @@ async function saveTaskSettings(task_id, taskType, projectID = null) {
             let fileArray = files.map(file => {
                 return {
                     name: file.innerText,
-                    link: file.getAttribute("data-link")
+                    link: file.getAttribute("data-link"),
+                    path: file.getAttribute("data-path"),
                 };
             });
 

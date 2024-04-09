@@ -96,6 +96,11 @@ class synologyAPICommunicationManager
 		//echo $err;
 	}
 
+	function downloadReq($path)
+	{
+		echo 'https://' . $this->credentials['NAS_domain'] . '/webapi/entry.cgi?api=SYNO.FileStation.Download&version=2&method=download&path=' . urlencode($path) . '&mode=download&_sid=' . $this->sid . '';
+	}
+
 	function logout()
 	{
 		$NAS_domain = $this->credentials['NAS_domain'];
@@ -124,6 +129,11 @@ class synologyAPICommunicationManager
 	function getSid()
 	{
 		return $this->sid;
+	}
+
+	function __destruct()
+	{
+		$this->logout();
 	}
 }
 $api = new synologyAPICommunicationManager();

@@ -108,6 +108,7 @@ async function selectFiles() {
         fileElement.innerHTML = `<i class="fas fa-file"></i> ${file.innerText}`;
         let path = file.getAttribute("data-path");
         fileElement.setAttribute("data-link", await getLink(path));
+        fileElement.setAttribute("data-path", path);
 
         let deleteButton = document.createElement("button");
         deleteButton.classList.add("btn", "btn-sm", "btn-danger", "float-end");
@@ -136,4 +137,16 @@ async function getLink(path){
     response = JSON.parse(response);
     console.log(response.data.links[0].url);
     return response.data.links[0].url;
+}
+
+
+async function getDownloadLink(path){
+
+    let response = await $.ajax({
+        type: "GET",
+        url: "./nasCommunication.php",
+        data: { mode: "downloadFile", path: path },
+    });
+    
+    window.open(response, "_blank");
 }

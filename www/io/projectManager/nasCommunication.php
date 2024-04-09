@@ -3,23 +3,20 @@ namespace Mediaio;
 
 require_once '../server/synologyCommunication.php';
 
-use Mediaio\synologyAPICommunicationManager;
 
-
-class NasCommunication
+class NasCommunication extends synologyAPICommunicationManager
 {
-    private $apiConnection = null;
     private $ProjectrootFolder = null;
 
     function __construct()
     {
-        $this->apiConnection = new synologyAPICommunicationManager();
+        synologyAPICommunicationManager::__construct();
     }
 
     function checkLogin()
     {
-        if ($this->apiConnection->getSid() == null) {
-            $this->apiConnection->obtainSID();
+        if (synologyAPICommunicationManager::getSid() == null) {
+            synologyAPICommunicationManager::obtainSID();
         }
     }
 
@@ -38,7 +35,7 @@ class NasCommunication
 
 
         $url = '/webapi/entry.cgi?api=SYNO.FileStation.List&version=2&method=list&folder_path=' . urlencode($path) . '&additional=%5B%22real_path%22%2C%22owner%2Ctime%22%5D';
-        $response = $this->apiConnection->runRequest($url, array(), "GET");
+        $response = synologyAPICommunicationManager::runRequest($url, array(), "GET");
         return $response;
     }
 
@@ -51,9 +48,10 @@ class NasCommunication
         }
 
         $url = '/webapi/entry.cgi?api=SYNO.FileStation.Sharing&version=3&method=create&path=' . urlencode($path);// . '&additional=%5B%22real_path%22%2C%22owner%2Ctime%22%5D';
-        $response = $this->apiConnection->runRequest($url, array(), "GET");
+        $response = synologyAPICommunicationManager::runRequest($url, array(), "GET");
         return $response;
     }
+
 
     function downloadFile($path)
     {
@@ -62,11 +60,8 @@ class NasCommunication
         if ($path == null) {
             return 500;
         }
-
-        $url = '/webapi/entry.cgi?api=SYNO.FileStation.Download&version=2&method=download&path=' . urlencode($path). '&mode=download';
-        $response = $this->apiConnection->runRequest($url, array(), "GET");
         
-        return $response;
+        return synologyAPICommunicationManager::downloadReq($path);
     }
 
 /*     function uploadFile($path)
@@ -83,30 +78,40 @@ class NasCommunication
     } */
 
     // Deconstructor which logs out the user
-    function __destruct()
+    function logout()
     {
-        $this->apiConnection->logout();
+        synologyAPICommunicationManager::__destruct();
     }
 }
 
 
-$nas = new NasCommunication();
+$nas = null;
 
 if (isset($_GET['mode'])) {
     switch ($_GET['mode']) {
         case 'setRootFolder':
+            $nas = new NasCommunication();
             $nas->setRootFolder($_GET['path']);
+            $nas->logout();
             echo '200';
-            break;
+            exit();
         case 'listDir':
+            $nas = new NasCommunication();
             echo $nas->listDir($_GET['path']);
-            break;
+            $nas->logout();
+            exit();
         case 'getLink':
+            $nas = new NasCommunication();
             echo $nas->getLink($_GET['path']);
-            break;
+            $nas->logout();
+            exit();
         case 'downloadFile':
+            $nas = new NasCommunication();
             echo $nas->downloadFile($_GET['path']);
             break;
+        case 'logout':
+            $nas->logout();
+            echo '200';
+            exit();
     }
-    exit();
 }
