@@ -100,8 +100,12 @@ async function selectFiles() {
     const browser = document.getElementById("fileExplorer");
     let selectedFiles = browser.getElementsByClassName("selected");
 
+    if (selectedFiles.length == 0) {
+        alert("Nincs kiválasztva fájl!");
+        return;
+    }
+
     const editorFileHolder = document.getElementById("taskFiles");
-    //console.log(selectedFiles);
     Array.from(selectedFiles).forEach(async file => {
         let fileElement = document.createElement("div");
         fileElement.classList.add("fileElement");
@@ -141,6 +145,10 @@ async function getLink(path) {
 
 
 async function getDownloadLink(path) {
+    if (isSAFARIOS()) {
+        errorToast("Safari blockolja a popupokat ezért itt (még) nem megy a download! - apple, think different💀!");
+        return;
+    }
 
     let response = await $.ajax({
         type: "GET",
@@ -148,5 +156,19 @@ async function getDownloadLink(path) {
         data: { mode: "downloadFile", path: path },
     });
 
-    await window.open(response, "_blank");
+    /*     if (response == 200){
+            successToast("Fájl letöltve!");
+        } */
+
+
+    if (isSAFARIOS()) {
+        //window.location.href = response;
+        return;
+    } else {
+        window.open(response, "_blank");
+    }
+}
+
+function isSAFARIOS() {
+    return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream && /Safari/.test(navigator.userAgent) && !/Chrome|CriOS/.test(navigator.userAgent);
 }

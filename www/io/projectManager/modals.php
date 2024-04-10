@@ -46,7 +46,8 @@
             <div class="modal-body" id="fileExplorer">
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" id="cancelBrowser" data-bs-dismiss="modal" data-bs-toggle="modal">Mégse</button>
+                <button type="button" class="btn btn-secondary" id="cancelBrowser" data-bs-dismiss="modal"
+                    data-bs-toggle="modal">Mégse</button>
                 <button type="button" class="btn btn-success" id="setRootFolder">Beállítás</button>
             </div>
         </div>
@@ -123,23 +124,22 @@
                 <form>
                     <div class="mb-1 input-group" id="taskName">
                         <span class="input-group-text">Feladat neve: </span>
-                        <input type="text" class="form-control" id="textTaskName">
+                        <input type="text" class="form-control" id="textTaskName" placeholder="Név">
                     </div>
                     <div class="mb-1" id="taskData">
                     </div>
-                    <div class="mb-1" id="taskFileManager">
-                        <div class="d-flex">
-                            <label for="taskFiles" class="col-form-label">NAS fájlok: </label>
-                            <button class="btn btn-outline-success" data-bs-dismiss="modal"
-                                data-bs-target="#filebrowserModal" data-bs-toggle="modal" id="browseProjectFiles"><i
-                                    class="far fa-plus-square"></i></button>
-                        </div>
-                        <div class="memberSelect" id="taskFiles" style="max-height: 90px;">
+                    <div class="mb-3 input-group" id="taskFileManager">
+                        <span for="taskFiles" class="input-group-text">NAS fájlok: </span>
+                        
+                        <div class="memberSelect" id="taskFiles">
 
                         </div>
+                        <button class="btn btn-outline-success" data-bs-dismiss="modal"
+                            data-bs-target="#filebrowserModal" data-bs-toggle="modal" id="browseProjectFiles"><i
+                                class="far fa-plus-square"></i></button>
                     </div>
-                    <div class="mb-3">
-                        <label for="taskMembers" class="col-form-label">Tagok:</label>
+                    <div class="mb-3 input-group" style="flex-wrap: nowrap;">
+                        <span for="taskMembers" class="input-group-text">Tagok:</span>
                         <div class="memberSelect" id="taskMembers" style="max-height: 90px;">
                         </div>
                     </div>
@@ -148,37 +148,8 @@
                         <input type="date" class="form-control" id="taskDate" placeholder="Nap">
                         <input type="time" class="form-control" id="taskTime" placeholder="Időpont">
                     </div>
-                    <div class="mb-2">
-                        <button type="button" class="btn" data-bs-toggle="button" id="taskSubmittable">Leadandó
-                            feladat</button>
-                        <button type="button" class="btn" data-bs-toggle="button" id="singleAnswer" disabled>Egyszer
-                            leadható
-                        </button>
-                        <script>
-                            let taskSubmittable = document.getElementById('taskSubmittable');
-
-                            let observer = new MutationObserver(function (mutations) {
-                                mutations.forEach(function (mutation) {
-                                    if (mutation.attributeName === "class") {
-                                        if (taskSubmittable.classList.contains('active')) {
-                                            document.getElementById("singleAnswer").disabled = false;
-                                            document.getElementById("fillOutText").disabled = false;
-                                        } else {
-                                            document.getElementById("fillOutText").disabled = true;
-                                            document.getElementById("singleAnswer").disabled = true;
-                                            document.getElementById("singleAnswer").classList.remove('active');
-                                        }
-                                    }
-                                });
-                            });
-
-                            observer.observe(taskSubmittable, {
-                                attributes: true //configure it to listen to attribute changes
-                            });
-
-                        </script>
+                    <div class="mb-2 input-group" id="submissionSettings">
                     </div>
-                    <input type="text" class="form-control" id="fillOutText" placeholder="Kitöltés szövege...">
                 </form>
             </div>
             <div class="modal-footer">

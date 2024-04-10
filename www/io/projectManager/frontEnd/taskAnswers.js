@@ -19,8 +19,7 @@ async function openTaskAnswers(taskId, projectId) {
     workingArea.innerHTML = '';
 
     switch (task.Task_type) {
-        case "text":
-        case "image":
+        case "task":
             var fillOutText = task.fillOutText;
 
             // Create a div for answered users

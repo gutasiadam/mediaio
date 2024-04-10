@@ -196,16 +196,6 @@ class projectManager
             $row['CreatorLastName'] = $creatorUserArray[0]['lastName'];
             $row['CreatorUsername'] = $creatorUserArray[0]['usernameUsers'];
 
-            //Check if user is allowed to delete the task
-            if (in_array("admin", $_SESSION['groups'])) {
-                $row['canDelete'] = 1;
-            } else {
-                if ($creatorUID == $_SESSION['userId']) {
-                    $row['canDelete'] = 1;
-                } else {
-                    $row['canDelete'] = 0;
-                }
-            }
 
             // Add the project deadline to the task
             $sql = "SELECT `Deadline` FROM `projects` WHERE `ID`=" . $row['ProjectId'] . ";";
@@ -213,11 +203,29 @@ class projectManager
             $row['ProjectDeadline'] = $result->fetch_assoc()['Deadline'];
 
 
+            // Get the project manager
+            $sql = "SELECT `managerUID` FROM `projects` WHERE `ID`=" . $row['ProjectId'] . ";";
+            $result = $connection->query($sql);
+            $projectManagerUID = $result->fetch_assoc()['managerUID'];
+
+
+            //Check if user is allowed to delete the task
+            if (in_array("admin", $_SESSION['groups'])) {
+                $row['canDelete'] = 1;
+            } else {
+                if ($creatorUID == $_SESSION['userId'] || $projectManagerUID == $_SESSION['userId']) {
+                    $row['canDelete'] = 1;
+                } else {
+                    $row['canDelete'] = 0;
+                }
+            }
+
+
             // Check if the task is a single answer task and the user is trying to edit it
             if ($row['SingleAnswer'] == 1 && $_POST['fillOut'] == 'false' && !in_array("admin", $_SESSION['groups'])) {
                 // If the task is a checklist or radio task, only the creator can edit it (unless the user is an admin)
                 if ($row['Task_type'] == "checklist" || $row['Task_type'] == "radio") {
-                    if ($creatorUID == $_SESSION['userId']) {
+                    if ($creatorUID == $_SESSION['userId'] || $projectManagerUID == $_SESSION['userId']) {
                         echo (json_encode($row));
                     } else {
                         echo 403;
@@ -636,6 +644,12 @@ class projectManager
             $resultItems[$key]['lastName'] = $user['lastName'];
             $resultItems[$key]['isManager'] = $managerUID == $item['UserID'] ? 1 : 0;
         }
+
+        // Sort the array by lastname and firstname
+        usort($resultItems, function ($a, $b) {
+            return $a['lastName'] <=> $b['lastName'] ?: $a['firstName'] <=> $b['firstName'];
+        });
+
         echo (json_encode($resultItems));
     }
 

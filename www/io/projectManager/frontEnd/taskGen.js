@@ -279,8 +279,11 @@ async function openTask(TaskId, projectID) {
     // Get the task data
     let taskData = task.Task_data;
 
-    document.getElementById("fillOutText").style.display = "none";
-    document.getElementById("fillOutText").value = task.fillOutText;
+    const filediv = document.getElementById("taskFileManager");
+    filediv.style.display = "none";
+
+    const fileHolder = document.getElementById("taskFiles");
+    fileHolder.innerHTML = "";
 
     switch (task.Task_type) {
         case "task":
@@ -288,8 +291,7 @@ async function openTask(TaskId, projectID) {
             break;
         case "checklist":
         case "radio":
-            generateCheckOrRadioEditor(taskDataHolder, taskData, task.Task_type);
-            document.getElementById('taskSubmittable').classList.add('active');
+            generateCheckOrRadioEditor(taskDataHolder, task.Task_type, taskData);
             break;
     }
 
@@ -322,20 +324,6 @@ async function openTask(TaskId, projectID) {
         });
     }
 
-    // Set the task submittable checkbox
-    if (task.isSubmittable == 1) {
-        document.getElementById("taskSubmittable").classList.add("active");
-        document.getElementById("singleAnswer").disabled = false;
-    } else {
-        document.getElementById("taskSubmittable").classList.remove("active");
-        document.getElementById("singleAnswer").disabled = true;
-    }
-
-    if (task.SingleAnswer == 1) {
-        document.getElementById("singleAnswer").classList.add("active");
-    } else {
-        document.getElementById("singleAnswer").classList.remove("active");
-    }
 
     // Get the task deadline
     let deadline = task.Deadline;
@@ -350,6 +338,9 @@ async function openTask(TaskId, projectID) {
     if (projectDeadline) {
         document.getElementById("taskDate").max = projectDeadline.split(" ")[0];
     }
+
+    // Set the task submission settings
+    await submissionSettings(task.Task_type, task);
 
 
     // Add delete button
@@ -406,7 +397,7 @@ function fillOutTask(TaskId) {
             document.getElementById("taskFillTitle").innerHTML = taskTitle;
 
             // Get the task data
-            let taskData = task.Task_data;
+            let taskData = JSON.parse(task.Task_data);
             let taskBody = document.getElementById("taskFillData");
             taskBody.innerHTML = "";
 
@@ -416,34 +407,24 @@ function fillOutTask(TaskId) {
             }
 
             switch (task.Task_type) {
-                case "text":
+                case "task":
+                    if (taskData.image != "") {
+                        let image = document.createElement("img");
+                        image.classList.add("card-img-top", "taskImage", "mb-2");
+                        image.src = taskData.image;
+                        taskBody.appendChild(image);
+                    }
+
                     let text = document.createElement("p");
                     text.classList.add("card-text", "taskText");
-                    text.innerHTML = makeFormatting(taskData);
+                    text.innerHTML = makeFormatting(taskData.text);
                     taskBody.appendChild(text);
-
-                    addFillOutText(taskBody, task.fillOutText, TaskId);
-
-                    break;
-                case "image":
-                    taskData = JSON.parse(taskData);
-                    let image = document.createElement("img");
-                    image.classList.add("card-img-top", "taskImage", "mb-2");
-                    image.src = taskData.image;
-                    taskBody.appendChild(image);
-
-                    let caption = document.createElement("p");
-                    caption.classList.add("card-text", "taskText");
-                    caption.innerHTML = makeFormatting(taskData.text);
-                    taskBody.appendChild(caption);
 
                     addFillOutText(taskBody, task.fillOutText, TaskId);
                     break;
                 case "checklist":
-                    generateCheckOrRadioFillOut(taskBody, task, "checklist");
-                    break;
                 case "radio":
-                    generateCheckOrRadioFillOut(taskBody, task, "radio");
+                    generateCheckOrRadioFillOut(taskBody, task, task.Task_type);
                     break;
             }
 
@@ -531,7 +512,12 @@ async function addNewTask(projectID, taskType, deadline = null) {
     taskDataLabel.innerHTML = "Adatok:";
     taskDataHolder.appendChild(taskDataLabel);
 
-    document.getElementById("fillOutText").style.display = "none";
+    const filediv = document.getElementById("taskFileManager");
+    filediv.style.display = "none";
+
+    const fileHolder = document.getElementById("taskFiles");
+    fileHolder.innerHTML = "";
+
     switch (taskType) {
         case "task":
             modalTitle.innerHTML = "Új feladat hozzáadása";
@@ -541,8 +527,7 @@ async function addNewTask(projectID, taskType, deadline = null) {
         case "checklist":
         case "radio":
             modalTitle.innerHTML = `Új lista hozzáadása (${taskType})`;
-            generateNewCheckOrRadioEditor(taskDataHolder, taskType);
-            document.getElementById('taskSubmittable').classList.add('active');
+            generateCheckOrRadioEditor(taskDataHolder, taskType);
             break;
     }
 
@@ -572,6 +557,9 @@ async function addNewTask(projectID, taskType, deadline = null) {
     if (deadline) {
         document.getElementById("taskDate").max = deadline.split(" ")[0];
     }
+
+
+    await submissionSettings(taskType);
 
 
     // Hide delete button if shown
@@ -610,10 +598,10 @@ async function saveTaskSettings(task_id, taskType, projectID = null) {
     let taskDataHolder = document.getElementById("taskData");
 
     // Check if the task is interactable
-    let isSubmittable = document.getElementById("taskSubmittable").classList.contains("active") ? 1 : 0;
+    let isSubmittable = document.getElementById("taskSubmittable").checked ? 1 : 0;
 
     // Check if the task is single answer
-    let singleAnswer = document.getElementById("singleAnswer").classList.contains("active") ? 1 : 0;
+    let singleAnswer = document.getElementById("singleAnswer").checked ? 1 : 0;
 
     let imageToUpload = null;
     let fillOutText = null;
@@ -740,8 +728,7 @@ async function submitTask(taskId, taskType) {
     let taskData = [];
 
     switch (taskType) {
-        case "text":
-        case "image":
+        case "task":
             let done = document.getElementById("fillOutCheckbox").checked;
             taskData = done ? ['done'] : null;
             break;
@@ -828,7 +815,7 @@ function textEditor(taskDataHolder, taskData = "", height = "250px") {
     textFormatOptions.classList.add("btn-group", "mb-1");
 
     let boldButton = document.createElement("button");
-    boldButton.classList.add("btn");
+    boldButton.classList.add("btn", "btn-");
     boldButton.innerHTML = "<b>B</b>";
     boldButton.onclick = function () {
         // Assume textarea is the textarea or input element where you want to bold the text
@@ -958,7 +945,6 @@ function textEditor(taskDataHolder, taskData = "", height = "250px") {
 async function taskBodyGenerator(projectID, TaskId, taskDataHolder, taskData = null) {
     taskData = taskData ? JSON.parse(taskData) : null;
 
-    document.getElementById("fillOutText").style.display = "block";
     textEditor(taskDataHolder, taskData ? taskData.text : "", "150px");
 
     var pictureDiv = document.createElement("div");
@@ -1022,13 +1008,13 @@ async function taskBodyGenerator(projectID, TaskId, taskDataHolder, taskData = n
     // Create file linker from NAS
 
     const filediv = document.getElementById("taskFileManager");
-    filediv.style.display = "block";
+    filediv.style.display = "flex";
 
     const fileHolder = document.getElementById("taskFiles");
     fileHolder.innerHTML = "";
 
-    if (taskData.files != '') {
-        
+    if (taskData && taskData.files != '') {
+
         taskData.files.forEach(file => {
             let fileDiv = document.createElement("div");
             fileDiv.classList.add("fileElement");
@@ -1053,56 +1039,78 @@ async function taskBodyGenerator(projectID, TaskId, taskDataHolder, taskData = n
     const projectRoot = await fetchProjectRoot(projectID);
 
     const openBrowserButton = document.getElementById("browseProjectFiles");
-    openBrowserButton.addEventListener("click", function (event) {
-        event.preventDefault();
-        browseNASFolder(projectID, TaskId, "selectFiles", projectRoot);
-    });
 
+    try {
+        openBrowserButton.removeEventListener('click', browserButtonHandler);
+    } catch (error) {
+        ;
+    }
+    // Create a new event handler with the current TaskId, taskType, and projectID
+    browserButtonHandler = createFileBrowserButtonHandler(projectID, TaskId, projectRoot);
+
+    // Add the new event listener
+    openBrowserButton.addEventListener('click', browserButtonHandler);
 }
 
+// Define the event handler function outside of the settings function
+function createFileBrowserButtonHandler(projectID, TaskId, projectRoot) {
+    return async function browserButtonHandler(e) {
+        e.preventDefault();
+        browseNASFolder(projectID, TaskId, "selectFiles", projectRoot);
+    };
+}
 
-function generateNewCheckOrRadioEditor(taskDataHolder, type) {
-    taskDataHolder.innerHTML = "";
+async function submissionSettings(taskType, task = null) {
 
-    textEditor(taskDataHolder, "", "100px");
+    const submissionSettings = document.getElementById("submissionSettings");
+    submissionSettings.innerHTML = "";
 
-    let label = document.createElement("label");
-    label.classList.add("form-label");
-    label.innerHTML = "Elemek:";
-    taskDataHolder.appendChild(label);
+    let label = document.createElement("span");
+    label.classList.add("input-group-text");
+    label.innerHTML = "Leadás:";
+    submissionSettings.appendChild(label);
 
-    let checklist = document.createElement("ul");
-    checklist.classList.add("list-group", "list-group-flush");
-    checklist.id = type;
-
-    let checklistItem = document.createElement("li");
-    checklistItem.classList.add("list-group-item");
-    checklistItem.innerHTML = "<input type='text' class='form-control " + type + "Item' placeholder='Új elem'>";
-    checklist.appendChild(checklistItem);
-
-    let newChecklistItem = document.createElement("button");
-    newChecklistItem.classList.add("btn", "btn-success", "btn-sm");
-    newChecklistItem.innerHTML = "Új elem";
-    newChecklistItem.onclick = function () {
-        let checklist = document.getElementById(type);
-        let checklistItem = document.createElement("li");
-        checklistItem.classList.add("list-group-item");
-        checklistItem.innerHTML = "<input type='text' class='form-control " + type + "Item' placeholder='Új elem'>";
-        checklist.appendChild(checklistItem);
+    if (taskType == "task") {
+        let fillOutText = document.createElement("input");
+        fillOutText.classList.add("form-control");
+        fillOutText.id = "fillOutText";
+        fillOutText.placeholder = "Megerősítés szövege";
+        fillOutText.value = task ? task.fillOutText : "";
+        submissionSettings.appendChild(fillOutText);
     }
 
-    // Prevent form submission
-    newChecklistItem.addEventListener('click', function (event) {
-        event.preventDefault();
-    });
+    let submitButton = document.createElement("input");
+    submitButton.type = "checkbox";
+    submitButton.classList.add("btn-check");
+    submitButton.id = "taskSubmittable";
+    submitButton.checked = task ? task.isSubmittable == 1 : false;
+    submitButton.autocomplete = "off";
+    submissionSettings.appendChild(submitButton);
 
-    taskDataHolder.appendChild(checklist);
-    taskDataHolder.appendChild(newChecklistItem);
+    let submitLabel = document.createElement("label");
+    submitLabel.classList.add("btn", "btn-outline-success");
+    submitLabel.htmlFor = "taskSubmittable";
+    submitLabel.innerHTML = `<i class="fas fa-user-check"></i> Leadandó`;
+    submissionSettings.appendChild(submitLabel);
+
+    let singleAnswerButton = document.createElement("input");
+    singleAnswerButton.type = "checkbox";
+    singleAnswerButton.classList.add("btn-check");
+    singleAnswerButton.id = "singleAnswer";
+    singleAnswerButton.checked = task ? task.SingleAnswer == 1 : false;
+    singleAnswerButton.autocomplete = "off";
+    submissionSettings.appendChild(singleAnswerButton);
+
+    let singleAnswerLabel = document.createElement("label");
+    singleAnswerLabel.classList.add("btn", "btn-outline-danger");
+    singleAnswerLabel.htmlFor = "singleAnswer";
+    singleAnswerLabel.innerHTML = `<i class="fas fa-check"></i> Egyszer`;
+    submissionSettings.appendChild(singleAnswerLabel);
 }
 
 
-function generateCheckOrRadioEditor(taskDataHolder, taskData, type) {
-    taskData = JSON.parse(taskData);
+function generateCheckOrRadioEditor(taskDataHolder, type, taskData = null) {
+    taskData = taskData ? JSON.parse(taskData) : { text: "", checklist: [{ value: "", checked: false }] };
     var checklistItems = taskData.checklist;
     // Adding text before the checklist
     textEditor(taskDataHolder, taskData.text, '100px');
@@ -1118,12 +1126,14 @@ function generateCheckOrRadioEditor(taskDataHolder, taskData, type) {
         let input = document.createElement("input");
         input.classList.add("form-control", type + "Item");
         input.value = item.value;
+        input.placeholder = "Új elem";
         checklistItem.appendChild(input);
 
         let deleteButton = document.createElement("button");
         deleteButton.classList.add("btn", "btn-danger", "btn-sm");
         deleteButton.innerHTML = `<i class="fas fa-trash-alt"></i>`;
         deleteButton.style.marginLeft = "5px";
+        deleteButton.disabled = checklistItems.indexOf(item) == 0 ? true : false;  // The first item should not be deleted
         deleteButton.addEventListener('click', function (event) {
             event.preventDefault();
             // If only one item is left return

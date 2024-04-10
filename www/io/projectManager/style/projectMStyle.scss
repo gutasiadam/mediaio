@@ -147,6 +147,7 @@
     max-height: 200px;
     overflow: auto;
     align-items: center;
+    padding: 5px;
 
     &::-webkit-scrollbar-track {
         background: rgb(255, 255, 255);
@@ -390,6 +391,10 @@
     }
 }
 
+#taskFileManager {
+    flex-wrap: nowrap;
+}
+
 #taskFiles {
     .fileElement {
         border: 1px solid rgb(179, 179, 179);
@@ -397,6 +402,9 @@
         background-color: rgb(255, 255, 255);
         padding: 3px;
     }
+
+    width: 100%;
+    max-height: 90px;
 }
 
 .taskCardFiles {
@@ -407,6 +415,7 @@
 
     padding-top: 5px;
     border-top: 1px solid rgb(100, 100, 100);
+
     .fileElement {
         border: 1px solid rgb(179, 179, 179);
         border-radius: 5px;

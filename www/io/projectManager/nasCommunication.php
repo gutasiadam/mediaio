@@ -1,5 +1,6 @@
 <?php
 namespace Mediaio;
+
 require_once '../server/synologyCommunication.php';
 
 //error_reporting(E_ERROR | E_PARSE);
@@ -48,7 +49,29 @@ class nasCommunication extends synologyAPICommunicationManager
       if ($path == null) {
          return 500;
       }
-      return synologyAPICommunicationManager::downloadReq($path);
+      $url = synologyAPICommunicationManager::downloadReq($path);
+
+      return $url;
+
+      // TODO: Implement download for IOS and shit like that
+      //$file = file_get_contents($url);
+//
+      //// Open the URL as a stream
+      //$file = fopen($url, 'rb');
+//
+      //if ($file !== false) {
+      //   header('Content-Description: File Transfer');
+      //   header('Content-Type: application/octet-stream');
+      //   header('Content-Disposition: attachment; filename="' . basename($path) . '"');
+      //   header('Expires: 0');
+      //   header('Cache-Control: must-revalidate');
+      //   header('Pragma: public');
+      //   header('Content-Length: ' . filesize($url));
+      //   fpassthru($file);
+      //   return 200;
+      //} else {
+      //   return 404; // File not found
+      //}
    }
 
    function logout()
@@ -62,7 +85,7 @@ session_start();
 
 if (!isset($_SESSION['nas']) || $_SESSION['nas'] == null) {
    $_SESSION['nas'] = new nasCommunication();
-} 
+}
 
 
 if (isset($_GET['mode'])) {

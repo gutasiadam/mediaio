@@ -102,7 +102,7 @@ class synologyAPICommunicationManager
 
 	function downloadReq($path)
 	{
-		echo 'https://' . $this->credentials['NAS_domain'] . '/webapi/entry.cgi?api=SYNO.FileStation.Download&version=2&method=download&path=' . urlencode($path) . '&mode=download&_sid=' . $this->sid . '';
+		return 'https://' . $this->credentials['NAS_domain'] . '/webapi/entry.cgi?api=SYNO.FileStation.Download&version=2&method=download&path=' . urlencode($path) . '&mode=download&_sid=' . $this->sid . '';
 	}
 
 	function logout()
