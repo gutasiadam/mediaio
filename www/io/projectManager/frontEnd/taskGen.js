@@ -147,7 +147,7 @@ async function createTask(task, projectID, canEdit) {
                 taskBody.appendChild(caption);
             }
 
-            if (taskData.files) {
+            if (taskData.files != '') {
                 let files = taskData.files;
                 let filesContainer = document.createElement("div");
                 filesContainer.classList.add("taskCardFiles");
@@ -566,19 +566,24 @@ async function addNewTask(projectID, taskType, deadline = null) {
     let deleteButton = document.getElementById("deleteTask");
     deleteButton.style.display = "none";
 
+    // Add save button
+    let saveButton = document.getElementById("saveNewTask");
+
+    // Enable the button and remove the previous event listener
+    saveButton.disabled = false;
+    try {
+        saveButton.removeEventListener('click', saveButtonHandler);
+    } catch (error) {
+        console.log("No event listener to remove");
+    }
+    // Create a new event handler with the current TaskId, taskType, and projectID
+    saveButtonHandler = createSaveButtonHandler(null, taskType, projectID);
+
+    // Add the new event listener
+    saveButton.addEventListener('click', saveButtonHandler);
+
     // Display task editor modal
     $('#taskEditorModal').modal('show');
-
-    // Get the save button
-    let saveButton = document.getElementById('saveNewTask');
-
-    // Add a click event listener to the button
-    saveButton.addEventListener('click', async function (e) {
-        e.preventDefault();
-        saveTaskSettings(null, taskType, projectID);
-        this.disabled = true;
-    });
-
 }
 
 
@@ -639,7 +644,7 @@ async function saveTaskSettings(task_id, taskType, projectID = null) {
             let itemData = Array.from(items).map((item, i) => ({
                 pos: i,
                 value: item.value,
-                checked: false,
+                checked: item.parentElement.querySelector(".form-check-input").checked,
             }));
             taskData = {
                 text: caption,
@@ -1115,13 +1120,25 @@ function generateCheckOrRadioEditor(taskDataHolder, type, taskData = null) {
     // Adding text before the checklist
     textEditor(taskDataHolder, taskData.text, '100px');
 
-    let checklist = document.createElement("ul");
-    checklist.classList.add("list-group", "list-group-flush");
+    let checklist = document.createElement("div");
+    //checklist.classList.add("input-group");
     checklist.id = type;
 
     checklistItems.forEach(item => {
-        let checklistItem = document.createElement("li");
-        checklistItem.classList.add("list-group-item", "d-flex");
+        let checklistItem = document.createElement("div");
+        checklistItem.classList.add("input-group", "mb-2");
+
+        let div = document.createElement("div");
+        div.classList.add("input-group-text");
+        checklistItem.appendChild(div);
+
+        let checkBOX = document.createElement("input");
+        checkBOX.classList.add("form-check-input");
+        checkBOX.type = type == "checklist" ? "checkbox" : "radio";
+        checkBOX.checked = item.checked;
+        checkBOX.disabled = true;
+        div.appendChild(checkBOX);
+
 
         let input = document.createElement("input");
         input.classList.add("form-control", type + "Item");
@@ -1130,9 +1147,8 @@ function generateCheckOrRadioEditor(taskDataHolder, type, taskData = null) {
         checklistItem.appendChild(input);
 
         let deleteButton = document.createElement("button");
-        deleteButton.classList.add("btn", "btn-danger", "btn-sm");
+        deleteButton.classList.add("btn", "btn-danger");
         deleteButton.innerHTML = `<i class="fas fa-trash-alt"></i>`;
-        deleteButton.style.marginLeft = "5px";
         deleteButton.disabled = checklistItems.indexOf(item) == 0 ? true : false;  // The first item should not be deleted
         deleteButton.addEventListener('click', function (event) {
             event.preventDefault();
@@ -1151,8 +1167,19 @@ function generateCheckOrRadioEditor(taskDataHolder, type, taskData = null) {
     newChecklistItem.classList.add("btn", "btn-success", "btn-sm");
     newChecklistItem.innerHTML = "Új elem";
     newChecklistItem.onclick = function () {
-        let checklistItem = document.createElement("li");
-        checklistItem.classList.add("list-group-item", "d-flex");
+        let checklistItem = document.createElement("div");
+        checklistItem.classList.add("input-group", "mb-2");
+
+        let div = document.createElement("div");
+        div.classList.add("input-group-text");
+        checklistItem.appendChild(div);
+
+        let checkBOX = document.createElement("input");
+        checkBOX.classList.add("form-check-input");
+        checkBOX.type = type == "checklist" ? "checkbox" : "radio";
+        checkBOX.disabled = true;
+        div.appendChild(checkBOX);
+
 
         let input = document.createElement("input");
         input.classList.add("form-control", type + "Item");
@@ -1160,9 +1187,8 @@ function generateCheckOrRadioEditor(taskDataHolder, type, taskData = null) {
         checklistItem.appendChild(input);
 
         let deleteButton = document.createElement("button");
-        deleteButton.classList.add("btn", "btn-danger", "btn-sm");
+        deleteButton.classList.add("btn", "btn-danger");
         deleteButton.innerHTML = `<i class="fas fa-trash-alt"></i>`;
-        deleteButton.style.marginLeft = "5px";
         deleteButton.addEventListener('click', function (event) {
             event.preventDefault();
             // If only one item is left return
@@ -1233,6 +1259,7 @@ async function cardCheckOrRadio(taskBody, task, type) {
 
         if (task.isSubmittable == 0) {
             input.checked = checklistItems[i].checked;
+            input.name = type + "-" + task.ID;
             input.onclick = function () {
                 saveCheckOrRadio(task.ID);
             }

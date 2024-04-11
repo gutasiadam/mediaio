@@ -72,11 +72,12 @@
                         <span class="input-group-text">Projekt neve: </span>
                         <input type="text" class="form-control" id="projectName" placeholder="Projekt leírása...">
                     </div>
-                    <div class="mb-3">
+                    <div class="mb-3 input-group">
+                        <span class="input-group-text">Projekt leírása: </span>
                         <textarea class="form-control" id="projectDescription"></textarea>
                     </div>
-                    <div class="mb-3">
-                        <label for="projectVisibility" class="col-form-label">Projekt láthatósága:</label>
+                    <div class="mb-3 input-group">
+                        <span for="projectVisibility" class="input-group-text">Projekt láthatósága:</span>
                         <select class="form-select" id="projectVisibility">
                             <option value="0">Mindenki</option>
                             <option value="1">Médiás</option>

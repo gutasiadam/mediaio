@@ -80,7 +80,7 @@ include ("../translation.php"); ?>
 
 
    setInterval(() => {
-      if ($('.modal').hasClass('show')) {
+      if ($('.modal').hasClass('show') || document.querySelectorAll('.dragging').length > 0) {
          return;
       }
       // Hide all tooltips

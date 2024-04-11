@@ -220,7 +220,8 @@ class retrieveManager
       $sql = " START TRANSACTION; UPDATE leltar SET leltar.Status=1, leltar.RentBy=NULL WHERE leltar.UID IN (" . $itemNamesString . ");";
       $sql .= "INSERT INTO takelog VALUES";
       $sql .= "(NULL, '$currDate', '$userName', '" . $dataString . "', 'IN',1,'$userName')";
-      $sql .= "; COMMIT;";;
+      $sql .= "; COMMIT;";
+      ;
       if (!$connection->multi_query($sql)) {
         printf("Error message: %s\n", $connection->error);
       } else {
@@ -374,15 +375,31 @@ class itemDataManager
     return;
   }
 
-  static function listItems()
+  //static function listItems()
+  //{
+  //  //Refresh takeoutJSON
+  //  self::generateTakeoutJSON();
+  //  //Return json
+  //  $itemsJSONFile = fopen(__DIR__ . '/data/takeOutItems.json', 'r');
+  //  $itemsJSON = fread($itemsJSONFile, filesize(__DIR__ . '/data/takeOutItems.json'));
+  //  fclose($itemsJSONFile);
+  //  return $itemsJSON;
+  //}
+
+  static function getItems()
   {
-    //Refresh takeoutJSON
-    self::generateTakeoutJSON();
-    //Return json
-    $itemsJSONFile = fopen(__DIR__ . '/data/takeOutItems.json', 'r');
-    $itemsJSON = fread($itemsJSONFile, filesize(__DIR__ . '/data/takeOutItems.json'));
-    fclose($itemsJSONFile);
-    return $itemsJSON;
+    $sql = "SELECT * FROM leltar";
+    //Get a new database connection
+    $connection = Database::runQuery_mysqli();
+    $stmt = $connection->prepare($sql);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $rows = array();
+    while ($row = $result->fetch_assoc()) {
+      $rows[] = $row;
+    }
+    $result = json_encode($rows);
+    return $result;
   }
 
   static function listByCriteria($itemState, $orderCriteria)
@@ -552,6 +569,12 @@ if (isset($_POST['mode'])) {
   }
   if ($_POST['mode'] == 'retrieveApproval') {
     echo retrieveManager::approveRetrieve($_POST['value']);
+    //echo $_POST['value'] ;
+    //Header set.
+    exit();
+  }
+  if ($_POST['mode'] == 'getItems') {
+    echo itemDataManager::getItems();
     //echo $_POST['value'] ;
     //Header set.
     exit();

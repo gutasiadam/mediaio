@@ -51,7 +51,7 @@ class formManager
   static function listForms()
   {
     $sql = "SELECT * FROM forms WHERE AccessRestrict='0';";
-    if (isset ($_SESSION['userId'])) {
+    if (isset($_SESSION['userId'])) {
       $sql = "SELECT * FROM forms WHERE AccessRestrict IN ('0', '2');";
       if (in_array("admin", $_SESSION['groups'])) {
         $sql = "SELECT * FROM forms";
@@ -128,9 +128,9 @@ class formManager
   static function getForm($id, $formHash)
   {
     if ($id != null) {
-      if (isset ($_SESSION['userId']) && in_array("admin", $_SESSION['groups'])) {
+      if (isset($_SESSION['userId']) && in_array("admin", $_SESSION['groups'])) {
         $sql = "SELECT * FROM forms WHERE ID=" . $id . ";";
-      } else if (isset ($_SESSION['userId'])) {
+      } else if (isset($_SESSION['userId'])) {
         $sql = "SELECT * FROM forms WHERE ID=" . $id . " AND AccessRestrict IN ('0','2') AND Status='1';";
       } else {
         $sql = "SELECT * FROM forms WHERE ID=" . $id . " AND AccessRestrict='0' AND Status='1';";
@@ -187,6 +187,18 @@ class formManager
     exit();
   }
 
+  static function deleteAnswer($id)
+  {
+    if (in_array("admin", $_SESSION['groups'])) {
+      $sql = "DELETE FROM formanswers WHERE ID=" . $id . ";";
+      $connection = Database::runQuery_mysqli();
+      $connection->query($sql);
+      $connection->close();
+      echo 200;
+      exit();
+    }
+  }
+
   static function getFormAnswers($id, $formHash)
   {
     if (in_array("admin", $_SESSION['groups'])) {
@@ -233,7 +245,7 @@ class formManager
 
 
 
-if (isset ($_POST['mode'])) {
+if (isset($_POST['mode'])) {
 
   //Set timezone to the computer's timezone.
   date_default_timezone_set('Europe/Budapest');
@@ -300,6 +312,11 @@ if (isset ($_POST['mode'])) {
       $_POST['answers'],
       $_POST['form']
     );
+    exit();
+  }
+
+  if ($_POST['mode'] == 'deleteAnswer') {
+    echo formManager::deleteAnswer($_POST['id']);
     exit();
   }
 

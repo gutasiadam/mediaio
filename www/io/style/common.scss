@@ -232,25 +232,6 @@ button.mediaBlue {
         display: none;
     }
 
-    .btn-secondary:active,
-    .btn-secondary:hover {
-        color: #fff !important;
-        background-color: #6c757d !important;
-        border-color: #6c757d !important;
-    }
-
-    .btn-outline-secondary:active,
-    .btn-outline-secondary:hover {
-        color: #6c757d !important;
-        background-color: #fff !important;
-        border-color: #6c757d !important;
-    }
-
-    .btn:focus,
-    .btn:hover {
-        text-decoration: none !important;
-    }
-
 
     display: flex;
     flex-direction:row;
@@ -262,6 +243,7 @@ button.mediaBlue {
     @media (max-width: 990px) {
         align-items: center;
         gap: 1%;
+        flex-wrap: wrap;
 
         .btn {
             width: 49.5%;

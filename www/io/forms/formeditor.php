@@ -184,40 +184,40 @@ if (!in_array("admin", $_SESSION["groups"])) {
                Új hozzáadása
             </button>
             <ul class="dropdown-menu">
-               <li><a class="dropdown-item" href="#" onclick="addFormElement('email')"><i class="fas fa-at fa-2x"></i>
+               <li><a class="dropdown-item" href="#" onclick="addFormElement('email')"><i class="fas fa-at"></i>
                      E-Mail</a></li>
                <li><a class="dropdown-item" href="#" onclick="addFormElement('shortText')"><i
-                        class="fas fa-grip-lines fa-2x"></i> Rövid szöveg</a></li>
+                        class="fas fa-grip-lines fa-lg"></i> Rövid szöveg</a></li>
                <li><a class="dropdown-item" href="#" onclick="addFormElement('longText')"><i
-                        class="fas fa-align-justify fa-2x"></i> Hosszú szöveg</a></li>
+                        class="fas fa-align-justify fa-lg"></i> Hosszú szöveg</a></li>
 
                <!-- Feleletválasztós -->
                <li class="dropdown-divider"></li>
                <li><a class="dropdown-item" href="#" onclick="addFormElement('radio')"><i
-                        class="far fa-dot-circle fa-2x"></i>
+                        class="far fa-dot-circle fa-lg"></i>
                      Feleletválasztós</a></li>
                <li><a class="dropdown-item" href="#" onclick="addFormElement('checkbox')"><i
-                        class="far fa-check-square fa-2x"></i> Jelölőnégyzet</a>
+                        class="far fa-check-square fa-lg"></i> Jelölőnégyzet</a>
                </li>
                <li><a class="dropdown-item" href="#" onclick="addFormElement('dropdown')"><i
-                        class="fas fa-chevron-down fa-2x"></i> Legördülő lista</a></li>
+                        class="fas fa-chevron-down fa-lg"></i> Legördülő lista</a></li>
 
                <!-- Skála -->
                <li class="dropdown-divider"></li>
                <li><a class="dropdown-item" href="#" onclick="addFormElement('scaleGrid')"><i
-                        class="fas fa-th fa-2x"></i> Feleletválasztós rács</a></li>
+                        class="fas fa-th fa-lg"></i> Feleletválasztós rács</a></li>
 
                <!-- Idő -->
                <li class="dropdown-divider"></li>
                <li><a class="dropdown-item" href="#" onclick="addFormElement('date')"><i
-                        class="fas fa-calendar-alt fa-2x"></i> Dátum</a></li>
-               <li><a class="dropdown-item" href="#" onclick="addFormElement('time')"><i class="fas fa-clock fa-2x"></i>
+                        class="fas fa-calendar-alt fa-lg"></i> Dátum</a></li>
+               <li><a class="dropdown-item" href="#" onclick="addFormElement('time')"><i class="fas fa-clock fa-lg"></i>
                      Idő</a></li>
 
                <!-- Fájl -->
                <li class="dropdown-divider"></li>
                <li><a class="dropdown-item" href="#" onclick="addFormElement('fileUpload')"><i
-                        class="fas fa-file fa-2x"></i> Fájl feltöltés</a>
+                        class="fas fa-file fa-lg"></i> Fájl feltöltés</a>
                </li>
                <!--
    
@@ -556,7 +556,7 @@ if (!in_array("admin", $_SESSION["groups"])) {
          echo 'null';
       } ?>;
 
-      console.log(formJson);
+      //console.log(formJson);
       //Send form to server
       $.ajax({
          type: "POST",
