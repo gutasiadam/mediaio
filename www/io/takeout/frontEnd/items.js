@@ -1,6 +1,66 @@
 
+$(document).ready(function () {
+    // Search
+
+    const searchInput = document.getElementById("search");
+
+    searchInput.addEventListener("input", function () {
+        const items = Array.from(document.getElementsByClassName("leltarItem"));
+        const inputValue = searchInput.value.toLowerCase();
+        const showAvailable = document.getElementById("show_unavailable").checked;
+    
+        items.forEach(item => {
+            const itemLabelElement = item.querySelector(".leltarItemLabel");
+    
+            // Restore the original item label
+            const originalItemLabel = `${itemLabelElement.parentElement.getAttribute("data-name")} - ${item.id}`;
+            const itemName = originalItemLabel.toLowerCase();
+    
+            const shouldDisplay = itemName.includes(inputValue) && (item.getAttribute("data-status") == 1 || !showAvailable);
+    
+            item.style.display = shouldDisplay ? "flex" : "none";
+    
+            if (shouldDisplay && inputValue) {
+                // Highlight matching characters
+                const regex = new RegExp(`(${inputValue})`, 'gi');
+                const highlightedLabel = originalItemLabel.replace(regex, '<span class="highlight">$1</span>');
+    
+                if (itemLabelElement.innerHTML !== highlightedLabel) {
+                    itemLabelElement.innerHTML = highlightedLabel;
+                }
+            } else if (itemLabelElement.innerHTML !== originalItemLabel) {
+                itemLabelElement.innerHTML = originalItemLabel;
+            }
+        });
+    });
+
+
+    // Add eventlistener to unavailable items
+    const show_unavailable = document.getElementById("show_unavailable");
+
+    show_unavailable.addEventListener("change", function () {
+        const items = Array.from(document.getElementsByClassName("leltarItem"));
+        const showAvailable = show_unavailable.checked;
+
+        items.forEach(item => {
+            const itemStatus = item.getAttribute("data-status");
+
+            if (showAvailable) {
+                item.style.display = itemStatus == 1 ? "flex" : "none";
+            } else {
+                item.style.display = "flex";
+            }
+        });
+
+        searchInput.dispatchEvent(new Event("input"));
+    });
+});
+
+
+
 async function loadItems() {
     const itemsList = document.getElementById("itemsList");
+    itemsList.innerHTML = "";
 
     //Get items from server
     const response = JSON.parse(await $.ajax({
@@ -21,6 +81,8 @@ async function loadItems() {
         itemElement.classList.add("form-check", "mb-1", "leltarItem");
         itemElement.setAttribute("data-takeRestrict", item.TakeRestrict);
         itemElement.setAttribute("data-status", item.Status);
+        itemElement.setAttribute("data-main-id", item.ID);
+        itemElement.setAttribute("data-name", item.Nev);
         itemElement.id = `${item.UID}`;
         if (item.Status == 1) {
             itemElement.onclick = () => {
@@ -50,6 +112,7 @@ async function loadItems() {
         itemsList.appendChild(itemElement);
     });
 
+    reloadSavedSelections();
 }
 
 
@@ -71,7 +134,7 @@ function toggleSelectItem(item) {
     }
 
     itemElement.classList.toggle("selected");
-    //updateSelectionCookie();
+    updateSelectionCookie();
 }
 
 
@@ -137,53 +200,9 @@ function deselect_all() {
 
     //decideGiveToAnotherPerson_visibility();
     //parseInt(badge.textContent = 0);
-    //updateSelectionCookie();
+    updateSelectionCookie();
 }
 
-$(document).ready(function () {
-    // Search
-
-    const searchInput = document.getElementById("search");
-
-    searchInput.addEventListener("input", function () {
-        const items = Array.from(document.getElementsByClassName("leltarItem"));
-        const inputValue = searchInput.value.toLowerCase();
-        const showAvailable = document.getElementById("show_unavailable").checked;
-
-        items.forEach(item => {
-            const itemName = item.querySelector(".leltarItemLabel").innerHTML.toLowerCase();
-
-            if (showAvailable) {
-                if (item.getAttribute("data-status") == 1) {
-                    item.style.display = itemName.includes(inputValue) ? "flex" : "none";
-                }
-            } else {
-                item.style.display = itemName.includes(inputValue) ? "flex" : "none";
-            }
-        });
-    });
-
-
-    // Add eventlistener to unavailable items
-    const show_unavailable = document.getElementById("show_unavailable");
-
-    show_unavailable.addEventListener("change", function () {
-        const items = Array.from(document.getElementsByClassName("leltarItem"));
-        const showAvailable = show_unavailable.checked;
-
-        items.forEach(item => {
-            const itemStatus = item.getAttribute("data-status");
-
-            if (showAvailable) {
-                item.style.display = itemStatus == 1 ? "flex" : "none";
-            } else {
-                item.style.display = "flex";
-            }
-        });
-
-        searchInput.dispatchEvent(new Event("input"));
-    });
-});
 
 
 
@@ -201,7 +220,6 @@ async function showPresetsModal() {
 
     //Convert rerponse to JSON
     var presets = JSON.parse(response);
-    takeoutPresets = [];
     //For each user add a select option to givetoAnotherPerson_UserName
     if (presets.length > 0) {
         $('#presetsLoading').hide();
@@ -209,25 +227,28 @@ async function showPresetsModal() {
     $('#presetsContainer').html('');
 
     presets.forEach((preset, i) => {
-        console.log(preset);
-        takeoutPresets.push(preset);
-
         const button = document.createElement('button');
         button.className = 'btn mediaBlue position-relative';
         button.id = `presetButton${i}`;
-        button.onclick = function () { addItems(i); };
-        button.innerHTML = `${preset.Name}<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">99+<span class="visually-hidden">unread messages</span></span>`;
+        button.onclick = function () { addItems(preset.Items); };
+        button.innerHTML = `${preset.Name}<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"></span>`;
 
         document.getElementById('presetsContainer').appendChild(button);
-
-        //Hide preset badges
-        presetStates.push(false);
     });
+}
 
-    for (var i = 0; i < takeoutPresets.length; i++) {
-        $('#presetButton' + i + ' span')[0].innerHTML = '';
-    }
 
+function addItems(items) {
+    console.log("Adding preset items");
+
+    items = JSON.parse(items);
+    items = items.items;
+
+    items.forEach(item => {
+        const itemElement = document.getElementById(item);
+        itemElement.click();
+    });
+    //$('#presets_Modal').modal('hide');
 }
 
 

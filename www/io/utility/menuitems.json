@@ -1,7 +1,7 @@
 { "menu": {
     "left" : [
         {"name": "index","icon": "fas fa-home fa-lg", "href": "index.php", "displayName": "Kezdőlap"},
-        {"name": "takeout","icon": "fas fa-upload fa-lg", "href": "takeout.php", "displayName": "Kivétel"},
+        {"name": "takeout","icon": "fas fa-upload fa-lg", "href": "takeout/", "displayName": "Kivétel"},
         {"name": "retrieve","icon": "fas fa-download fa-lg", "href": "retrieve.php", "displayName": "Visszahozás"},
         {"name": "projectmanager", "icon": "fas fa-tasks fa-lg", "href": "projectManager/index.php",  "displayName": "Projektek"},
         {"name": "adatok","icon": "fas fa-database fa-lg", "href": "adatok.php?Out=4&orderByField=Nev&order=ASC", "displayName": "Adatok"},
@@ -20,7 +20,7 @@
       
     ]},
     "indexTable":[
-        {"name": "takeout","icon": "fas fa-upload fa-3x", "href": "takeout.php", "displayName": "Kivétel"},
+        {"name": "takeout","icon": "fas fa-upload fa-3x", "href": "takeout/", "displayName": "Kivétel"},
         {"name": "retrieve","icon": "fas fa-download fa-3x", "href": "retrieve.php", "displayName": "Visszahozás"},
         {"name": "projectmanager", "icon": "fas fa-tasks fa-3x", "href": "./projectManager/", "displayName": "Projektek"},
         {"name": "adatok","icon": "fas fa-database fa-3x", "href": "./adatok.php?Out=4&orderByField=Nev&order=ASC", "displayName": "Adatok"},

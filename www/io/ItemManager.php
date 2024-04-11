@@ -20,11 +20,61 @@ class takeOutManager
   User takeout process. Stages the takeout as it still needs to be approved on userCheck panel.
   sets the item status to 2 (needs approvement.)
   */
-  static function stageTakeout()
+  static function stageTakeout($takeoutItems, $user)
   {
     //Accesses post and Session Data.
+    //var_dump($takeoutData);
+    $currDate = date("Y/m/d H:i:s");
+    $connection = Database::runQuery_mysqli();
+
+    //Logging into takelog
+
+    //Auto accept available
+    $takeOutAsUser = $_POST['takeoutAsUser'] ?? $_SESSION['UserUserName'];
+    $acknowledged = in_array("admin", $_SESSION['groups']) ? 1 : 0; // Stageing happens here
+    $ackBy = $acknowledged ? $_SESSION['UserUserName'] : NULL;
+
+    $sql = "INSERT INTO takelog (`ID`, `Date`, `User`, `Items`, `Event`,`Acknowledged`,`ACKBY`) 
+            VALUES (NULL, '$currDate', '$takeOutAsUser', '$takeoutItems', 'OUT', $acknowledged, '$ackBy')";
+    $result = mysqli_query($connection, $sql);
 
 
+    // Default response
+    $response = 400;
+
+    if ($result == TRUE) {
+      // Change every item as taken in the database
+
+      // If another person was selected at takeout, use that person's name
+      $logUser = $user ? $user : $_SESSION['UserUserName'];
+
+      // Prepare the SQL statement once
+      $stmt = $connection->prepare("UPDATE leltar SET Status = ?, RentBy = ? WHERE `UID` = ?");
+
+      $takeoutItems = json_decode($takeoutItems, true);
+      foreach ($takeoutItems as $i) {
+        $uid = $i["uid"];
+        $status = in_array("admin", $_SESSION['groups']) ? 0 : 2;
+
+        // Bind parameters and execute
+        $stmt->bind_param("iss", $status, $logUser, $uid);
+        $result = $stmt->execute();
+
+        if ($result != TRUE) {
+          echo "Error: " . $stmt->error;
+          break;
+        }
+      }
+
+      // If no errors occurred during the loop
+      if ($result == TRUE) {
+        $response = 200;
+      }
+    }
+
+    echo $response;
+    $connection->close();
+    return;
   }
 
   //Usercheck approved takeout process. Acknowledges the takeout process and sets the item status to 1 (taken out)
@@ -228,7 +278,7 @@ class retrieveManager
         //All good, return OK message
         echo 200;
         exit();
-        return;
+        //return;
       }
     } else { // Manual accept in usercheck required
       $sql = " 
@@ -550,8 +600,8 @@ if (isset($_POST['mode'])) {
   //Set timezone to the computer's timezone.
   date_default_timezone_set('Europe/Budapest');
 
-  if ($_POST['mode'] == 'takeOutStaging') {
-    echo takeOutManager::stageTakeout();
+  if ($_POST['mode'] == 'stageTakeout') {
+    echo takeOutManager::stageTakeout($_POST['items'], $_POST['user']);
     //Header set.
     exit();
   }

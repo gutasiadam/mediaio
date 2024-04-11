@@ -12,15 +12,18 @@ function getCookie(cName) {
 }
 
 function updateSelectionCookie() {
-    console.log("[updateSelectionCookie] - called");
+    console.log("Updating selection cookie");
+
     //Set cookie expire date to 1 day
     var d = new Date();
     d.setTime(d.getTime() + (1 * 24 * 60 * 60 * 1000));
     var expires = "expires=" + d.toUTCString();
+
     //get IDs of selected items
-    var selectedItems = $('#jstree').jstree().get_selected(); //----------------------------------- TODO
-    console.log(selectedItems);
-    document.cookie = "selectedItems=" + selectedItems + ";" + expires + ";path=/";
+    let selectedItems = document.getElementsByClassName("selected");
+    selectedItems = Array.from(selectedItems).map(item => item.id);
+    //console.log(selectedItems);
+    document.cookie = "selectedItems=" + JSON.stringify(selectedItems) + ";" + expires + ";path=/";
 }
 
 
@@ -28,16 +31,12 @@ function reloadSavedSelections() {
     //Try re-selectiong items that are saved in the takeOutItems cookie.
 
     var selecteditems = getCookie("selectedItems")
-    if (!selecteditems) {
+    selecteditems = JSON.parse(selecteditems);
+    if (!selecteditems || selecteditems.length === 0) {
         return;
-    }
-    selecteditems = selecteditems.split(",");
-    if (selecteditems[0] === "") {
-        badge.textContent = 0;
-        console.log("No items to reload");
     }
     selecteditems.forEach(element => {
         console.log("Reloading item: " + element);
-        //$('#jstree').jstree().select_node(element); -------------------------------- TODO: Fix this
+        document.getElementById(element).click();
     });
 }

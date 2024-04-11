@@ -35,7 +35,41 @@
     }
 }
 
+.selectedList {
+    max-height: 80dvh;
+    overflow: auto;
 
+    &::-webkit-scrollbar-track {
+        background: rgb(255, 255, 255);
+        /* color of the tracking area */
+    }
+
+    &::-webkit-scrollbar {
+        width: 12px;
+        /* width of the entire scrollbar */
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background-color: rgb(179, 179, 179);
+        /* color of the scroll thumb */
+        border-radius: 20px;
+    }
+}
+
+.selected-card {
+    /* Animation when appending card */
+    animation: fadeIn 0.3s;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
 
 .leltarItem {
     display: flex;
@@ -47,7 +81,6 @@
     word-wrap: break-word;
 
     @media (max-width: 575px) {
-        padding-bottom: 5px;
         .leltarItemLabel {
             font-size: larger;
         }
@@ -58,6 +91,9 @@
     background-color: #b0e4fe;
 }
 
+.highlight {
+    background-color: yellow;
+}
 
 .leltarItemLabel {
     margin-left: 5px;

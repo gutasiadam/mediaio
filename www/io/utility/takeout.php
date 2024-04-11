@@ -265,7 +265,7 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
       </div>
     </div>
   </div>
-  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+  <script src="utility/qr_scanner/html5-qrcode.min.js" type="text/javascript"></script>
   <script src="utility/qr_scanner/io_qr_scanner.js" type="text/javascript"></script>
 </body>
 
@@ -887,18 +887,6 @@ if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["grou
             displayMessageInTitle("#doTitle", "Hiba történt.");
           }
 
-        }
-      });
-    });
-
-    $('#submit').click(function () {
-      $.ajax({
-        url: "name.php",
-        method: "POST",
-        data: $('#add_name').serialize(),
-        success: function (data) {
-          //alert(data);
-          $('#add_name')[0].reset();
         }
       });
     });

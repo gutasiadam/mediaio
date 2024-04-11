@@ -17,7 +17,7 @@ error_reporting(E_ALL ^ E_NOTICE);
 
 <body style="user-select: none;">
     <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-dark">
-        <a class="navbar-brand" href="index.php">
+        <a class="navbar-brand" href="../index.php">
             <img src="../utility/logo2.png" height="50">
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
@@ -53,6 +53,21 @@ error_reporting(E_ALL ^ E_NOTICE);
             </form>
         </div>
     </nav>
+
+    <!-- Info toast -->
+    <div class="toast-container bottom-0 start-50 translate-middle-x p-3" style="z-index: 9999;">
+        <div class="toast" id="infoToast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <img src="../logo.ico" class="rounded me-2" alt="..." style="height: 20px; filter: invert(1);">
+                <strong class="me-auto" id="infoToastTitle">Projektek</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+            </div>
+        </div>
+    </div>
+
+
     <?php
     //Limit GivetoAnotherperson modal to admin users only
     if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["groups"])) {
@@ -159,8 +174,8 @@ error_reporting(E_ALL ^ E_NOTICE);
                 <div class="modal-footer" id="scanner_footer">
                     <button type="button" class="btn btn-outline-dark" id="ext_scanner" onclick="ExternalScan()">Külső
                         olvasó</button>
-                    <button type="button" class="btn btn-info" id="zoom_btn" onclick="zoomCamera()">Zoom: 2x</button>
-                    <button type="button" class="btn btn-info" id="torch_btn" onclick="startTorch()">Vaku</button>
+                    <button type="button" class="btn btn-info" id="zoom_btn" onclick="zoomCamera()" style="display: none;">Zoom: 2x</button>
+                    <button type="button" class="btn btn-info" id="torch_btn" onclick="startTorch()" style="display: none;">Vaku</button>
                     <div class="dropdown dropup">
                         <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown"
                             aria-expanded="true">
@@ -193,8 +208,8 @@ error_reporting(E_ALL ^ E_NOTICE);
                         data-bs-toggle="offcanvas" role="button" aria-controls="sidebar">Kiválasztva
                         <span id="selectedCount" class="badge bg-danger">0</span>
                     </button>
-                    <button class="btn btn-sm btn-success col-lg-auto mb-1" id="takeout2BTN"
-                        style='margin-bottom: 6px'>Mehet</button>
+                    <button class="btn btn-sm btn-success col-lg-auto mb-1" id="takeout2BTN" style='margin-bottom: 6px'
+                        onclick="submitTakout()">Mehet</button>
                     <button class="btn btn-sm btn-danger col-lg-auto mb-1 text-nowrap" id="clear"
                         style='margin-bottom: 6px' data-bs-target="#clear_Modal" data-bs-toggle="modal">Összes
                         törlése</button>
@@ -249,12 +264,15 @@ error_reporting(E_ALL ^ E_NOTICE);
                         <div class="col-12 selectedList" id="offcanvasList">
                         </div>
                         <button class="btn btn-sm btn-success col-lg-auto mb-1" data-bs-dismiss="offcanvas"
-                            id="takeout2BTN-mobile">Mehet</button>
+                            id="takeout2BTN-mobile" onclick="submitTakout()">Mehet</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    <script src="../utility/qr_scanner/io_qr_scanner.js" type="text/javascript"></script>
     <!-- Navigation back to top -->
     <div id='toTop'><i class="fas fa-chevron-up"></i></div>
 </body>
@@ -266,7 +284,6 @@ error_reporting(E_ALL ^ E_NOTICE);
 
     $(document).ready(function () {
         loadPage();
-
 
         $('#itemsList').scroll(function () {
             if ($(this).scrollTop()) {
@@ -288,18 +305,53 @@ error_reporting(E_ALL ^ E_NOTICE);
         }, { passive: false });
 
 
-        async function loadPage() {
-            //Load items
-            await loadItems();
-            //Load selected items
-            await loadTooltips();
-        }
     });
+
+    async function loadPage() {
+        //Load items
+        await loadItems();
+        //Load selected items
+        await loadTooltips();
+    }
+
 
     // Load tooltips
     async function loadTooltips() {
         //Load tooltips
         $('[data-bs-toggle="tooltip"]').tooltip();
+    }
+
+
+    async function submitTakout() {
+        const selectedItems = document.getElementsByClassName("selected");
+
+        const takeoutItems = Array.from(selectedItems).map(item => ({
+            id: item.getAttribute("data-main-id"),
+            uid: item.id,
+            name: item.getAttribute("data-name"),
+        }));
+
+        console.log(takeoutItems);
+
+        const response = await $.ajax({
+            url: "../ItemManager.php",
+            method: "POST",
+            data: {
+                mode: "stageTakeout",
+                items: JSON.stringify(takeoutItems),
+                user: null, // TODO: Implement user selection
+            }
+        });
+
+        console.log(response);
+
+        if (response == 200) {
+            deselect_all();
+            successToast("Sikeres kivétel!");
+            loadPage();
+        } else {
+            errorToast("Hiba történt a kivétel során!");
+        }
     }
 </script>
 

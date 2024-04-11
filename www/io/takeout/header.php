@@ -19,16 +19,12 @@
   <title>Arpad Media IO</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <script src="https://unpkg.com/html5-qrcode" type="text/javascript" defer></script>
-  <script src="../utility/qr_scanner/io_qr_scanner.js" type="text/javascript" defer></script>
-
-  <link href='style.scss' rel='stylesheet'/>
+  <link href='style.scss' rel='stylesheet' />
 
   <script src="./frontEnd/items.js" type="text/javascript"></script>
-  <script src="./frontEnd/fetchData.js" type="text/javascript"></script>
   <script src="./frontEnd/qrManager.js" type="text/javascript"></script>
   <script src="./frontEnd/cookieManager.js" type="text/javascript"></script>
-
+  <script src="./frontEnd/toastManager.js" type="text/javascript" defer></script>
 
 </head>
 <div class="UI_loading"><img class="loadingAnimation" src="../utility/mediaIO_loading_logo.gif"></div>
