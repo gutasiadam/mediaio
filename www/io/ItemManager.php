@@ -546,6 +546,23 @@ class itemDataManager
 class itemHistoryManager
 {
   #TODO: Take code from Pathfinder and implement it here.
+
+  static function getItemHistory($itemUID)
+  {
+    $sql = "SELECT * FROM `takelog` WHERE JSON_CONTAINS(Items, " . "'" . "{" . '"uid" : "' . $itemUID . '"}' . "'" . ") ORDER BY `Date` DESC";
+    //Get a new database connection
+    $connection = Database::runQuery_mysqli();
+    $stmt = $connection->prepare($sql);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $rows = array();
+    while ($row = $result->fetch_assoc()) {
+      $rows[] = $row;
+    }
+    $result = json_encode($rows);
+    return $result;
+  }
+
 }
 
 class userManager
@@ -602,46 +619,30 @@ if (isset($_POST['mode'])) {
 
   if ($_POST['mode'] == 'stageTakeout') {
     echo takeOutManager::stageTakeout($_POST['items'], $_POST['user']);
-    //Header set.
-    exit();
   }
   if ($_POST['mode'] == 'takeOutApproval') {
     echo takeOutManager::approveTakeout($_POST['value']);
-    //echo $_POST['value'] ;
-    //Header set.
-    exit();
   }
   if ($_POST['mode'] == 'retrieveStaging') {
     echo retrieveManager::stageRetrieve();
-    //echo $_POST['value'] ;
-    //Header set.
-    exit();
   }
   if ($_POST['mode'] == 'retrieveApproval') {
     echo retrieveManager::approveRetrieve($_POST['value']);
-    //echo $_POST['value'] ;
-    //Header set.
-    exit();
   }
   if ($_POST['mode'] == 'getItems') {
     echo itemDataManager::getItems();
-    //echo $_POST['value'] ;
-    //Header set.
-    exit();
+  }
+
+  if ($_POST['mode'] == 'getItemHistory') {
+    echo itemHistoryManager::getItemHistory($_POST['itemUID']);
   }
 
   if ($_POST['mode'] == 'getUsers') {
     echo userManager::getUsers();
-    //echo $_POST['value'] ;
-    //Header set.
-    exit();
   }
 
   if ($_POST['mode'] == 'getPresets') {
     echo userManager::getPresets();
-    //echo $_POST['value'] ;
-    //Header set.
-    exit();
   }
 
   if ($_POST['mode'] == 'getProfileItemCounts') {
@@ -650,6 +651,6 @@ if (isset($_POST['mode'])) {
     echo itemDataManager::getToBeUserCheckedCount();
     echo ",";
     echo itemDataManager::getUserItemCount();
-    exit();
   }
+  exit();
 }

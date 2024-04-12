@@ -40,7 +40,7 @@ error_reporting(E_ALL ^ E_NOTICE);
                     </a>
                 </li>
             </ul>
-            <form method='post' class="form-inline my-2 my-lg-0" action=utility/userLogging.php>
+            <form method='post' class="form-inline my-2 my-lg-0" action=../utility/userLogging.php>
                 <button id="logoutBtn" class="btn btn-danger my-2 my-sm-0 logout-button" name='logout-submit'
                     type="submit">Kijelentkezés</button>
                 <script type="text/javascript">
@@ -270,9 +270,7 @@ error_reporting(E_ALL ^ E_NOTICE);
             </div>
         </div>
     </div>
-
-    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
-    <script src="../utility/qr_scanner/io_qr_scanner.js" type="text/javascript"></script>
+    
     <!-- Navigation back to top -->
     <div id='toTop'><i class="fas fa-chevron-up"></i></div>
 </body>

@@ -166,10 +166,11 @@ class formManager
   static function submitAnswer($uid, $id, $formHash, $ip, $answers, $form)
   {
     // Prevent injection
-    if (preg_match('/[<>]/', $answers)) {
-      echo 500;
-      exit();
-    }
+    $answers = json_decode($answers, true);
+    array_walk_recursive($answers, function (&$value) {
+      $value = htmlspecialchars($value);
+    });
+    $answers = json_encode($answers, JSON_UNESCAPED_UNICODE);
     if ($id == -1) {
       $id = formManager::getIdFromHash($formHash);
     }

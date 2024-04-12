@@ -270,6 +270,14 @@ class projectManager
     static function saveTask()
     {
         $settings = json_decode($_POST['task'], true);
+
+        // Prevent XSS attacks
+        $settings['Task_title'] = htmlspecialchars($settings['Task_title']);
+        $settings['fillOutText'] = htmlspecialchars($settings['fillOutText']);
+
+        array_walk_recursive($settings['Task_data'], function (&$item) {
+            $item = htmlspecialchars($item);
+        });
         $settings['Task_data'] = json_encode($settings['Task_data']);
 
 
@@ -489,6 +497,10 @@ class projectManager
         if (in_array("admin", $_SESSION['groups'])) {
 
             $settings = json_decode($_POST['settings'], true);
+
+            // Prevent XSS attacks
+            $settings['Name'] = htmlspecialchars($settings['Name']);
+            $settings['Description'] = htmlspecialchars($settings['Description']);
 
             $connection = Database::runQuery_mysqli(self::$schema);
 

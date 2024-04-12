@@ -40,51 +40,6 @@ button.mediaBlue {
 }
 
 
-.jstree-hidden {
-    display: none;
-}
-
-.jstree-default .jstree-anchor.jstree-clicked i.jstree-icon.jstree-checkbox {
-    background-image: url("../utility/jstree/checked.svg") !important;
-    background-position: 0 0 !important;
-    margin: 0 7px 2px -12px !important;
-}
-
-.jstree-default .jstree-anchor i.jstree-icon.jstree-checkbox {
-    background-image: url("../utility/jstree/empty.svg") !important;
-    background-position: 0 0 !important;
-    margin: 0 7px 0 -12px !important;
-}
-
-.jstree-default .jstree-node {
-
-    @media (max-width: 575px) {
-        padding-bottom: 10px;
-
-        .jstree-anchor {
-            font-size: large;
-        }
-    }
-
-    padding-bottom: 5px;
-    height: auto;
-
-    .jstree-wholerow {
-        display: inline;
-    }
-
-    .jstree-icon {
-        display: inline-block;
-    }
-
-    .jstree-anchor {
-        white-space: normal;
-        word-wrap: break-word;
-        width: 90vw;
-        display: inline;
-    }
-}
-
 #takeout-container {
     display: flex;
     justify-content: space-between;
@@ -143,41 +98,6 @@ button.mediaBlue {
     align-items: center;
 }
 
-
-#jstree {
-    display: block;
-    width: 100%;
-    overflow: auto;
-    white-space: nowrap;
-    position: relative;
-    margin-top: 5px;
-    margin-left: auto;
-    margin-right: auto;
-    height: calc(100vh - 290px);
-    min-height: 300px;
-
-    &::-webkit-scrollbar-track {
-        background: rgb(255, 255, 255);
-        /* color of the tracking area */
-    }
-
-    &::-webkit-scrollbar {
-        width: 12px;
-        /* width of the entire scrollbar */
-    }
-
-    &::-webkit-scrollbar-thumb {
-        background-color: rgb(179, 179, 179);
-        /* color of the scroll thumb */
-        border-radius: 20px;    
-    }
-
-    @media (max-width: 575px) {
-        height: calc(100dvh - 350px);
-        font-size: large;
-        width: 100%;
-    }
-}
 
 #toTop {
     position: fixed;
@@ -321,25 +241,6 @@ button.mediaBlue {
         .btn {
             margin-bottom: 6px;
             width: fit-content;
-        }
-
-        .btn-secondary:active,
-        .btn-secondary:hover {
-            color: #fff !important;
-            background-color: #6c757d !important;
-            border-color: #6c757d !important;
-        }
-
-        .btn-outline-secondary:active,
-        .btn-outline-secondary:hover {
-            color: #6c757d !important;
-            background-color: #fff !important;
-            border-color: #6c757d !important;
-        }
-
-        .btn:focus,
-        .btn:hover {
-            text-decoration: none !important;
         }
 
         display: flex;

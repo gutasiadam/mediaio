@@ -62,8 +62,8 @@ if (isset($_POST['method'])){
     }
 
     if($_POST['method']=='getServiceItems'){
-        $workID=$_POST['workID'];
-        $n=$_POST["user"];
+        //$workID=$_POST['workID'];
+        //$n=$_POST["user"];
         $sql="SELECT UID, Nev FROM leltar WHERE RentBy='Service';";
         $connection=Database::runQuery_mysqli();
         //Store result in array
@@ -82,7 +82,7 @@ if (isset($_POST['method'])){
     if($_POST['method']=='returnServiceItem'){
         $uid=$_POST['UID'];
         $dataArray=array();
-        array_push($dataArray,array("UID" => $uid,"name" => $_POST['itemName']));
+        array_push($dataArray,array("uid" => $uid,"name" => $_POST['itemName']));
         $sql="UPDATE leltar SET RentBy=NULL, Status=1 WHERE UID='".$uid."';";
         $sql.="INSERT INTO takelog VALUES (NULL, '".date("Y/m/d H:i:s")."','Service','".json_encode($dataArray)."','IN',1,'Service');";
         $connection=Database::runQuery_mysqli();
