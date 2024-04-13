@@ -25,7 +25,7 @@ if (isset($_POST['method'])){
         //Encode useritem as json
         $damageItem=array(
         [
-            'UID' => $_POST['userItems'],
+            'uid' => $_POST['userItems'],
             'name' => $_POST['itemName']]
         );
 
@@ -41,12 +41,6 @@ if (isset($_POST['method'])){
         if(!$connection->multi_query($sql)){
             echo "Error message: %s\n".$connection->error;
             exit();
-        }
-
-        //If not successful
-        if(!$result){
-            //echo the results error
-            echo $result;
         }
 
         $subject = 'Sérülés - '.$_POST['userItems'];
@@ -70,7 +64,7 @@ if (isset($_POST['method'])){
         $resultItems=array();
         if ($result = $connection->query($sql)) {
           while ($row = $result->fetch_assoc()) {
-            $resultItems[] = array('UID'=> $row['UID'],'name'=> $row['Nev']);
+            $resultItems[] = array('uid'=> $row['UID'],'name'=> $row['Nev']);
           }
           echo(json_encode($resultItems));
         }else{
@@ -80,7 +74,7 @@ if (isset($_POST['method'])){
     }
 
     if($_POST['method']=='returnServiceItem'){
-        $uid=$_POST['UID'];
+        $uid=$_POST['uid'];
         $dataArray=array();
         array_push($dataArray,array("uid" => $uid,"name" => $_POST['itemName']));
         $sql="UPDATE leltar SET RentBy=NULL, Status=1 WHERE UID='".$uid."';";

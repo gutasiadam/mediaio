@@ -21,14 +21,8 @@
 
   <link href='style.scss' rel='stylesheet' />
 
-  <script src="./frontEnd/retrieve.js" type="text/javascript"></script>
-  <script src="./frontEnd/qrManager.js" type="text/javascript"></script>
-  <script src="./frontEnd/toastManager.js" type="text/javascript" defer></script>
+  <script src="./frontEnd/stats.js" type="text/javascript"></script>
   <script src="./frontEnd/cookieManager.js" type="text/javascript"></script>
-
-
-  <script src="../utility/qr_scanner/html5-qrcode.min.js" type="text/javascript" defer></script>
-  <script src="../utility/qr_scanner/io_qr_scanner.js" type="text/javascript" defer></script>
 
 </head>
 <div class="UI_loading"><img class="loadingAnimation" src="../utility/mediaIO_loading_logo.gif"></div>

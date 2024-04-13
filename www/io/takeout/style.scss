@@ -59,6 +59,18 @@
 .selected-card {
     /* Animation when appending card */
     animation: fadeIn 0.3s;
+
+    &.special {
+        color: rgb(255, 76, 76);
+    }
+
+    &.event {
+        color: rgb(29, 124, 29);
+    }
+
+    &.studio {
+        color: rgb(64, 64, 168);
+    }
 }
 
 @keyframes fadeIn {
@@ -84,6 +96,18 @@
         .leltarItemLabel {
             font-size: larger;
         }
+    }
+
+    &.special {
+        color: rgb(255, 76, 76);
+    }
+
+    &.event {
+        color: rgb(29, 124, 29);
+    }
+
+    &.studio {
+        color: rgb(64, 64, 168);
     }
 }
 

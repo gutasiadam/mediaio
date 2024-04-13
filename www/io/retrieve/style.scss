@@ -1,11 +1,42 @@
-
-
-.itemsToRetrieve{
-    max-width: 600px;
+.itemsToRetrieve {
+    max-width: 1200px;
     width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+    margin: 0 auto;
+
+    max-height: 75dvh;
+    overflow: auto;
+
+    &::-webkit-scrollbar-track {
+        background: rgb(255, 255, 255);
+        /* color of the tracking area */
+    }
+
+    &::-webkit-scrollbar {
+        width: 8px;
+        /* width of the entire scrollbar */
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background-color: rgb(179, 179, 179);
+        /* color of the scroll thumb */
+        border-radius: 20px;
+    }
+
+    .itemCard {
+        cursor: not-allowed;
+        opacity: 0.5;
+        transition: all 0.2s;
+    }
+
+    .selectable {
+        cursor: pointer;
+        opacity: 1;
+        transition: all 0.2s;
+    }
+
 }
 
 
@@ -17,20 +48,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-
-    #submit-retrieve {
-        align-items: center;
-        justify-content: center;
-
-        #intact {
-            width: 70dvw;
-            max-width: 400px;
-        }
-
-        #send_retrieve {
-            width: 100px;
-        }
-    }
+    max-height: 75dvh;
 
     #retrieve-option-buttons {
         .btn {
@@ -56,40 +74,58 @@
 
         }
     }
+}
+
+#AnnounceDamage {
+    &.animate_shakeY {
+        transition: all 1s cubic-bezier(.36, .07, .19, .97);
+        animation: shakeY 1s cubic-bezier(.36, .07, .19, .97) both;
+    }
+}
 
 
+#manualHolder {
+    width: fit-content;
+    padding: 0;
 
-    #retrieve-row {
-        width: 60vw;
-        margin-left: auto;
-        margin-right: auto;
-        overflow: auto;
-        max-height: 75dvh;
+    &.animate_shakeY {
+        transition: all 1s cubic-bezier(.36, .07, .19, .97);
+        animation: shakeY 1s cubic-bezier(.36, .07, .19, .97) both;
 
-        &::-webkit-scrollbar-track {
-            background: rgb(255, 255, 255);
-            /* color of the tracking area */
-        }
-    
-        &::-webkit-scrollbar {
-            width: 8px;
-            /* width of the entire scrollbar */
-        }
-    
-        &::-webkit-scrollbar-thumb {
-            background-color: rgb(179, 179, 179);
-            /* color of the scroll thumb */
-            border-radius: 20px;    
-        }
-
-        @media (max-width: 990px) {
-            width: 100%;
-            max-height: 68dvh;
-            margin: 0;
+        label {
+            color: red;
         }
     }
+}
 
-    @media (max-width: 990px) {
-        height: calc(100dvh - 90px);
+#submission {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+}
+
+@keyframes shakeY {
+
+    10%,
+    90% {
+        transform: translate3d(0, -1px, 0);
+    }
+
+    20%,
+    80% {
+        transform: translate3d(0, 2px, 0);
+    }
+
+    30%,
+    50%,
+    70% {
+        transform: translate3d(0, -4px, 0);
+    }
+
+    40%,
+    60% {
+        transform: translate3d(0, 4px, 0);
     }
 }

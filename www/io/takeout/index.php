@@ -174,8 +174,10 @@ error_reporting(E_ALL ^ E_NOTICE);
                 <div class="modal-footer" id="scanner_footer">
                     <button type="button" class="btn btn-outline-dark" id="ext_scanner" onclick="ExternalScan()">Külső
                         olvasó</button>
-                    <button type="button" class="btn btn-info" id="zoom_btn" onclick="zoomCamera()" style="display: none;">Zoom: 2x</button>
-                    <button type="button" class="btn btn-info" id="torch_btn" onclick="startTorch()" style="display: none;">Vaku</button>
+                    <button type="button" class="btn btn-info" id="zoom_btn" onclick="zoomCamera()"
+                        style="display: none;">Zoom: 2x</button>
+                    <button type="button" class="btn btn-info" id="torch_btn" onclick="startTorch()"
+                        style="display: none;">Vaku</button>
                     <div class="dropdown dropup">
                         <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown"
                             aria-expanded="true">
@@ -270,7 +272,7 @@ error_reporting(E_ALL ^ E_NOTICE);
             </div>
         </div>
     </div>
-    
+
     <!-- Navigation back to top -->
     <div id='toTop'><i class="fas fa-chevron-up"></i></div>
 </body>
@@ -351,6 +353,20 @@ error_reporting(E_ALL ^ E_NOTICE);
             errorToast("Hiba történt a kivétel során!");
         }
     }
+
+    const roleLevel = <?php
+    if (in_array("system", $_SESSION["groups"])) {
+        echo 5;
+    } else if (in_array("admin", $_SESSION["groups"])) {
+        echo 4;
+    } else if (in_array("event", $_SESSION["groups"])) {
+        echo 3;
+    } else if (in_array("studio", $_SESSION["groups"])) {
+        echo 2;
+    } else {
+        echo 0;
+    }
+    ?>;
 </script>
 
 </html>

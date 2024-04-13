@@ -230,6 +230,22 @@ class takeOutManager
 
 class retrieveManager
 {
+  // Function to list the items that are taken out by the user
+  static function listUserItems()
+  {
+    //Get the items that are currently by the user
+    $connection = Database::runQuery_mysqli();
+    $sql = ("SELECT * FROM `leltar` WHERE `RentBy`='" . $_SESSION['UserUserName'] . "' AND Status=0");
+    $result = $connection->query($sql);
+    $connection->close();
+    $items = array();
+    while ($row = $result->fetch_assoc()) {
+      $items[] = $row;
+    }
+
+    return json_encode($items);
+  }
+
   /*
   User takeout process. Stages the takeout as it still needs to be approved on userCheck panel.
   sets the item status to 2 (needs approvement.)
@@ -399,30 +415,6 @@ class itemDataManager
     $sql = $sql . " ORDER BY " . $_GET['orderByField'] . " " . $_GET['order'];
     //echo $sql;
     return Database::runQuery($sql);
-  }
-  /** Generates JSON data for takeout page, showing available and unavailable items. */
-  static function generateTakeoutJSON()
-  {
-    $mysqli = Database::runQuery_mysqli();
-    $rows = array();
-    $mysqli->set_charset("utf8");
-    $query = "SELECT Nev, ID, UID, Category, TakeRestrict, ConnectsToItems, Status FROM leltar"; //AND Status=1 
-    if ($result = $mysqli->query($query)) {
-      while ($row = $result->fetch_assoc()) {
-        if ($row['Status'] != "1") {
-          $row['state'] = ['disabled' => true];
-        } else {
-          $row['state'] = ['disabled' => false];
-        }
-        $rows[] = $row;
-      }
-      $a = json_encode($rows);
-      //var_dump($a);
-      $itemsJSONFile = fopen(__DIR__ . '/data/takeOutItems.json', 'w');
-      fwrite($itemsJSONFile, $a);
-      fclose($itemsJSONFile);
-    }
-    return;
   }
 
   //static function listItems()
@@ -623,6 +615,9 @@ if (isset($_POST['mode'])) {
   if ($_POST['mode'] == 'takeOutApproval') {
     echo takeOutManager::approveTakeout($_POST['value']);
   }
+  if ($_POST['mode'] == 'listUserItems') {
+    echo retrieveManager::listUserItems();
+  }
   if ($_POST['mode'] == 'retrieveStaging') {
     echo retrieveManager::stageRetrieve();
   }
@@ -631,6 +626,10 @@ if (isset($_POST['mode'])) {
   }
   if ($_POST['mode'] == 'getItems') {
     echo itemDataManager::getItems();
+  }
+
+  if ($_POST['mode'] == 'listByCriteria') {
+    echo itemDataManager::listByCriteria($_POST['itemState'], $_POST['orderCriteria']);
   }
 
   if ($_POST['mode'] == 'getItemHistory') {

@@ -8,23 +8,23 @@ $(document).ready(function () {
         const items = Array.from(document.getElementsByClassName("leltarItem"));
         const inputValue = searchInput.value.toLowerCase();
         const showAvailable = document.getElementById("show_unavailable").checked;
-    
+
         items.forEach(item => {
             const itemLabelElement = item.querySelector(".leltarItemLabel");
-    
+
             // Restore the original item label
             const originalItemLabel = `${itemLabelElement.parentElement.getAttribute("data-name")} - ${item.id}`;
             const itemName = originalItemLabel.toLowerCase();
-    
-            const shouldDisplay = itemName.includes(inputValue) && (item.getAttribute("data-status") == 1 || !showAvailable);
-    
+
+            const shouldDisplay = itemName.includes(inputValue) && (item.getAttribute("data-available") == "true" || !showAvailable);
+
             item.style.display = shouldDisplay ? "flex" : "none";
-    
+
             if (shouldDisplay && inputValue) {
                 // Highlight matching characters
                 const regex = new RegExp(`(${inputValue})`, 'gi');
                 const highlightedLabel = originalItemLabel.replace(regex, '<span class="highlight">$1</span>');
-    
+
                 if (itemLabelElement.innerHTML !== highlightedLabel) {
                     itemLabelElement.innerHTML = highlightedLabel;
                 }
@@ -43,10 +43,11 @@ $(document).ready(function () {
         const showAvailable = show_unavailable.checked;
 
         items.forEach(item => {
-            const itemStatus = item.getAttribute("data-status");
+            const itemAvailable = item.getAttribute("data-available") == "true";
+            console.log(itemAvailable);
 
             if (showAvailable) {
-                item.style.display = itemStatus == 1 ? "flex" : "none";
+                item.style.display = itemAvailable ? "flex" : "none";
             } else {
                 item.style.display = "flex";
             }
@@ -84,16 +85,52 @@ async function loadItems() {
         itemElement.setAttribute("data-main-id", item.ID);
         itemElement.setAttribute("data-name", item.Nev);
         itemElement.id = `${item.UID}`;
-        if (item.Status == 1) {
-            itemElement.onclick = () => {
-                toggleSelectItem(item);
-            };
-        }
 
         const checkBox = document.createElement("input");
         checkBox.type = "checkbox";
-        if (item.Status == 0) {
-            checkBox.disabled = true;
+        switch (item.TakeRestrict) {
+            case '*':
+                checkBox.disabled = roleLevel < 5 || item.Status == 0 || item.Status == 2;
+                itemElement.setAttribute("data-available", roleLevel >= 5 ? "true" : "false");
+                if (item.Status == 1 && roleLevel >= 5) {
+                    itemElement.onclick = () => {
+                        toggleSelectItem(item);
+                    };
+                }
+                itemElement.classList.add("special");
+                break;
+            case 'e':
+                checkBox.disabled = roleLevel < 3 || item.Status == 0 || item.Status == 2;
+                itemElement.setAttribute("data-available", roleLevel >= 3 ? "true" : "false");
+                if (item.Status == 1 && roleLevel >= 3) {
+                    itemElement.onclick = () => {
+                        toggleSelectItem(item);
+                    };
+                }
+                itemElement.classList.add("event");
+                break;
+            case 's':
+                checkBox.disabled = roleLevel < 2 || item.Status == 0 || item.Status == 2;
+                itemElement.setAttribute("data-available", roleLevel >= 2 ? "true" : "false");
+                if (item.Status == 1 && roleLevel >= 2) {
+                    itemElement.onclick = () => {
+                        toggleSelectItem(item);
+                    };
+                }
+                itemElement.classList.add("studio");
+                break;
+            default:
+                checkBox.disabled = item.Status == 0 || item.Status == 2;
+                itemElement.setAttribute("data-available", "true");
+                if (item.Status == 1) {
+                    itemElement.onclick = () => {
+                        toggleSelectItem(item);
+                    };
+                }
+                break;
+        }
+        if (item.Status == 0 || item.Status == 2) {
+            itemElement.setAttribute("data-available", "false");
         }
         checkBox.classList.add("form-check-input", "leltarItemCheckbox");
 

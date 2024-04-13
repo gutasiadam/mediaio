@@ -50,6 +50,19 @@ include "header.php";
   </div>
 </nav>
 
+<!-- Info toast -->
+<div class="toast-container bottom-0 start-50 translate-middle-x p-3" style="z-index: 9999;">
+  <div class="toast" id="infoToast" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast-header">
+      <img src="../logo.ico" class="rounded me-2" alt="..." style="height: 20px; filter: invert(1);">
+      <strong class="me-auto" id="infoToastTitle">Projektek</strong>
+      <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+    <div class="toast-body">
+    </div>
+  </div>
+</div>
+
 <!-- Scanner Modal -->
 <div class="modal fade" id="scanner_Modal" tabindex="-1" role="dialog" aria-labelledby="scanner_ModalLabel"
   aria-hidden="true">
@@ -97,31 +110,17 @@ include "header.php";
 </div>
 <!-- End of Scanner Modal -->
 
-<body>
-  <h2 class="rainbow" id="doTitle">Visszahozás</h2>
-  <div class="container" id="retrieve-container">
-    <!-- Announce Damage button -->
-    <div class="row" id="retrieve-option-buttons">
-      <button class="btn btn-danger" onclick="AnnounceDamage()">Sérülés bejelentése <i
-          class="fas fa-file-alt"></i></button>
-      <button type="button" class="btn btn-warning" onclick="showScannerModal()">Szkenner <i
-          class="fas fa-qrcode"></i></button>
-      <input type="checkbox" class="btn-check" autocomplete="off" id="manual_Retrieve">
-      <label class="btn btn-outline-secondary" for="manual_Retrieve">Visszahozás kézzel</label>
-    </div>
 
-    <div class="row itemsToRetrieve">
-      <div class="col">
-        Nálad levő eszközök:
+<!-- Confirmation Modal -->
+<div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Visszahozás megerősítése</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <div class="col">
-        Kiválasztott eszközök:
-      </div>
-    </div>
-
-    <div class="row" id="submit-retrieve">
-      <!-- Displays a tickable when items are selected, to approve tekaout process -->
-      <div class="col" id="intact">
+      <div class="modal-body">
         <div class="form-check intactForm" id="if_intact">
           <input class="form-check-input" type="checkbox" value="" id="intactItems">
           <label class="form-check-label" for="intactItems">
@@ -130,13 +129,33 @@ include "header.php";
           </label>
         </div>
       </div>
-      <!-- Send button holder -->
-      <div class="" id="send_retrieve">
-        <button class="send btn btn-success">
-          <i class="fas fa-check-square fa-4x"></i>
-        </button>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Mégse</button>
+        <button type="button" class="btn btn-success" onclick="submitRetrieve();">Mehet</button>
       </div>
     </div>
+  </div>
+</div>
+
+
+<body>
+  <h2 class="rainbow" id="doTitle">Visszahozás</h2>
+  <div class="container" id="retrieve-container">
+    <!-- Announce Damage button -->
+    <div class="row mb-3" id="retrieve-option-buttons">
+      <button class="btn btn-danger" onclick="AnnounceDamage()" id="AnnounceDamage">Sérülés bejelentése <i
+          class="fas fa-file-alt"></i></button>
+      <button type="button" class="btn btn-warning" onclick="showScannerModal()">Szkenner <i
+          class="fas fa-qrcode"></i></button>
+      <div id="manualHolder">
+        <input type="checkbox" class="btn-check" autocomplete="off" id="manual_Retrieve">
+        <label class="btn btn-outline-secondary" for="manual_Retrieve">Visszahozás kézzel</label>
+      </div>
+    </div>
+
+    <div class="itemsToRetrieve" id="itemsHolder">
+    </div>
+    <button class="btn btn-success w-50 mb-3" id="submission" data-bs-target="#confirmModal" data-bs-toggle="modal">Visszahozás</button>
 
     <div id='toTop'><i class="fas fa-chevron-down"></i></div>
 </body>
