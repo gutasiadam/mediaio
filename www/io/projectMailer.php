@@ -18,7 +18,7 @@ class ProjectMailer
     public static function sendMail($to, $subject, $message)
     {
         $mail = new MailService();
-        return $mail->sendContactMail(null, $to, $subject, $message);
+        return $mail->sendContactMail('Média IO - projektek', $to, $subject, $message);
     }
 
     public static function sendNewProjectMail($project_id, $member)
@@ -30,13 +30,32 @@ class ProjectMailer
         $email = $result->fetch_assoc()['email'];
         $name = $result->fetch_assoc()['firstName'];
 
-        $sql = "SELECT `Name` FROM `projects` WHERE `ID`=" . $_POST['id'] . ";";
+        $sql = "SELECT `Name`,`managerUID` FROM `projects` WHERE `ID`=" . $_POST['id'] . ";";
         $result = $connection->query($sql);
         $projectName = $result->fetch_assoc()['Name'];
+        $managerUID = $result->fetch_assoc()['managerUID'];
+
+        $sql = "SELECT `firstName`, `lastName` FROM `users` WHERE `idUsers`=" . $managerUID . ";";
+        $result = $connection->query($sql);
+        $managerName = $result->fetch_assoc()['lastName'] . " " . $result->fetch_assoc()['firstName'];
 
         $connection->close();
 
-        $message = "Kedves " . $name . "! \n Hozzá lettél adva a " . $projectName . " projekthez.";
+        //E-mail küldése a felhasználónak
+        $message = '
+                    <html>
+                    <head>
+                    <title>Arpad Media IO</title>
+                    </head>
+                    <body>
+                    <h3>Kedves ' . $name . '!</h3>
+                    <p>Hozzá lettél adva a "' . $projectName . '" projekthez.</p>
+
+                    <i>Ez egy tájékoztató üzenet, kérlek ne válaszolj rá!</i>
+                    <h5>Projekt vezető: <br> ' . $managerName . '</h5>
+                    </body>
+                    </html>
+                    ';
         $subject = "Hozzá lettél adva a " . $projectName . " projekthez.";
 
         self::sendMail($email, $subject, $message);
