@@ -444,8 +444,20 @@ class itemDataManager
     return $result;
   }
 
-  static function listByCriteria($itemState, $orderCriteria)
+  static function listByCriteria($itemState, $orderCriteria, $orderDirection = 'asc', $takeRestrict = 'none')
   {
+    $takeRestrictArray = array(
+      'medias' => 'TakeRestrict=""',
+      'studios' => 'TakeRestrict="s"',
+      'eventes' => 'TakeRestrict="e"',
+      'nonRentable' => 'TakeRestrict="*"',
+      'mediaAndStudio' => 'TakeRestrict="" OR TakeRestrict="s"',
+      'mediaAndEvent' => 'TakeRestrict="" OR TakeRestrict="e"',
+      'studioAndEvent' => 'TakeRestrict="s" OR TakeRestrict="e"',
+      'mediaAndStudioAndEvent' => 'TakeRestrict="" OR TakeRestrict="s" OR TakeRestrict="e"',
+      'none' => '1=1',
+    );
+
     $stateArray = array(
       'in' => 'RentBy IS NULL',
       'out' => 'RentBy IS NOT NULL',
@@ -462,7 +474,12 @@ class itemDataManager
       'type' => 'Tipus',
     );
 
-    $sql = "SELECT * FROM leltar WHERE " . $stateArray[$itemState] . " ORDER BY " . $orderbyArray[$orderCriteria];
+    $orderDirARR = array(
+      'asc' => 'ASC',
+      'desc' => 'DESC',
+    );
+
+    $sql = "SELECT * FROM leltar WHERE " . $takeRestrictArray[$takeRestrict] . " AND " . $stateArray[$itemState] . " ORDER BY " . $orderbyArray[$orderCriteria] . " " . $orderDirARR[$orderDirection];
     //Get a new database connection
     $connection = Database::runQuery_mysqli();
     $stmt = $connection->prepare($sql);
@@ -629,7 +646,7 @@ if (isset($_POST['mode'])) {
   }
 
   if ($_POST['mode'] == 'listByCriteria') {
-    echo itemDataManager::listByCriteria($_POST['itemState'], $_POST['orderCriteria']);
+    echo itemDataManager::listByCriteria($_POST['itemState'], $_POST['orderCriteria'], $_POST['orderDirection'], $_POST['takeRestrict']);
   }
 
   if ($_POST['mode'] == 'getItemHistory') {

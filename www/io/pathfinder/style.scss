@@ -32,13 +32,21 @@
     flex-direction: column;
     flex-wrap: wrap;
     max-width: 700px;
+    position: relative;
 }
 
 #itemsList {
-    position: relative;
+    position: absolute;
     z-index: 9999;
     overflow: auto;
     max-height: 20dvh;
+    top: 40px;
+    max-width: inherit;
+    width: 95%;
+
+    padding: 5px;
+    
+    background-color: white;
 
     &::-webkit-scrollbar-track {
         background: rgb(255, 255, 255);

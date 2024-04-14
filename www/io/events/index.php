@@ -160,9 +160,9 @@ if (!isset($_SESSION['userId'])) {
   </div>
 
 
-  <table class="table table-bordered" style="height: 85%">
+  <table class="table table-bordered" style="height: 85dvh">
     <tr>
-      <td width=100%>
+      <td style="height: 85dvh">
         <div id='calendar'>
       </td>
       </div>

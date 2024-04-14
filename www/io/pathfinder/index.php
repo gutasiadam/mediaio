@@ -64,7 +64,7 @@ include "header.php";
     <div class="row justify-content-center">
       <div class="searchField">
         <div class="input-group">
-          <input type="text" class="form-control" placeholder="Keresés" aria-label="Tárgy keresése" id="search">
+          <input type="text" class="form-control" placeholder="Keresés" aria-label="Tárgy keresése" id="search" autocomplete="neautofilleljlégyszi">
           <button class="btn btn-outline-success" type="button" id="submitLog">Keresés</button>
         </div>
         <div class="list-group" id="itemsList">

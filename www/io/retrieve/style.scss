@@ -1,5 +1,5 @@
 .itemsToRetrieve {
-    max-width: 1200px;
+    max-width: 60dvw;
     width: 100%;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -16,6 +16,7 @@
 
     &::-webkit-scrollbar {
         width: 8px;
+        height: 8px;
         /* width of the entire scrollbar */
     }
 
@@ -37,6 +38,10 @@
         transition: all 0.2s;
     }
 
+    @media (max-width: 575px) {
+        max-width: 95dvw;
+    }
+
 }
 
 
@@ -44,7 +49,6 @@
 #retrieve-container {
 
     width: 100%;
-    overflow-x: auto;
     display: flex;
     flex-direction: column;
     align-items: center;

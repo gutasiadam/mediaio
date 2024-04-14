@@ -13,7 +13,7 @@ include "header.php";
 ?>
 
 <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-dark">
-  <a class="navbar-brand" href="index.php">
+  <a class="navbar-brand" href="../index.php">
     <img src="../utility/logo2.png" height="50">
   </a>
   <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
@@ -149,13 +149,14 @@ include "header.php";
           class="fas fa-qrcode"></i></button>
       <div id="manualHolder">
         <input type="checkbox" class="btn-check" autocomplete="off" id="manual_Retrieve">
-        <label class="btn btn-outline-secondary" for="manual_Retrieve">Visszahozás kézzel</label>
+        <label class="btn btn-outline-secondary" for="manual_Retrieve" style="width:100%;">Visszahozás kézzel</label>
       </div>
     </div>
 
     <div class="itemsToRetrieve" id="itemsHolder">
     </div>
-    <button class="btn btn-success w-50 mb-3" id="submission" data-bs-target="#confirmModal" data-bs-toggle="modal">Visszahozás</button>
+    <button class="btn btn-success w-50 mb-3" id="submission" data-bs-target="#confirmModal"
+      data-bs-toggle="modal">Visszahozás</button>
 
     <div id='toTop'><i class="fas fa-chevron-down"></i></div>
 </body>

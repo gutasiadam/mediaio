@@ -35,6 +35,66 @@
     }
 }
 
+#takeout-option-buttons {
+
+    .btn {
+        position: relative;
+        /*  width: max-content; */
+    }
+
+    #show_selected {
+        width: 100%;
+        display: none;
+    }
+
+
+    display: flex;
+    flex-direction:row;
+    gap: 5px;
+    row-gap: 2px;
+    width: 100%;
+    margin-left: 0;
+
+    @media (max-width: 990px) {
+        align-items: center;
+        gap: 1%;
+        flex-wrap: wrap;
+
+        .btn {
+            width: 49.5%;
+        }
+    }
+
+    @media (max-width: 575px) {
+
+        #show_selected {
+            display: block;
+        }
+
+        #takeout2BTN {
+            display: none;
+        }
+
+    }
+
+}
+
+#takeout-container {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+
+    #selected-desktop #output-desktop {
+        display: none;
+    }
+
+    @media (max-width: 575px) {
+        #selected-desktop {
+            display: none;
+        }
+    }
+}
+
 .selectedList {
     max-height: 80dvh;
     overflow: auto;
@@ -45,7 +105,7 @@
     }
 
     &::-webkit-scrollbar {
-        width: 12px;
+        width: 8px;
         /* width of the entire scrollbar */
     }
 

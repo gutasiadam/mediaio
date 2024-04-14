@@ -60,21 +60,21 @@ error_reporting(E_ERROR | E_PARSE);
 
    <div class="container">
       <div class="row justify-content-center">
-         <div class="btn-group mb-1" role="group" aria-label="Beállítások" style="max-width: 600px">
-            <input type="checkbox" class="btn-check filterButton" id="medias" autocomplete="off">
+         <div class="btn-group mb-1" role="group" id="settings" aria-label="Beállítások">
+            <input type="checkbox" class="btn-check filterButton" id="medias" autocomplete="off" checked>
             <label class="btn btn-outline-secondary" for="medias">Médiás</label>
 
-            <input type="checkbox" class="btn-check filterButton" id="studios" autocomplete="off">
+            <input type="checkbox" class="btn-check filterButton" id="studios" autocomplete="off" checked>
             <label class="btn btn-outline-secondary" for="studios">Stúdiós</label>
 
-            <input type="checkbox" class="btn-check filterButton" id="event" autocomplete="off">
+            <input type="checkbox" class="btn-check filterButton" id="event" autocomplete="off" checked>
             <label class="btn btn-outline-secondary" for="event">Event</label>
 
             <input type="checkbox" class="btn-check filterButton" id="isOut" autocomplete="off">
             <label class="btn btn-outline-secondary" for="isOut">Kinnlévő</label>
 
-            <input type="checkbox" class="btn-check filterButton" id="isAvailable" autocomplete="off">
-            <label class="btn btn-outline-secondary" for="isAvailable">Nem kölcsönözhető</label>
+            <input type="checkbox" class="btn-check filterButton" id="nonRentable" autocomplete="off">
+            <label class="btn btn-outline-secondary" for="nonRentable">Nem kivehető</label>
          </div>
       </div>
 

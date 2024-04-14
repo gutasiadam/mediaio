@@ -44,8 +44,6 @@ $(document).ready(function () {
 
         items.forEach(item => {
             const itemAvailable = item.getAttribute("data-available") == "true";
-            console.log(itemAvailable);
-
             if (showAvailable) {
                 item.style.display = itemAvailable ? "flex" : "none";
             } else {

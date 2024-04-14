@@ -51,7 +51,7 @@ if (isset($_SESSION["userId"])) { ?>
     <table class="help-logintable">
       <tr>
         <td>
-          <form action="pfcurr.php"><button class="btn btn-dark position-relative w-100">Nálam levő tárgyak <i
+          <form action="./userItems/"><button class="btn btn-dark position-relative w-100">Nálam levő tárgyak <i
                 class="fas fa-box-open"></i><span id="userItemCount"
                 class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span></button>
           </form>

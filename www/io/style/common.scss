@@ -40,35 +40,6 @@ button.mediaBlue {
 }
 
 
-#takeout-container {
-    display: flex;
-    justify-content: space-between;
-    flex-direction: row;
-
-    #selected-desktop #output-desktop {
-        display: none;
-    }
-
-    @media (max-width: 575px) {
-        #selected-desktop {
-            display: none;
-        }
-    }
-
-    .selectedItemsDisplay {
-        list-style: none;
-        background-color: #777777;
-        color: white;
-        font-size: 17px;
-        padding-bottom: 0.2rem;
-        padding-top: 0.2rem;
-        overflow: auto;
-        max-height: calc(100vh - 230px);
-        display: block;
-    }
-}
-
-
 #toTop {
     position: fixed;
     bottom: 20px;
@@ -107,51 +78,6 @@ button.mediaBlue {
     flex-wrap: wrap;
     gap: 5px;
     flex-direction: row;
-}
-
-
-#takeout-option-buttons {
-
-    .btn {
-        position: relative;
-        /*  width: max-content; */
-    }
-
-    #show_selected {
-        width: 100%;
-        display: none;
-    }
-
-
-    display: flex;
-    flex-direction:row;
-    gap: 5px;
-    row-gap: 2px;
-    width: 100%;
-    margin-left: 0;
-
-    @media (max-width: 990px) {
-        align-items: center;
-        gap: 1%;
-        flex-wrap: wrap;
-
-        .btn {
-            width: 49.5%;
-        }
-    }
-
-    @media (max-width: 575px) {
-
-        #show_selected {
-            display: block;
-        }
-
-        #takeout2BTN {
-            display: none;
-        }
-
-    }
-
 }
 
 
@@ -290,62 +216,6 @@ input[type=submit] {
         display: block;
         max-height: 65dvh;
     }
-}
-
-
-
-
-#itemSearch {
-    width: 70dvw;
-    max-width: 500px;
-
-    .row {
-        .col {
-            padding: 0;
-            padding-left: 15px;
-        }
-
-        .col-3 {
-            padding: 0;
-        }
-    }
-
-}
-
-.autocomplete-items {
-    position: relative;
-    height: fit-content;
-    max-height: 30vh;
-    overflow: auto;
-    border: 1px solid #d4d4d4;
-    border-bottom: none;
-    border-top: none;
-    z-index: 99;
-    width: fit-content;
-    max-width: 500px;
-}
-
-.autocomplete-items div {
-    padding: 10px;
-    cursor: pointer;
-    background-color: #fff;
-    border-bottom: 1px solid #d4d4d4;
-    position: relative;
-}
-
-/*when hovering an item:*/
-.autocomplete-items div:hover {
-    background-color: #e9e9e9;
-}
-
-/*when navigating through the items using the arrow keys:*/
-.autocomplete-active {
-    background-color: Black !important;
-    color: #ffffff;
-}
-
-.livearray {
-    display: none;
 }
 
 
@@ -949,17 +819,6 @@ table {
 
     @media (max-width: 990px) {
         width: 60%;
-    }
-}
-
-
-/* Index részek */
-
-
-
-@media print {
-    .noprint {
-        display: none;
     }
 }
 
