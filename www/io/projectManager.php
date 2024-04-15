@@ -11,7 +11,7 @@ use Mediaio\projectPictureManager;
 
 error_reporting(E_ALL);
 
-if(session_status() === PHP_SESSION_NONE) {
+if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
@@ -347,7 +347,7 @@ class projectManager
             // Do nothing
         }
 
-        if ($_FILES['image']['name'] != "") {
+        if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
 
             // If the task is an image task, upload the image
             $uploadResult = projectPictureManager::uploadImage($taskID, $_FILES['image']);
