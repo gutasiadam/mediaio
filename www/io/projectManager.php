@@ -9,10 +9,11 @@ use Mediaio\Database;
 use Mediaio\ProjectMailer;
 use Mediaio\projectPictureManager;
 
-error_reporting(E_ERROR | E_PARSE);
+error_reporting(E_ALL);
 
-session_start();
-
+if(session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 class projectManager
 {

@@ -143,7 +143,7 @@ include "header.php";
   <div class="container" id="retrieve-container">
     <!-- Announce Damage button -->
     <div class="row mb-3" id="retrieve-option-buttons">
-      <button class="btn btn-danger" onclick="AnnounceDamage()" id="AnnounceDamage">Sérülés bejelentése <i
+      <button class="btn btn-danger" onclick="AnnounceDamage()" id="AnnounceDamage">Sérült eszköz <i
           class="fas fa-file-alt"></i></button>
       <button type="button" class="btn btn-warning" onclick="showScannerModal()">Szkenner <i
           class="fas fa-qrcode"></i></button>

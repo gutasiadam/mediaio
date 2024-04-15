@@ -61,7 +61,7 @@ async function removeMemberFromProject(projectID, memberID) {
 
     return await $.ajax({
         type: "POST",
-        url: "../projectManager.php",
+        url: "../../projectManager.php",
         data: { mode: "removeMemberFromProject", projectId: projectID, userId: memberID },
     });
 }
@@ -146,7 +146,7 @@ async function changeManager(projectID, memberID) {
 
         response = await $.ajax({
             type: "POST",
-            url: "../projectManager.php",
+            url: "../../projectManager.php",
             data: { mode: "changeManager", projectId: projectID, newManagerId: memberID },
         });
 
@@ -315,30 +315,10 @@ async function saveProjectSettings(proj_id) {
 // Delete project
 
 async function deleteProject(proj_id) {
+    // Delete the project
+    await deleteProjectFromDB(proj_id);
 
-    // Get the project name
-    var projectName = document.getElementById("deleteText").placeholder;
-
-    var typedName = document.getElementById("deleteText").value;
-
-    if (projectName == typedName) {
-
-        // Delete the project
-        await deleteProjectFromDB(proj_id);
-
-        // Reload the page
-        refreshProjects();
-
-        successToast("Projekt sikeresen törölve!");
-
-        // Close the modal
-        $('#projectSettingsModal').modal('hide');
-
-    } else {
-        console.error("Error: Project name does not match");
-        return;
-    }
-
+    successToast("Projekt sikeresen törölve!");
 }
 
 
@@ -390,7 +370,7 @@ async function saveNASPath(projectID, path) {
 
     let response = await $.ajax({
         type: "POST",
-        url: "../projectManager.php",
+        url: "../../projectManager.php",
         data: { mode: "saveNASPath", projectID: projectID, path: path },
     });
 

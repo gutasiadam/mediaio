@@ -7,7 +7,7 @@ async function fetchProjects(archived = 0) {
 
             response = await $.ajax({
                 type: "POST",
-                url: "../projectManager.php",
+                url: "../../projectManager.php",
                 data: { mode: "listProjects", archived: archived }
             });
 
@@ -39,7 +39,7 @@ async function fetchProject(proj_id) {
 
             response = await $.ajax({
                 type: "POST",
-                url: "../projectManager.php",
+                url: "../../projectManager.php",
                 data: { mode: "getProject", id: proj_id }
             });
 
@@ -67,7 +67,7 @@ async function createNewProject() {
 
             response = await $.ajax({
                 type: "POST",
-                url: "../projectManager.php",
+                url: "../../projectManager.php",
                 data: { mode: "createNewProject" }
             });
 
@@ -96,7 +96,7 @@ async function fetchProjectRoot(proj_id) {
 
             response = await $.ajax({
                 type: "POST",
-                url: "../projectManager.php",
+                url: "../../projectManager.php",
                 data: { mode: "getProjectRoot", id: proj_id }
             });
 
@@ -126,7 +126,7 @@ async function fetchTask(proj_id = null, task_id = null, fillOut = false) {
 
             response = await $.ajax({
                 type: "POST",
-                url: "../projectManager.php",
+                url: "../../projectManager.php",
                 data: { mode: "getProjectTask", proj_id: proj_id, task_id: task_id, fillOut: fillOut }
             });
 
@@ -156,7 +156,7 @@ async function fetchUIs(task_id) {
 
             response = await $.ajax({
                 type: "POST",
-                url: "../projectManager.php",
+                url: "../../projectManager.php",
                 data: { mode: "getUIs", id: task_id }
             });
 
@@ -183,7 +183,7 @@ async function fetchUI(task_id) {
 
             response = await $.ajax({
                 type: "POST",
-                url: "../projectManager.php",
+                url: "../../projectManager.php",
                 data: { mode: "getUI", ID: task_id }
             });
 
@@ -210,7 +210,7 @@ async function userTaskData(task_id, proj_id = null) {
 
             response = await $.ajax({
                 type: "POST",
-                url: "../projectManager.php",
+                url: "../../projectManager.php",
                 data: { mode: "getUserTaskData", task_id: task_id, proj_id: proj_id }
             });
 
@@ -240,7 +240,6 @@ async function saveTaskToDB(task, taskMembersArray, image, task_id = null) {
 
     return new Promise(async (resolve, reject) => {
         try {
-            let response;
 
             let formData = new FormData();
             formData.append("mode", "saveTask");
@@ -253,9 +252,9 @@ async function saveTaskToDB(task, taskMembersArray, image, task_id = null) {
                 formData.append("ID", task_id);
             }
 
-            response = await $.ajax({
+            const response = await $.ajax({
                 type: "POST",
-                url: "../projectManager.php",
+                url: "../../projectManager.php",
                 data: formData,
                 processData: false,
                 contentType: false
@@ -283,7 +282,7 @@ async function submitTaskToDB(task_id, taskData) {
 
             response = await $.ajax({
                 type: "POST",
-                url: "../projectManager.php",
+                url: "../../projectManager.php",
                 data: { mode: "submitTask", ID: task_id, task: taskJson }
             });
 
@@ -310,7 +309,7 @@ async function deleteTaskFromDB(task_id) {
 
             response = await $.ajax({
                 type: "POST",
-                url: "../projectManager.php",
+                url: "../../projectManager.php",
                 data: { mode: "deleteTask", ID: task_id }
             });
 
@@ -351,7 +350,7 @@ async function saveProjectSettingsToDB(proj_id, projectName, projectDescription,
 
             response = await $.ajax({
                 type: "POST",
-                url: "../projectManager.php",
+                url: "../../projectManager.php",
                 data: { mode: "saveProjectSettings", id: proj_id, settings: settingsJson }
             });
 
@@ -381,7 +380,7 @@ async function saveProjectMembersToDB(proj_id, members) {
 
             response = await $.ajax({
                 type: "POST",
-                url: "../projectManager.php",
+                url: "../../projectManager.php",
                 data: { mode: "saveProjectMembers", id: proj_id, Members: membersJson }
             });
 
@@ -412,7 +411,7 @@ async function deleteProjectFromDB(proj_id) {
 
             response = await $.ajax({
                 type: "POST",
-                url: "../projectManager.php",
+                url: "../../projectManager.php",
                 data: { mode: "deleteProject", id: proj_id }
             });
 
@@ -444,7 +443,7 @@ async function getUsers() {
 
             response = await $.ajax({
                 type: "POST",
-                url: "../projectManager.php",
+                url: "../../projectManager.php",
                 data: { mode: "getUsers" }
             });
 
@@ -476,7 +475,7 @@ async function fetchMemberNames(memberIDs) {
 
                 response = await $.ajax({
                     type: "POST",
-                    url: "../projectManager.php",
+                    url: "../../projectManager.php",
                     data: { mode: "getUsers", ID: memberID }
                 });
 
@@ -509,7 +508,7 @@ async function fetchProjectMembers(proj_id) {
 
             response = await $.ajax({
                 type: "POST",
-                url: "../projectManager.php",
+                url: "../../projectManager.php",
                 data: { mode: "getProjectMembers", id: proj_id }
             });
 
@@ -538,7 +537,7 @@ async function fetchTaskMembers(task_id, proj_id) {
 
             response = await $.ajax({
                 type: "POST",
-                url: "../projectManager.php",
+                url: "../../projectManager.php",
                 data: { mode: "getTaskMembers", task_id: task_id, proj_id: proj_id }
             });
 

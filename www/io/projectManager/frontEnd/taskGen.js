@@ -380,6 +380,9 @@ function createSaveButtonHandler(TaskId, taskType, projectID) {
     return async function saveButtonHandler(e) {
         e.preventDefault();
         this.disabled = true;
+        setTimeout(() => {
+            this.disabled = false;
+        }, 1000);
         saveTaskSettings(TaskId, taskType, projectID);
     };
 }

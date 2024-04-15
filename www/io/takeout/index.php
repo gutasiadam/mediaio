@@ -348,6 +348,7 @@ error_reporting(E_ALL ^ E_NOTICE);
         if (response == 200) {
             deselect_all();
             successToast("Sikeres kivétel!");
+            badge.innerHTML = 0;
             loadPage();
         } else {
             errorToast("Hiba történt a kivétel során!");
