@@ -188,7 +188,7 @@ async function createTask(task, projectID, canEdit) {
     // check deadline and color the card accordingly
     if (task.Deadline) {
         var deadlineText = await getDeadline(task.Deadline);
-        if (task.isSubmittable && uData == 100 || !task.isSubmittable) {
+        if (task.isInteractable && uData == 100 || !task.isInteractable) {
             colorTaskCard(taskHeader, task.Deadline);
             let deadline = document.createElement("span");
             deadline.classList.add("badge");
@@ -216,7 +216,7 @@ async function createTask(task, projectID, canEdit) {
     }
 
     // Check if task is filled out
-    if (task.isSubmittable == 1 && uData != 404) {
+    if (task.isInteractable == 1 && uData != 404) {
         if (uData != 100) {
             // Add show answers button
             let showAnswersButton = document.createElement("button");
@@ -606,7 +606,7 @@ async function saveTaskSettings(task_id, taskType, projectID = null) {
     let taskDataHolder = document.getElementById("taskData");
 
     // Check if the task is interactable
-    let isSubmittable = document.getElementById("taskSubmittable").checked ? 1 : 0;
+    let isInteractable = document.getElementById("taskInteractable").checked ? 1 : 0;
 
     // Check if the task is single answer
     let singleAnswer = document.getElementById("singleAnswer").checked ? 1 : 0;
@@ -665,7 +665,7 @@ async function saveTaskSettings(task_id, taskType, projectID = null) {
         "Task_type": taskType,
         "Task_title": taskName,
         "Task_data": taskData,
-        "isInteractable": isSubmittable,
+        "isInteractable": isInteractable,
         "fillOutText": fillOutText,
         "singleAnswer": singleAnswer,
         "Deadline": taskDeadline
@@ -1090,14 +1090,14 @@ async function submissionSettings(taskType, task = null) {
     let submitButton = document.createElement("input");
     submitButton.type = "checkbox";
     submitButton.classList.add("btn-check");
-    submitButton.id = "taskSubmittable";
-    submitButton.checked = task ? task.isSubmittable == 1 : false;
+    submitButton.id = "taskInteractable";
+    submitButton.checked = task ? task.isInteractable == 1 : false;
     submitButton.autocomplete = "off";
     submissionSettings.appendChild(submitButton);
 
     let submitLabel = document.createElement("label");
     submitLabel.classList.add("btn", "btn-outline-success");
-    submitLabel.htmlFor = "taskSubmittable";
+    submitLabel.htmlFor = "taskInteractable";
     submitLabel.innerHTML = `<i class="fas fa-user-check"></i> Leadandó`;
     submissionSettings.appendChild(submitLabel);
 
@@ -1257,10 +1257,10 @@ async function cardCheckOrRadio(taskBody, task, type) {
         } else {
             input.type = "radio";
         }
-        input.disabled = task.isSubmittable == 0 ? false : true;
+        input.disabled = task.isInteractable == 0 ? false : true;
         input.id = checklistItems[i].pos;
 
-        if (task.isSubmittable == 0) {
+        if (task.isInteractable == 0) {
             input.checked = checklistItems[i].checked;
             input.name = type + "-" + task.ID;
             input.onclick = function () {
@@ -1271,7 +1271,7 @@ async function cardCheckOrRadio(taskBody, task, type) {
         checklistItem.appendChild(input);
 
         var selectedCount = 0;
-        if (task.isSubmittable == 1) {
+        if (task.isInteractable == 1) {
             for (let j = 0; j < UIData.length; j++) {
                 if (UIData[j].length <= i) {
                     continue;
@@ -1284,7 +1284,7 @@ async function cardCheckOrRadio(taskBody, task, type) {
         let label = document.createElement("label");
         label.classList.add("form-check-label");
         label.htmlFor = checklistItems[i].pos;
-        if (task.isSubmittable == 1) {
+        if (task.isInteractable == 1) {
             label.innerHTML = checklistItems[i].value + " (" + selectedCount + ")";
         } else {
             label.innerHTML = checklistItems[i].value;
