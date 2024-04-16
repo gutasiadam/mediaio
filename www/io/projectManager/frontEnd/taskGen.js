@@ -665,7 +665,7 @@ async function saveTaskSettings(task_id, taskType, projectID = null) {
         "Task_type": taskType,
         "Task_title": taskName,
         "Task_data": taskData,
-        "isSubmittable": isSubmittable,
+        "isInteractable": isSubmittable,
         "fillOutText": fillOutText,
         "singleAnswer": singleAnswer,
         "Deadline": taskDeadline

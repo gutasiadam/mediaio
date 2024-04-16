@@ -285,17 +285,17 @@ class projectManager
         $connection = Database::runQuery_mysqli(self::$schema);
 
         if ($settings['Deadline'] != "NULL") {
-            $sql = "INSERT INTO `project_components` (`ID`, `ProjectId`, `Task_type`, `Task_title`, `Task_data`, `isSubmittable`, `fillOutText`, `SingleAnswer`, `AddedByUID`, `Deadline`) 
+            $sql = "INSERT INTO `project_components` (`ID`, `ProjectId`, `Task_type`, `Task_title`, `Task_data`, `isInteractable`, `fillOutText`, `SingleAnswer`, `AddedByUID`, `Deadline`) 
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
-                    ON DUPLICATE KEY UPDATE `Task_title`=?, `Task_data`=?, `Deadline`=?, `isSubmittable`=?, `fillOutText`=?, `SingleAnswer`=?;";
+                    ON DUPLICATE KEY UPDATE `Task_title`=?, `Task_data`=?, `Deadline`=?, `isInteractable`=?, `fillOutText`=?, `SingleAnswer`=?;";
             $stmt = $connection->prepare($sql);
-            $stmt->bind_param("iisssisiissssisi", $_POST['ID'], $settings['ProjectId'], $settings['Task_type'], $settings['Task_title'], $settings['Task_data'], $settings['isSubmittable'], $settings['fillOutText'], $settings['singleAnswer'], $_SESSION['userId'], $settings['Deadline'], $settings['Task_title'], $settings['Task_data'], $settings['Deadline'], $settings['isSubmittable'], $settings['fillOutText'], $settings['singleAnswer']);
+            $stmt->bind_param("iisssisiissssisi", $_POST['ID'], $settings['ProjectId'], $settings['Task_type'], $settings['Task_title'], $settings['Task_data'], $settings['isInteractable'], $settings['fillOutText'], $settings['singleAnswer'], $_SESSION['userId'], $settings['Deadline'], $settings['Task_title'], $settings['Task_data'], $settings['Deadline'], $settings['isInteractable'], $settings['fillOutText'], $settings['singleAnswer']);
         } else {
-            $sql = "INSERT INTO `project_components` (`ID`, `ProjectId`, `Task_type`, `Task_title`, `Task_data`, `isSubmittable`, `fillOutText`, `SingleAnswer`, `AddedByUID`, `Deadline`) 
+            $sql = "INSERT INTO `project_components` (`ID`, `ProjectId`, `Task_type`, `Task_title`, `Task_data`, `isInteractable`, `fillOutText`, `SingleAnswer`, `AddedByUID`, `Deadline`) 
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NULL) 
-                    ON DUPLICATE KEY UPDATE `Task_title`=?, `Task_data`=?, `Deadline`=NULL, `isSubmittable`=?, `fillOutText`=?, `SingleAnswer`=?;";
+                    ON DUPLICATE KEY UPDATE `Task_title`=?, `Task_data`=?, `Deadline`=NULL, `isInteractable`=?, `fillOutText`=?, `SingleAnswer`=?;";
             $stmt = $connection->prepare($sql);
-            $stmt->bind_param("iisssisiissisi", $_POST['ID'], $settings['ProjectId'], $settings['Task_type'], $settings['Task_title'], $settings['Task_data'], $settings['isSubmittable'], $settings['fillOutText'], $settings['singleAnswer'], $_SESSION['userId'], $settings['Task_title'], $settings['Task_data'], $settings['isSubmittable'], $settings['fillOutText'], $settings['singleAnswer']);
+            $stmt->bind_param("iisssisiissisi", $_POST['ID'], $settings['ProjectId'], $settings['Task_type'], $settings['Task_title'], $settings['Task_data'], $settings['isInteractable'], $settings['fillOutText'], $settings['singleAnswer'], $_SESSION['userId'], $settings['Task_title'], $settings['Task_data'], $settings['isInteractable'], $settings['fillOutText'], $settings['singleAnswer']);
         }
 
         $stmt->execute();
