@@ -10,6 +10,11 @@ if (!isset($_SESSION["userId"])) {
   echo "<script>window.location.href = '../index.php?error=AccessViolation';</script>";
   exit();
 }
+
+if (!in_array("system", $_SESSION["groups"])) {
+  echo "<script>window.location.href = '../404.html';</script>";
+  exit();
+}
 include "header.php";
 ?>
 

@@ -100,8 +100,6 @@ error_reporting(E_ERROR | E_PARSE);
             success: function (data) {
               var dataArray = data.split(",");
               //console.log(dataArray);
-              //Set the user item count
-              //document.getElementById("userItemCount").innerHTML = dataArray[2];
               //Set the usercheck count
               if (dataArray[1] > 0) {
                 document.getElementById("usercheckItemCount").innerHTML = dataArray[1] + " esemény vár elfogadásra!";

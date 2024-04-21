@@ -64,9 +64,9 @@ include "header.php";
 </div>
 
 <!-- Scanner Modal -->
-<div class="modal fade" id="scanner_Modal" tabindex="-1" role="dialog" aria-labelledby="scanner_ModalLabel"
+<div class="modal fade" id="scanner_Modal" data-bs-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="scanner_ModalLabel"
   aria-hidden="true">
-  <div class="modal-dialog" role="document">
+  <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLabel">Szkenner</h5>
@@ -90,8 +90,8 @@ include "header.php";
       <div class="modal-footer" id="scanner_footer">
         <button type="button" class="btn btn-outline-dark" id="ext_scanner" onclick="ExternalScan()">Külső
           olvasó</button>
-        <button type="button" class="btn btn-info" id="zoom_btn" onclick="zoomCamera()">Zoom: 2x</button>
-        <button type="button" class="btn btn-info" id="torch_btn" onclick="startTorch()">Vaku</button>
+        <button type="button" class="btn btn-info" id="zoom_btn" onclick="zoomCamera()" style="display: none;">Zoom: 2x</button>
+        <button type="button" class="btn btn-info" id="torch_btn" onclick="startTorch()" style="display: none;">Vaku</button>
         <div class="dropdown dropup">
           <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown"
             aria-expanded="true">

@@ -8,50 +8,57 @@ $(document).ready(function () {
         const items = Array.from(document.getElementsByClassName("leltarItem"));
         const inputValue = searchInput.value.toLowerCase();
         const showAvailable = document.getElementById("show_unavailable").checked;
+        const filterSettings = Array.from(document.getElementsByClassName("filterCheckbox")).filter(checkbox => checkbox.checked).map(checkbox => checkbox.getAttribute("data-filter"));
+
 
         items.forEach(item => {
+            // Get the label element of the item
             const itemLabelElement = item.querySelector(".leltarItemLabel");
 
-            // Restore the original item label
+            // Construct the original label using the parent's data-name attribute and the item's id
             const originalItemLabel = `${itemLabelElement.parentElement.getAttribute("data-name")} - ${item.id}`;
+
+            // Convert the original label to lowercase for comparison
             const itemName = originalItemLabel.toLowerCase();
 
-            const shouldDisplay = itemName.includes(inputValue) && (item.getAttribute("data-available") == "true" || !showAvailable);
+            // Check if the item is available
+            const isAvailable = item.getAttribute("data-available") == "true";
 
+            // Check if the item meets the filter criteria
+            const inFilterCriteria = filterSettings.length === 0 || filterSettings.includes(item.getAttribute("data-takerestrict"));
+
+            // Determine if the item should be displayed based on the input value, availability, and filter criteria
+            const shouldDisplay = itemName.includes(inputValue) && inFilterCriteria && (isAvailable || !showAvailable);
+
+            // Set the display style of the item based on the shouldDisplay flag
             item.style.display = shouldDisplay ? "flex" : "none";
 
+            // If the item should be displayed and there is an input value, highlight the matching text in the label
             if (shouldDisplay && inputValue) {
-                // Highlight matching characters
-                const regex = new RegExp(`(${inputValue})`, 'gi');
-                const highlightedLabel = originalItemLabel.replace(regex, '<span class="highlight">$1</span>');
-
-                if (itemLabelElement.innerHTML !== highlightedLabel) {
-                    itemLabelElement.innerHTML = highlightedLabel;
-                }
-            } else if (itemLabelElement.innerHTML !== originalItemLabel) {
-                itemLabelElement.innerHTML = originalItemLabel;
+                const highlightedLabel = originalItemLabel.replace(new RegExp(`(${inputValue})`, 'gi'), '<span class="highlight">$1</span>');
+                itemLabelElement.innerHTML = itemLabelElement.innerHTML !== highlightedLabel ? highlightedLabel : itemLabelElement.innerHTML;
+            } else {
+                // If the item should not be displayed or there is no input value, remove any existing highlights from the label
+                itemLabelElement.innerHTML = itemLabelElement.innerHTML !== originalItemLabel ? originalItemLabel : itemLabelElement.innerHTML;
             }
         });
     });
 
+    // Add event listener to only show unavailable items checkbox
+    const showUnavailableCheckbox = document.getElementById("show_unavailable");
 
-    // Add eventlistener to unavailable items
-    const show_unavailable = document.getElementById("show_unavailable");
-
-    show_unavailable.addEventListener("change", function () {
-        const items = Array.from(document.getElementsByClassName("leltarItem"));
-        const showAvailable = show_unavailable.checked;
-
-        items.forEach(item => {
-            const itemAvailable = item.getAttribute("data-available") == "true";
-            if (showAvailable) {
-                item.style.display = itemAvailable ? "flex" : "none";
-            } else {
-                item.style.display = "flex";
-            }
-        });
-
+    showUnavailableCheckbox.addEventListener("change", function () {
         searchInput.dispatchEvent(new Event("input"));
+    });
+
+
+    // Add event listeners to filter checkboxes
+    const checkboxes = document.querySelectorAll(".filterCheckbox");
+
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener("change", function () {
+            searchInput.dispatchEvent(new Event("input"));
+        });
     });
 });
 

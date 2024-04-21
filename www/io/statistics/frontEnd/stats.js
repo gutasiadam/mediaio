@@ -56,7 +56,7 @@ function getSearchQuery(order = null) {
     let orderBY;
     switch (orderCriteria) {
         case "UID":
-            orderBY = "uid";
+            orderBY = "id";
             break;
         case "Név":
             orderBY = "name";
@@ -116,7 +116,7 @@ async function loadTableData(takeRestrict = "none", itemState = "all", orderCrit
 
     let orderBY;
     switch (orderCriteria) {
-        case "uid":
+        case "id":
             orderBY = "UID";
             break;
         case "name":
@@ -162,12 +162,14 @@ async function loadTableData(takeRestrict = "none", itemState = "all", orderCrit
         const row = body.insertRow(-1);
         row.id = item.UID;
         item.TakeRestrict == '*' ? row.classList.add("table-danger") : null;
-        item.TakeRestrict == 's' ? row.classList.add("table-info") : null;
+        item.TakeRestrict == 's' ? row.classList.add("table-primary") : null;
         item.TakeRestrict == 'e' ? row.classList.add("table-success") : null;
+        item.RentBy != null ? row.classList.add("table-warning") : null;
         const cellValues = [item.UID, item.Nev, item.Tipus, item.RentBy];
         cellValues.forEach((value, index) => {
             const cell = row.insertCell(index);
             cell.innerHTML = value;
+            item.RentBy != null ? cell.style.fontStyle = "italic" : null;
         });
     });
 

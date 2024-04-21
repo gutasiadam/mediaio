@@ -29,11 +29,12 @@
     }
 
     @media (max-width: 575px) {
-        height: calc(100dvh - 350px);
+        height: calc(100dvh - 300px);
         font-size: large;
         width: 100%;
     }
 }
+
 
 #takeout-option-buttons {
 
@@ -61,7 +62,7 @@
         flex-wrap: wrap;
 
         .btn {
-            width: 49.5%;
+            width: 32.6%;
         }
     }
 

@@ -527,6 +527,23 @@ class itemDataManager
     return $result;
   }
 
+
+  static function getItemsForConfirmation()
+  {
+    $sql = "SELECT * FROM takelog WHERE Acknowledged=0 AND Event != 'SERVICE' ORDER BY DATE DESC, USER, EVENT";
+    //Get a new database connection
+    $connection = Database::runQuery_mysqli();
+    $stmt = $connection->prepare($sql);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $rows = array();
+    while ($row = $result->fetch_assoc()) {
+      $rows[] = $row;
+    }
+    $result = json_encode($rows);
+    return $result;
+  }
+
   static function getToBeUserCheckedCount()
   {
     $sql = "SELECT COUNT(*) FROM takelog WHERE Acknowledged=0";
@@ -659,6 +676,10 @@ if (isset($_POST['mode'])) {
 
   if ($_POST['mode'] == 'getPresets') {
     echo userManager::getPresets();
+  }
+
+  if ($_POST['mode'] == 'getItemsForConfirmation') {
+    echo itemDataManager::getItemsForConfirmation();
   }
 
   if ($_POST['mode'] == 'getProfileItemCounts') {

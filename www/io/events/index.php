@@ -34,7 +34,6 @@ if (!isset($_SESSION['userId'])) {
   <script src="./moment/main.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="./defaultCalendarRender.js"></script>
-  <!-- HOZZÁADÁS MODAL -->
 </head>
 <script>
   $(window).on('load', function () {

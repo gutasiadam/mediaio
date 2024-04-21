@@ -67,41 +67,28 @@ error_reporting(E_ALL ^ E_NOTICE);
         </div>
     </div>
 
-
-    <?php
-    //Limit GivetoAnotherperson modal to admin users only
-    if (in_array("system", $_SESSION["groups"]) or in_array("admin", $_SESSION["groups"])) {
-        ?>
-        <!-- GivetoAnotherperson Modal -->
-        <div class="modal fade" id="givetoAnotherPerson_Modal" tabindex="-1" role="dialog"
-            aria-labelledby="givetoAnotherPerson_Modal_Label" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="givetoAnotherPerson_Modal_Label">Eszköz kivétele más helyett</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <!-- Perform an ajax query to ItemManager.php -->
-                        <div id='givetoAnotherPerson_UserName_Field'>
-
-                            <label for="givetoAnotherPerson_UserName">Felhasználó neve:</label>
-                            <select id="givetoAnotherPerson_UserName" name="givetoAnotherPerson_UserName"
-                                class="form-control" required>
-                                <option value="" disabled selected>Válassz felhasználót</option>
-                            </select>
-
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
-                        </div>
-                    </div>
+    <!-- takeoutSettingsModal Modal -->
+    <div class="modal fade" id="takeoutSettingsModal" tabindex="-1" role="dialog"
+        aria-labelledby="takeoutSettingsModal_Modal_Label" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="takeoutSettingsModal_Label">Kivétel beállítások</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <i>Fejlesztés alatt...</i><br>
+                    <b>Nyomj a "Mehet" gombra a kivétel megerősítéséhez!</b>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-bs-dismiss="modal" onclick="submitTakout()">
+                        Mehet</button>
                 </div>
             </div>
         </div>
-        <!-- End of GivetoAnotherperson Modal -->
-    <?php } ?>
+    </div>
+
 
 
     <!-- Presets Modal -->
@@ -149,9 +136,9 @@ error_reporting(E_ALL ^ E_NOTICE);
     <!-- End of Clear Modal -->
 
     <!-- Scanner Modal -->
-    <div class="modal fade" id="scanner_Modal" tabindex="-1" role="dialog" aria-labelledby="scanner_ModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
+    <div class="modal fade" id="scanner_Modal" data-bs-backdrop="static" tabindex="-1" role="dialog"
+        aria-labelledby="scanner_ModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">Szkenner</h5>
@@ -203,51 +190,61 @@ error_reporting(E_ALL ^ E_NOTICE);
                 <h3>Kiválasztva:</h3>
             </div>
             <div class="col">
-                Keresés: <input type="text" id="search" style='margin-bottom: 10px'
-                    placeholder="Kezdd el ide írni, mit vinnél el.." autocomplete="off" />
+                <div class="input-group mb-1">
+                    <input type="text" class="form-control" id="search" placeholder="Kezdd el ide írni, mit vinnél el.."
+                        aria-label="Kezdd el ide írni, mit vinnél el.." aria-describedby="button-addon2">
+
+                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside"
+                        aria-expanded="false">Szűrés</button>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <div class="dropdown-item">
+                                <input class="form-check-input filterCheckbox" type="checkbox" autocomplete="off"
+                                    id="show_studios" data-filter="s">
+                                <label class="form-check-label" for="show_studios">Stúdiós</label>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="dropdown-item">
+                                <input class="form-check-input filterCheckbox" type="checkbox" autocomplete="off"
+                                    id="show_eventes" data-filter="e">
+                                <label class="form-check-label" for="show_eventes">Eventes</label>
+                            </div>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li>
+                            <div class="dropdown-item">
+                                <input class="form-check-input" type="checkbox" autocomplete="off"
+                                    id="show_unavailable">
+                                <label class="form-check-label" for="show_unavailable">Csak elérhető</label>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
                 <div id="takeout-option-buttons">
                     <button href="#sidebar" class="btn btn-sm btn-success mb-1" id="show_selected"
                         data-bs-toggle="offcanvas" role="button" aria-controls="sidebar">Kiválasztva
                         <span id="selectedCount" class="badge bg-danger">0</span>
                     </button>
                     <button class="btn btn-sm btn-success col-lg-auto mb-1" id="takeout2BTN" style='margin-bottom: 6px'
-                        onclick="submitTakout()">Mehet</button>
+                        data-bs-target="#takeoutSettingsModal" data-bs-toggle="modal">Mehet</button>
+
+                    <button class="btn btn-sm btn-info col-lg-auto mb-1" onclick="showPresetsModal()"
+                        style='margin-bottom:6px'>Presetek</button>
                     <button class="btn btn-sm btn-danger col-lg-auto mb-1 text-nowrap" id="clear"
                         style='margin-bottom: 6px' data-bs-target="#clear_Modal" data-bs-toggle="modal">Összes
                         törlése</button>
-                    <button class="btn btn-sm btn-info col-lg-auto mb-1" onclick="showPresetsModal()"
-                        style='margin-bottom:6px'>Presetek</button>
-                    <button type="button" class="btn btn-sm btn-warning col-lg-auto mb-1" onclick="showScannerModal()"
-                        style='margin-bottom:6px'>Szkenner <i class="fas fa-qrcode"></i></button>
+                    <button type="button" class="btn btn-warning btn-sm col-lg-auto mb-1 text-nowrap"
+                        onclick="showScannerModal()">Szkenner <i class="fas fa-qrcode"></i></button>
+
 
                     <!-- GivetoAnotherperson button -->
                     <!-- <button class="btn btn-sm btn-dark col-lg-auto mb-1 text-nowrap" id="givetoAnotherPerson_Button"
                         type="button" data-bs-toggle="modal" data-bs-target="#givetoAnotherPerson_Modal"
                         style="margin-bottom: 6px">Másnak veszek
                         ki</button> -->
-
-                    <input type="checkbox" class="btn-check" autocomplete="off" id="show_unavailable">
-                    <label class="btn btn-sm btn-outline-secondary col-lg-auto mb-1 text-nowrap"
-                        for="show_unavailable">Csak
-                        elérhető
-                        tárgyak</label>
-                    <!-- <button class="btn btn-sm btn-secondary col-lg-auto mb-1 text-nowrap" 
-                        type="button" onclick="ShowUnavailable()" style="margin-bottom: 6px"></button> -->
-
-
-                    <!-- <select class="form-select col-lg-auto mb-1" style='margin-bottom:6px; width: fit-content'
-                        aria-label="Filter">
-                        <option selected>Szűrés</option>
-                        <option value="1">Médiás</option>
-                        <option value="2">Stúdiós</option>
-                        <option value="3">Event</option>
-                    </select> -->
-
-                    <!-- Belső használatra kivétel - későbbi release -->
-                    <!-- <div class="form-check form-switch col-2">
-                        <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
-                     <label class="form-check-label text-nowrap" for="flexSwitchCheckDefault">Csak használatra</label>
-                    </div> -->
                 </div>
                 <div id="itemsList">
                 </div>
@@ -266,7 +263,8 @@ error_reporting(E_ALL ^ E_NOTICE);
                         <div class="col-12 selectedList" id="offcanvasList">
                         </div>
                         <button class="btn btn-sm btn-success col-lg-auto mb-1" data-bs-dismiss="offcanvas"
-                            id="takeout2BTN-mobile" onclick="submitTakout()">Mehet</button>
+                            id="takeout2BTN-mobile" data-bs-target="#takeoutSettingsModal"
+                            data-bs-toggle="modal">Mehet</button>
                     </div>
                 </div>
             </div>
@@ -324,6 +322,11 @@ error_reporting(E_ALL ^ E_NOTICE);
 
     async function submitTakout() {
         const selectedItems = document.getElementsByClassName("selected");
+
+        if (selectedItems.length == 0) {
+            errorToast("Nincs kiválasztva semmi!");
+            return;
+        }
 
         const takeoutItems = Array.from(selectedItems).map(item => ({
             id: item.getAttribute("data-main-id"),

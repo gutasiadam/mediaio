@@ -69,15 +69,15 @@
             <div class="modal-body">
                 <form>
                     <div class="mb-3 input-group">
-                        <span class="input-group-text">Projekt neve: </span>
+                        <span class="input-group-text">Név: </span>
                         <input type="text" class="form-control" id="projectName" placeholder="Projekt leírása...">
                     </div>
                     <div class="mb-3 input-group">
-                        <span class="input-group-text">Projekt leírása: </span>
+                        <span class="input-group-text">Leírás: </span>
                         <textarea class="form-control" id="projectDescription"></textarea>
                     </div>
                     <div class="mb-3 input-group">
-                        <span for="projectVisibility" class="input-group-text">Projekt láthatósága:</span>
+                        <span for="projectVisibility" class="input-group-text">Láthatóság:</span>
                         <select class="form-select" id="projectVisibility">
                             <option value="0">Mindenki</option>
                             <option value="1">Médiás</option>
@@ -87,7 +87,7 @@
                         </select>
                     </div>
                     <div class="mb-3 input-group">
-                        <span class="input-group-text">Projekt határideje: </span>
+                        <span class="input-group-text">Határidő: </span>
                         <input type="date" class="form-control" id="projectDate">
                         <input type="time" class="form-control" id="projectTime">
                     </div>
@@ -124,7 +124,7 @@
             <div class="modal-body">
                 <form>
                     <div class="mb-1 input-group" id="taskName">
-                        <span class="input-group-text">Feladat neve: </span>
+                        <span class="input-group-text">Név: </span>
                         <input type="text" class="form-control" id="textTaskName" placeholder="Név">
                     </div>
                     <div class="mb-1" id="taskData">
@@ -145,7 +145,7 @@
                         </div>
                     </div>
                     <div class="mb-3 input-group">
-                        <span class="input-group-text">Feladat határideje: </span>
+                        <span class="input-group-text">Határidő: </span>
                         <input type="date" class="form-control" id="taskDate" placeholder="Nap">
                         <input type="time" class="form-control" id="taskTime" placeholder="Időpont">
                     </div>
