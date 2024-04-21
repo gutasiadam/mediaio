@@ -13,6 +13,20 @@ $(document).ready(function () {
         });
     });
 
+    $('#tableContainer').scroll(function () {
+        if ($(this).scrollTop()) {
+            $('#toTop').fadeIn();
+        } else {
+            $('#toTop').fadeOut();
+        }
+    });
+
+    $("#toTop").click(function () {
+        $("#tableContainer").animate({
+            scrollTop: 0
+        }, 700);
+    });
+
 });
 
 
