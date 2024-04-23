@@ -29,9 +29,13 @@ function updateSelectionCookie() {
 
 function reloadSavedSelections() {
     //Try re-selectiong items that are saved in the takeOutItems cookie.
-
-    var selecteditems = getCookie("selectedItems")
-    selecteditems = JSON.parse(selecteditems);
+    try {
+        var selecteditems = getCookie("selectedItems")
+        selecteditems = JSON.parse(selecteditems);
+    } catch (error) {
+        console.log("No saved items found");
+        return;
+    }
     if (!selecteditems || selecteditems.length === 0) {
         return;
     }

@@ -104,7 +104,7 @@ error_reporting(E_ERROR | E_PARSE);
               if (dataArray[1] > 0) {
                 document.getElementById("usercheckItemCount").innerHTML = dataArray[1] + " esemény vár elfogadásra!";
                 let form = document.createElement('form');
-                form.action = "../profile/usercheck.php";
+                form.action = "../profile/transConfirm";
                 form.style = "width: fit-content; display: inline-block;";
                 form.innerHTML = '<button type="submit" class="btn btn-primary btn-sm">Vigyél oda!</button>';
                 document.getElementById("service_toast_footer").prepend(form);

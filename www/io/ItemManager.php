@@ -417,16 +417,22 @@ class itemDataManager
     return Database::runQuery($sql);
   }
 
-  //static function listItems()
-  //{
-  //  //Refresh takeoutJSON
-  //  self::generateTakeoutJSON();
-  //  //Return json
-  //  $itemsJSONFile = fopen(__DIR__ . '/data/takeOutItems.json', 'r');
-  //  $itemsJSON = fread($itemsJSONFile, filesize(__DIR__ . '/data/takeOutItems.json'));
-  //  fclose($itemsJSONFile);
-  //  return $itemsJSON;
-  //}
+  static function getPresets()
+  {
+    $mysqli = Database::runQuery_mysqli();
+    $rows = array();
+    $mysqli->set_charset("utf8");
+    $query = "SELECT Name, Items FROM takeoutpresets";
+    if ($result = $mysqli->query($query)) {
+      while ($row = $result->fetch_assoc()) {
+        $rows[] = $row;
+      }
+      $a = json_encode($rows);
+      //var_dump($a);
+      echo $a;
+    }
+    return;
+  }
 
   static function getItems()
   {
@@ -451,10 +457,10 @@ class itemDataManager
       'studios' => 'TakeRestrict="s"',
       'eventes' => 'TakeRestrict="e"',
       'nonRentable' => 'TakeRestrict="*"',
-      'mediaAndStudio' => 'TakeRestrict="" OR TakeRestrict="s"',
-      'mediaAndEvent' => 'TakeRestrict="" OR TakeRestrict="e"',
-      'studioAndEvent' => 'TakeRestrict="s" OR TakeRestrict="e"',
-      'mediaAndStudioAndEvent' => 'TakeRestrict="" OR TakeRestrict="s" OR TakeRestrict="e"',
+      'mediaAndStudio' => '(TakeRestrict="" OR TakeRestrict="s")',
+      'mediaAndEvent' => '(TakeRestrict="" OR TakeRestrict="e")',
+      'studioAndEvent' => '(TakeRestrict="s" OR TakeRestrict="e")',
+      'mediaAndStudioAndEvent' => '(TakeRestrict="" OR TakeRestrict="s" OR TakeRestrict="e")',
       'none' => '1=1',
     );
 
@@ -530,7 +536,7 @@ class itemDataManager
 
   static function getItemsForConfirmation()
   {
-    $sql = "SELECT * FROM takelog WHERE Acknowledged=0 AND Event != 'SERVICE' ORDER BY DATE DESC, USER, EVENT";
+    $sql = "SELECT * FROM takelog WHERE Acknowledged=0 AND Event != 'SERVICE' ORDER BY DATE DESC, EVENT";
     //Get a new database connection
     $connection = Database::runQuery_mysqli();
     $stmt = $connection->prepare($sql);
@@ -591,49 +597,6 @@ class itemHistoryManager
 
 }
 
-class userManager
-{
-  /**
-   * Get every user from the database
-   */
-  static function getUsers()
-  {
-    $mysqli = Database::runQuery_mysqli();
-    $rows = array();
-    $mysqli->set_charset("utf8");
-    $query = "SELECT usernameUsers FROM users";
-    if ($result = $mysqli->query($query)) {
-      while ($row = $result->fetch_assoc()) {
-        $rows[] = $row;
-      }
-      $a = json_encode($rows);
-      //var_dump($a);
-      echo $a;
-    }
-    return;
-  }
-
-  /**
-   * Get present presets from the database
-   */
-
-  static function getPresets()
-  {
-    $mysqli = Database::runQuery_mysqli();
-    $rows = array();
-    $mysqli->set_charset("utf8");
-    $query = "SELECT Name, Items FROM takeoutpresets";
-    if ($result = $mysqli->query($query)) {
-      while ($row = $result->fetch_assoc()) {
-        $rows[] = $row;
-      }
-      $a = json_encode($rows);
-      //var_dump($a);
-      echo $a;
-    }
-    return;
-  }
-}
 
 /**
  * Handle URL requests
@@ -670,12 +633,8 @@ if (isset($_POST['mode'])) {
     echo itemHistoryManager::getItemHistory($_POST['itemUID']);
   }
 
-  if ($_POST['mode'] == 'getUsers') {
-    echo userManager::getUsers();
-  }
-
   if ($_POST['mode'] == 'getPresets') {
-    echo userManager::getPresets();
+    echo itemDataManager::getPresets();
   }
 
   if ($_POST['mode'] == 'getItemsForConfirmation') {

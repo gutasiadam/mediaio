@@ -20,6 +20,8 @@
   <script src="toastManager.js" crossorigin="anonymous" defer></script>
   <script src="confirmFrontEnd.js" crossorigin="anonymous"></script>
 
+  <link href='style.scss' rel='stylesheet' />
+
   <script>
     $(window).on('load', function () {
       console.log("Finishing UI");

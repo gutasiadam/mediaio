@@ -94,6 +94,16 @@ function getSearchQuery(order = null) {
     }
     if (nonRentable) {
         takeRestrict = "nonRentable";
+        checkboxes.forEach((checkbox) => {
+            if (checkbox.id !== "nonRentable") {
+                checkbox.disabled = true;
+                checkbox.checked = false;
+            }
+        });
+    } else {
+        checkboxes.forEach((checkbox) => {
+            checkbox.disabled = false;
+        });
     }
 
     loadTableData(takeRestrict, itemState, orderBY, orderDirection);
