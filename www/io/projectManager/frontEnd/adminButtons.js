@@ -1,3 +1,19 @@
+async function generateNewProjectButton() {
+
+    const projectHolder = document.getElementById("projectHolder");
+
+    // Create add button
+
+    const addProjectButton = document.createElement("button");
+    addProjectButton.classList.add("btn", "btn-success", "addProjectButton");
+    addProjectButton.innerHTML = '<i class="fas fa-plus"></i>';
+    addProjectButton.onclick = function () {
+        createNewProject();
+    }
+    projectHolder.appendChild(addProjectButton);
+
+}
+
 
 function changeProjectSettingsButton(projectID) {
     let settingsButton = document.createElement("button");

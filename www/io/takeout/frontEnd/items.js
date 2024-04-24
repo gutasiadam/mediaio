@@ -277,6 +277,8 @@ async function showPresetsModal() {
 
         document.getElementById('presetsContainer').appendChild(button);
     });
+
+    document.getElementById('notAvailableItems').innerHTML = '';
 }
 
 
@@ -286,11 +288,50 @@ function addItems(items) {
     items = JSON.parse(items);
     items = items.items;
 
+    let notAvailableItems = [];
+
     items.forEach(item => {
         const itemElement = document.getElementById(item);
-        itemElement.click();
+
+        // If item is not found, skip it
+        if (!itemElement) {
+            return;
+        }
+
+        // Get if item is available
+        const isAvailable = itemElement.getAttribute("data-available") == "true";
+
+        // If item is not available, add it to the notAvailableItems array
+        if (!isAvailable) {
+            notAvailableItems.push(item);
+        } else {
+            // If item is available, select it
+            itemElement.click();
+        }
     });
-    //$('#presets_Modal').modal('hide');
+
+    console.log(`Not available items: ${notAvailableItems}`);
+
+    if (notAvailableItems.length > 0) {
+        const notAvailableItemsHolder = document.getElementById("notAvailableItems");
+        notAvailableItemsHolder.innerHTML = "";
+
+        // Create not available label:
+        const notAvailableLabel = document.createElement("h5");
+        notAvailableLabel.innerHTML = "Az alábbi elemek nem elérhetőek:";
+        notAvailableItemsHolder.appendChild(notAvailableLabel);
+
+        notAvailableItems.forEach(item => {
+            const itemElement = document.getElementById(item);
+
+            // Create a list with the not available items
+            const listItem = document.createElement("li");
+            listItem.classList.add("list-group-item");
+            listItem.innerHTML = itemElement.querySelector(".leltarItemLabel").textContent;
+            notAvailableItemsHolder.appendChild(listItem);
+
+        });
+    }
 }
 
 

@@ -51,7 +51,7 @@ include ("../translation.php"); ?>
       <?php } ?>
       &nbsp;Jelenlegi projektek&nbsp;
       <?php if (isset($_SESSION["userId"]) && in_array("admin", $_SESSION["groups"])) { ?>
-         <button class="btn btn-success" onclick=createNewProject()><i class="fas fa-plus fa-lg"></i></button>
+         <!-- <button class="btn btn-success" onclick=createNewProject()><i class="fas fa-plus fa-lg"></i></button> -->
       <?php } ?>
    </h1>
 
@@ -79,12 +79,20 @@ include ("../translation.php"); ?>
    });
 
 
-   setInterval(() => {
+   setInterval(async () =>  {
+      // Check if there is anything updated
+      if (await checkForUpdates() == 'false') {
+         console.log('No updates found');
+         return;
+      }
+
       if ($('.modal').hasClass('show') || document.querySelectorAll('.dragging').length > 0) {
          return;
       }
       // Hide all tooltips
       document.querySelectorAll('.tooltip').forEach(e => e.style.display = 'none');
+
+
       refreshProjects();
       simpleToast("Projektek frissítve!");
    }, 60000);

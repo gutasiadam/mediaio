@@ -19,6 +19,11 @@ function generateProjects(project, mobile = false) {
                 for (let i = 0; i < project.length; i++) {
                     await generateProjectBody(project[i]);
                 }
+                try {
+                    await generateNewProjectButton();
+                } catch (error) {
+                    ;
+                }
             }
             resolve();
         } catch (error) {
@@ -232,7 +237,7 @@ async function generateProjectBody(project) {
     let projectID = project.ID;
 
     // Div to add projects to
-    let projectHolder = document.getElementById("projectHolder");
+    const projectHolder = document.getElementById("projectHolder");
 
     // Create a new project holder card
     let projectCard = document.createElement("div");

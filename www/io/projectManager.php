@@ -9,7 +9,7 @@ use Mediaio\Database;
 use Mediaio\ProjectMailer;
 use Mediaio\projectPictureManager;
 
-error_reporting(E_ALL);
+error_reporting(E_ERROR | E_PARSE);
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -79,6 +79,27 @@ class projectManager
         } else {
             echo 403;
         }
+    }
+
+    static function checkforUpdates() {
+        // Set timezone to +02:00
+        date_default_timezone_set('Europe/Budapest');
+        // Get current date -1 minute in mysql TIMESTAMP format
+        $currentTime = date("Y-m-d H:i:s", strtotime("-1 minute"));
+
+        $sql = "SELECT * FROM projects WHERE Last_edited > '" . $currentTime . "';";
+        $connection = Database::runQuery_mysqli(self::$schema);
+        $result = $connection->query($sql);
+        if ($result->num_rows > 0) {
+            return 'true';
+        }
+
+        $sql = "SELECT * FROM project_components WHERE Last_edit > '" . $currentTime . "';";
+        $result = $connection->query($sql);
+        if ($result->num_rows > 0) {
+            return 'true';
+        }
+        return 'false';
     }
 
     static function listProjects($archived = 0)
@@ -775,6 +796,10 @@ if (isset($_POST['mode'])) {
             break;
         case 'archiveProject':
             echo projectManager::archiveProject();
+            break;
+
+        case 'checkForUpdates':
+            echo projectManager::checkForUpdates();
             break;
         case 'listProjects':
             echo projectManager::listProjects($_POST['archived']);

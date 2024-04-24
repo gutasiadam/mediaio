@@ -1,3 +1,22 @@
+
+async function checkForUpdates() {
+
+    const response = await $.ajax({
+        type: "POST",
+        url: "../../projectManager.php",
+        data: { mode: "checkForUpdates" }
+    });
+
+    if (response == 500) {
+        serverErrorToast();
+    }
+    //console.log(response);
+
+    return response;    
+}
+
+
+
 async function fetchProjects(archived = 0) {
     //console.log("Fetching projects");
 

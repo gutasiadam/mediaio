@@ -42,7 +42,8 @@ async function openTaskAnswers(taskId, projectId) {
                 if (uData.some(item => item.UserId === member.UserId)) {
                     var userAnswer = uData.find(item => item.UserId === member.UserId);
                     memberDiv.innerHTML = `<a data-bs-toggle="tooltip" data-bs-title="Leadva: ${userAnswer.submissionTime}">${member.firstName} ${member.lastName}</a>`;
-                    memberDiv.classList.add('selectedMember');
+                    // Check if the user answered late
+                    userAnswer.submissionTime > task.Deadline? memberDiv.classList.add('lateSubmission') : memberDiv.classList.add('selectedMember');
                     answeredUsers.appendChild(memberDiv);
                 } else {
                     notAnsweredUsers.appendChild(memberDiv);
@@ -78,6 +79,8 @@ async function openTaskAnswers(taskId, projectId) {
                 if (uData.some(item => item.UserId === member.UserId)) {
                     var userAnswer = uData.find(item => item.UserId === member.UserId);
                     memberDiv.innerHTML = `<a data-bs-toggle="tooltip" data-bs-title="Leadva: ${userAnswer.submissionTime}">${member.firstName} ${member.lastName}</a>`;
+                    // Check if the user answered late
+                    userAnswer.submissionTime > task.Deadline? memberDiv.classList.add('lateSubmission') : memberDiv.classList.add('selectedMember');
                     userAnswer = JSON.parse(userAnswer.Data);
                     userAnswer.forEach(answer => {
                         if (answer.checked == false) return;

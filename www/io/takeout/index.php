@@ -103,7 +103,7 @@ error_reporting(E_ALL ^ E_NOTICE);
                 <div class="modal-body">
                     <div id="presetsLoading" class="spinner-grow text-info" role="status"></div>
                     <div id="presetsContainer"></div>
-
+                    <div class="mt-3" id="notAvailableItems"></div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>

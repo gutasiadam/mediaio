@@ -1,6 +1,4 @@
 
-
-
 async function generateTasks(projectID, canEdit) {
     let taskHolder = document.createElement("div");
     taskHolder.classList.add("taskHolder");
