@@ -76,8 +76,18 @@ async function loadItems() {
             mode: "getItems"
         }
     }));
+    
+    //Get userinfo
 
-    //console.log(response);
+    const users = JSON.parse(await $.ajax({
+        url: "../Accounting.php",
+        method: "POST",
+        data: {
+            mode: "getPublicUserInfo"
+        }
+    }));
+
+    //console.log(users);
 
     response.forEach(item => {
         if (item.TakeRestrict == 'ü') {
@@ -147,7 +157,8 @@ async function loadItems() {
         if (item.Status == 1) {
             itemLabel.innerHTML = `${item.Nev} - ${item.UID}`;
         } else {
-            itemLabel.innerHTML = `<a data-bs-toggle="tooltip" data-bs-title="Kivette: ${item.RentBy}">${item.Nev} - ${item.UID}</a>`;
+            const RentByUsername = users.find((user) => user.idUsers == item.RentBy)?.usernameUsers || '';
+            itemLabel.innerHTML = `<a data-bs-toggle="tooltip" data-bs-title="Kivette: ${RentByUsername}">${item.Nev} - ${item.UID}</a>`;
         }
         itemElement.appendChild(itemLabel);
 

@@ -123,6 +123,14 @@ async function loadTableData(takeRestrict = "none", itemState = "all", orderCrit
         },
     }));
 
+    const users = JSON.parse(await $.ajax({
+        url: "../Accounting.php",
+        type: "POST",
+        data: {
+            mode: "getPublicUserInfo",
+        },
+    }));
+
 
     let orderBY;
     switch (orderCriteria) {
@@ -175,7 +183,8 @@ async function loadTableData(takeRestrict = "none", itemState = "all", orderCrit
         item.TakeRestrict == 's' ? row.classList.add("table-primary") : null;
         item.TakeRestrict == 'e' ? row.classList.add("table-success") : null;
         item.RentBy != null ? row.classList.add("table-warning") : null;
-        const cellValues = [item.UID, item.Nev, item.Tipus, item.RentBy];
+        const RentByUsername = users.find((user) => user.idUsers == item.RentBy)?.usernameUsers || '';
+        const cellValues = [item.UID, item.Nev, item.Tipus, RentByUsername];
         cellValues.forEach((value, index) => {
             const cell = row.insertCell(index);
             cell.innerHTML = value;

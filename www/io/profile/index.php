@@ -83,7 +83,7 @@ if (isset($_SESSION["userId"])) { ?>
                     <tr><td><form action="./transConfirm"><button class="btn btn-success position-relative w-100">Jóváhagyás <i class="fas fa-user-check"></i>  <span id="usercheckItemCount" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                     0
                     <span class="visually-hidden">unread messages</span></button></form></td></tr>
-                    <tr><td><form action="stats.php"><button class="btn btn-dark w-100">Statisztika <i class="fas fa-chart-pie"></i></i></button></form></td></tr>
+                    <tr><td><form action="./statistics"><button class="btn btn-dark w-100">Statisztika <i class="fas fa-chart-pie"></i></i></button></form></td></tr>
                     ';
       }
       if (in_array("system", $_SESSION["groups"]) or in_array("teacher", $_SESSION["groups"])) { //SYSADMIN OR TEACHER

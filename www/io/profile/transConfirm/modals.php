@@ -45,7 +45,7 @@
                 <div id="itemsList"></div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-success" id="saveButton">Mentés</button>
+                <button type="button" class="btn btn-success" id="submitButton">Mentés</button>
             </div>
         </div>
     </div>

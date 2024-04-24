@@ -329,7 +329,7 @@ error_reporting(E_ALL ^ E_NOTICE);
         }
 
         const takeoutItems = Array.from(selectedItems).map(item => ({
-            id: item.getAttribute("data-main-id"),
+            //id: item.getAttribute("data-main-id"),
             uid: item.id,
             name: item.getAttribute("data-name"),
         }));
@@ -342,7 +342,7 @@ error_reporting(E_ALL ^ E_NOTICE);
             data: {
                 mode: "stageTakeout",
                 items: JSON.stringify(takeoutItems),
-                user: null, // TODO: Implement user selection
+                toUserId: null, // TODO: Implement user selection
             }
         });
 

@@ -9,7 +9,7 @@
     margin-right: auto;
 
     padding-left: 5px;
-    height: calc(100vh - 290px);
+    height: calc(100vh - 270px);
     min-height: 300px;
 
     &::-webkit-scrollbar-track {
@@ -29,7 +29,7 @@
     }
 
     @media (max-width: 575px) {
-        height: calc(100dvh - 300px);
+        height: calc(100dvh - 290px);
         font-size: large;
         width: 100%;
     }

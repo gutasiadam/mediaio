@@ -3,7 +3,7 @@ namespace Mediaio;
 
 
 session_start();
-include "header.php";
+
 
 error_reporting(E_ALL ^ E_NOTICE);
 
@@ -17,6 +17,7 @@ if (!in_array("system", $_SESSION["groups"])) {
   echo "Nincs jogosultságod az oldal megtekintéséhez!";
   exit();
 }
+include "header.php";
 ?>
 
 <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-dark">
@@ -63,7 +64,7 @@ if (!in_array("system", $_SESSION["groups"])) {
   <h1 class="rainbow">Jóváhagyás</h1>
 
   <div class="container">
-    <div class="row">
+    <div class="row justify-content-center">
       <div id="confirmEvents">
         
       </div>
