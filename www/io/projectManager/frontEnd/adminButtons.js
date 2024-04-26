@@ -2,17 +2,37 @@ async function generateNewProjectButton() {
 
     const projectHolder = document.getElementById("projectHolder");
 
+
+    // Create a div for the button
+    const div = document.createElement("div");
+    div.classList.add("addProjectButton")
+
     // Create add button
 
     const addProjectButton = document.createElement("button");
-    addProjectButton.classList.add("btn", "btn-success", "addProjectButton");
+    addProjectButton.classList.add("btn", "btn-success");
+    addProjectButton.style.height = '30%';
     addProjectButton.innerHTML = '<i class="fas fa-plus"></i>';
     addProjectButton.onclick = function () {
         createNewProject();
     }
-    projectHolder.appendChild(addProjectButton);
+    div.appendChild(addProjectButton);
 
+    projectHolder.appendChild(div);
 }
+
+
+//async function showAnswersButtonAdmin(cardFooter, taskID, projectID) {
+//    // Add show answers button
+//    let showAnswersButton = document.createElement("button");
+//    showAnswersButton.classList.add("btn", "btn-sm", "showAnswersButton");
+//    showAnswersButton.innerHTML = `<i class="fas fa-stream fa-lg"></i>`;
+//    showAnswersButton.onclick = function () {
+//        openTaskAnswers(taskID, projectID);
+//    }
+//    cardFooter.appendChild(showAnswersButton);
+//    cardFooter.style.justifyContent = "space-between";
+//}
 
 
 function changeProjectSettingsButton(projectID) {

@@ -220,7 +220,7 @@ async function fetchUI(task_id) {
     });
 }
 
-async function userTaskData(task_id, proj_id = null) {
+async function userTaskData(task_id, type = "card", proj_id = null) {
     //console.info("Loading user task data...");
 
     return new Promise(async (resolve, reject) => {
@@ -230,7 +230,11 @@ async function userTaskData(task_id, proj_id = null) {
             response = await $.ajax({
                 type: "POST",
                 url: "../../projectManager.php",
-                data: { mode: "getUserTaskData", task_id: task_id, proj_id: proj_id }
+                data: { mode: "getUserTaskData", 
+                task_id: task_id, 
+                proj_id: proj_id,
+                type: type
+            }
             });
 
             if (response == 500) {

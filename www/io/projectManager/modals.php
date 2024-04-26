@@ -131,7 +131,7 @@
                     </div>
                     <div class="mb-3 input-group" id="taskFileManager">
                         <span for="taskFiles" class="input-group-text">NAS fájlok: </span>
-                        
+
                         <div class="memberSelect" id="taskFiles">
 
                         </div>
@@ -154,6 +154,7 @@
                 </form>
             </div>
             <div class="modal-footer">
+                <span id="taskEditorIDspan" style="font-style: italic;"></span>
                 <button type="button" class="btn btn-danger" data-bs-dismiss="modal" data-bs-target="#areyousureModal"
                     data-bs-toggle="modal" id="deleteTask" style="display: none;">Törlés</button>
                 <button type="button" class="btn btn-success" id="saveNewTask">Mentés</button>

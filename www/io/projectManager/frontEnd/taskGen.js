@@ -18,7 +18,8 @@ async function generateTasks(projectID, canEdit) {
 }
 
 async function createTask(task, projectID, canEdit) {
-    var uData = await userTaskData(task.ID, projectID);
+    var uData = JSON.parse(await userTaskData(task.ID, 'card', projectID));
+    console.log(uData);
 
     let taskCard = document.createElement("div");
     taskCard.classList.add("card", "taskCard");
@@ -186,12 +187,12 @@ async function createTask(task, projectID, canEdit) {
     // check deadline and color the card accordingly
     if (task.Deadline) {
         var deadlineText = await getDeadline(task.Deadline);
-        if (task.isInteractable && uData == 100 || !task.isInteractable) {
+        let shouldDisplayDeadline = uData.isAdmin || (uData.isTaskMember && !uData.filled) && task.isInteractable;
+        if (shouldDisplayDeadline) {
             colorTaskCard(taskHeader, task.Deadline);
             let deadline = document.createElement("span");
             deadline.classList.add("badge");
-            deadline.innerHTML = deadlineText;
-            //deadline.innerHTML = `<a data-bs-toggle="tooltip" data-bs-title="${task.Deadline.slice(0, -3)}">${deadlineText}</a>`;
+            deadline.innerHTML = `<a data-bs-toggle="tooltip" data-bs-title="${task.Deadline.slice(0, -3)}">${deadlineText}</a>`;
             let deadlineColor = getDeadlineColor(task.Deadline);
             switch (deadlineColor) {
                 case "overdue":
@@ -214,8 +215,9 @@ async function createTask(task, projectID, canEdit) {
     }
 
     // Check if task is filled out
-    if (task.isInteractable == 1 && uData != 404) {
-        if (uData != 100) {
+    if (task.isInteractable == 1) {
+        let shouldDisplayAnswer = uData.filled && uData.isTaskMember;
+        if (uData.isAdmin || shouldDisplayAnswer) {
             // Add show answers button
             let showAnswersButton = document.createElement("button");
             showAnswersButton.classList.add("btn", "btn-sm", "showAnswersButton");
@@ -226,24 +228,28 @@ async function createTask(task, projectID, canEdit) {
             cardFooter.appendChild(showAnswersButton);
             cardFooter.style.justifyContent = "space-between";
         }
-        if (uData == 100 || task.SingleAnswer == 0) {
-            // ADD fill out button to task
-            let fillOutButton = document.createElement("button");
-            fillOutButton.classList.add("btn", "btn-sm", "fillOutButton", uData != 100 ? "btn-warning" : "btn-primary");
-            fillOutButton.innerHTML = uData != 100 ? "Módosítás" : "Kitöltés";
-            fillOutButton.onclick = function () {
-                fillOutTask(task.ID);
+        if (uData.isTaskMember) {
+            let shouldAddButton = task.SingleAnswer == '0' || !uData.filled;
+            if (shouldAddButton) {
+                // ADD fill out button to task
+                let fillOutButton = document.createElement("button");
+                fillOutButton.classList.add("btn", "btn-sm", "fillOutButton", uData.filled ? "btn-warning" : "btn-primary");
+                fillOutButton.innerHTML = uData.filled ? "Módosítás" : "Kitöltés";
+                fillOutButton.onclick = function () {
+                    fillOutTask(task.ID);
+                }
+                cardFooter.appendChild(fillOutButton);
+            } else if (task.SingleAnswer == '1' && uData.filled) {
+                // Add "Leadva" text
+                let filledOutText = document.createElement("p");
+                filledOutText.classList.add("card-text", "taskText");
+                filledOutText.innerHTML = "<i>Leadva</i>";
+                cardFooter.appendChild(filledOutText);
             }
-            cardFooter.appendChild(fillOutButton);
-        } else {
-            // Add "Leadva" text
-            let filledOutText = document.createElement("p");
-            filledOutText.classList.add("card-text", "taskText");
-            filledOutText.innerHTML = "<i>Leadva</i>";
-            cardFooter.appendChild(filledOutText);
         }
-
-        taskCard.appendChild(cardFooter);
+        if (uData.isTaskMember || uData.isAdmin) {
+            taskCard.appendChild(cardFooter);
+        }
     }
 
     return taskCard;
@@ -368,6 +374,11 @@ async function openTask(TaskId, projectID) {
 
     // Add the new event listener
     saveButton.addEventListener('click', saveButtonHandler);
+
+    // For development purposes, add task id to modal footer
+    let idSpan = document.getElementById("taskEditorIDspan");
+    idSpan.innerHTML = `ID: ${TaskId}`;
+
 
     // Display task editor modal
     $('#taskEditorModal').modal('show');
@@ -938,10 +949,16 @@ function textEditor(taskDataHolder, taskData = "", height = "250px") {
 
     taskDataHolder.appendChild(textFormatOptions);
 
+    function decodeHtml(html) {
+        var txt = document.createElement("textarea");
+        txt.innerHTML = html;
+        return txt.value;
+    }
+
     let textArea = document.createElement("textarea");
     textArea.classList.add("form-control", "mb-2");
     textArea.id = "textTaskData";
-    textArea.value = taskData;
+    textArea.value = decodeHtml(taskData);
     textArea.placeholder = "Szöveg...";
     textArea.style.height = height;
 
@@ -1094,7 +1111,7 @@ async function submissionSettings(taskType, task = null) {
     submissionSettings.appendChild(submitButton);
 
     let submitLabel = document.createElement("label");
-    submitLabel.classList.add("btn", "btn-outline-success");
+    submitLabel.classList.add("btn", "btn-outline-success", 'd-flex', 'align-items-center');
     submitLabel.htmlFor = "taskInteractable";
     submitLabel.innerHTML = `<i class="fas fa-user-check"></i>`;
     submissionSettings.appendChild(submitLabel);
@@ -1108,7 +1125,7 @@ async function submissionSettings(taskType, task = null) {
     submissionSettings.appendChild(singleAnswerButton);
 
     let singleAnswerLabel = document.createElement("label");
-    singleAnswerLabel.classList.add("btn", "btn-outline-danger");
+    singleAnswerLabel.classList.add("btn", "btn-outline-danger", 'd-flex', 'align-items-center');
     singleAnswerLabel.htmlFor = "singleAnswer";
     singleAnswerLabel.innerHTML = `<i class="fas fa-check"></i>`;
     submissionSettings.appendChild(singleAnswerLabel);
@@ -1256,7 +1273,7 @@ async function cardCheckOrRadio(taskBody, task, type) {
             input.type = "radio";
         }
         input.disabled = task.isInteractable == 0 ? false : true;
-        input.id = checklistItems[i].pos;
+        input.id = checklistItems[i].pos + "-" + task.ID;
 
         if (task.isInteractable == 0) {
             input.checked = checklistItems[i].checked;
@@ -1281,7 +1298,7 @@ async function cardCheckOrRadio(taskBody, task, type) {
         }
         let label = document.createElement("label");
         label.classList.add("form-check-label");
-        label.htmlFor = checklistItems[i].pos;
+        label.htmlFor = checklistItems[i].pos + "-" + task.ID;
         if (task.isInteractable == 1) {
             label.innerHTML = checklistItems[i].value + " (" + selectedCount + ")";
         } else {

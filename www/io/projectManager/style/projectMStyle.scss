@@ -36,6 +36,12 @@
     min-height: 300px;
     max-height: 79dvh;
 
+    .addProjectButton {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
     &::-webkit-scrollbar-track {
         background: rgb(255, 255, 255);
         /* color of the tracking area */
@@ -61,6 +67,8 @@
         max-height: 88dvh;
     }
 }
+
+
 
 .projectCard {
     min-width: 400px;

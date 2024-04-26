@@ -81,7 +81,8 @@ class projectManager
         }
     }
 
-    static function checkforUpdates() {
+    static function checkforUpdates()
+    {
         // Set timezone to +02:00
         date_default_timezone_set('Europe/Budapest');
         // Get current date -1 minute in mysql TIMESTAMP format
@@ -192,7 +193,7 @@ class projectManager
     {
         if ($_POST['task_id'] == null) {
             // Get all tasks of the project
-            $sql = "SELECT * FROM project_components WHERE ProjectId=" . $_POST['proj_id'] . " ORDER BY Position IS NULL, Position;";
+            $sql = "SELECT * FROM project_components WHERE ProjectId=" . $_POST['proj_id'] . " ORDER BY COALESCE(Position, Deadline);";
         } else {
             // Get the task with the specified ID
             $sql = "SELECT * FROM project_components WHERE ID=" . $_POST['task_id'] . ";";
@@ -615,37 +616,55 @@ class projectManager
 
     static function getUserTaskData()
     {
-        $sql = "SELECT * FROM `project_task_userdata` WHERE TaskId=" . $_POST['task_id'] . ";";
-        $connection = Database::runQuery_mysqli(self::$schema);
-        $result = $connection->query($sql);
-        $connection->close();
-        $row = $result->fetch_assoc();
-        if ($row == null) {
-            $taskMembers = self::getTaskMembers();
-            if ($taskMembers == null) {
-                echo 404;
-                exit();
-            }
-            $taskMembers = array_map(function ($item) {
-                if ($item['assignedToTask'] == 1) {
-                    return intval($item['UserId']);
+        $responseJSON = array();
+        $responseJSON['isAdmin'] = in_array("admin", $_SESSION['groups']);
+
+
+        if ($_POST['type'] == "card") {
+            $sql = "SELECT * FROM `project_task_userdata` WHERE TaskId=" . $_POST['task_id'] . " AND UserId=" . $_SESSION['userId'] . ";";
+            $connection = Database::runQuery_mysqli(self::$schema);
+            $result = $connection->query($sql);
+            $row = $result->fetch_assoc();
+            if ($row == null) {
+                $responseJSON['filled'] = false;
+                $taskMembers = self::getTaskMembers();
+
+                // If the task has members
+                if ($taskMembers != null) {
+
+                    // Check if the user is a member of the task
+                    $taskMembers = array_map(function ($item) {
+                        if ($item['assignedToTask'] == 1) {
+                            return intval($item['UserId']);
+                        }
+                    }, $taskMembers);
+
+                    if (in_array($_SESSION['userId'], $taskMembers)) {
+                        $responseJSON['isTaskMember'] = true;
+                    } else {
+                        $responseJSON['isTaskMember'] = false;
+                    }
+                } else {
+                    // If the task has no members
+                    $responseJSON['isTaskMember'] = false;
                 }
-            }, $taskMembers);
-
-            if (in_array($_SESSION['userId'], $taskMembers)) {
-                echo 100;
-                exit();
+            } else {
+                $responseJSON['isTaskMember'] = true;
+                $responseJSON['filled'] = true;
             }
 
-            echo 404;
-            exit();
+        } else if ($_POST['type'] == "get") {
+            $sql = "SELECT * FROM `project_task_userdata` WHERE TaskId=" . $_POST['task_id'] . ";";
+            $connection = Database::runQuery_mysqli(self::$schema);
+            $result = $connection->query($sql);
+            $connection->close();
+            $rows = array();
+            foreach ($result as $row) {
+                $rows[] = $row;
+            }
+            $responseJSON['data'] = $rows == null ? null : $rows;
         }
-        if ($row['Data'] == 'null') {
-            echo 100;
-            exit();
-        }
-        echo (json_encode($row));
-        exit();
+        return json_encode($responseJSON);
     }
 
     static function getProjectMembers($projectID)
