@@ -11,7 +11,7 @@ if (!isset($_SESSION["userId"])) {
   exit();
 }
 
-if (!in_array("system", $_SESSION["groups"])) {
+if (!in_array("admin", $_SESSION["groups"])) {
   echo "<script>window.location.href = '../404.html';</script>";
   exit();
 }

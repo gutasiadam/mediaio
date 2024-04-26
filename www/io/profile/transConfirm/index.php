@@ -13,7 +13,7 @@ if (!isset($_SESSION["userId"])) {
 }
 
 // Prevent unauthorized access
-if (!in_array("system", $_SESSION["groups"])) {
+if (!in_array("admin", $_SESSION["groups"])) {
   echo "Nincs jogosultságod az oldal megtekintéséhez!";
   exit();
 }

@@ -1096,7 +1096,7 @@ async function submissionSettings(taskType, task = null) {
     let submitLabel = document.createElement("label");
     submitLabel.classList.add("btn", "btn-outline-success");
     submitLabel.htmlFor = "taskInteractable";
-    submitLabel.innerHTML = `<i class="fas fa-user-check"></i> Leadandó`;
+    submitLabel.innerHTML = `<i class="fas fa-user-check"></i>`;
     submissionSettings.appendChild(submitLabel);
 
     let singleAnswerButton = document.createElement("input");
@@ -1110,7 +1110,7 @@ async function submissionSettings(taskType, task = null) {
     let singleAnswerLabel = document.createElement("label");
     singleAnswerLabel.classList.add("btn", "btn-outline-danger");
     singleAnswerLabel.htmlFor = "singleAnswer";
-    singleAnswerLabel.innerHTML = `<i class="fas fa-check"></i> Egyszer`;
+    singleAnswerLabel.innerHTML = `<i class="fas fa-check"></i>`;
     submissionSettings.appendChild(singleAnswerLabel);
 }
 

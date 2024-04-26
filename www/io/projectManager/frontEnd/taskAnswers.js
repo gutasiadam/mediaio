@@ -6,7 +6,9 @@ async function openTaskAnswers(taskId, projectId) {
 
     // Get the task answers
     var uDataResponse = await userTaskData(taskId);
+    console.log(uDataResponse);
     var uData = Array.isArray(uDataResponse) ? JSON.parse(uDataResponse) : [JSON.parse(uDataResponse)];
+    console.log(uData);
 
     // Get the task
     var task = JSON.parse(await fetchTask(null, taskId));

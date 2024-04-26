@@ -615,7 +615,7 @@ class projectManager
 
     static function getUserTaskData()
     {
-        $sql = "SELECT * FROM `project_task_userdata` WHERE TaskId=" . $_POST['task_id'] . " AND UserId=" . $_SESSION['userId'] . ";";
+        $sql = "SELECT * FROM `project_task_userdata` WHERE TaskId=" . $_POST['task_id'] . ";";
         $connection = Database::runQuery_mysqli(self::$schema);
         $result = $connection->query($sql);
         $connection->close();
