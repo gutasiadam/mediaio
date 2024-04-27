@@ -52,8 +52,17 @@ $(document).ready(function () {
     });
 
 
-    // Add event listeners to filter checkboxes
+    // Add event listeners to filter checkboxes and their divs
     const checkboxes = document.querySelectorAll(".filterCheckbox");
+    const holderDivs = document.querySelectorAll(".dropdown-item");
+
+    holderDivs.forEach(holderDiv => {
+        holderDiv.addEventListener("click", function () {
+            const checkbox = holderDiv.querySelector(".filterCheckbox");
+            checkbox.checked = !checkbox.checked;
+            searchInput.dispatchEvent(new Event("input"));
+        });
+    });
 
     checkboxes.forEach(checkbox => {
         checkbox.addEventListener("change", function () {
@@ -76,7 +85,7 @@ async function loadItems() {
             mode: "getItems"
         }
     }));
-    
+
     //Get userinfo
 
     const users = JSON.parse(await $.ajax({

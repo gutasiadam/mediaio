@@ -19,9 +19,13 @@ const qrOnSuccess = (decodedText, decodedResult) => {
 
         setTimeout(() => {
             canScan = true;
-        }, 1500);
+        }, 2000);
     } else {
+        canScan = false;
         showToast("Nem található ilyen eszköz!", "red");
         scan_fail_sfx.play();
+        setTimeout(() => {
+            canScan = true;
+        }, 2000);
     }
 };

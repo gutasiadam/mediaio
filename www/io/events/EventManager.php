@@ -97,7 +97,7 @@ class EventManager
             'title'   => $event->getSummary(),
             'start'   => $start,
             'end'   => $end,
-            'backgroundColor' => "#0e6ab5",
+            'backgroundColor' => "#083b82",
             'textColor' => "#ffffff",
             'borderColor' => "#ffffff"
            );

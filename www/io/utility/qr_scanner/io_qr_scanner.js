@@ -1,7 +1,7 @@
 // AUDIO
 
-let scan_succes_sfx = new Audio('utility/qr_scanner/sounds/scan_succes.mp3');
-let scan_fail_sfx = new Audio('utility/qr_scanner/sounds/scan_fail.mp3');
+let scan_succes_sfx = new Audio('../utility/qr_scanner/sounds/scan_succes.mp3');
+let scan_fail_sfx = new Audio('../utility/qr_scanner/sounds/scan_fail.mp3');
 
 //Scanner
 let macroCam;

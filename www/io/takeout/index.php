@@ -215,6 +215,13 @@ error_reporting(E_ALL ^ E_NOTICE);
                         <li>
                             <div class="dropdown-item">
                                 <input class="form-check-input filterCheckbox" type="checkbox" autocomplete="off"
+                                    id="show_medias" data-filter="">
+                                <label class="form-check-label" for="show_medias">Médiás</label>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="dropdown-item">
+                                <input class="form-check-input filterCheckbox" type="checkbox" autocomplete="off"
                                     id="show_studios" data-filter="s">
                                 <label class="form-check-label" for="show_studios">Stúdiós</label>
                             </div>
