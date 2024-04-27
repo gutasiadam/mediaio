@@ -88,8 +88,8 @@ if (isset($_SESSION["userId"])) { ?>
       }
       if (in_array("system", $_SESSION["groups"]) or in_array("teacher", $_SESSION["groups"])) { //SYSADMIN OR TEACHER
         echo '
-                    <tr><td><form action="../budget/"><button class="btn btn-info w-100">Költségvetés <i class="fas fa-coins"></i></button></form></td></tr>
-					          <tr><td><form action="points.php"><button class="btn btn-success w-100">Pontszámok <i class="fas fa-calculator"></i></button></form> </td></tr>';
+                    <tr><td><form action="../budget/"><button class="btn btn-info w-100" disabled>Költségvetés <i class="fas fa-coins"></i></button></form></td></tr>
+					          <tr><td><form action="points.php"><button class="btn btn-success w-100" disabled>Pontszámok <i class="fas fa-calculator"></i></button></form> </td></tr>';
       }
       if (in_array("system", $_SESSION["groups"])) {
         echo '

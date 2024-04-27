@@ -19,11 +19,11 @@ function generateProjects(project, mobile = false) {
                 for (let i = 0; i < project.length; i++) {
                     await generateProjectBody(project[i]);
                 }
-                try {
-                    await generateNewProjectButton();
-                } catch (error) {
-                    ;
-                }
+            }
+            try {
+                await generateNewProjectButton(mobile);
+            } catch (error) {
+                ;
             }
             resolve();
         } catch (error) {
@@ -258,8 +258,9 @@ async function generateProjectBody(project) {
     // Create li elements
     let tasks = document.createElement("li");
     tasks.classList.add("nav-item");
-    tasks.innerHTML = `<button class="nav-link active" id="task-tab" data-bs-toggle="tab" data-bs-target="#task-tab-pane-${projectID}" type="button" role='tab' aria-controls='task-tab-pane' aria-selected='true'>
-    <a data-bs-toggle="tooltip" data-bs-title="${project.Description}">${projectName}</a></button>`;
+    //tasks.innerHTML = `<button class="nav-link active" id="task-tab" data-bs-toggle="tab" data-bs-target="#task-tab-pane-${projectID}" type="button" role='tab' aria-controls='task-tab-pane' aria-selected='true'>
+    //<a data-bs-toggle="tooltip" data-bs-title="${project.Description}">${projectName}</a></button>`;
+    tasks.innerHTML = `<button class="nav-link active" id="task-tab" data-bs-toggle="tab" data-bs-target="#task-tab-pane-${projectID}" type="button" role='tab' aria-controls='task-tab-pane' aria-selected='true'>${projectName}</button>`;
     nav.appendChild(tasks);
 
     let members = document.createElement("li");
@@ -318,7 +319,7 @@ async function generateProjectBody(project) {
 
 
     // Create a new project description
-    //projectBody.appendChild(createDiscription(projectID, project.Description));
+    projectBody.appendChild(createDiscription(projectID, project.Description));
 
     // Generating the project tasks
     projectBody.appendChild(await generateTasks(projectID, project.canEdit));
@@ -493,21 +494,34 @@ function getDeadlineColor(deadline) {
 
 function createDiscription(projectID, Description) {
     // Create a new project description
-    let projectDescriptionHolder = document.createElement("div");
+    const projectDescriptionHolder = document.createElement("div");
     projectDescriptionHolder.classList.add("projectDescriptionHolder");
 
-    let projectDescription = document.createElement("span");
-    projectDescription.classList.add("card-text", "projectDescription");
-    projectDescription.innerHTML = Description;
-    projectDescriptionHolder.appendChild(projectDescription);
 
-    try {
-        projectDescriptionHolder.appendChild(editDescriptionButton(projectID));
-    } catch (error) {
-        ;
+    // Make the description max 100 characters
+    if (Description.length > 100) {
+        var ShortDescription = `${makeFormatting(Description.slice(0, 60)) || 'Nincs leírás'} <a class="descToggle" onclick=ToggleDesc(${projectID})>Több...</a>`;
     }
 
+    const projectDescription = document.createElement("span");
+    projectDescription.classList.add("card-text", "projectDescription");
+    projectDescription.innerHTML = ShortDescription || Description;
+    projectDescription.setAttribute("fullDescription", Description);
+    projectDescriptionHolder.appendChild(projectDescription);
+
     return projectDescriptionHolder;
+}
+
+function ToggleDesc(projectID) {
+    const desc = document.getElementById(projectID).getElementsByClassName("projectDescription")[0];
+    const descToggle = desc.getElementsByClassName("descToggle")[0];
+    const Description = desc.getAttribute("fullDescription");
+
+    if (descToggle.innerHTML == "Több...") {
+        desc.innerHTML = `${makeFormatting(Description)} <a class="descToggle" onclick=ToggleDesc(${projectID})>Kevesebb...</a>`;
+    } else {
+        desc.innerHTML = `${makeFormatting(Description.slice(0, 60))} <a class="descToggle" onclick=ToggleDesc(${projectID})>Több...</a>`;
+    }
 }
 
 

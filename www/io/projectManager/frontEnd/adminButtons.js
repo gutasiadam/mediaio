@@ -1,7 +1,6 @@
-async function generateNewProjectButton() {
+async function generateNewProjectButton(mobile) {
 
-    const projectHolder = document.getElementById("projectHolder");
-
+    const projectHolder = mobile ? document.getElementsByClassName("container")[0] : document.getElementById("projectHolder");
 
     // Create a div for the button
     const div = document.createElement("div");
@@ -10,8 +9,7 @@ async function generateNewProjectButton() {
     // Create add button
 
     const addProjectButton = document.createElement("button");
-    addProjectButton.classList.add("btn", "btn-success");
-    addProjectButton.style.height = '30%';
+    addProjectButton.classList.add("btn", "btn-success", "addButton");
     addProjectButton.innerHTML = '<i class="fas fa-plus"></i>';
     addProjectButton.onclick = function () {
         createNewProject();
@@ -19,20 +17,8 @@ async function generateNewProjectButton() {
     div.appendChild(addProjectButton);
 
     projectHolder.appendChild(div);
+
 }
-
-
-//async function showAnswersButtonAdmin(cardFooter, taskID, projectID) {
-//    // Add show answers button
-//    let showAnswersButton = document.createElement("button");
-//    showAnswersButton.classList.add("btn", "btn-sm", "showAnswersButton");
-//    showAnswersButton.innerHTML = `<i class="fas fa-stream fa-lg"></i>`;
-//    showAnswersButton.onclick = function () {
-//        openTaskAnswers(taskID, projectID);
-//    }
-//    cardFooter.appendChild(showAnswersButton);
-//    cardFooter.style.justifyContent = "space-between";
-//}
 
 
 function changeProjectSettingsButton(projectID) {

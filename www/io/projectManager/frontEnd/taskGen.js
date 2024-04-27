@@ -19,7 +19,6 @@ async function generateTasks(projectID, canEdit) {
 
 async function createTask(task, projectID, canEdit) {
     var uData = JSON.parse(await userTaskData(task.ID, 'card', projectID));
-    console.log(uData);
 
     let taskCard = document.createElement("div");
     taskCard.classList.add("card", "taskCard");
@@ -226,7 +225,7 @@ async function createTask(task, projectID, canEdit) {
                 openTaskAnswers(task.ID, projectID);
             }
             cardFooter.appendChild(showAnswersButton);
-            cardFooter.style.justifyContent = "space-between";
+            //cardFooter.style.justifyContent = "space-between";
         }
         if (uData.isTaskMember) {
             let shouldAddButton = task.SingleAnswer == '0' || !uData.filled;
@@ -234,7 +233,7 @@ async function createTask(task, projectID, canEdit) {
                 // ADD fill out button to task
                 let fillOutButton = document.createElement("button");
                 fillOutButton.classList.add("btn", "btn-sm", "fillOutButton", uData.filled ? "btn-warning" : "btn-primary");
-                fillOutButton.innerHTML = uData.filled ? "Módosítás" : "Kitöltés";
+                fillOutButton.innerHTML = uData.filled && JSON.parse(uData.data.Data) != 'reverted' ? "Módosítás" : "Kitöltés"; // If the user has already filled out the task, change the button text to "Modify"
                 fillOutButton.onclick = function () {
                     fillOutTask(task.ID);
                 }
@@ -247,9 +246,9 @@ async function createTask(task, projectID, canEdit) {
                 cardFooter.appendChild(filledOutText);
             }
         }
-        if (uData.isTaskMember || uData.isAdmin) {
-            taskCard.appendChild(cardFooter);
-        }
+    }
+    if (uData.isTaskMember || uData.isAdmin) {
+        taskCard.appendChild(cardFooter);
     }
 
     return taskCard;
@@ -484,7 +483,7 @@ async function addFillOutText(taskBody, fillOutText, taskId) {
 
     // Create a div for the checkbox
     let fillOutDiv = document.createElement("div");
-    fillOutDiv.classList.add("form-check");
+    fillOutDiv.classList.add("form-check", "d-flex");
 
     // Create a checkbox
     let fillOutCheckbox = document.createElement("input");
@@ -747,7 +746,7 @@ async function submitTask(taskId, taskType) {
     switch (taskType) {
         case "task":
             let done = document.getElementById("fillOutCheckbox").checked;
-            taskData = done ? ['done'] : null;
+            taskData = done ? ['done'] : ['reverted'];
             break;
         case "checklist":
         case "radio":

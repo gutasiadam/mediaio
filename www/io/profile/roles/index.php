@@ -245,7 +245,7 @@ if (!in_array("system", $_SESSION["groups"])) {
     let roles = [
       { value: 'média', text: 'Médiás' },
       { value: 'studio', text: 'Stúdiós' },
-      { value: 'event', text: 'Eventes csicska' },
+      { value: 'event', text: 'Eventes' },
       { value: 'admin', text: 'Vezetőségi tag' },
       { value: 'teacher', text: 'Tanár' },
       { value: 'system', text: 'SysAdmin' }

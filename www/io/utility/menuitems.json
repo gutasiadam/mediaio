@@ -1,7 +1,7 @@
 { "menu": {
     "left" : [
         {"name": "index","icon": "fas fa-home fa-lg", "href": "index.php", "displayName": "Kezdőlap"},
-        {"name": "takeout","icon": "fas fa-upload fa-lg", "href": "takeout/", "displayName": "Kivétel"},
+        {"name": "takeout","icon": "fas fa-upload fa-lg", "href": "takeout/", "displayName": "Elvitel"},
         {"name": "retrieve","icon": "fas fa-download fa-lg", "href": "retrieve/", "displayName": "Visszahozás"},
         {"name": "projectmanager", "icon": "fas fa-tasks fa-lg", "href": "projectManager/index.php",  "displayName": "Projektek"},
         {"name": "adatok","icon": "fas fa-database fa-lg", "href": "leltar/", "displayName": "Leltár"},
@@ -19,7 +19,7 @@
       
     ]},
     "indexTable":[
-        {"name": "takeout","icon": "fas fa-upload fa-3x", "href": "takeout/", "displayName": "Kivétel"},
+        {"name": "takeout","icon": "fas fa-upload fa-3x", "href": "takeout/", "displayName": "Elvitel"},
         {"name": "retrieve","icon": "fas fa-download fa-3x", "href": "retrieve/", "displayName": "Visszahozás"},
         {"name": "projectmanager", "icon": "fas fa-tasks fa-3x", "href": "./projectManager/", "displayName": "Projektek"},
         {"name": "adatok","icon": "fas fa-database fa-3x", "href": "leltar/", "displayName": "Leltár"},

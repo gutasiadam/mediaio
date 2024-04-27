@@ -50,12 +50,8 @@ include ("../translation.php"); ?>
          <button class="btn btn-secondary" onclick=showArchivedProjects()><i class="fas fa-archive fa-lg"></i></button>
       <?php } ?>
       &nbsp;Jelenlegi projektek&nbsp;
-      <?php if (isset($_SESSION["userId"]) && in_array("admin", $_SESSION["groups"])) { ?>
-         <!-- <button class="btn btn-success" onclick=createNewProject()><i class="fas fa-plus fa-lg"></i></button> -->
-      <?php } ?>
    </h1>
 
-   <!-- <button type="button" class="btn custom-kurva-anyja" onclick="unsetNAS()">LOFASZ</button> -->
 
    <div class="container">
 
@@ -78,10 +74,12 @@ include ("../translation.php"); ?>
       refreshProjects();
    });
 
+   // Check for updates every minute
+   let lastUpdate = new Date().getTime();
 
-   setInterval(async () =>  {
+   setInterval(async () => {
       // Check if there is anything updated
-      if (await checkForUpdates() == 'false') {
+      if (await checkForUpdates(lastUpdate) == 'false') {
          console.log('No updates found');
          return;
       }
@@ -94,6 +92,7 @@ include ("../translation.php"); ?>
 
 
       refreshProjects();
+      lastUpdate = new Date().getTime();
       simpleToast("Projektek frissítve!");
    }, 60000);
 

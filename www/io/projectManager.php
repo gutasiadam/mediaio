@@ -83,19 +83,18 @@ class projectManager
 
     static function checkforUpdates()
     {
+        $lastUpdate = $_POST['lastUpdate'];
         // Set timezone to +02:00
         date_default_timezone_set('Europe/Budapest');
-        // Get current date -1 minute in mysql TIMESTAMP format
-        $currentTime = date("Y-m-d H:i:s", strtotime("-1 minute"));
 
-        $sql = "SELECT * FROM projects WHERE Last_edited > '" . $currentTime . "';";
+        $sql = "SELECT * FROM projects WHERE Last_edited > '" . $lastUpdate . "';";
         $connection = Database::runQuery_mysqli(self::$schema);
         $result = $connection->query($sql);
         if ($result->num_rows > 0) {
             return 'true';
         }
 
-        $sql = "SELECT * FROM project_components WHERE Last_edit > '" . $currentTime . "';";
+        $sql = "SELECT * FROM project_components WHERE Last_edit > '" . $lastUpdate . "';";
         $result = $connection->query($sql);
         if ($result->num_rows > 0) {
             return 'true';
@@ -650,6 +649,7 @@ class projectManager
                 }
             } else {
                 $responseJSON['isTaskMember'] = true;
+                $responseJSON['data'] = $row;
                 $responseJSON['filled'] = true;
             }
 

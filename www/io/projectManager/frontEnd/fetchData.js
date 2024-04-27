@@ -1,10 +1,18 @@
 
-async function checkForUpdates() {
+async function checkForUpdates(lastUpdate) {
+
+    // Make lastUpdate to a yyyy:mm:dd hh:mm:ss format from JS Date object
+    lastUpdate = new Date(lastUpdate);
+    lastUpdate = lastUpdate.toISOString().slice(0, 19).replace("T", " ");
+
 
     const response = await $.ajax({
         type: "POST",
         url: "../../projectManager.php",
-        data: { mode: "checkForUpdates" }
+        data: {
+            mode: "checkForUpdates",
+            lastUpdate: lastUpdate
+        }
     });
 
     if (response == 500) {
@@ -12,7 +20,7 @@ async function checkForUpdates() {
     }
     //console.log(response);
 
-    return response;    
+    return response;
 }
 
 
@@ -230,11 +238,12 @@ async function userTaskData(task_id, type = "card", proj_id = null) {
             response = await $.ajax({
                 type: "POST",
                 url: "../../projectManager.php",
-                data: { mode: "getUserTaskData", 
-                task_id: task_id, 
-                proj_id: proj_id,
-                type: type
-            }
+                data: {
+                    mode: "getUserTaskData",
+                    task_id: task_id,
+                    proj_id: proj_id,
+                    type: type
+                }
             });
 
             if (response == 500) {

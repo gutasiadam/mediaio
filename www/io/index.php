@@ -274,3 +274,16 @@ if ($_GET["error"] == "registrationLimit") {
 }
 ?>
 </body>
+
+
+<style>
+  input[type=text] {
+    background-color: #f1f1f1;
+    width: 100%;
+  }
+
+  input[type=password] {
+    background-color: #f1f1f1;
+    width: 100%;
+  }
+</style>

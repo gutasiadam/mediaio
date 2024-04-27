@@ -73,13 +73,28 @@ error_reporting(E_ALL ^ E_NOTICE);
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="takeoutSettingsModal_Label">Kivétel beállítások</h5>
+                    <h5 class="modal-title" id="takeoutSettingsModal_Label">Elvitel beállítások</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                     </button>
                 </div>
                 <div class="modal-body">
-                    <i>Fejlesztés alatt...</i><br>
-                    <b>Nyomj a "Mehet" gombra a kivétel megerősítéséhez!</b>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text">Név:</span>
+                        <input type="text" class="form-control" placeholder="Projekt/Bérlő neve"
+                            aria-label="Projekt/Bérlő neve" aria-describedby="name" disabled>
+                    </div>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text">Tervezett időtartam:</span>
+                        <input type="date" min="<?php echo date('Y-m-d'); ?>" class="form-control" id="startingDate"
+                            disabled>
+                        <input type="date" class="form-control" id="endDate" disabled>
+                    </div>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text">Megjegyzés:</span>
+                        <textarea class="form-control" aria-label="Comment" disabled></textarea>
+                    </div>
+                    <i style="color:red;">Fejlesztés alatt...</i><br>
+                    <b>Nyomj a "Mehet" gombra a elvitel megerősítéséhez!</b>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-success" data-bs-dismiss="modal" onclick="submitTakout()">
@@ -183,7 +198,7 @@ error_reporting(E_ALL ^ E_NOTICE);
 
 
 
-    <h2 class="rainbow" id="doTitle">Tárgy kivétel</h2>
+    <h2 class="rainbow" id="doTitle">Tárgy elvitel</h2>
     <div class="container">
         <div class="row align-items-start" id="takeout-container">
             <div class="col-4 selectedList" id="selected-desktop">
@@ -194,8 +209,8 @@ error_reporting(E_ALL ^ E_NOTICE);
                     <input type="text" class="form-control" id="search" placeholder="Kezdd el ide írni, mit vinnél el.."
                         aria-label="Kezdd el ide írni, mit vinnél el.." aria-describedby="button-addon2">
 
-                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside"
-                        aria-expanded="false">Szűrés</button>
+                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                        data-bs-auto-close="outside" aria-expanded="false">Szűrés</button>
                     <ul class="dropdown-menu">
                         <li>
                             <div class="dropdown-item">
@@ -350,11 +365,15 @@ error_reporting(E_ALL ^ E_NOTICE);
 
         if (response == 200) {
             deselect_all();
-            successToast("Sikeres kivétel!");
+            if (<?php echo in_array("admin", $_SESSION["groups"]) ? 1 : 0; ?>) {
+                successToast("Sikeres elvitel!");
+            } else {
+                warningToast("Sikeres elvitel! Jóváhagyásra vár!");
+            }
             badge.innerHTML = 0;
             loadPage();
         } else {
-            errorToast("Hiba történt a kivétel során!");
+            errorToast("Hiba történt az elvitel során!");
         }
     }
 

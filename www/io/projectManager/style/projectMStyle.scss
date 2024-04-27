@@ -26,6 +26,13 @@
     }
 }
 
+.descToggle {
+    font-style: italic;
+    color: rgb(100, 100, 100);
+
+    cursor: pointer;
+}
+
 .projectHolder {
     display: flex;
     flex-wrap: nowrap;
@@ -36,11 +43,7 @@
     min-height: 300px;
     max-height: 79dvh;
 
-    .addProjectButton {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
+    padding-bottom: 5px;
 
     &::-webkit-scrollbar-track {
         background: rgb(255, 255, 255);
@@ -68,6 +71,24 @@
     }
 }
 
+
+.addProjectButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .addButton {
+        height: 30%;
+        
+        @media (max-width: 768px) {
+            height: 30px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        margin-top: 10px;
+    }
+}
 
 
 .projectCard {
@@ -109,7 +130,8 @@
     vertical-align: middle;
     align-items: center;
     justify-content: space-between;
-    /* border-bottom: 1px solid black; */
+    border-bottom: 1px solid rgb(184, 184, 184);
+    padding-bottom: 5px;
 }
 
 .projectDescription {
@@ -222,6 +244,8 @@
     max-height: 100%;
     width: 100%;
 
+    padding-right: 5px;
+
     &::-webkit-scrollbar-track {
         background: rgb(255, 255, 255);
         /* color of the tracking area */
@@ -265,6 +289,8 @@
 .membersHolder {
     overflow: auto;
     max-height: 100%;
+
+    padding-right: 5px;
 
     &::-webkit-scrollbar-track {
         background: rgb(255, 255, 255);
