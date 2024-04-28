@@ -3,6 +3,13 @@
     --media-blue: #000658;
 }
 
+/* Import font from local folder*/
+@font-face {
+    font-family: 'MediaRoundedBold';
+    src: url('./fonts/AMArialRDBD.ttf') format('truetype');
+}
+
+
 
 * {
     box-sizing: border-box;
@@ -130,44 +137,6 @@ button.mediaBlue {
 .autocomplete {
     position: relative;
     display: inline-block;
-}
-
-.login-input {
-    position: relative;
-    width: 100%;
-    margin: 15px auto;
-}
-
-.login-input input[name="useremail"] {
-    width: 100%;
-    padding: 10px 5px 10px 10px;
-    display: block;
-    border: 1px solid #EDEDED;
-    border-radius: 4px;
-    transition: 0.2s ease-out;
-    color: darken(#EDEDED, 30%);
-
-    &:focus {
-        padding: 10px 5px 10px 10px;
-        outline: 0;
-        border-color: #FF7052;
-    }
-}
-
-.login-input input[name="pwd"] {
-    width: 100%;
-    padding: 10px 5px 10px 10px;
-    display: block;
-    border: 1px solid #EDEDED;
-    border-radius: 4px;
-    transition: 0.2s ease-out;
-    color: darken(#EDEDED, 30%);
-
-    &:focus {
-        padding: 10px 5px 10px 10px;
-        outline: 0;
-        border-color: #FF7052;
-    }
 }
 
 
@@ -668,38 +637,43 @@ table {
     text-align: center;
 }
 
-.login {
-    position: relative;
-    top: 50%;
-    width: 250px;
-    display: table;
-    margin: -150px auto 0 auto;
-    background: #fff;
-    border-radius: 4px;
-    z-index: 2;
+.login-body {
+    background: linear-gradient(to top, #d3d3d3, #acacac);
 }
 
-.legend {
-    position: relative;
+.login {
+    max-width: 300px;
     width: 100%;
     display: block;
-    background: #1d2660;
-    padding: 15px;
-    color: #fff;
-    font-size: 25px;
+    padding: 20px;
+    background: #fff;
+    border-radius: 15px;
+    z-index: 2;
 
-    &:after {
-        content: "";
-        /* background-image: url(http://simpleicon.com/wp-content/uploads/multy-user.png); */
-        background-size: 100px 100px;
-        background-repeat: no-repeat;
-        background-position: 152px -16px;
-        opacity: 0.06;
-        top: 0;
-        left: 0;
-        bottom: 0;
-        right: 0;
-        position: absolute;
+    box-shadow: #00000081 0px 0px 10px 0px;
+
+    .form-label {
+        margin-bottom: 0;
+    }
+
+    .form-control {
+        background-color: rgba(0, 0, 0, 0);
+        box-shadow: none !important;
+        border: none;
+        border-bottom: 1px solid #ccc;
+        border-radius: 4px 4px 0 0;
+    }
+
+    #zsoka {
+        font-size: 40px;
+        font-family: 'MediaRoundedBold';
+        color: #1d2660;
+    }
+
+    .submit-btn{
+        background: linear-gradient(135deg, #ff7052, #1d2660);
+        color: #fff;
+        border: none;
     }
 }
 
@@ -726,14 +700,15 @@ table {
 }
 
 .feedback {
-    position: absolute;
-    bottom: -70px;
+    position: relative;
+    bottom: 28px;
     width: 100%;
     text-align: center;
     color: #fff;
     background: #2ecc71;
     padding: 10px 0;
-    font-size: 12px;
+    font-size: 18px;
+    border-radius: 10px;
     display: none;
     opacity: 0;
 
@@ -1127,9 +1102,9 @@ nav .navbarPhP {
     }
 }
 
-.question{
+.question {
     overflow: auto;
-     
+
     label.form-label {
         font-weight: bold;
     }
@@ -1141,7 +1116,7 @@ nav .navbarPhP {
     flex-direction: row;
 }
 
-.grid-column{
+.grid-column {
     display: flex;
     flex-direction: column;
     justify-content: center;

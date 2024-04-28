@@ -17,8 +17,7 @@ class ProjectMailer
 {
     public static function sendMail($to, $subject, $message)
     {
-        $mail = new MailService();
-        return $mail->sendContactMail('Média IO - projektek', $to, $subject, $message);
+        MailService::sendContactMail('Média IO - projektek', $to, $subject, $message);
     }
 
     public static function sendNewProjectMail($project_id, $member)

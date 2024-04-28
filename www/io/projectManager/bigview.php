@@ -71,9 +71,25 @@ include ("../translation.php"); ?>
       refreshProjects();
    });
 
-   setInterval(function () {
+   // Check for updates every minute
+   let lastUpdate = new Date().getTime();
+
+   setInterval(async () => {
+      // Check if there is anything updated
+      if (await checkForUpdates(lastUpdate) == 'false') {
+         console.log('No updates found');
+         return;
+      }
+
+      if ($('.modal').hasClass('show') || document.querySelectorAll('.dragging').length > 0) {
+         return;
+      }
+      // Hide all tooltips
+      document.querySelectorAll('.tooltip').forEach(e => e.style.display = 'none');
+
+
       refreshProjects();
-      simpleToast("Projekt frissítve");
+      simpleToast("Projekt frissítve!");
    }, 60000);
 
    async function refreshProjects() {
@@ -92,6 +108,7 @@ include ("../translation.php"); ?>
       //TODO: ORDER FUNCTIONALITY NEEDED HERE
       await toolTipRender();
 
+      lastUpdate = new Date().getTime();
       //Remove spinner
       projectHolder.removeChild(spinner);
    }

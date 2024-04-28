@@ -92,7 +92,6 @@ include ("../translation.php"); ?>
 
 
       refreshProjects();
-      lastUpdate = new Date().getTime();
       simpleToast("Projektek frissítve!");
    }, 60000);
 
@@ -113,6 +112,7 @@ include ("../translation.php"); ?>
       await generateProjects(projects, mobile);
       await dragAndDropReady();
       await toolTipRender();
+      lastUpdate = new Date().getTime();
 
       try {
          projectHolder.removeChild(spinner);
