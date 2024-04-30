@@ -206,7 +206,7 @@ async function generateMobileProjectBody(project, accordion) {
 
     // Generate tasks inside the project
     let description = document.createElement("p");
-    description.innerHTML = project.Description;
+    description.innerHTML = makeFormatting(project.Description);
     body.appendChild(description);
 
     // Project deadline

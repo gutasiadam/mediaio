@@ -208,15 +208,22 @@ class projectManager
                 exit();
             }
             // Get the creator UID of the task
-            $sql = "SELECT `AddedByUID` FROM `project_components` WHERE `ID`=" . $_POST['task_id'] . ";";
+            $sql = "SELECT `AddedByUID`, `EditedByUID` FROM `project_components` WHERE `ID`=" . $_POST['task_id'] . ";";
             $result = $connection->query($sql);
             $creatorUID = $result->fetch_assoc()['AddedByUID'];
+            $editorUID = $result->fetch_assoc()['EditedByUID'];
 
             // Get the creator's name and username
             $creatorUserArray = self::getUsers($creatorUID);
             $row['CreatorFirstName'] = $creatorUserArray[0]['firstName'];
             $row['CreatorLastName'] = $creatorUserArray[0]['lastName'];
             $row['CreatorUsername'] = $creatorUserArray[0]['usernameUsers'];
+
+            // Get the editor's name and username
+            $editorUserArray = self::getUsers($editorUID);
+            $row['EditorFirstName'] = $editorUserArray[0]['firstName'];
+            $row['EditorLastName'] = $editorUserArray[0]['lastName'];
+            $row['EditorUsername'] = $editorUserArray[0]['usernameUsers'];
 
 
             // Add the project deadline to the task
@@ -268,22 +275,23 @@ class projectManager
             }
             // Get the creator UID of the task
             foreach ($rows as $key => $row) {
-                $sql = "SELECT `AddedByUID` FROM `project_components` WHERE ProjectId=" . $_POST['proj_id'] . " AND `ID`=" . $row['ID'] . ";";
-                $result = $connection->query($sql);
-                $creatorUID = $result->fetch_assoc()['AddedByUID'];
+                $creatorUID = $row['AddedByUID'];
+                $editorUID = $row['EditedByUID'];
 
                 // Get the creator's name and username
                 $creatorUserArray = self::getUsers($creatorUID);
                 $rows[$key]['CreatorFirstName'] = $creatorUserArray[0]['firstName'];
                 $rows[$key]['CreatorLastName'] = $creatorUserArray[0]['lastName'];
                 $rows[$key]['CreatorUsername'] = $creatorUserArray[0]['usernameUsers'];
+
+                // Get the editor's name and username
+                $editorUserArray = self::getUsers($editorUID);
+                $rows[$key]['EditorFirstName'] = $editorUserArray[0]['firstName'];
+                $rows[$key]['EditorLastName'] = $editorUserArray[0]['lastName'];
+                $rows[$key]['EditorUsername'] = $editorUserArray[0]['usernameUsers'];
+
             }
             $connection->close();
-
-            // Sort the array by lastname and firstname
-            usort($rows, function ($a, $b) {
-                return $a['CreatorLastName'] <=> $b['CreatorLastName'] ?: $a['CreatorFirstName'] <=> $b['CreatorFirstName'];
-            });
 
             echo (json_encode($rows));
         }
@@ -306,17 +314,17 @@ class projectManager
         $connection = Database::runQuery_mysqli(self::$schema);
 
         if ($settings['Deadline'] != "NULL") {
-            $sql = "INSERT INTO `project_components` (`ID`, `ProjectId`, `Task_type`, `Task_title`, `Task_data`, `isInteractable`, `fillOutText`, `SingleAnswer`, `AddedByUID`, `Deadline`) 
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
-                    ON DUPLICATE KEY UPDATE `Task_title`=?, `Task_data`=?, `Deadline`=?, `isInteractable`=?, `fillOutText`=?, `SingleAnswer`=?;";
+            $sql = "INSERT INTO `project_components` (`ID`, `ProjectId`, `Task_type`, `Task_title`, `Task_data`, `isInteractable`, `fillOutText`, `SingleAnswer`, `AddedByUID`, `Deadline`, `EditedByUID`) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
+                    ON DUPLICATE KEY UPDATE `Task_title`=?, `Task_data`=?, `Deadline`=?, `isInteractable`=?, `fillOutText`=?, `SingleAnswer`=?, `EditedByUID`=?;";
             $stmt = $connection->prepare($sql);
-            $stmt->bind_param("iisssisiissssisi", $_POST['ID'], $settings['ProjectId'], $settings['Task_type'], $settings['Task_title'], $settings['Task_data'], $settings['isInteractable'], $settings['fillOutText'], $settings['singleAnswer'], $_SESSION['userId'], $settings['Deadline'], $settings['Task_title'], $settings['Task_data'], $settings['Deadline'], $settings['isInteractable'], $settings['fillOutText'], $settings['singleAnswer']);
+            $stmt->bind_param("iisssisiisisssisii", $_POST['ID'], $settings['ProjectId'], $settings['Task_type'], $settings['Task_title'], $settings['Task_data'], $settings['isInteractable'], $settings['fillOutText'], $settings['singleAnswer'], $_SESSION['userId'], $settings['Deadline'], $_SESSION['userId'], $settings['Task_title'], $settings['Task_data'], $settings['Deadline'], $settings['isInteractable'], $settings['fillOutText'], $settings['singleAnswer'], $_SESSION['userId']);
         } else {
-            $sql = "INSERT INTO `project_components` (`ID`, `ProjectId`, `Task_type`, `Task_title`, `Task_data`, `isInteractable`, `fillOutText`, `SingleAnswer`, `AddedByUID`, `Deadline`) 
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NULL) 
-                    ON DUPLICATE KEY UPDATE `Task_title`=?, `Task_data`=?, `Deadline`=NULL, `isInteractable`=?, `fillOutText`=?, `SingleAnswer`=?;";
+            $sql = "INSERT INTO `project_components` (`ID`, `ProjectId`, `Task_type`, `Task_title`, `Task_data`, `isInteractable`, `fillOutText`, `SingleAnswer`, `AddedByUID`, `Deadline`, `EditedByUID`) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, ?) 
+                    ON DUPLICATE KEY UPDATE `Task_title`=?, `Task_data`=?, `Deadline`=NULL, `isInteractable`=?, `fillOutText`=?, `SingleAnswer`=?, `EditedByUID`=?;";
             $stmt = $connection->prepare($sql);
-            $stmt->bind_param("iisssisiissisi", $_POST['ID'], $settings['ProjectId'], $settings['Task_type'], $settings['Task_title'], $settings['Task_data'], $settings['isInteractable'], $settings['fillOutText'], $settings['singleAnswer'], $_SESSION['userId'], $settings['Task_title'], $settings['Task_data'], $settings['isInteractable'], $settings['fillOutText'], $settings['singleAnswer']);
+            $stmt->bind_param("iisssisiiissisii", $_POST['ID'], $settings['ProjectId'], $settings['Task_type'], $settings['Task_title'], $settings['Task_data'], $settings['isInteractable'], $settings['fillOutText'], $settings['singleAnswer'], $_SESSION['userId'], $_SESSION['userId'], $settings['Task_title'], $settings['Task_data'], $settings['isInteractable'], $settings['fillOutText'], $settings['singleAnswer'], $_SESSION['userId']);
         }
 
         $stmt->execute();

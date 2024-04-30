@@ -136,6 +136,28 @@
 
 .projectDescription {
     overflow: hidden;
+} 
+
+#projectDescription {
+    &::-webkit-scrollbar-track {
+        background: rgb(255, 255, 255);
+        /* color of the tracking area */
+    }
+
+    &::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+        /* width of the entire scrollbar */
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background-color: rgb(179, 179, 179);
+        /* color of the scroll thumb */
+        border-radius: 20px;
+        /* roundness of the scroll thumb */
+        /* border: 1px solid rgb(221, 221, 221); */
+        /* creates padding around scroll thumb */
+    }
 }
 
 .projectBody {

@@ -5,6 +5,7 @@ $(document).ready(function () {
     const searchInput = document.getElementById("search");
 
     searchInput.addEventListener("input", function () {
+        console.log("Searching items");
         const items = Array.from(document.getElementsByClassName("leltarItem"));
         const inputValue = searchInput.value.toLowerCase();
         const showAvailable = document.getElementById("show_unavailable").checked;
@@ -53,19 +54,12 @@ $(document).ready(function () {
 
 
     // Add event listeners to filter checkboxes and their divs
-    const checkboxes = document.querySelectorAll(".filterCheckbox");
     const holderDivs = document.querySelectorAll(".dropdown-item");
 
     holderDivs.forEach(holderDiv => {
         holderDiv.addEventListener("click", function () {
             const checkbox = holderDiv.querySelector(".filterCheckbox");
             checkbox.checked = !checkbox.checked;
-            searchInput.dispatchEvent(new Event("input"));
-        });
-    });
-
-    checkboxes.forEach(checkbox => {
-        checkbox.addEventListener("change", function () {
             searchInput.dispatchEvent(new Event("input"));
         });
     });

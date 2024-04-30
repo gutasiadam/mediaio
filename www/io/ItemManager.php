@@ -581,7 +581,7 @@ class itemDataManager
     //Get a new database connection
     $connection = Database::runQuery_mysqli();
     $stmt = $connection->prepare($sql);
-    $stmt->bind_param("s", $_SESSION['UserUserName']);
+    $stmt->bind_param("i", $_SESSION['UserId']);
     $stmt->execute();
     $result = $stmt->get_result();
     return mysqli_num_rows($result);

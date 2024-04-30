@@ -23,6 +23,8 @@ async function loadPage() {
 
     const events = JSON.parse(response);
 
+    console.log(events);
+
     if (events.length == 0) {
         const noItems = document.createElement("div");
         noItems.classList.add("alert", "alert-info", "mt-3", "text-center");

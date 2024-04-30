@@ -2,18 +2,17 @@
 namespace Mediaio;
 
 require_once __DIR__ . '/Database.php';
-require_once __DIR__ . '/Core.php';
 require_once __DIR__ . '/Mailer.php';
-use Mediaio\Core;
 use Mediaio\Database;
-use Mediaio\MailService;
 
 error_reporting(E_ERROR | E_PARSE);
 
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 
-class ProjectMailer
+class ProjectMailer extends MailService
 {
     public static function sendMail($to, $subject, $message)
     {

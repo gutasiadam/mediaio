@@ -78,11 +78,17 @@ error_reporting(E_ALL ^ E_NOTICE);
                     </button>
                 </div>
                 <div class="modal-body">
-                    <div class="input-group mb-3">
-                        <span class="input-group-text">Név:</span>
-                        <input type="text" class="form-control" placeholder="Projekt/Bérlő neve"
-                            aria-label="Projekt/Bérlő neve" aria-describedby="name" disabled>
-                    </div>
+                    <?php
+                    if (in_array("admin", $_SESSION["groups"])):
+                        ?>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text">Név:</span>
+                            <input type="text" class="form-control" placeholder="Projekt/Bérlő neve"
+                                aria-label="Projekt/Bérlő neve" aria-describedby="name" disabled>
+                        </div>
+                        <?php
+                    endif;
+                    ?>
                     <div class="input-group mb-3">
                         <span class="input-group-text">Tervezett időtartam:</span>
                         <input type="date" min="<?php echo date('Y-m-d'); ?>" class="form-control" id="startingDate"

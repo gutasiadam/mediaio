@@ -232,8 +232,9 @@ async function openSettings(proj_id) {
     document.getElementById("projectName").value = projectName;
 
     // Set the project description
-    var projectDescription = projectSettings.Description;
-    document.getElementById("projectDescription").value = projectDescription;
+    const holderDiv = document.getElementById("projectDescriptionDiv");
+    textEditor(holderDiv, projectSettings.Description, '200px', 'projectDescription');
+    
 
 
     // Load deadline

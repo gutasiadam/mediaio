@@ -40,6 +40,24 @@ class Accounting
 
     }
 
+    static function getLastLogin($userID)
+    {
+        $connection = Database::runQuery_mysqli();
+        $sql = "SELECT * FROM log WHERE UserID = ? AND Action = 'login_Success' ORDER BY ID DESC LIMIT 1";
+        $stmt = $connection->prepare($sql);
+        $stmt->bind_param("s", $userID);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $connection->close();
+
+        if ($result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            return json_encode($row);
+        } else {
+            return json_encode(array('code' => '404'));
+        }
+    }
+
 }
 
 
@@ -72,5 +90,10 @@ if (isset($_POST['mode'])) {
             echo userManager::getPublicUserInfo();
             break;
 
+
+        // Get the last login event for a user
+        case 'getLastLogin':
+            echo Accounting::getLastLogin($_POST['userID']);
+            break;
     }
 }

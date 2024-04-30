@@ -80,6 +80,11 @@
 
 }
 
+.filterCheckbox {
+    pointer-events: none;
+}
+
+
 #takeout-container {
     display: flex;
     justify-content: space-between;

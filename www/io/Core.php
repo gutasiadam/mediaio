@@ -11,7 +11,9 @@ use Mediaio\Database;
 use Mediaio\Accounting;
 use Mediaio\MailService;
 
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 class Core
 {
@@ -143,11 +145,6 @@ class Core
                             } else {
                                 return array('token' => $token, 'code' => 200);
                             }
-
-                            //bind parameters
-
-
-                            exit();
                         }
 
                         $_SESSION['userId'] = $row['idUsers'];

@@ -68,13 +68,14 @@
             </div>
             <div class="modal-body">
                 <form>
-                    <div class="mb-3 input-group">
+                    <div class="mb-1 input-group">
                         <span class="input-group-text">Név: </span>
                         <input type="text" class="form-control" id="projectName" placeholder="Projekt leírása...">
                     </div>
-                    <div class="mb-3 input-group">
+                    <div id="textEditorButtons"></div>
+                    <div class="mb-3 input-group" id="projectDescriptionDiv">
                         <span class="input-group-text">Leírás: </span>
-                        <textarea class="form-control" id="projectDescription"></textarea>
+                        
                     </div>
                     <div class="mb-3 input-group">
                         <span for="projectVisibility" class="input-group-text">Láthatóság:</span>

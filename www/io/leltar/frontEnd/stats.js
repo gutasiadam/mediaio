@@ -73,7 +73,7 @@ function getSearchQuery(order = null) {
     }
 
 
-    const itemState = isOut ? "out" : "all";
+    let itemState = isOut ? "out" : "all";
     let takeRestrict;
     if (medias && studios && eventes) {
         takeRestrict = "mediaAndStudioAndEvent";
@@ -94,6 +94,7 @@ function getSearchQuery(order = null) {
     }
     if (nonRentable) {
         takeRestrict = "nonRentable";
+        itemState = "all";
         checkboxes.forEach((checkbox) => {
             if (checkbox.id !== "nonRentable") {
                 checkbox.disabled = true;

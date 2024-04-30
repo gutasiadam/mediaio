@@ -55,14 +55,20 @@ async function createTask(task, projectID, canEdit) {
     var creatorlastName = task.CreatorLastName;
     var creatorUsername = task.CreatorUsername;
 
+    let lastEditorfirstName = task.EditorFirstName;
+    let lastEditorlastName = task.EditorLastName;
+    let lastEditorUsername = task.EditorUsername;
 
-    var creatorTooltip = '<a data-bs-toggle="tooltip" data-bs-title="Készítette: ' + creatorlastName + " " + creatorfirstName + " (" + creatorUsername + ")" + '"><i class="fas fa-info-circle"></i></a>';
+    let lastEditedTime = task.Last_edit;
 
-    var taskHeader = document.createElement("div");
+
+    let creatorTooltip = `<a data-bs-toggle="tooltip" data-bs-html="true" data-bs-title="<i class='fas fa-pencil-alt'></i>: ${lastEditorlastName} ${lastEditorfirstName} (${lastEditorUsername})<br>${lastEditedTime}"><i class="fas fa-info-circle"></i></a>`;
+
+    const taskHeader = document.createElement("div");
     taskHeader.classList.add("card-header", "taskHeader");
 
     if (task.Task_title) {
-        var taskTitle = document.createElement("p");
+        let taskTitle = document.createElement("p");
         taskTitle.classList.add("card-title", "taskTitle");
         taskTitle.style.marginBottom = "0px";
         taskTitle.innerHTML = task.Task_title;
@@ -70,14 +76,14 @@ async function createTask(task, projectID, canEdit) {
     } else {
         taskHeader.style.justifyContent = "end";
     }
-    let creatorSpan = document.createElement("div");
+    const creatorSpan = document.createElement("div");
     //creatorSpan.classList.add("badge", "bg-light", "text-dark");
     creatorSpan.innerHTML = creatorTooltip;
     taskHeader.appendChild(creatorSpan);
 
     // Create drag handle
     if (window.innerWidth > 768) {
-        let dragHandle = document.createElement("span");
+        const dragHandle = document.createElement("span");
         dragHandle.classList.add("dragHandle");
         dragHandle.innerHTML = "<i class='fas fa-grip-vertical'></i>";
         dragHandle.style.marginLeft = "5px";
@@ -206,11 +212,6 @@ async function createTask(task, projectID, canEdit) {
             }
             cardFooter.appendChild(deadline);
         }
-        else {
-            cardFooter.style.justifyContent = "end";
-        }
-    } else {
-        cardFooter.style.justifyContent = "end";
     }
 
     // Check if task is filled out
@@ -225,7 +226,6 @@ async function createTask(task, projectID, canEdit) {
                 openTaskAnswers(task.ID, projectID);
             }
             cardFooter.appendChild(showAnswersButton);
-            //cardFooter.style.justifyContent = "space-between";
         }
         if (uData.isTaskMember) {
             let shouldAddButton = task.SingleAnswer == '0' || !uData.filled;
@@ -247,7 +247,15 @@ async function createTask(task, projectID, canEdit) {
             }
         }
     }
-    if (uData.isTaskMember || uData.isAdmin) {
+
+    // Based on the number of items in the taskFooter, adjust the justify-content
+    if (task.Deadline && !task.isInteractable) {
+        cardFooter.style.justifyContent = "start";
+    } else {
+        cardFooter.style.justifyContent = "space-between";
+    }
+
+    if ((uData.isTaskMember || uData.isAdmin) && cardFooter.childElementCount != 0) {
         taskCard.appendChild(cardFooter);
     }
 
@@ -826,7 +834,7 @@ function makeFormatting(taskData) {
 
 }
 
-function textEditor(taskDataHolder, taskData = "", height = "250px") {
+function textEditor(taskDataHolder, taskData = "", height = "250px", inputAreaId = "textTaskData") {
     let textFormatOptions = document.createElement("div");
     textFormatOptions.classList.add("btn-group", "mb-1");
 
@@ -835,7 +843,7 @@ function textEditor(taskDataHolder, taskData = "", height = "250px") {
     boldButton.innerHTML = "<b>B</b>";
     boldButton.onclick = function () {
         // Assume textarea is the textarea or input element where you want to bold the text
-        var textarea = document.getElementById('textTaskData');
+        var textarea = document.getElementById(inputAreaId);
 
         // Get the current selection
         var start = textarea.selectionStart;
@@ -865,7 +873,7 @@ function textEditor(taskDataHolder, taskData = "", height = "250px") {
     italicButton.classList.add("btn");
     italicButton.innerHTML = "<i>I</i>";
     italicButton.onclick = function () {
-        var textarea = document.getElementById('textTaskData');
+        var textarea = document.getElementById(inputAreaId);
         var start = textarea.selectionStart;
         var end = textarea.selectionEnd;
 
@@ -887,7 +895,7 @@ function textEditor(taskDataHolder, taskData = "", height = "250px") {
     underlineButton.classList.add("btn");
     underlineButton.innerHTML = "<u>U</u>";
     underlineButton.onclick = function () {
-        var textarea = document.getElementById('textTaskData');
+        var textarea = document.getElementById(inputAreaId);
         var start = textarea.selectionStart;
         var end = textarea.selectionEnd;
 
@@ -909,7 +917,7 @@ function textEditor(taskDataHolder, taskData = "", height = "250px") {
     linkButton.classList.add("btn");
     linkButton.innerHTML = "<a href='#'>Link</a>";
     linkButton.onclick = function () {
-        var textarea = document.getElementById('textTaskData');
+        var textarea = document.getElementById(inputAreaId);
         var start = textarea.selectionStart;
         var end = textarea.selectionEnd;
 
@@ -946,7 +954,13 @@ function textEditor(taskDataHolder, taskData = "", height = "250px") {
         event.preventDefault();
     });
 
+    if (inputAreaId == "textTaskData") {
     taskDataHolder.appendChild(textFormatOptions);
+    } else if (inputAreaId == "projectDescription") {
+        let editorButtonsDiv = document.getElementById("textEditorButtons");
+        editorButtonsDiv.innerHTML = "";
+        editorButtonsDiv.appendChild(textFormatOptions);
+    }
 
     function decodeHtml(html) {
         var txt = document.createElement("textarea");
@@ -955,8 +969,9 @@ function textEditor(taskDataHolder, taskData = "", height = "250px") {
     }
 
     let textArea = document.createElement("textarea");
-    textArea.classList.add("form-control", "mb-2");
-    textArea.id = "textTaskData";
+    textArea.classList.add("form-control");
+    inputAreaId == "textTaskData" ? textArea.classList.add("mb-2") : null;
+    textArea.id = inputAreaId;
     textArea.value = decodeHtml(taskData);
     textArea.placeholder = "Szöveg...";
     textArea.style.height = height;
@@ -969,7 +984,7 @@ async function taskBodyGenerator(projectID, TaskId, taskDataHolder, taskData = n
 
     textEditor(taskDataHolder, taskData ? taskData.text : "", "150px");
 
-    var pictureDiv = document.createElement("div");
+    const pictureDiv = document.createElement("div");
     pictureDiv.classList.add("input-group");
 
     let label = document.createElement("span");
@@ -977,7 +992,7 @@ async function taskBodyGenerator(projectID, TaskId, taskDataHolder, taskData = n
     label.innerHTML = "Kép:";
     pictureDiv.appendChild(label);
 
-    var imageInput = document.createElement("input");
+    const imageInput = document.createElement("input");
     imageInput.classList.add("form-control");
     imageInput.id = "imageLink";
     if (taskData) {
@@ -986,7 +1001,31 @@ async function taskBodyGenerator(projectID, TaskId, taskDataHolder, taskData = n
     imageInput.placeholder = "Kép URL...";
     pictureDiv.appendChild(imageInput);
 
-    var uploadImage = document.createElement("input");
+    const pasteFromClipboard = document.createElement("button");
+    pasteFromClipboard.classList.add("btn", "btn-outline-secondary");
+    pasteFromClipboard.innerHTML = `<i class="fas fa-paste"></i>`;
+    pasteFromClipboard.onclick = function (event) {
+        event.preventDefault();
+        navigator.clipboard.read().then(items => {
+            items.forEach(item => {
+                for (let type of item.types) {
+                    if (type.startsWith('image/')) {
+                        item.getType(type).then(blob => {
+                            let file = new File([blob], "ClipboardImage.png", { type: blob.type });
+                            let fileInput = document.getElementById('imageUpload');
+                            let dataTransfer = new DataTransfer();
+                            dataTransfer.items.add(file);
+                            fileInput.files = dataTransfer.files;
+                            imageInput.value = 'Kép beillesztve!'; 
+                        });
+                    }
+                }
+            });
+        });
+    }
+    pictureDiv.appendChild(pasteFromClipboard);
+
+    const uploadImage = document.createElement("input");
     uploadImage.type = "file";
     uploadImage.style.display = "none"; // Hide the file input
     uploadImage.accept = "image/*";
@@ -1000,10 +1039,10 @@ async function taskBodyGenerator(projectID, TaskId, taskDataHolder, taskData = n
         }
     });
 
-    var uploadButton = document.createElement("button");
+    const uploadButton = document.createElement("button");
     uploadButton.type = "button";
     uploadButton.classList.add("btn", "btn-outline-success");
-    uploadButton.innerHTML = `<i class="fas fa-upload"></i>`;
+    uploadButton.innerHTML = `<i class="fas fa-folder-open"></i>`;
 
     // Trigger the file input when the button is clicked
     uploadButton.addEventListener("click", function () {
@@ -1013,7 +1052,7 @@ async function taskBodyGenerator(projectID, TaskId, taskDataHolder, taskData = n
     pictureDiv.appendChild(uploadImage);
     pictureDiv.appendChild(uploadButton);
 
-    var resetButton = document.createElement("button");
+    const resetButton = document.createElement("button");
     resetButton.classList.add("btn", "btn-outline-danger");
     resetButton.type = "button";
     resetButton.innerHTML = `<i class="fas fa-trash-alt"></i>`;
@@ -1093,9 +1132,10 @@ async function submissionSettings(taskType, task = null) {
     submissionSettings.appendChild(label);
 
     if (taskType == "task") {
-        let fillOutText = document.createElement("input");
+        let fillOutText = document.createElement("textarea");
         fillOutText.classList.add("form-control");
         fillOutText.id = "fillOutText";
+        fillOutText.style.height = "70px";
         fillOutText.placeholder = "Megerősítés szövege";
         fillOutText.value = task ? task.fillOutText : "";
         submissionSettings.appendChild(fillOutText);

@@ -133,7 +133,7 @@ else { ?>
   <body class="login-body">
 
 
-    <div class="container d-flex justify-content-center align-items-center h-100">
+    <div class="container d-flex justify-content-center align-items-center" style="height: 100dvh;">
       <!-- Login form -->
       <form class="login" action="utility/userLogging.php" method="post" autocomplete="off">
         <fieldset>
@@ -282,17 +282,3 @@ if ($_GET["error"] == "registrationLimit") {
               </script>';
 }
 ?>
-
-
-
-<style>
-  input[type=text] {
-    background-color: #f1f1f1;
-    width: 100%;
-  }
-
-  input[type=password] {
-    background-color: #f1f1f1;
-    width: 100%;
-  }
-</style>

@@ -4,21 +4,34 @@
 
 async function openTaskAnswers(taskId, projectId) {
 
+    $('#taskAnswersModal').modal('show');
+
+    // Get the working area
+    const workingArea = document.getElementById('taskAnswerData');
+    workingArea.innerHTML = '';
+
+    // Add spinner
+    let spinner = document.createElement("div");
+    spinner.classList.add("spinner-grow", "text-secondary");
+    spinner.id = "loadingSpinner";
+    spinner.style.margin = "auto";
+    spinner.style.display = "block";
+    workingArea.appendChild(spinner);
+
     // Get the task answers
-    var uDataResponse = await userTaskData(taskId, "get");
-    var uData = JSON.parse(uDataResponse);
+    let uDataResponse = await userTaskData(taskId, "get");
+    let uData = JSON.parse(uDataResponse);
     uData = uData.data ? uData.data : [];
     console.log(uData);
 
     // Get the task
-    var task = JSON.parse(await fetchTask(null, taskId));
+    let task = JSON.parse(await fetchTask(null, taskId));
 
     // Fetch the task members
-    var members = JSON.parse(await fetchTaskMembers(taskId, projectId));
+    let members = JSON.parse(await fetchTaskMembers(taskId, projectId));
 
-    // Get the working area
-    var workingArea = document.getElementById('taskAnswerData');
-    workingArea.innerHTML = '';
+    // Remove spinner
+    spinner.remove();
 
     switch (task.Task_type) {
         case "task":
@@ -101,6 +114,4 @@ async function openTaskAnswers(taskId, projectId) {
 
     }
     toolTipRender();
-
-    $('#taskAnswersModal').modal('show');
 }
