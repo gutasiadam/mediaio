@@ -57,14 +57,14 @@ include "header.php";
 
 <body>
   <h1 class="rainbow">Statisztika</h1>
-  <div class="container text-center">
-    <div class="row statsRow">
-      <div class="numbers" id="statsNums">
-        <div id="users"></div>
-        <div id="items"></div>
-        <div id="transactions"></div>
+  <div class="container">
+
+    <div class="row justify-content-center">
+      <div id="eventsContainer">
+
       </div>
-      <div id="statistics"></div>
     </div>
+    <!-- Navigation back to top -->
+    <div id='toTop'><i class="fas fa-chevron-up"></i></div>
   </div>
 </body>

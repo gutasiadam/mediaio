@@ -81,7 +81,6 @@ async function loadPage() {
         cardBody.appendChild(takenItems);
 
         const items = JSON.parse(event.Items);
-        console.log(items);
 
         for (let i = 0; i < 5; i++) {
             if (i >= items.length) {

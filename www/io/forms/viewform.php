@@ -13,7 +13,7 @@ include ("../translation.php"); ?>
    <div class="container" id="form-container">
       <form class="row form-control" id="form-body">
          <h2 class="rainbow" id="form_name"></h2>
-         <h5 class="mb-3" id="form_header"></h5>
+         <h5 class="formViewHeader" id="form_header"></h5>
       </form>
 
       <div class="row">

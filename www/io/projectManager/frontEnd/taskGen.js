@@ -50,11 +50,7 @@ async function createTask(task, projectID, canEdit) {
         });
     }
 
-    // Add task creator tooltip
-    var creatorfirstName = task.CreatorFirstName;
-    var creatorlastName = task.CreatorLastName;
-    var creatorUsername = task.CreatorUsername;
-
+    // Add task editor tooltip
     let lastEditorfirstName = task.EditorFirstName;
     let lastEditorlastName = task.EditorLastName;
     let lastEditorUsername = task.EditorUsername;
@@ -200,6 +196,9 @@ async function createTask(task, projectID, canEdit) {
             deadline.innerHTML = `<a data-bs-toggle="tooltip" data-bs-title="${task.Deadline.slice(0, -3)}">${deadlineText}</a>`;
             let deadlineColor = getDeadlineColor(task.Deadline);
             switch (deadlineColor) {
+                case "longAgo":
+                    deadline.classList.add("bg-secondary");
+                    break;
                 case "overdue":
                     deadline.classList.add("bg-danger");
                     break;
@@ -800,7 +799,10 @@ function colorTaskCard(taskHeader, deadline) {
     let currentDate = new Date();
     let taskDeadline = new Date(deadline);
 
-    if (taskDeadline < currentDate) {
+    // If task is overdue more than a week, return
+    if (currentDate - taskDeadline > (1000 * 60 * 60 * 24 * 7)) {
+        return;
+    } else if (taskDeadline < currentDate) {
         taskHeader.classList.add("bg-danger", "text-white");
     } else if (taskDeadline - currentDate < (1000 * 60 * 60 * 48)) {
         taskHeader.classList.add("bg-warning");
@@ -955,7 +957,7 @@ function textEditor(taskDataHolder, taskData = "", height = "250px", inputAreaId
     });
 
     if (inputAreaId == "textTaskData") {
-    taskDataHolder.appendChild(textFormatOptions);
+        taskDataHolder.appendChild(textFormatOptions);
     } else if (inputAreaId == "projectDescription") {
         let editorButtonsDiv = document.getElementById("textEditorButtons");
         editorButtonsDiv.innerHTML = "";
@@ -1016,7 +1018,7 @@ async function taskBodyGenerator(projectID, TaskId, taskDataHolder, taskData = n
                             let dataTransfer = new DataTransfer();
                             dataTransfer.items.add(file);
                             fileInput.files = dataTransfer.files;
-                            imageInput.value = 'Kép beillesztve!'; 
+                            imageInput.value = 'Kép beillesztve!';
                         });
                     }
                 }

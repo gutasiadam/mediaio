@@ -219,26 +219,14 @@ if (!in_array("admin", $_SESSION["groups"])) {
                <li><a class="dropdown-item" href="#" onclick="addFormElement('fileUpload')"><i
                         class="fas fa-file fa-lg"></i> Fájl feltöltés</a>
                </li>
-               <!--
-   
-   <li><a class="dropdown-item" href="#"> <span draggable="false" ondragstart="drag(event)"
-            class="heading toolIcon clickableIcon" name="Szakaszcím"><i
-               class="fas fa-heading fa-2x"></i></span></a></li>
-   <li><a class="dropdown-item" href="#"><span draggable="false" ondragstart="drag(event)"
-            class="paragraph toolIcon clickableIcon" name="Szakasz bekezdés"><i
-               class="fas fa-paragraph fa-2x"></i></span></a></li> -->
-               <!-- 
-   <li><a class="dropdown-item" href="#"><span draggable="false" ondragstart="drag(event)"
-            class="scale toolIcon clickableIcon" name="Lineáris skála"><i
-               class="fas fa-sort-numeric-up fa-2x"></i></span> Lineáris skála</a></li> -->
             </ul>
          </div>
          <button class="btn btn-primary" onclick="saveForm(false)">Mentés</button>
-         <button class="btn btn-danger" onclick="showDeleteModal()"><i class='fas fa-trash-alt fa-lg'></i></button>
+         <!-- <button class="btn btn-danger" data-bs-target="#delete_Modal" data-bs-toggle="modal"><i class='fas fa-trash-alt fa-lg'></i></button> -->
          <button class="btn" onclick="showFormAnswers(<?php echo $_GET['formId'] ?>)"><i
                class='fas fa-align-left fa-lg'></i></button>
          <button class="btn" onclick="viewForm(<?php echo $_GET['formId'] ?>)"><i class="fas fa-eye"></i></button>
-         <button class="btn" onclick="showSettingsModal()"><i class="fas fa-sliders-h fa-lg"></i></button>
+         <button class="btn" data-bs-target="#settings_Modal" data-bs-toggle="modal"><i class="fas fa-sliders-h fa-lg"></i></button>
       </div>
       <div class="row" id="editorZone">
 
@@ -287,16 +275,6 @@ if (!in_array("admin", $_SESSION["groups"])) {
    //Function to show form answers
    function showFormAnswers(formId) {
       window.location.href = "formanswers.php?formId=" + formId;
-   }
-
-   //Function to show delete modal
-   function showDeleteModal() {
-      $('#delete_Modal').modal('show');
-   }
-
-   //Function to show settings modal
-   function showSettingsModal() {
-      $('#settings_Modal').modal('show');
    }
 
    //Function to show title modal
@@ -358,9 +336,7 @@ if (!in_array("admin", $_SESSION["groups"])) {
 
       loadPageAsync(formId, formHash);
       $('#accessRestrict').change(function () {
-         // Assuming the specific option value is 'specificOption'
          if ($(this).val() === '3') {
-            // Assuming your link has an id of 'myLink'
             showLink(formHash);
          } else {
             showLink(formHash, false);

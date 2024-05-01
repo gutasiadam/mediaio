@@ -19,7 +19,7 @@ async function FetchData(formId, formHash) {
             }
 
             if (response == 404) {
-               window.location.href = "index.php?invalidID";
+                window.location.href = "index.php?invalidID";
             }
 
             var form = JSON.parse(response);
@@ -34,72 +34,59 @@ async function FetchData(formId, formHash) {
 
 async function fetchAnswers(formId, formHash) {
     console.log("Fetching form answers");
-    return new Promise(async (resolve, reject) => {
-        try {
-            let response;
-            if (formId != -1) {
-                response = await $.ajax({
-                    type: "POST",
-                    url: "../formManager.php",
-                    data: { mode: "getFormAnswers", id: formId }
-                });
-            } else {
-                response = await $.ajax({
-                    type: "POST",
-                    url: "../formManager.php",
-                    data: { mode: "getFormAnswers", formHash: formHash }
-                });
-            }
-
-
-            if (response == 404) {
-                window.location.href = "index.php?invalidID";
-            }
-
-            var submission = JSON.parse(response);
-            //console.log(submission);
-            
-            for (var i = 0; i < submission.length; i++) {
-                formAnswers.push(submission[i]);
-            }
-
-            var dropdown = document.getElementById("answers_dropdown"); 
-
-            for (var i = 0; i < submission.length; i++) {
-                var id = submission[i].ID;
-
-                var li = document.createElement("li");
-                li.classList.add("dropdown-item");
-                li.style.cursor = "pointer";
-
-                li.onclick = (function (id) {
-                    return function () {
-                        showFormAnswers(id);
-                    };
-                })(id);
-
-                li.innerHTML = (i + 1) + ". válasz</a>";
-                dropdown.appendChild(li);
-            }
-            resolve();
-        } catch (error) {
-            console.error("Error:", error);
-            reject(error);
+    try {
+        let data = { mode: "getFormAnswers" };
+        if (formId != -1) {
+            data.id = formId;
+        } else {
+            data.formHash = formHash;
         }
-    });
+
+        let response = await $.ajax({
+            type: "POST",
+            url: "../formManager.php",
+            data: data
+        });
+
+        if (response == 404) {
+            window.location.href = "index.php?invalidID";
+        }
+
+        let submission = JSON.parse(response);
+        submission.forEach(item => formAnswers.push(item));
+
+        let dropdown = document.getElementById("answers_dropdown");
+
+        submission.forEach((item, i) => {
+            let id = item.ID;
+
+            let li = document.createElement("li");
+            li.classList.add("dropdown-item");
+            li.style.cursor = "pointer";
+
+            li.onclick = function () {
+                showFormAnswers(id);
+            };
+
+            li.innerHTML = `${i + 1}. válasz</a>`;
+            dropdown.appendChild(li);
+        });
+    } catch (error) {
+        console.error("Error:", error);
+    }
 }
 
 
 async function loadPage(form, state) {
 
-    var formElements = JSON.parse(form.Data);
-    var formName = form.Name;
-    var formStatus = JSON.parse(form.Status);
-    var formAccess = JSON.parse(form.AccessRestrict);
-    var formAnonim = form.Anonim;
-    var formSingleAnswer = form.SingleAnswer;
-    var formHash = form.LinkHash;
-    var formId = form.Id;
+    const formElements = JSON.parse(form.Data);
+    const formName = form.Name;
+    const formStatus = JSON.parse(form.Status);
+    const formAccess = JSON.parse(form.AccessRestrict);
+    const formAnonim = form.Anonim;
+    const formSingleAnswer = form.SingleAnswer;
+    const formHash = form.LinkHash;
+    const formId = form.Id;
 
     if (state == "fill" || state == "answers") {
         //Set form Name and header
@@ -138,24 +125,24 @@ async function loadPage(form, state) {
         document.getElementById("form_name").innerHTML = "Sikeres leadás!";
         document.getElementById("form_header").innerHTML = "Köszönjük, hogy kitöltötte a kérdőívet!";
     }
-    var formContainer = document.getElementById("form-body");
+    let formContainer = document.getElementById("form-body");
 
 
 
-    //Set background
-    var style = document.createElement('style');
+    // Set background
+    const style = document.createElement('style');
     style.innerHTML = `
     body::before {
-    content: "";
-    position: fixed;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    background-image: url(../forms/backgrounds/` + form.Background + `);
-    background-size: cover;
-    background-position: center;
-    z-index: -1;
+        content: "";
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        background-image: url(../forms/backgrounds/${form.Background});
+        background-size: cover;
+        background-position: center;
+        z-index: -1;
     }`;
     document.head.appendChild(style);
 
@@ -167,29 +154,26 @@ async function loadPage(form, state) {
         if (state == "editor") {
             formContainer = document.getElementById("editorZone");
         }
-        //Load form elements
-        for (var pos = 1; pos <= formElements.length; pos++) {
-            for (var j = 0; j < formElements.length; j++) {
-                if (formElements[j].place == pos) {
-                    var element = formElements[j];
-                }
-            }
+        // Create a map of form elements by their place
+        let formElementsMap = new Map();
+        formElements.forEach((element, index) => {
+            formElementsMap.set(element.place, element);
+        });
 
-            var elementType = element.type;
-            var elementId = element.id;
-            var elementPlace = element.place;
-            var elementSettings = element.settings;
+        // Load form elements
+        for (let pos = 1; pos <= formElements.length; pos++) {
+            let element = formElementsMap.get(pos);
 
+            let { type: elementType, id: elementId, place: elementPlace, settings: elementSettings } = element;
 
-            //Add settings, where possible
-            //console.log("Id: " + elementId + " Place:" + elementPlace + " Type: " + elementType + " Settings: " + elementSettings);
+            // Add settings, where possible
+            // console.log(`Id: ${elementId} Place: ${elementPlace} Type: ${elementType} Settings: ${elementSettings}`);
             formContainer.appendChild(generateElement(elementType, elementId, elementPlace, elementSettings, state));
-
         }
 
         if (state == "fill") {
             //Add submit button
-            var submit = document.createElement("button");
+            const submit = document.createElement("button");
             submit.classList.add("btn", "btn-lg", "btn-success");
             submit.type = "submit";
             submit.innerHTML = "Leadás";

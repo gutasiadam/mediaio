@@ -280,6 +280,9 @@ async function generateProjectBody(project) {
         deadline.innerHTML = `<a data-bs-toggle="tooltip" data-bs-title="${project.Deadline.slice(0, -3)}">${deadlineText}</a>`;
         let deadlineColor = getDeadlineColor(project.Deadline);
         switch (deadlineColor) {
+            case "longAgo":
+                deadline.classList.add("bg-secondary");
+                break;
             case "overdue":
                 deadline.classList.add("bg-danger");
                 break;
@@ -482,7 +485,10 @@ function getDeadlineColor(deadline) {
         let now = new Date();
         let projectDeadline = new Date(deadline);
 
-        if (projectDeadline < now) {
+        // If task is overdue more than a week, return
+        if (now - projectDeadline > (1000 * 60 * 60 * 24 * 7)) {
+            return "longAgo";
+        } else if (projectDeadline < now) {
             return "overdue";
         } else if (projectDeadline - now < (1000 * 60 * 60 * 48)) {   // 48 hours
             return "soon";
@@ -629,5 +635,8 @@ async function getDeadline(deadline) {
     if (differenceInHours > 0) return differenceInHours + " óra";
     if (differenceInMinutes > 0) return differenceInMinutes + " perc";
     if (differenceInSeconds >= 0) return "Épp most";
+
+    // if the deadline is overdue more than a week
+    if (differenceInDays < -7) return "Régen";
     return "Lejárt";
 }
