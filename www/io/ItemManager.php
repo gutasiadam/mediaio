@@ -480,14 +480,13 @@ class itemDataManager
   //Returns how many items the user has taken out.
   static function getUserItemCount()
   {
-    $sql = "SELECT * FROM leltar WHERE RentBy = ?";
-    //Get a new database connection
+    $sql = "SELECT * FROM `leltar` WHERE `RentBy` = ?";
     $connection = Database::runQuery_mysqli();
     $stmt = $connection->prepare($sql);
-    $stmt->bind_param("i", $_SESSION['UserId']);
+    $stmt->bind_param("i", $_SESSION['userId']);
     $stmt->execute();
     $result = $stmt->get_result();
-    return mysqli_num_rows($result);
+    return $result->num_rows;
   }
 
   static function listUserItems($userData)
@@ -606,18 +605,12 @@ if (isset($_POST['mode'])) {
   if ($_POST['mode'] == 'stageTakeout') {
     echo takeOutManager::stageTakeout($_POST['items'], $_POST['toUserId']);
   }
-  //if ($_POST['mode'] == 'takeOutApproval') {
-  //  echo takeOutManager::approveTakeout($_POST['value']);
-  //}
   if ($_POST['mode'] == 'listUserItems') {
     echo retrieveManager::listUserItems();
   }
   if ($_POST['mode'] == 'retrieveStaging') {
     echo retrieveManager::stageRetrieve();
   }
-  //if ($_POST['mode'] == 'retrieveApproval') {
-  //  echo retrieveManager::approveRetrieve($_POST['value']);
-  //}
 
   if ($_POST['mode'] == 'confirmItems') {
     echo itemDataManager::confirmItems($_POST['eventID'], $_POST['items'], $_POST['direction']);

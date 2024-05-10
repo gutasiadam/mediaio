@@ -26,7 +26,7 @@ async function loadPage() {
         },
     }));
 
-    console.log(response);
+    //console.log(response);
 
     const Container = document.getElementById("eventsContainer");
 
@@ -34,7 +34,7 @@ async function loadPage() {
         const noItems = document.createElement("div");
         noItems.classList.add("alert", "alert-info", "mt-3", "text-center");
         noItems.style.width = "400px";
-        noItems.innerHTML = "Semmi sem vár elfogadásra!";
+        noItems.innerHTML = "Nem történt esemény az elmúlt héten!";
         Container.appendChild(noItems);
 
         Container.style.display = "flex";
@@ -50,6 +50,7 @@ async function loadPage() {
         const card = document.createElement('div');
         card.classList.add('card', 'mb-3');
         card.classList.add(event.Event === 'OUT' ? 'border-danger' : event.Event === 'DECLINE' ? 'border-warning' : 'border-success');
+        card.classList.add(event.Event === 'OUT' ? 'card-out' : event.Event === 'DECLINE' ? 'card-decline' : 'card-in');
 
         const cardBody = document.createElement('div');
         cardBody.classList.add('card-body', 'confirm-card');
@@ -102,7 +103,6 @@ async function loadPage() {
 
         const cardTimestamp = document.createElement('p');
         cardTimestamp.classList.add('card-timestamp');
-        cardTimestamp.style.marginBottom = '10px';
         let date = new Date(event.Date);
         let formattedDate = `${date.getFullYear()}.${(date.getMonth() + 1).toString().padStart(2, '0')}.${date.getDate().toString().padStart(2, '0')} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`;
         cardTimestamp.textContent = formattedDate;
@@ -110,7 +110,7 @@ async function loadPage() {
 
         const inOrOut = document.createElement('p');
         inOrOut.classList.add('card-timestamp');
-        inOrOut.style.marginBottom = '10px';
+        inOrOut.style.fontSize = '1.2em';
         inOrOut.style.fontWeight = 'bold';
         inOrOut.textContent = event.Event === 'OUT' ? 'Kiadás' : event.Event === 'DECLINE' ? 'Elutasítás' : 'Visszahozás';
         cardButtonHolder.appendChild(inOrOut);
@@ -128,4 +128,23 @@ async function loadPage() {
         Container.appendChild(card);
     });
 
+}
+
+
+async function openInfoModal(event) {
+    //Get event type and set modal title
+    document.getElementById('SettingsModalLabel').textContent = event.Event === 'OUT' ? 'Kiadás' : event.Event === 'DECLINE' ? 'Elutasítás' : 'Visszahozás';
+
+    // Set the event items
+    const items = JSON.parse(event.Items);
+    const itemList = document.getElementById('itemsList');
+    itemList.innerHTML = '';
+    items.forEach(item => {
+        const listItem = document.createElement('li');
+        listItem.innerHTML = `${item.name} - ${item.uid}`;
+        itemList.appendChild(listItem);
+    });
+
+    // Open the modal
+    $('#SettingsModal').modal('show');
 }

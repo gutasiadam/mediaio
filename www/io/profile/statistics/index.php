@@ -1,4 +1,6 @@
 <?php
+namespace Mediaio;
+
 error_reporting(E_ERROR | E_PARSE);
 
 session_start();
@@ -14,6 +16,8 @@ if (!in_array("admin", $_SESSION["groups"])) {
 }
 
 include "header.php";
+include "../../Accounting.php";
+include "../../ItemManager.php";
 ?>
 
 
@@ -56,11 +60,78 @@ include "header.php";
 </nav>
 
 <body>
+
+  <!-- Accept settings modal -->
+
+  <div class="modal fade" id="SettingsModal" tabindex="-1" aria-labelledby="SettingsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="SettingsModalLabel">Részletek</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <ul id="itemsList"></ul>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-success" data-bs-dismiss="modal">Ok</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+
   <h1 class="rainbow">Statisztika</h1>
   <div class="container">
+    <div class="col-3 mb-2">
+      <div class="accordion">
+        <div class="accordion-item">
+          <h2 class="accordion-header">
+            <button class="accordion-button collapsed" id="statsButton" type="button" data-bs-toggle="collapse"
+              data-bs-target="#statsNum" aria-expanded="true" aria-controls="statsNum">
+              Adatok
+            </button>
+          </h2>
+          <div id="statsNum" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+            <div class="accordion-body">
 
-    <div class="row justify-content-center">
-      <div id="eventsContainer">
+              <div class="card mb-3">
+                <div class="card-header" style="font-weight: bold;">
+                  Felhasználók:
+                </div>
+                <div class="card-body d-flex justify-content-between">
+                  <span class="infoText"><?php echo getUserCount(); ?> fő</span><button class="btn" type="button"
+                    onclick="window.location.href = '../userlist.php';"><i class="fas fa-users"></i></button>
+                </div>
+              </div>
+              <div class="card mb-3">
+                <div class="card-header" style="font-weight: bold;">
+                  Benn levő tárgyak:
+                </div>
+                <div class="card-body">
+                  <span class="infoText"><?php echo getItemCount(); ?></span>
+                </div>
+              </div>
+              <!-- <div class="card mb-3">
+                <div class="card-body">
+                  <h5 class="card-title">Események: <?php //echo getEventCount() ?></h5>
+                </div>
+              </div> -->
+
+            </div>
+          </div>
+          <script>
+            if (window.innerWidth > 768) {
+              document.getElementById("statsButton").click();
+            }
+          </script>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="row justify-content-center" id="eventsContainer">
 
       </div>
     </div>
@@ -68,3 +139,41 @@ include "header.php";
     <div id='toTop'><i class="fas fa-chevron-up"></i></div>
   </div>
 </body>
+
+
+
+<?php
+
+function getUserCount()
+{
+  $users = userManager::getPublicUserInfo();
+  //Count the number of users
+  $userCount = count(json_decode($users));
+  return $userCount;
+}
+
+
+function getItemCount()
+{
+  $items = itemDataManager::getItems();
+  //Count the number of items
+  $itemCount = count(json_decode($items));
+
+  // Get taken items
+  $takenItems = itemDataManager::listByCriteria("out", "id");
+  $takenItemCount = count(json_decode($takenItems));
+  $itemsIn = $itemCount - $takenItemCount;
+
+  $precent = round(($itemsIn / $itemCount) * 100, 2);
+
+  return "$itemsIn / $itemCount ($precent%)";
+}
+
+
+function getEventCount()
+{
+  $events = itemHistoryManager::getInventoryHistory();
+  //Count the number of events
+  $eventCount = count(json_decode($events));
+  return $eventCount;
+}

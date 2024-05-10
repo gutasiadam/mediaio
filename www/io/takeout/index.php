@@ -253,7 +253,7 @@ error_reporting(E_ALL ^ E_NOTICE);
                 </div>
                 <div id="takeout-option-buttons">
                     <button href="#sidebar" class="btn btn-sm btn-success mb-1" id="show_selected"
-                        data-bs-toggle="offcanvas" role="button" aria-controls="sidebar">Kiválasztva
+                        data-bs-toggle="offcanvas" role="button" aria-controls="sidebar">Folytatás
                         <span id="selectedCount" class="badge bg-danger">0</span>
                     </button>
                     <button class="btn btn-sm btn-success col-lg-auto mb-1" id="takeout2BTN" style='margin-bottom: 6px'
