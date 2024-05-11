@@ -23,7 +23,7 @@ async function loadPage() {
 
     const events = JSON.parse(response);
 
-    console.log(events);
+    //console.log(events);
 
     if (events.length == 0) {
         const noItems = document.createElement("div");
@@ -110,7 +110,7 @@ async function loadPage() {
         cardTimestamp.classList.add('card-timestamp');
         cardTimestamp.style.marginBottom = '10px';
         let date = new Date(event.Date);
-        let formattedDate = `${date.getFullYear()}.${(date.getMonth() + 1).toString().padStart(2, '0')}.${date.getDate().toString().padStart(2, '0')}`;
+        let formattedDate = `${date.getFullYear()}.${(date.getMonth() + 1).toString().padStart(2, '0')}.${date.getDate().toString().padStart(2, '0')} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`;
         cardTimestamp.textContent = formattedDate;
         cardButtonHolder.appendChild(cardTimestamp);
 

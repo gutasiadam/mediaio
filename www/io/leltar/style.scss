@@ -1,5 +1,3 @@
-
-
 #settings {
     max-width: 600px;
     overflow: auto;
@@ -42,5 +40,26 @@
         background-color: rgb(179, 179, 179);
         /* color of the scroll thumb */
         border-radius: 20px;
+    }
+}
+
+
+.waitForConfirm {
+
+    * {
+        animation: textColor 1s infinite alternate;
+    }
+}
+
+
+/* Animations */
+
+@keyframes textColor {
+    0% {
+        color: #000;
+    }
+
+    100% {
+        color: #f00;
     }
 }

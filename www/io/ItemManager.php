@@ -20,22 +20,29 @@ class takeOutManager
   User takeout process. Stages the takeout as it still needs to be approved on userCheck panel.
   sets the item status to 2 (needs approvement.)
   */
-  static function stageTakeout($takeoutItems, $user)
+  static function stageTakeout($takeoutItems, $plannedData = NULL)
   {
     //Accesses post and Session Data.
     //var_dump($takeoutData);
     $currDate = date("Y/m/d H:i:s");
     $connection = Database::runQuery_mysqli();
 
-    //Logging into takelog
+
+    // Planned takeout code TODO: Implement this
+    if ($plannedData != NULL) {
+      $plannedData = json_decode($plannedData, true);
+      $sql = "INSERT INTO takeoutPlanner (`ID`, `Name`, `Description`, `UserID`, `Items`, `StartTime`, `ReturnTime`, `isTaken`) 
+              VALUES (NULL, '" . $plannedData['Name'] . "', '" . $plannedData['Desc'] . "', '" . $_SESSION['userId'] . "', '" . $takeoutItems . "', '" . $plannedData['StartingDate'] . "', '" . $plannedData['EndDate'] . "', 0)";
+      $connection->query($sql);
+    }
 
     //Auto accept available
-    $takeOutAsUser = $user == '' ? $_SESSION['userId'] : $user;
+    $UID = $_SESSION['userId'];
     $acknowledged = in_array("admin", $_SESSION['groups']) ? 1 : 0; // Stageing happens here
     $ackBy = $acknowledged ? $_SESSION['UserUserName'] : NULL;
 
     $sql = "INSERT INTO takelog (`ID`, `Date`, `UserID`, `Items`, `Event`,`Acknowledged`,`ACKBY`) 
-            VALUES (NULL, '$currDate', '$takeOutAsUser', '$takeoutItems', 'OUT', $acknowledged, '$ackBy')";
+            VALUES (NULL, '$currDate', '$UID', '$takeoutItems', 'OUT', $acknowledged, '$ackBy')";
     $result = mysqli_query($connection, $sql);
 
 
@@ -54,7 +61,7 @@ class takeOutManager
         $status = in_array("admin", $_SESSION['groups']) ? 0 : 2;
 
         // Bind parameters and execute
-        $stmt->bind_param("iss", $status, $takeOutAsUser, $uid);
+        $stmt->bind_param("iss", $status, $UID, $uid);
         $result = $stmt->execute();
 
         if ($result != TRUE) {
@@ -327,6 +334,12 @@ class itemDataManager
         // Update the takelog entry for the original items
         $sql = "UPDATE takelog SET Items='" . json_encode(array_diff_multi($originalItems, $declinedItems)) . "' WHERE ID=" . $eventID;
         $connection->query($sql);
+
+        // If everything was declined, delete the original takelog entry
+        if (count($originalItems) == count($declinedItems)) {
+          $sql = "DELETE FROM takelog WHERE ID=" . $eventID;
+          $connection->query($sql);
+        }
       }
       $connection->close();
       return 200;
@@ -603,7 +616,7 @@ if (isset($_POST['mode'])) {
   date_default_timezone_set('Europe/Budapest');
 
   if ($_POST['mode'] == 'stageTakeout') {
-    echo takeOutManager::stageTakeout($_POST['items'], $_POST['toUserId']);
+    echo takeOutManager::stageTakeout($_POST['items'], $_POST['plannedData']);
   }
   if ($_POST['mode'] == 'listUserItems') {
     echo retrieveManager::listUserItems();

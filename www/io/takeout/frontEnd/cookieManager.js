@@ -1,4 +1,5 @@
 
+let reloading = false;
 
 function getCookie(cName) {
     const name = cName + "=";
@@ -27,20 +28,24 @@ function updateSelectionCookie() {
 }
 
 
-function reloadSavedSelections() {
+async function reloadSavedSelections() {
+    reloading = true;
     //Try re-selectiong items that are saved in the takeOutItems cookie.
     try {
         var selecteditems = getCookie("selectedItems")
         selecteditems = JSON.parse(selecteditems);
     } catch (error) {
+        reloading = false;
         console.log("No saved items found");
         return;
     }
     if (!selecteditems || selecteditems.length === 0) {
+        reloading = false;
         return;
     }
     selecteditems.forEach(element => {
         console.log("Reloading item: " + element);
         document.getElementById(element).click();
     });
+    reloading = false;
 }

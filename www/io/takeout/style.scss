@@ -1,3 +1,44 @@
+#selectMenu {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: center;
+    overflow-x: auto;
+    overflow-y: hidden;
+    max-width: 100%;
+    max-height: 70px;
+    padding-left: 10px;
+    padding-right: 10px;
+
+    @media (max-width: 488px) {
+        justify-content: flex-start;
+    }
+
+    *{
+        display: flex;
+        min-width: fit-content;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: rgb(255, 255, 255);
+        /* color of the tracking area */
+    }
+
+    &::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+        /* width of the entire scrollbar */
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background-color: rgb(179, 179, 179);
+        /* color of the scroll thumb */
+        border-radius: 20px;
+    }
+}
+
+
+
 #itemsList {
     display: block;
     width: 100%;

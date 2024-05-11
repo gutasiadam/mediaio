@@ -22,7 +22,7 @@ include "../../ItemManager.php";
 
 
 <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-dark">
-  <a class="navbar-brand" href="index.php">
+  <a class="navbar-brand" href="../index.php">
     <img src="../../utility/logo2.png" height="50">
   </a>
   <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
@@ -85,7 +85,14 @@ include "../../ItemManager.php";
 
   <h1 class="rainbow">Statisztika</h1>
   <div class="container">
-    <div class="col-3 mb-2">
+    <div class="col-3 text-center mb-2">
+      <div class="btn-group mb-2" role="group" aria-label="Basic radio toggle button group">
+        <input type="radio" class="btn-check" name="btnradio" id="itemStats" autocomplete="off" checked>
+        <label class="btn btn-outline-secondary" for="itemStats">Tárgyak</label>
+
+        <input type="radio" class="btn-check" name="btnradio" id="userStats" autocomplete="off">
+        <label class="btn btn-outline-secondary" for="userStats">Felhasználók</label>
+      </div>
       <div class="accordion">
         <div class="accordion-item">
           <h2 class="accordion-header">
@@ -99,7 +106,7 @@ include "../../ItemManager.php";
 
               <div class="card mb-3">
                 <div class="card-header" style="font-weight: bold;">
-                  Felhasználók:
+                  Felhasználók
                 </div>
                 <div class="card-body d-flex justify-content-between">
                   <span class="infoText"><?php echo getUserCount(); ?> fő</span><button class="btn" type="button"
@@ -108,7 +115,7 @@ include "../../ItemManager.php";
               </div>
               <div class="card mb-3">
                 <div class="card-header" style="font-weight: bold;">
-                  Benn levő tárgyak:
+                  Benn levő tárgyak
                 </div>
                 <div class="card-body">
                   <span class="infoText"><?php echo getItemCount(); ?></span>

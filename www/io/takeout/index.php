@@ -83,8 +83,8 @@ error_reporting(E_ALL ^ E_NOTICE);
                         ?>
                         <div class="input-group mb-3">
                             <span class="input-group-text">Név:</span>
-                            <input type="text" class="form-control" placeholder="Projekt/Bérlő neve"
-                                aria-label="Projekt/Bérlő neve" aria-describedby="name" disabled>
+                            <input type="text" class="form-control" id="plannedName" placeholder="Projekt/Bérlő neve"
+                                aria-label="Projekt/Bérlő neve" aria-describedby="name">
                         </div>
                         <?php
                     endif;
@@ -92,12 +92,12 @@ error_reporting(E_ALL ^ E_NOTICE);
                     <div class="input-group mb-3">
                         <span class="input-group-text">Tervezett időtartam:</span>
                         <input type="date" min="<?php echo date('Y-m-d'); ?>" class="form-control" id="startingDate"
-                            disabled>
-                        <input type="date" class="form-control" id="endDate" disabled>
+                            >
+                        <input type="date" class="form-control" id="endDate">
                     </div>
                     <div class="input-group mb-3">
                         <span class="input-group-text">Megjegyzés:</span>
-                        <textarea class="form-control" aria-label="Comment" disabled></textarea>
+                        <textarea class="form-control" aria-label="Comment" id="plannedDesc"></textarea>
                     </div>
                     <i style="color:red;">Fejlesztés alatt...</i><br>
                     <b>Nyomj a "Mehet" gombra a elvitel megerősítéséhez!</b>
@@ -202,105 +202,134 @@ error_reporting(E_ALL ^ E_NOTICE);
     <!-- End of Scanner Modal -->
 
 
+    <ul class="nav nav-underline mt-1 mb-2" id="selectMenu" role="tablist">
+        <li class="nav-item" role="presentation">
+            <a class="nav-link active" id="takeout-tab" data-bs-toggle="tab" data-bs-target="#takeout-tab-pane"
+                aria-current="page" href="#">
+                <h2 class="rainbow" style="font-size: 40px; margin: 0;">Tárgy elvitel</h2>
+            </a>
+        </li>
+        <h2 class="rainbow"> - </h2>
+        <li class="nav-item" role="presentation">
+            <a class="nav-link" href="#" id="prepared-tab" data-bs-toggle="tab" data-bs-target="#prepared-tab-pane">
+                <h2 class="rainbow" style="margin: 0;font-style: italic; font-size: 40px;">Előjegyzések</h2>
+            </a>
+        </li>
+    </ul>
+    <div class="tab-content" id="myTabContent">
+        <div class="tab-pane fade show active" id="takeout-tab-pane" role="tabpanel" aria-labelledby="takeout-tab"
+            tabindex="0">
+            <div class="container" id="takeOutContainer">
+                <div class="row align-items-start" id="takeout-container">
+                    <div class="col-4 selectedList" id="selected-desktop">
+                        <h3>Kiválasztva:</h3>
+                    </div>
+                    <div class="col">
+                        <div class="input-group mb-1">
+                            <input type="text" class="form-control" id="search"
+                                placeholder="Kezdd el ide írni, mit vinnél el.."
+                                aria-label="Kezdd el ide írni, mit vinnél el.." aria-describedby="button-addon2">
+
+                            <button class="btn btn-outline-secondary dropdown-toggle" type="button"
+                                data-bs-toggle="dropdown" data-bs-auto-close="outside"
+                                aria-expanded="false">Szűrés</button>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <div class="dropdown-item">
+                                        <input class="form-check-input filterCheckbox" type="checkbox"
+                                            autocomplete="off" id="show_medias" data-filter="">
+                                        <label class="form-check-label" for="show_medias">Médiás</label>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="dropdown-item">
+                                        <input class="form-check-input filterCheckbox" type="checkbox"
+                                            autocomplete="off" id="show_studios" data-filter="s">
+                                        <label class="form-check-label" for="show_studios">Stúdiós</label>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="dropdown-item">
+                                        <input class="form-check-input filterCheckbox" type="checkbox"
+                                            autocomplete="off" id="show_eventes" data-filter="e">
+                                        <label class="form-check-label" for="show_eventes">Eventes</label>
+                                    </div>
+                                </li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li>
+                                    <div class="dropdown-item">
+                                        <input class="form-check-input" type="checkbox" autocomplete="off"
+                                            id="show_unavailable">
+                                        <label class="form-check-label" for="show_unavailable">Csak elérhető</label>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        <div id="takeout-option-buttons">
+                            <button href="#sidebar" class="btn btn-sm btn-success mb-1" id="show_selected"
+                                data-bs-toggle="offcanvas" role="button" aria-controls="sidebar">Folytatás
+                                <span id="selectedCount" class="badge bg-danger">0</span>
+                            </button>
+                            <button class="btn btn-sm btn-success col-lg-auto mb-1" id="takeout2BTN"
+                                style='margin-bottom: 6px' data-bs-target="#takeoutSettingsModal"
+                                data-bs-toggle="modal">Mehet</button>
+
+                            <button class="btn btn-sm btn-info col-lg-auto mb-1" onclick="showPresetsModal()"
+                                style='margin-bottom:6px'>Presetek</button>
+                            <button class="btn btn-sm btn-danger col-lg-auto mb-1 text-nowrap" id="clear"
+                                style='margin-bottom: 6px' data-bs-target="#clear_Modal" data-bs-toggle="modal">Összes
+                                törlése</button>
+                            <button type="button" class="btn btn-warning btn-sm col-lg-auto mb-1 text-nowrap"
+                                onclick="showScannerModal()">Szkenner <i class="fas fa-qrcode"></i></button>
 
 
-    <h2 class="rainbow" id="doTitle">Tárgy elvitel</h2>
-    <div class="container">
-        <div class="row align-items-start" id="takeout-container">
-            <div class="col-4 selectedList" id="selected-desktop">
-                <h3>Kiválasztva:</h3>
-            </div>
-            <div class="col">
-                <div class="input-group mb-1">
-                    <input type="text" class="form-control" id="search" placeholder="Kezdd el ide írni, mit vinnél el.."
-                        aria-label="Kezdd el ide írni, mit vinnél el.." aria-describedby="button-addon2">
-
-                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
-                        data-bs-auto-close="outside" aria-expanded="false">Szűrés</button>
-                    <ul class="dropdown-menu">
-                        <li>
-                            <div class="dropdown-item">
-                                <input class="form-check-input filterCheckbox" type="checkbox" autocomplete="off"
-                                    id="show_medias" data-filter="">
-                                <label class="form-check-label" for="show_medias">Médiás</label>
-                            </div>
-                        </li>
-                        <li>
-                            <div class="dropdown-item">
-                                <input class="form-check-input filterCheckbox" type="checkbox" autocomplete="off"
-                                    id="show_studios" data-filter="s">
-                                <label class="form-check-label" for="show_studios">Stúdiós</label>
-                            </div>
-                        </li>
-                        <li>
-                            <div class="dropdown-item">
-                                <input class="form-check-input filterCheckbox" type="checkbox" autocomplete="off"
-                                    id="show_eventes" data-filter="e">
-                                <label class="form-check-label" for="show_eventes">Eventes</label>
-                            </div>
-                        </li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-                        <li>
-                            <div class="dropdown-item">
-                                <input class="form-check-input" type="checkbox" autocomplete="off"
-                                    id="show_unavailable">
-                                <label class="form-check-label" for="show_unavailable">Csak elérhető</label>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-                <div id="takeout-option-buttons">
-                    <button href="#sidebar" class="btn btn-sm btn-success mb-1" id="show_selected"
-                        data-bs-toggle="offcanvas" role="button" aria-controls="sidebar">Folytatás
-                        <span id="selectedCount" class="badge bg-danger">0</span>
-                    </button>
-                    <button class="btn btn-sm btn-success col-lg-auto mb-1" id="takeout2BTN" style='margin-bottom: 6px'
-                        data-bs-target="#takeoutSettingsModal" data-bs-toggle="modal">Mehet</button>
-
-                    <button class="btn btn-sm btn-info col-lg-auto mb-1" onclick="showPresetsModal()"
-                        style='margin-bottom:6px'>Presetek</button>
-                    <button class="btn btn-sm btn-danger col-lg-auto mb-1 text-nowrap" id="clear"
-                        style='margin-bottom: 6px' data-bs-target="#clear_Modal" data-bs-toggle="modal">Összes
-                        törlése</button>
-                    <button type="button" class="btn btn-warning btn-sm col-lg-auto mb-1 text-nowrap"
-                        onclick="showScannerModal()">Szkenner <i class="fas fa-qrcode"></i></button>
-
-
-                    <!-- GivetoAnotherperson button -->
-                    <!-- <button class="btn btn-sm btn-dark col-lg-auto mb-1 text-nowrap" id="givetoAnotherPerson_Button"
+                            <!-- GivetoAnotherperson button -->
+                            <!-- <button class="btn btn-sm btn-dark col-lg-auto mb-1 text-nowrap" id="givetoAnotherPerson_Button"
                         type="button" data-bs-toggle="modal" data-bs-target="#givetoAnotherPerson_Modal"
                         style="margin-bottom: 6px">Másnak veszek
                         ki</button> -->
-                </div>
-                <div id="itemsList">
-                </div>
-            </div>
-
-
-            <!-- Offcanvas -->
-            <div class="offcanvas offcanvas-start" tabindex="-1" id="sidebar" aria-labelledby="sidebar-label">
-                <div class="offcanvas-header">
-                    <h4 class="offcanvas-title" id="sidebar-label">Kiválasztva</h4>
-                    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"
-                        aria-label="Close"></button>
-                </div>
-                <div class="offcanvas-body" id="sidebar-body">
-                    <div class="row">
-                        <div class="col-12 selectedList" id="offcanvasList">
                         </div>
-                        <button class="btn btn-sm btn-success col-lg-auto mb-1" data-bs-dismiss="offcanvas"
-                            id="takeout2BTN-mobile" data-bs-target="#takeoutSettingsModal"
-                            data-bs-toggle="modal">Mehet</button>
+                        <div id="itemsList">
+                        </div>
+                    </div>
+
+
+                    <!-- Offcanvas -->
+                    <div class="offcanvas offcanvas-start" tabindex="-1" id="sidebar" aria-labelledby="sidebar-label">
+                        <div class="offcanvas-header">
+                            <h4 class="offcanvas-title" id="sidebar-label">Kiválasztva</h4>
+                            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"
+                                aria-label="Close"></button>
+                        </div>
+                        <div class="offcanvas-body" id="sidebar-body">
+                            <div class="row">
+                                <div class="col-12 selectedList" id="offcanvasList">
+                                </div>
+                                <button class="btn btn-sm btn-success col-lg-auto mb-1" data-bs-dismiss="offcanvas"
+                                    id="takeout2BTN-mobile" data-bs-target="#takeoutSettingsModal"
+                                    data-bs-toggle="modal">Mehet</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Navigation back to top -->
+                <div id='toTop'><i class="fas fa-chevron-up"></i></div>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="prepared-tab-pane" role="tabpanel" aria-labelledby="prepared-tab" tabindex="0">
+            <div class="container" id="preparedContainer">
+                <div class="row">
+                    <!-- in development label -->
+                    <div class="col-12">
+                        <h1 class="text-center">Fejlesztés alatt...</h1>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Navigation back to top -->
-    <div id='toTop'><i class="fas fa-chevron-up"></i></div>
 </body>
 
 
@@ -364,13 +393,26 @@ error_reporting(E_ALL ^ E_NOTICE);
 
         console.log(takeoutItems);
 
+        // Planned data
+        const Name = document.getElementById("plannedName").value;
+        const StartingDate = document.getElementById("startingDate").value;
+        const EndDate = document.getElementById("endDate").value;
+        const Desc = document.getElementById("plannedDesc").value;
+
+        const PlannedData = {
+            Name: Name,
+            StartingDate: StartingDate,
+            EndDate: EndDate,
+            Desc: Desc,
+        };
+
         const response = await $.ajax({
             url: "../ItemManager.php",
             method: "POST",
             data: {
                 mode: "stageTakeout",
                 items: JSON.stringify(takeoutItems),
-                toUserId: null, // TODO: Implement user selection
+                plannedData: JSON.stringify(PlannedData),
             }
         });
 

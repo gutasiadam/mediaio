@@ -186,6 +186,17 @@ function toggleSelectItem(item) {
     } else {
         checkBox.checked = true;
         addItemCard(item);
+        // Check for connected items
+        if (item.ConnectsToItems && !reloading) {
+            console.log("Connecting items");
+            const connectedItems = JSON.parse(item.ConnectsToItems);
+            connectedItems.forEach(connectedItem => {
+                const connectedItemElement = document.getElementById(connectedItem);
+                if (!connectedItemElement.classList.contains("selected")) {
+                    connectedItemElement.click();
+                }
+            });
+        };
         parseInt(badge.textContent = parseInt(badge.textContent) + 1);
     }
 

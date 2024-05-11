@@ -180,10 +180,17 @@ async function loadTableData(takeRestrict = "none", itemState = "all", orderCrit
         }
         const row = body.insertRow(-1);
         row.id = item.UID;
+
+
         item.TakeRestrict == '*' ? row.classList.add("table-danger") : null;
         item.TakeRestrict == 's' ? row.classList.add("table-primary") : null;
         item.TakeRestrict == 'e' ? row.classList.add("table-success") : null;
         item.RentBy != null ? row.classList.add("table-warning") : null;
+
+        if (item.Status == 2) {
+            row.classList.add("waitForConfirm");
+        }
+
         const RentByUsername = users.find((user) => user.idUsers == item.RentBy)?.usernameUsers || '';
         const cellValues = [item.UID, item.Nev, item.Tipus, RentByUsername];
         cellValues.forEach((value, index) => {

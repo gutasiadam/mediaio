@@ -112,7 +112,11 @@ async function loadPage() {
         inOrOut.classList.add('card-timestamp');
         inOrOut.style.fontSize = '1.2em';
         inOrOut.style.fontWeight = 'bold';
-        inOrOut.textContent = event.Event === 'OUT' ? 'Kiadás' : event.Event === 'DECLINE' ? 'Elutasítás' : 'Visszahozás';
+        inOrOut.textContent = event.Event === 'OUT' ? 'Kiadva' : event.Event === 'DECLINE' ? 'Elutasítva' : 'Visszahozva';
+        if (event.Acknowledged == 0) {
+            inOrOut.style.fontSize = '1em';
+            inOrOut.textContent += ' (Megerősítésre vár)';
+        }
         cardButtonHolder.appendChild(inOrOut);
 
         const moreInfo = document.createElement('button');
