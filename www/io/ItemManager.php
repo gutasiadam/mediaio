@@ -23,62 +23,75 @@ class takeOutManager
   static function stageTakeout($takeoutItems, $plannedData = NULL)
   {
     //Accesses post and Session Data.
-    //var_dump($takeoutData);
+    // Set time zone to Budapest
+    date_default_timezone_set('Europe/Budapest');
     $currDate = date("Y/m/d H:i:s");
     $connection = Database::runQuery_mysqli();
 
-
-    // Planned takeout code TODO: Implement this
-    if ($plannedData != NULL) {
-      $plannedData = json_decode($plannedData, true);
-      $sql = "INSERT INTO takeoutPlanner (`ID`, `Name`, `Description`, `UserID`, `Items`, `StartTime`, `ReturnTime`, `isTaken`) 
-              VALUES (NULL, '" . $plannedData['Name'] . "', '" . $plannedData['Desc'] . "', '" . $_SESSION['userId'] . "', '" . $takeoutItems . "', '" . $plannedData['StartingDate'] . "', '" . $plannedData['EndDate'] . "', 0)";
-      $connection->query($sql);
-    }
-
-    //Auto accept available
+    $instantTakeOut = false;
     $UID = $_SESSION['userId'];
+
+    // Planned takeout code
+    $plannedData = json_decode($plannedData, true);
+
+    // Check if the planned takeout is in the past
+    if (strtotime($plannedData['StartingDate']) < strtotime($currDate)) {
+      $instantTakeOut = true;
+    }
+    $eventState = $instantTakeOut ? 1 : 0; // 1 = Instant, 0 = Planned
+
+    // Is user an admin?
     $acknowledged = in_array("admin", $_SESSION['groups']) ? 1 : 0; // Stageing happens here
+    // Set the ackBy field to the user's name if the user is an admin
     $ackBy = $acknowledged ? $_SESSION['UserUserName'] : NULL;
+    // Check if the takeout is instant or planned
+    $direction = $instantTakeOut ? 'OUT' : 'PLANNED';
 
-    $sql = "INSERT INTO takelog (`ID`, `Date`, `UserID`, `Items`, `Event`,`Acknowledged`,`ACKBY`) 
-            VALUES (NULL, '$currDate', '$UID', '$takeoutItems', 'OUT', $acknowledged, '$ackBy')";
-    $result = mysqli_query($connection, $sql);
+    try {
+      // TAKELOG
+      $sql = "INSERT INTO takelog (`ID`, `Date`, `UserID`, `Items`, `Event`,`Acknowledged`,`ACKBY`) 
+            VALUES (NULL, '$currDate', '$UID', '$takeoutItems', '$direction', $acknowledged, '$ackBy')";
+      $connection->query($sql);
+      $takelogID = $connection->insert_id;
 
-
-    // Default response
-    $response = 400;
-
-    if ($result == TRUE) {
-      // Change every item as taken in the database
-
-      // Prepare the SQL statement once
-      $stmt = $connection->prepare("UPDATE leltar SET Status = ?, RentBy = ? WHERE `UID` = ?");
-
-      $takeoutItems = json_decode($takeoutItems, true);
-      foreach ($takeoutItems as $i) {
-        $uid = $i["uid"];
-        $status = in_array("admin", $_SESSION['groups']) ? 0 : 2;
-
-        // Bind parameters and execute
-        $stmt->bind_param("iss", $status, $UID, $uid);
-        $result = $stmt->execute();
-
-        if ($result != TRUE) {
-          echo "Error: " . $stmt->error;
-          break;
-        }
-      }
-
-      // If no errors occurred during the loop
-      if ($result == TRUE) {
-        $response = 200;
-      }
+      // TAKEOUTPLANNER
+      $sql = "INSERT INTO takeoutPlanner (`ID`, `Name`, `Description`, `UserID`, `Items`, `takelogID`, `StartTime`, `ReturnTime`, `eventState`) 
+              VALUES (NULL, '" . $plannedData['Name'] . "', '" . $plannedData['Desc'] . "', '" . $_SESSION['userId'] . "', '" . $takeoutItems . "', $takelogID, '" . $plannedData['StartingDate'] . "', '" . $plannedData['EndDate'] . "', $eventState)";
+      $connection->query($sql);
+    } catch (\Exception $e) {
+      echo "Error: " . $e->getMessage();
+      return 500;
     }
 
-    echo $response;
-    $connection->close();
-    return;
+
+    // Change every item as taken in the database
+    $takeoutItems = json_decode($takeoutItems, true);
+
+    try {
+      // Start transaction
+      $connection->begin_transaction();
+      $status = 2;
+
+      // Check if planned takeout start time is in the future
+      $instantTakeOut ? ($status = in_array("admin", $_SESSION['groups']) ? 0 : 2) : $status = 3;
+
+      // Update leltar
+      $stmt = $connection->prepare("UPDATE leltar SET Status=?, RentBy=? WHERE UID=?;");
+      foreach ($takeoutItems as $item) {
+        $stmt->bind_param("iss", $status, $UID, $item['uid']);
+        $stmt->execute();
+      }
+
+      // Commit transaction
+      $connection->commit();
+      $connection->close();
+    } catch (\Exception $e) {
+      // Rollback transaction if there is an error
+      $connection->rollback();
+      printf("Error message: %s\n", $e->getMessage());
+    }
+
+    return 200;
   }
 
   /*Take out items from the database. Sets the item status to 0 (taken out)
@@ -177,7 +190,7 @@ class retrieveManager
   {
     //Get the items that are currently by the user
     $connection = Database::runQuery_mysqli();
-    $sql = ("SELECT * FROM `leltar` WHERE `RentBy`='" . $_SESSION['userId'] . "' AND Status=0");
+    $sql = ("SELECT * FROM `leltar` WHERE `RentBy`='" . $_SESSION['userId'] . "' AND (Status=0 OR Status=3)");
     $result = $connection->query($sql);
     $connection->close();
     $items = array();
@@ -202,54 +215,45 @@ class retrieveManager
     }
     date_default_timezone_set('Europe/Budapest');
     $currDate = date("Y/m/d H:i:s");
-    $data = json_decode(stripslashes($_POST['data']), true);
-    $dataArray = array();
+    $retrieveItems = json_decode($_POST['data'], true);
 
-    foreach ($data as $d) {
-      array_push($dataArray, $d["uid"]);
-    }
-    //For Use in SQL query.
+    //Convert data to JSON
+    $dataJSON = json_encode($retrieveItems);
 
-    $itemNamesString = '';
-    //Append each uid to a string, separated by commas.
-    foreach ($dataArray as $uid) {
-      $itemNamesString .= "'" . $uid . "',";
-    }
-
-    //strip last comma
-    $itemNamesString = substr($itemNamesString, 0, -1);
-    // //Convert DataArraz to JSON
-    $dataString = json_encode($data);
     // Database init  - create a mysqli object
-
     $connection = Database::runQuery_mysqli();
-    if (in_array("admin", $_SESSION['groups'])) { //Auto accept 
-      $sql = " START TRANSACTION; UPDATE leltar SET leltar.Status=1, leltar.RentBy=NULL WHERE leltar.UID IN (" . $itemNamesString . ");";
-      $sql .= "INSERT INTO takelog VALUES";
-      $sql .= "(NULL, '$currDate', '" . $_SESSION['userId'] . "', '" . $dataString . "', 'IN',1,'$userName')";
-      $sql .= "; COMMIT;";
-      ;
-      if (!$connection->multi_query($sql)) {
-        printf("Error message: %s\n", $connection->error);
-      } else {
-        //All good, return OK message
-        echo 200;
-        exit();
-        //return;
+
+    $status = in_array("admin", $_SESSION['groups']) ? 1 : 2;
+    $acknowledged = in_array("admin", $_SESSION['groups']) ? 1 : 0;
+    $ackBy = in_array("admin", $_SESSION['groups']) ? $_SESSION['UserUserName'] : NULL;
+    try {
+      // Start transaction
+      $connection->begin_transaction();
+
+      // Update leltar
+      $stmt = $connection->prepare("UPDATE leltar SET Status=?, RentBy=NULL WHERE UID=?;");
+      foreach ($retrieveItems as $item) {
+        $stmt->bind_param("is", $status, $item['uid']);
+        $stmt->execute();
       }
-    } else { // Manual accept in usercheck required
-      $sql = " 
-      START TRANSACTION; UPDATE leltar SET leltar.Status=2, leltar.RentBy=NULL WHERE leltar.UID IN (" . $itemNamesString . ");";
-      $sql .= "INSERT INTO takelog VALUES";
-      $sql .= "(NULL, '$currDate', '" . $_SESSION['userId'] . "', '" . $dataString . "', 'IN',0,NULL)";
-      $sql .= "; COMMIT;";
-      if (!$connection->multi_query($sql)) {
-        printf("Error message: %s\n", $connection->error);
-      } else {
-        //All good, return OK message
-        echo 200;
-        return;
-      }
+
+      // Insert into takelog
+      $stmt = $connection->prepare("INSERT INTO takelog VALUES (NULL, ?, ?, ?, 'IN', ?, ?);");
+      $stmt->bind_param("sssis", $currDate, $_SESSION['userId'], $dataJSON, $acknowledged, $ackBy);
+      $stmt->execute();
+
+      // TODO: Update takeoutPlanner table
+
+      // Commit transaction
+      $connection->commit();
+
+      // All good, return OK message
+      echo 200;
+      exit();
+    } catch (\Exception $e) {
+      // Rollback transaction if there is an error
+      $connection->rollback();
+      printf("Error message: %s\n", $e->getMessage());
     }
   }
 }
@@ -257,6 +261,65 @@ class retrieveManager
 class itemDataManager
 {
 
+  static function getPlannedTakeouts()
+  {
+    $sql = "SELECT * FROM takeoutPlanner";
+    //Get a new database connection
+    $connection = Database::runQuery_mysqli();
+    $stmt = $connection->prepare($sql);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $rows = array();
+    $rows['events'] = array();
+    while ($row = $result->fetch_assoc()) {
+      $rows['events'][] = $row;
+    }
+    $rows['userId'] = $_SESSION['userId'];
+    $rows['isAdmin'] = in_array("admin", $_SESSION['groups']);
+    $result = json_encode($rows);
+    return $result;
+  }
+
+
+  static function deletePlannedTakeout($eventID)
+  {
+    $sql = "SELECT * FROM takeoutPlanner WHERE ID=" . $eventID;
+    //Get a new database connection
+    $connection = Database::runQuery_mysqli();
+    $result = $connection->query($sql);
+    $result = $result->fetch_assoc();
+
+    if ($result['UserID'] != $_SESSION['userId'] && !in_array("admin", $_SESSION['groups'])) {
+      return 403;
+    }
+
+    // If the items have been taken out or already returned, dont delete the event
+    if ($result['eventState'] != 1 && $result['eventState'] != 2) {
+
+      // Delete from takelog
+      $sql = "DELETE FROM takelog WHERE ID=" . $result['takelogID'] . ";";
+      $connection->query($sql);
+
+
+      // Change every item as taken in the database
+      $items = json_decode($result['Items'], true);
+      $stmt = $connection->prepare("UPDATE leltar SET Status = 1, RentBy = NULL WHERE `UID` = ?");
+      foreach ($items as $i) {
+        $stmt->bind_param("s", $i['uid']);
+        $stmt->execute();
+      }
+
+    }
+    $sql = "DELETE FROM takeoutPlanner WHERE ID=" . $eventID;
+    $connection->query($sql);
+    return 200;
+  }
+
+  /*
+
+  Confirm items in the database. Sets the item status to 0 (taken out) or 1 (available)
+
+  */
   static function confirmItems($eventID, $items, $direction)
   {
     if (!isset($_SESSION["userId"]))
@@ -502,27 +565,6 @@ class itemDataManager
     return $result->num_rows;
   }
 
-  static function listUserItems($userData)
-  {
-    //If userdata is empty, return a json with the error message.
-    if (empty($userData)) {
-      return json_encode(array('type' => 'error', 'text' => 'Invalid api key'));
-    }
-    $sql = "SELECT * FROM leltar WHERE RentBy = ?";
-    //Get a new database connection
-    $connection = Database::runQuery_mysqli();
-    $stmt = $connection->prepare($sql);
-    $stmt->bind_param("s", $userData['username']);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $rows = array();
-    while ($row = $result->fetch_assoc()) {
-      $rows[] = $row;
-    }
-    $result = json_encode($rows);
-    return $result;
-  }
-
 
   static function getItemsForConfirmation()
   {
@@ -624,6 +666,14 @@ if (isset($_POST['mode'])) {
   if ($_POST['mode'] == 'retrieveStaging') {
     echo retrieveManager::stageRetrieve();
   }
+
+  if ($_POST['mode'] == 'getPlannedTakeouts') {
+    echo itemDataManager::getPlannedTakeouts();
+  }
+  if ($_POST['mode'] == 'deletePlannedTakeout') {
+    echo itemDataManager::deletePlannedTakeout($_POST['ID']);
+  }
+
 
   if ($_POST['mode'] == 'confirmItems') {
     echo itemDataManager::confirmItems($_POST['eventID'], $_POST['items'], $_POST['direction']);

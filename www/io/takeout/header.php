@@ -26,6 +26,9 @@
   <script src="./frontEnd/cookieManager.js" type="text/javascript"></script>
   <script src="./frontEnd/toastManager.js" type="text/javascript" defer></script>
 
+  <script src='./fullcalendar-6.1.11/dist/index.global.js' type="text/javascript"></script>
+  <script src="./frontEnd/takeOutPlanner.js" type="text/javascript" defer></script>
+
   <script src="../utility/qr_scanner/html5-qrcode.min.js" type="text/javascript" defer></script>
   <script src="../utility/qr_scanner/io_qr_scanner.js" type="text/javascript" defer></script>
 

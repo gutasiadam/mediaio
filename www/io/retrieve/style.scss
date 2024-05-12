@@ -109,6 +109,12 @@
     margin: 0 auto;
 }
 
+.planned {
+    cursor: wait !important;
+    border: 1px solid #189ec0;
+    font-style: italic;
+}
+
 @keyframes shakeY {
 
     10%,

@@ -242,10 +242,6 @@ class EventManager
     //  $res = Database::runQuery($query);
     //  return;
   }
-
-  static function rescheduleEvent()
-  {
-  }
 }
 
 if (isset($_POST['o'])) {

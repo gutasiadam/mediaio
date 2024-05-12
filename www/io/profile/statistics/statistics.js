@@ -49,8 +49,8 @@ async function loadPage() {
 
         const card = document.createElement('div');
         card.classList.add('card', 'mb-3');
-        card.classList.add(event.Event === 'OUT' ? 'border-danger' : event.Event === 'DECLINE' ? 'border-warning' : 'border-success');
-        card.classList.add(event.Event === 'OUT' ? 'card-out' : event.Event === 'DECLINE' ? 'card-decline' : 'card-in');
+        card.classList.add(event.Event === 'OUT' ? 'border-danger' : event.Event === 'DECLINE' ? 'border-warning' : event.Event === 'PLANNED' ? 'border-info' : 'border-success');
+        card.classList.add(event.Event === 'OUT' ? 'card-out' : event.Event === 'DECLINE' ? 'card-decline' : event.Event === 'PLANNED' ? 'card-planned' : 'card-in');
 
         const cardBody = document.createElement('div');
         cardBody.classList.add('card-body', 'confirm-card');
@@ -112,7 +112,7 @@ async function loadPage() {
         inOrOut.classList.add('card-timestamp');
         inOrOut.style.fontSize = '1.2em';
         inOrOut.style.fontWeight = 'bold';
-        inOrOut.textContent = event.Event === 'OUT' ? 'Kiadva' : event.Event === 'DECLINE' ? 'Elutasítva' : 'Visszahozva';
+        inOrOut.textContent = event.Event === 'OUT' ? 'Kiadva' : event.Event === 'DECLINE' ? 'Elutasítva' : event.Event === 'PLANNED' ? 'Időzítve' : 'Visszahozva';
         if (event.Acknowledged == 0) {
             inOrOut.style.fontSize = '1em';
             inOrOut.textContent += ' (Megerősítésre vár)';
@@ -137,7 +137,7 @@ async function loadPage() {
 
 async function openInfoModal(event) {
     //Get event type and set modal title
-    document.getElementById('SettingsModalLabel').textContent = event.Event === 'OUT' ? 'Kiadás' : event.Event === 'DECLINE' ? 'Elutasítás' : 'Visszahozás';
+    document.getElementById('SettingsModalLabel').textContent = event.Event === 'OUT' ? 'Kiadás' : event.Event === 'DECLINE' ? 'Elutasítás' : event.Event === 'PLANNED' ? 'Időzítés' : 'Visszahozás';
 
     // Set the event items
     const items = JSON.parse(event.Items);

@@ -67,13 +67,14 @@ async function loadUserItems() {
 
 
 function createItemCard(item) {
-
+    const itemStatus = item.Status;
     const itemHolder = document.getElementById("itemsHolder");
 
     const itemCard = document.createElement("div");
     itemCard.classList.add("card", "itemCard");
     itemCard.id = item.UID;
     itemCard.setAttribute("data-name", item.Nev);
+    itemStatus == 3 ? itemCard.classList.add("planned") : null;
     itemCard.onclick = function () {
         if (this.classList.contains("selectable")) {
             toggleSelectItem(item);
@@ -91,18 +92,30 @@ function createItemCard(item) {
     const cardBody = document.createElement("div");
     cardBody.classList.add("card-body");
 
+    const textHolder = document.createElement("div");
+
     const cardTitle = document.createElement("h5");
     cardTitle.classList.add("card-title");
     cardTitle.innerHTML = item.Nev;
+    textHolder.appendChild(cardTitle);
 
     const cardText = document.createElement("p");
     cardText.classList.add("card-text");
     cardText.innerHTML = item.UID;
+    textHolder.appendChild(cardText);
+
+    cardBody.appendChild(textHolder);
+
+    if (itemStatus == 3) {
+        cardBody.classList.add("d-flex", "justify-content-between");
+        const loadingSpinner = document.createElement("div");
+        loadingSpinner.classList.add("spinner-border", "text-secondary", "spinner-border-sm");
+        cardBody.appendChild(loadingSpinner);
+    }
 
 
 
-    cardBody.appendChild(cardTitle);
-    cardBody.appendChild(cardText);
+
     itemCard.appendChild(cardBody);
 
     itemHolder.appendChild(itemCard);
@@ -111,6 +124,10 @@ function createItemCard(item) {
 
 
 function toggleSelectItem(item) {
+    if (item.Status == 3) {
+        warningToast("Ez a tárgy még nincs nálad, csak időzítve van!");
+        return;
+    }
     const itemElement = document.getElementById(item.UID);
 
     itemElement.classList.toggle("text-bg-success");
@@ -159,6 +176,7 @@ async function submitRetrieve() {
         loadUserItems();
         clearSelectionCookie();
     } else {
+        console.log(response);
         serverErrorToast();
     }
 }

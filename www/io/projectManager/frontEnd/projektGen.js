@@ -369,7 +369,7 @@ async function generateProjectBody(project) {
     }
     // Create Body for members
     let membersBody = document.createElement("div");
-    membersBody.classList.add("card-body", "projectMembers", "tab-pane", "fade");
+    membersBody.classList.add("projectMembers", "tab-pane", "fade");
     membersBody.id = "users-tab-pane-" + projectID;
     membersBody.role = "tabpanel";
     membersBody.ariaLabelledby = "users-tab";

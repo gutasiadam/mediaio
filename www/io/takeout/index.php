@@ -5,7 +5,8 @@ namespace Mediaio;
 session_start();
 
 include "header.php";
-
+// Set timezone
+date_default_timezone_set('Europe/Budapest');
 
 if (!isset($_SESSION["userId"])) {
     echo "<script>window.location.href = '../index.php?error=AccessViolation';</script>";
@@ -54,165 +55,21 @@ error_reporting(E_ALL ^ E_NOTICE);
         </div>
     </nav>
 
-    <!-- Info toast -->
-    <div class="toast-container bottom-0 start-50 translate-middle-x p-3" style="z-index: 9999;">
-        <div class="toast" id="infoToast" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="toast-header">
-                <img src="../logo.ico" class="rounded me-2" alt="..." style="height: 20px; filter: invert(1);">
-                <strong class="me-auto" id="infoToastTitle">Projektek</strong>
-                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-            </div>
-            <div class="toast-body">
-            </div>
-        </div>
-    </div>
-
-    <!-- takeoutSettingsModal Modal -->
-    <div class="modal fade" id="takeoutSettingsModal" tabindex="-1" role="dialog"
-        aria-labelledby="takeoutSettingsModal_Modal_Label" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="takeoutSettingsModal_Label">Elvitel beállítások</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <?php
-                    if (in_array("admin", $_SESSION["groups"])):
-                        ?>
-                        <div class="input-group mb-3">
-                            <span class="input-group-text">Név:</span>
-                            <input type="text" class="form-control" id="plannedName" placeholder="Projekt/Bérlő neve"
-                                aria-label="Projekt/Bérlő neve" aria-describedby="name">
-                        </div>
-                        <?php
-                    endif;
-                    ?>
-                    <div class="input-group mb-3">
-                        <span class="input-group-text">Tervezett időtartam:</span>
-                        <input type="date" min="<?php echo date('Y-m-d'); ?>" class="form-control" id="startingDate"
-                            >
-                        <input type="date" class="form-control" id="endDate">
-                    </div>
-                    <div class="input-group mb-3">
-                        <span class="input-group-text">Megjegyzés:</span>
-                        <textarea class="form-control" aria-label="Comment" id="plannedDesc"></textarea>
-                    </div>
-                    <i style="color:red;">Fejlesztés alatt...</i><br>
-                    <b>Nyomj a "Mehet" gombra a elvitel megerősítéséhez!</b>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-success" data-bs-dismiss="modal" onclick="submitTakout()">
-                        Mehet</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-
-    <!-- Presets Modal -->
-    <div class="modal fade" id="presets_Modal" tabindex="-1" role="dialog" aria-labelledby="presets_ModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Elérhető presetek</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div id="presetsLoading" class="spinner-grow text-info" role="status"></div>
-                    <div id="presetsContainer"></div>
-                    <div class="mt-3" id="notAvailableItems"></div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- End of Presets Modal -->
-
-    <!-- Clear Modal -->
-    <div class="modal fade" id="clear_Modal" tabindex="-1" role="dialog" aria-labelledby="clear_ModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Összes törlése</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <a>Biztosan ki akarsz törölni mindent?</a>
-                </div>
-                <div class="modal-footer">
-                    <button class="btn btn-danger col-lg-auto mb-1" id="clear" data-bs-dismiss="modal"
-                        onclick="deselect_all()">Összes törlése</button>
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Mégse</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- End of Clear Modal -->
-
-    <!-- Scanner Modal -->
-    <div class="modal fade" id="scanner_Modal" data-bs-backdrop="static" tabindex="-1" role="dialog"
-        aria-labelledby="scanner_ModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Szkenner</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" onclick="pauseCamera()"
-                        aria-label="Close"></button>
-                </div>
-                <div class="modal-body" id="scanner_body">
-                    <div id="reader" width="600px"></div>
-                    <!-- Toasts -->
-                    <div class="toast align-items-center" id="scan_toast" role="alert" aria-live="assertive"
-                        aria-atomic="true" style="z-index: 99; display:none;">
-                        <div class="d-flex">
-                            <div class="toast-body" id="scan_result">
-                            </div>
-                            <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast"
-                                aria-label="Close"></button>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer" id="scanner_footer">
-                    <button type="button" class="btn btn-outline-dark" id="ext_scanner" onclick="ExternalScan()">Külső
-                        olvasó</button>
-                    <button type="button" class="btn btn-info" id="zoom_btn" onclick="zoomCamera()"
-                        style="display: none;">Zoom: 2x</button>
-                    <button type="button" class="btn btn-info" id="torch_btn" onclick="startTorch()"
-                        style="display: none;">Vaku</button>
-                    <div class="dropdown dropup">
-                        <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown"
-                            aria-expanded="true">
-                            Kamerák
-                        </button>
-                        <ul class="dropdown-menu" id="av_cams"></ul>
-                    </div>
-                    <button type="button" class="btn btn-success" onclick="pauseCamera()"
-                        data-bs-dismiss="modal">Kész</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- End of Scanner Modal -->
+    <?php include "modals.php"; ?>
 
 
     <ul class="nav nav-underline mt-1 mb-2" id="selectMenu" role="tablist">
         <li class="nav-item" role="presentation">
             <a class="nav-link active" id="takeout-tab" data-bs-toggle="tab" data-bs-target="#takeout-tab-pane"
                 aria-current="page" href="#">
-                <h2 class="rainbow" style="font-size: 40px; margin: 0;">Tárgy elvitel</h2>
+                <h2 class="rainbow" style="font-size: 40px; margin: 0;">Elvitel</h2>
             </a>
         </li>
         <h2 class="rainbow"> - </h2>
         <li class="nav-item" role="presentation">
-            <a class="nav-link" href="#" id="prepared-tab" data-bs-toggle="tab" data-bs-target="#prepared-tab-pane">
-                <h2 class="rainbow" style="margin: 0;font-style: italic; font-size: 40px;">Előjegyzések</h2>
+            <a class="nav-link" href="#" onclick="loadTakeOutPlanner();" id="prepared-tab" data-bs-toggle="tab"
+                data-bs-target="#prepared-tab-pane">
+                <h2 class="rainbow" style="margin: 0; font-size: 40px;">Előjegyzések</h2>
             </a>
         </li>
     </ul>
@@ -284,12 +141,6 @@ error_reporting(E_ALL ^ E_NOTICE);
                             <button type="button" class="btn btn-warning btn-sm col-lg-auto mb-1 text-nowrap"
                                 onclick="showScannerModal()">Szkenner <i class="fas fa-qrcode"></i></button>
 
-
-                            <!-- GivetoAnotherperson button -->
-                            <!-- <button class="btn btn-sm btn-dark col-lg-auto mb-1 text-nowrap" id="givetoAnotherPerson_Button"
-                        type="button" data-bs-toggle="modal" data-bs-target="#givetoAnotherPerson_Modal"
-                        style="margin-bottom: 6px">Másnak veszek
-                        ki</button> -->
                         </div>
                         <div id="itemsList">
                         </div>
@@ -320,12 +171,7 @@ error_reporting(E_ALL ^ E_NOTICE);
         </div>
         <div class="tab-pane fade" id="prepared-tab-pane" role="tabpanel" aria-labelledby="prepared-tab" tabindex="0">
             <div class="container" id="preparedContainer">
-                <div class="row">
-                    <!-- in development label -->
-                    <div class="col-12">
-                        <h1 class="text-center">Fejlesztés alatt...</h1>
-                    </div>
-                </div>
+                <div id='calendar'></div>
             </div>
         </div>
     </div>
@@ -382,6 +228,10 @@ error_reporting(E_ALL ^ E_NOTICE);
 
         if (selectedItems.length == 0) {
             errorToast("Nincs kiválasztva semmi!");
+            $('#takeoutSettingsModal').modal('hide');
+            setTimeout(() => {
+                document.getElementById("search").focus();
+            }, 500);
             return;
         }
 
@@ -396,7 +246,23 @@ error_reporting(E_ALL ^ E_NOTICE);
         // Planned data
         const Name = document.getElementById("plannedName").value;
         const StartingDate = document.getElementById("startingDate").value;
+
+        if (StartingDate == "") {
+            errorToast("Nem adtál meg kezdési időpontot!");
+            return;
+        }
+
         const EndDate = document.getElementById("endDate").value;
+
+        if (EndDate == "") {
+            document.getElementById("endDate").focus();
+            errorToast("Nem adtál meg visszahozás időpontot!");
+            return;
+        }
+        if (EndDate < StartingDate) {
+            errorToast("A visszahozás időpontja nem lehet korábbi a kezdetinél!");
+            return;
+        }
         const Desc = document.getElementById("plannedDesc").value;
 
         const PlannedData = {
@@ -416,8 +282,6 @@ error_reporting(E_ALL ^ E_NOTICE);
             }
         });
 
-        console.log(response);
-
         if (response == 200) {
             deselect_all();
             if (<?php echo in_array("admin", $_SESSION["groups"]) ? 1 : 0; ?>) {
@@ -426,8 +290,10 @@ error_reporting(E_ALL ^ E_NOTICE);
                 warningToast("Sikeres elvitel! Jóváhagyásra vár!");
             }
             badge.innerHTML = 0;
+            $('#takeoutSettingsModal').modal('hide');
             loadPage();
         } else {
+            console.log(response);
             errorToast("Hiba történt az elvitel során!");
         }
     }

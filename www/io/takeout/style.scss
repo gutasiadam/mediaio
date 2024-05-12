@@ -14,7 +14,7 @@
         justify-content: flex-start;
     }
 
-    *{
+    * {
         display: flex;
         min-width: fit-content;
     }
@@ -36,7 +36,6 @@
         border-radius: 20px;
     }
 }
-
 
 
 #itemsList {
@@ -232,5 +231,55 @@
 }
 
 .leltarItemCheckbox {
+    cursor: pointer;
+}
+
+.planned {
+    animation: textColor 1s infinite alternate;
+}
+
+/* Animations */
+
+@keyframes textColor {
+    0% {
+        color: #000;
+    }
+
+    100% {
+        color: rgb(219, 135, 40);
+    }
+}
+
+
+/* Calendar */
+
+#calendar {
+    a {
+        /* Remove any css from links */
+        text-decoration: none;
+        color: inherit;
+    }
+}
+
+.fc-scroller {
+    &::-webkit-scrollbar-track {
+        background: rgb(255, 255, 255);
+        /* color of the tracking area */
+    }
+
+    &::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+        /* width of the entire scrollbar */
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background-color: rgb(179, 179, 179);
+        /* color of the scroll thumb */
+        border-radius: 20px;
+    }
+}
+
+.fc-daygrid-event-harness {
     cursor: pointer;
 }

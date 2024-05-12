@@ -79,7 +79,7 @@
 
     .addButton {
         height: 30%;
-        
+
         @media (max-width: 768px) {
             height: 30px;
         }
@@ -94,7 +94,8 @@
 .projectCard {
     min-width: 400px;
     max-width: 400px;
-    max-height: 60%;
+    height: inherit;
+    max-height: inherit;
     /* min-height: 60%; */
 }
 
@@ -136,7 +137,7 @@
 
 .projectDescription {
     overflow: hidden;
-} 
+}
 
 #projectDescription {
     &::-webkit-scrollbar-track {
@@ -183,11 +184,8 @@
 }
 
 .tab-content {
-    max-height: 72dvh;
-
-    @media (max-width: 768px) {
-        max-height: 85dvh;
-    }
+    height: 100%;
+    max-height: 94%;
 }
 
 

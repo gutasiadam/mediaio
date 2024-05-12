@@ -106,11 +106,12 @@ async function loadItems() {
 
         const checkBox = document.createElement("input");
         checkBox.type = "checkbox";
+        const availability = item.Status == 1 || item.Status == 3;
         switch (item.TakeRestrict) {
             case '*':
                 checkBox.disabled = roleLevel < 5 || item.Status == 0 || item.Status == 2;
                 itemElement.setAttribute("data-available", roleLevel >= 5 ? "true" : "false");
-                if (item.Status == 1 && roleLevel >= 5) {
+                if (availability && roleLevel >= 5) {
                     itemElement.onclick = () => {
                         toggleSelectItem(item);
                     };
@@ -120,7 +121,7 @@ async function loadItems() {
             case 'e':
                 checkBox.disabled = roleLevel < 3 || item.Status == 0 || item.Status == 2;
                 itemElement.setAttribute("data-available", roleLevel >= 3 ? "true" : "false");
-                if (item.Status == 1 && roleLevel >= 3) {
+                if (availability && roleLevel >= 3) {
                     itemElement.onclick = () => {
                         toggleSelectItem(item);
                     };
@@ -130,7 +131,7 @@ async function loadItems() {
             case 's':
                 checkBox.disabled = roleLevel < 2 || item.Status == 0 || item.Status == 2;
                 itemElement.setAttribute("data-available", roleLevel >= 2 ? "true" : "false");
-                if (item.Status == 1 && roleLevel >= 2) {
+                if (availability && roleLevel >= 2) {
                     itemElement.onclick = () => {
                         toggleSelectItem(item);
                     };
@@ -140,7 +141,7 @@ async function loadItems() {
             default:
                 checkBox.disabled = item.Status == 0 || item.Status == 2;
                 itemElement.setAttribute("data-available", "true");
-                if (item.Status == 1) {
+                if (availability) {
                     itemElement.onclick = () => {
                         toggleSelectItem(item);
                     };
@@ -149,6 +150,10 @@ async function loadItems() {
         }
         if (item.Status == 0 || item.Status == 2) {
             itemElement.setAttribute("data-available", "false");
+        }
+        if (item.Status == 3) {
+            itemElement.setAttribute("data-planned", "true");
+            itemElement.classList.add("planned");
         }
         checkBox.classList.add("form-check-input", "leltarItemCheckbox");
 
@@ -161,7 +166,9 @@ async function loadItems() {
             itemLabel.innerHTML = `${item.Nev} - ${item.UID}`;
         } else {
             const RentByUsername = users.find((user) => user.idUsers == item.RentBy)?.usernameUsers || '';
-            itemLabel.innerHTML = `<a data-bs-toggle="tooltip" data-bs-title="Kivette: ${RentByUsername}">${item.Nev} - ${item.UID}</a>`;
+            itemLabel.innerHTML = `<a data-bs-toggle="tooltip" data-bs-title="${item.Status == 3 ? 'Időzítve' : 'Kivette'}: ${RentByUsername}">
+            ${item.Nev} - ${item.UID}</a>`;
+
         }
         itemElement.appendChild(itemLabel);
 
