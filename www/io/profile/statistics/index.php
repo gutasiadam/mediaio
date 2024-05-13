@@ -138,7 +138,7 @@ include "../../ItemManager.php";
       </div>
     </div>
     <div class="col">
-      <div class="row justify-content-center" id="eventsContainer">
+      <div id="eventsContainer">
 
       </div>
     </div>

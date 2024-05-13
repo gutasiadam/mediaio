@@ -282,7 +282,10 @@ error_reporting(E_ALL ^ E_NOTICE);
             }
         });
 
-        if (response == 200) {
+        if (response == 409) {
+            errorToast("Az általad megadott időre már valaki lefoglalta valamelyik eszközt!");
+        }
+        else if (response == 200) {
             deselect_all();
             if (<?php echo in_array("admin", $_SESSION["groups"]) ? 1 : 0; ?>) {
                 successToast("Sikeres elvitel!");

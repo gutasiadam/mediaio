@@ -168,7 +168,10 @@ class Core
                     }
                 } else {
 
-                    Accounting::logEvent(0, "login_NoUser", '{"username":"' . $userName . '"}');
+                    $Data = [
+                        'username' => $userName
+                    ];
+                    Accounting::logEvent(0, "login_NoUser", $Data);
                     header("Location: ../index.php?error=NoUser");
                     exit();
                 }

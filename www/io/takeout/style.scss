@@ -197,6 +197,7 @@
 
     white-space: normal;
     word-wrap: break-word;
+    margin-bottom: 5px;
 
     @media (max-width: 575px) {
         .leltarItemLabel {
@@ -232,10 +233,15 @@
 
 .leltarItemCheckbox {
     cursor: pointer;
+    margin-top: 0;
 }
 
 .planned {
     animation: textColor 1s infinite alternate;
+}
+
+.planned-card {
+    animation: plannedBackground 2s infinite alternate;
 }
 
 /* Animations */
@@ -247,6 +253,16 @@
 
     100% {
         color: rgb(219, 135, 40);
+    }
+}
+
+@keyframes plannedBackground {
+    20% {
+        background-color: white;
+    }
+
+    100% {
+        background-color: rgb(226, 179, 78);
     }
 }
 

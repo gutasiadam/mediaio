@@ -86,6 +86,8 @@ async function getTakeOutEvents() {
     let events = [];
     const resEvents = response.events;
 
+    console.log(resEvents);
+
     if (response.events.length == 0) {
         return [];
     }
@@ -113,8 +115,9 @@ async function getTakeOutEvents() {
                 Description: element.Description,
                 itemsList: element.Items,
                 isAdmin: response.isAdmin,
-                userId: element.UserID,
-                currentUser: response.userId,
+                ownerId: element.UserID,
+                currentUser: response.currentUser,
+                eventState: element.eventState
             },
         });
     });
@@ -149,8 +152,40 @@ async function openEventModal(info) {
 
     const footer = document.getElementById('plannedEventsFooter');
     footer.innerHTML = "";
+
+    let isOwner = info.event.extendedProps.ownerId == info.event.extendedProps.currentUser;
+    let canStart = info.event.start > new Date().toISOString();
+    // Add start button
+    if (isOwner && canStart && info.event.extendedProps.eventState == 0) {
+        const startButton = document.createElement('button');
+        startButton.classList.add('btn', 'btn-primary');
+        startButton.innerHTML = "Elvitel indítása";
+        startButton.onclick = async function () {
+            const response = JSON.parse(await $.ajax({
+                url: "../../ItemManager.php",
+                method: "POST",
+                data: {
+                    mode: "startPlannedTakeout",
+                    eventID: info.event.id
+                }
+            }));
+
+            if (response == 200) {
+                successToast("Sikeres elindítás");
+                $('#plannedEventsModal').modal('hide');
+                document.getElementById('prepared-tab').click();
+                loadItems();
+            }
+            else {
+                serverErrorToast();
+            }
+        }
+        footer.append(startButton);
+    }
+
+    let canDelete = info.event.extendedProps.eventState == 0 || info.event.extendedProps.eventState == -1;
     // Add delete button
-    if (info.event.extendedProps.isAdmin || info.event.extendedProps.userId == info.event.extendedProps.currentUser) {
+    if ((info.event.extendedProps.isAdmin || isOwner) && canDelete) {
         const deleteButton = document.createElement('button');
         deleteButton.classList.add('btn', 'btn-danger');
         deleteButton.innerHTML = "Törlés";
@@ -201,6 +236,7 @@ async function deleteEvent(eventId) {
             successToast("Sikeres törlés");
             $('#areyousureModal').modal('hide');
             document.getElementById('prepared-tab').click();
+            loadItems();
         }
         else {
             serverErrorToast();

@@ -8,11 +8,11 @@ use Mediaio\Database;
 
 class Accounting
 {
-    static function logEvent($userID, $event, $optionalJSONData = NULL)
+    static function logEvent($userID, $event, $optionalData = NULL)
     {
 
         //Encode JSON data to make it SQL compatible
-        $optionalJSONData = json_encode($optionalJSONData);
+        $optionalJSONData = json_encode($optionalData);
 
         //Write to log file
         $logFile = fopen("./log.txt", "a");
@@ -58,6 +58,24 @@ class Accounting
         }
     }
 
+    static function getLogHistory()
+    {
+        // Select only the last week's data
+        $sql = "SELECT * FROM `log` WHERE `Date` > DATE_SUB(NOW(), INTERVAL 1 WEEK) ORDER BY `Date` DESC";
+        //Get a new database connection
+        $connection = Database::runQuery_mysqli();
+        $stmt = $connection->prepare($sql);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $rows = array();
+        while ($row = $result->fetch_assoc()) {
+            $rows[] = $row;
+        }
+        $result = json_encode($rows);
+        return $result;
+
+    }
+
 }
 
 
@@ -94,6 +112,11 @@ if (isset($_POST['mode'])) {
         // Get the last login event for a user
         case 'getLastLogin':
             echo Accounting::getLastLogin($_POST['userID']);
+            break;
+
+        // Get the log history for the last week
+        case 'getLogHistory':
+            echo Accounting::getLogHistory();
             break;
     }
 }

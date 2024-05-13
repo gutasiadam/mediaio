@@ -218,6 +218,7 @@ function addItemCard(item) {
 
     const card = document.createElement("div");
     card.classList.add("card", "mb-2", "selected-card");
+    item.Status == 3 ? card.classList.add("planned-card") : null;
     card.id = `selected-${item.UID}`;
 
     const cardBody = document.createElement("div");

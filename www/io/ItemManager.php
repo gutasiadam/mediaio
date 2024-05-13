@@ -34,6 +34,35 @@ class takeOutManager
     // Planned takeout code
     $plannedData = json_decode($plannedData, true);
 
+    // --------  Check for any conflicts with the planned takeout -------//
+    $sql = "SELECT * FROM takeoutPlanner";
+    $result = $connection->query($sql);
+
+    if ($result->num_rows > 0) {
+      $rows = $result->fetch_all(MYSQLI_ASSOC);
+
+      $plannedItems = json_decode($takeoutItems, true);
+      foreach ($rows as $row) {
+        $items = json_decode($row['Items'], true);
+
+
+        $plannedStart = strtotime($plannedData['StartingDate']);
+        $plannedEnd = strtotime($plannedData['EndDate']);
+        $rangeStart = strtotime($row['StartTime']);
+        $rangeEnd = strtotime($row['ReturnTime']);
+
+        // If the submitted time frame matches with any planned takeout
+        if (($plannedStart > $rangeStart && $plannedStart < $rangeEnd) || 
+        ($plannedEnd > $rangeStart && $plannedEnd < $rangeEnd)) {
+          // Check if there are any conflicts with the items
+          $conflict = array_intersect(array_column($items, 'uid'), array_column($plannedItems, 'uid'));
+          if (count($conflict) > 0) {
+            return 409;
+          }
+        }
+      }
+    }
+
     // Check if the planned takeout is in the past
     if (strtotime($plannedData['StartingDate']) < strtotime($currDate)) {
       $instantTakeOut = true;
@@ -242,7 +271,29 @@ class retrieveManager
       $stmt->bind_param("sssis", $currDate, $_SESSION['userId'], $dataJSON, $acknowledged, $ackBy);
       $stmt->execute();
 
-      // TODO: Update takeoutPlanner table
+      // Update takeoutPlanner table
+      $sql = "SELECT * FROM takeoutPlanner WHERE eventState=1";
+      $result = $connection->query($sql);
+
+      if ($result->num_rows > 0) { // For safety reasons
+        $rows = $result->fetch_all(MYSQLI_ASSOC);
+
+        // Check if all the items are returned
+        foreach ($rows as $row) {
+          // Make a list of the items for IN statement
+          $items = json_decode($row['Items'], true);
+          $items = array_map(function ($item) {
+            return "'" . $item['uid'] . "'";
+          }, $items);
+
+          $sql = "SELECT * FROM leltar WHERE RentBy='" . $_SESSION['userId'] . "' AND Status=0 AND UID IN (" . implode(",", $items) . ")";
+          $result = $connection->query($sql);
+          if ($result->num_rows == 0) {
+            $sql = "UPDATE takeoutPlanner SET eventState=2 WHERE ID=" . $row['ID'];
+            $connection->query($sql);
+          }
+        }
+      }
 
       // Commit transaction
       $connection->commit();
@@ -274,10 +325,42 @@ class itemDataManager
     while ($row = $result->fetch_assoc()) {
       $rows['events'][] = $row;
     }
-    $rows['userId'] = $_SESSION['userId'];
+    $rows['currentUser'] = $_SESSION['userId'];
     $rows['isAdmin'] = in_array("admin", $_SESSION['groups']);
     $result = json_encode($rows);
     return $result;
+  }
+
+
+  static function startPlannedTakeout($eventID)
+  {
+    $sql = "SELECT * FROM takeoutPlanner WHERE ID=" . $eventID;
+    //Get a new database connection
+    $connection = Database::runQuery_mysqli();
+    $result = $connection->query($sql);
+    $result = $result->fetch_assoc();
+
+    if ($result['UserID'] != $_SESSION['userId']) {
+      return 403;
+    }
+
+    $sql = "UPDATE takeoutPlanner SET eventState=1 WHERE ID=" . $eventID;
+    $connection->query($sql);
+
+    // Update takelog
+    $sql = "UPDATE takelog SET Event='OUT' WHERE ID=" . $result['takelogID'];
+    $connection->query($sql);
+
+    // Change every item as taken in the database
+    $items = json_decode($result['Items'], true);
+    $status = in_array("admin", $_SESSION['groups']) ? 0 : 2;
+    $stmt = $connection->prepare("UPDATE leltar SET Status = $status, RentBy = ? WHERE `UID` = ?");
+    foreach ($items as $i) {
+      $stmt->bind_param("ss", $_SESSION['userId'], $i['uid']);
+      $stmt->execute();
+    }
+
+    return 200;
   }
 
 
@@ -670,6 +753,10 @@ if (isset($_POST['mode'])) {
   if ($_POST['mode'] == 'getPlannedTakeouts') {
     echo itemDataManager::getPlannedTakeouts();
   }
+  if ($_POST['mode'] == 'startPlannedTakeout') {
+    echo itemDataManager::startPlannedTakeout($_POST['eventID']);
+  }
+
   if ($_POST['mode'] == 'deletePlannedTakeout') {
     echo itemDataManager::deletePlannedTakeout($_POST['ID']);
   }

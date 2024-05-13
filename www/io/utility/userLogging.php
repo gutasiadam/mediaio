@@ -3,7 +3,8 @@
 
     namespace Mediaio;
 
-    error_reporting(E_ERROR | E_PARSE);
+    //error_reporting(E_ERROR | E_PARSE);
+    error_reporting(E_ALL);
     require '../projectManager/nasCommunication.php';
     require '../Core.php';
     use Mediaio\Core;
