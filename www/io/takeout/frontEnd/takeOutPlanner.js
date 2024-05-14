@@ -154,7 +154,7 @@ async function openEventModal(info) {
     footer.innerHTML = "";
 
     let isOwner = info.event.extendedProps.ownerId == info.event.extendedProps.currentUser;
-    let canStart = info.event.start > new Date().toISOString();
+    let canStart = info.event.start.getTime() < new Date().getTime();
     // Add start button
     if (isOwner && canStart && info.event.extendedProps.eventState == 0) {
         const startButton = document.createElement('button');

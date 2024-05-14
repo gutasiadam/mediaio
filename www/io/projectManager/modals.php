@@ -74,7 +74,6 @@
                     </div>
                     <div id="textEditorButtons"></div>
                     <div class="mb-3 input-group" id="projectDescriptionDiv">
-                        <span class="input-group-text">Leírás: </span>
                         
                     </div>
                     <div class="mb-3 input-group">

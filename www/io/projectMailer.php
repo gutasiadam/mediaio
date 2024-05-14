@@ -14,6 +14,7 @@ if (session_status() === PHP_SESSION_NONE) {
 
 class ProjectMailer extends MailService
 {
+    private static $schema = "am_projects";
     public static function sendMail($to, $subject, $message)
     {
         MailService::sendContactMail('Média IO - projektek', $to, $subject, $message);
@@ -21,23 +22,30 @@ class ProjectMailer extends MailService
 
     public static function sendNewProjectMail($project_id, $member)
     {
+        $connection = Database::runQuery_mysqli(self::$schema);
+        $sql = "SELECT `Name`,`managerUID` FROM `projects` WHERE `ID`='" . $project_id . "';";
+        $result = $connection->query($sql);
+
+        $row = $result->fetch_assoc();
+        $projectName = $row['Name'];
+        $managerUID = $row['managerUID'];
+        $connection->close();
+
         $connection = Database::runQuery_mysqli();
         // Send an email to the new member
-        $sql = "SELECT `email`, `firstName` AND  FROM `users` WHERE `idUsers`=" . $member . ";";
+        $sql = "SELECT `emailUsers`, `firstName` FROM `users` WHERE `idUsers`='" . $member . "';";
         $result = $connection->query($sql);
-        $email = $result->fetch_assoc()['email'];
-        $name = $result->fetch_assoc()['firstName'];
+        $row = $result->fetch_assoc();
+        $email = $row['emailUsers'];
+        $name = $row['firstName'];
 
-        $sql = "SELECT `Name`,`managerUID` FROM `projects` WHERE `ID`=" . $_POST['id'] . ";";
-        $result = $connection->query($sql);
-        $projectName = $result->fetch_assoc()['Name'];
-        $managerUID = $result->fetch_assoc()['managerUID'];
 
         $sql = "SELECT `firstName`, `lastName` FROM `users` WHERE `idUsers`=" . $managerUID . ";";
         $result = $connection->query($sql);
-        $managerName = $result->fetch_assoc()['lastName'] . " " . $result->fetch_assoc()['firstName'];
-
+        $row = $result->fetch_assoc();
+        $managerName = $row['lastName'] . " " . $row['firstName'];
         $connection->close();
+    
 
         //E-mail küldése a felhasználónak
         $message = '
@@ -61,7 +69,7 @@ class ProjectMailer extends MailService
 
     public static function sendProjectDeadlineMailToAll($project_id)
     {
-        $connection = Database::runQuery_mysqli();
+        $connection = Database::runQuery_mysqli(self::$schema);
 
         // Get the project name and deadline
         $sql = "SELECT `Name`, `Deadline` FROM `projects` WHERE `ID`=" . $project_id . ";";
@@ -69,6 +77,9 @@ class ProjectMailer extends MailService
         $project = $result->fetch_assoc();
         $projectName = $project['Name'];
         $deadline = $project['Deadline'];
+        $connection->close();
+
+        $connection = Database::runQuery_mysqli();
 
         // Get the members of the project
         $sql = "SELECT `idUsers` FROM `projectmembers` WHERE `ProjectID`=" . $project_id . ";";
@@ -87,10 +98,11 @@ class ProjectMailer extends MailService
 
         // Send an email to all members
         foreach ($members as $member) {
-            $sql = "SELECT `email`, `firstName` FROM `users` WHERE `idUsers`=" . $member[0] . ";";
+            $sql = "SELECT `emailUsers`, `firstName` FROM `users` WHERE `idUsers`=" . $member[0] . ";";
             $result = $connection->query($sql);
-            $email = $result->fetch_assoc()['email'];
-            $name = $result->fetch_assoc()['firstName'];
+            $row = $result->fetch_assoc();
+            $email = $row['emailUsers'];
+            $name = $row['firstName'];
 
             $message .= "Kedves " . $name . "! \n" . $message;
             self::sendMail($email, $subject, $message);

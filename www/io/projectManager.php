@@ -53,6 +53,19 @@ class projectManager
         }
     }
 
+    static function restoreProject($projectID)
+    {
+        if (in_array("admin", $_SESSION['groups'])) {
+            $sql = "UPDATE projects SET Archived=0 WHERE ID=" . $projectID . ";";
+            $connection = Database::runQuery_mysqli(self::$schema);
+            $connection->query($sql);
+            $connection->close();
+            return 200;
+        } else {
+            return 403;
+        }
+    }
+
     static function deleteProject()
     {
         if (in_array("admin", $_SESSION['groups'])) {
@@ -746,8 +759,9 @@ class projectManager
             // Send an email to the new member
             try {
                 ProjectMailer::sendNewProjectMail($_POST['id'], $member);
-            } catch (\Exception) {
-                // Do nothing
+            } catch (\Exception $e) {
+                // Print to log
+                print_r($e);
             }
         }
 
@@ -823,6 +837,9 @@ if (isset($_POST['mode'])) {
             break;
         case 'archiveProject':
             echo projectManager::archiveProject();
+            break;
+        case 'restoreProject':
+            echo projectManager::restoreProject($_POST['projectID']);
             break;
 
         case 'checkForUpdates':

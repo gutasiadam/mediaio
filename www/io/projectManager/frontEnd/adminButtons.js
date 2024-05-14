@@ -233,8 +233,16 @@ async function openSettings(proj_id) {
 
     // Set the project description
     const holderDiv = document.getElementById("projectDescriptionDiv");
+    holderDiv.innerHTML = "";
+
+    // Add description
+    const span = document.createElement("span");
+    span.innerHTML = "Leírás: ";
+    span.classList.add("input-group-text");
+    holderDiv.appendChild(span);
+
     textEditor(holderDiv, projectSettings.Description, '200px', 'projectDescription');
-    
+
 
 
     // Load deadline
@@ -338,12 +346,93 @@ async function saveProjectSettings(proj_id) {
 // Delete project
 
 async function deleteProject(proj_id) {
-    // Delete the project
-    await deleteProjectFromDB(proj_id);
+    $('#taskArchiveModal').modal('hide');
+    $('#areyousureModal').modal('show');
 
-    successToast("Projekt sikeresen törölve!");
+    document.getElementById('sureButton').innerHTML = "Törlés";
+
+    // Create a new Promise that resolves when the button is clicked
+    let buttonClicked = new Promise((resolve, reject) => {
+        document.getElementById('sureButton').addEventListener('click', resolve);
+        document.getElementById('cancelButton').addEventListener('click', reject);
+    });
+
+    await buttonClicked.then(async () => {
+        await deleteProjectFromDB(proj_id);
+        successToast("Projekt sikeresen törölve!");
+    }).catch(() => {
+        // Do nothing
+        console.log("Archiving cancelled");
+    });
+    showArchivedProjects();
 }
 
+
+// Archived projects
+
+async function showArchivedProjects() {
+    try {
+        let archivedProjects = await fetchProjects(1);
+        if (archivedProjects.length == 0) {
+            alert("Nincs archivált projekt.");
+            return;
+        }
+
+        // Create a new project holder card
+        let projectHolder = document.getElementById("archivedTasks");
+        projectHolder.innerHTML = "";
+
+        for (let i = 0; i < archivedProjects.length; i++) {
+            projectHolder.appendChild(await generateArchivedProjectBody(archivedProjects[i]));
+        }
+
+        $('#taskArchiveModal').modal('show');
+    } catch (error) {
+        console.error("Error showing archived projects:", error);
+    }
+
+}
+
+async function generateArchivedProjectBody(project) {
+    console.log(`Generating archived project body: ${project.Name}`);
+
+    // Create a new project card
+    let projectCard = document.createElement("div");
+    projectCard.classList.add("card", "archivedProjectCard");
+    projectCard.id = project.ID;
+
+    // Create a new project body
+    let projectBody = document.createElement("div");
+    projectBody.classList.add("card-body", "d-flex", "justify-content-between", "align-items-center");
+    projectBody.innerHTML = project.Name;
+    projectCard.appendChild(projectBody);
+
+    // Create button holder div
+    let buttonHolder = document.createElement("div");
+    projectBody.appendChild(buttonHolder);
+
+    // Create restore button
+    let restoreButton = document.createElement("button");
+    restoreButton.classList.add("btn", "btn-success");
+    restoreButton.innerHTML = `<i class="fas fa-undo"></i>`;
+    restoreButton.style.marginRight = "10px";
+    restoreButton.onclick = function () {
+        restoreProject(project.ID);
+    }
+    buttonHolder.appendChild(restoreButton);
+
+    // Create delete button
+    let deleteButton = document.createElement("button");
+    deleteButton.classList.add("btn", "btn-danger");
+    deleteButton.innerHTML = `<i class="fas fa-trash-alt"></i>`;
+    deleteButton.onclick = function () {
+        deleteProject(project.ID);
+    }
+    buttonHolder.appendChild(deleteButton);
+
+
+    return projectCard;
+}
 
 async function archiveProject(projectID) {
     console.log("Archiving project: " + projectID);
@@ -362,20 +451,19 @@ async function archiveProject(projectID) {
 
     buttonClicked.then(async () => {
         // Archive the project
-        $.ajax({
+        const response = await $.ajax({
             type: "POST",
             url: "../../projectManager.php",
             data: { mode: "archiveProject", projectId: projectID },
-            success: function (response) {
-                console.log(response);
-                if (response == 500) {
-                    window.location.href = "index.php?serverError";
-                }
-                if (response == 200) {
-                    location.reload();
-                }
-            }
         });
+
+        if (response == 200) {
+            await refreshProjects();
+            successToast("Projekt beállítások sikeresen mentve!");
+            $('#areyousureModal').modal('hide');
+        } else {
+            serverErrorToast();
+        }
     }).catch(() => {
         // Do nothing
         console.log("Archiving cancelled");
@@ -383,6 +471,48 @@ async function archiveProject(projectID) {
     });
 
 
+}
+
+async function restoreProject(projectID) {
+    console.log("Restoring project: " + projectID);
+    $('#taskArchiveModal').modal('hide');
+    $('#areyousureModal').modal('show');
+
+    document.getElementById('sureButton').innerHTML = "Visszaállítás";
+    document.getElementById('sureButton').classList.remove("btn-danger");
+    document.getElementById('sureButton').classList.add("btn-success");
+
+
+
+    // Create a new Promise that resolves when the button is clicked
+    let buttonClicked = new Promise((resolve, reject) => {
+        document.getElementById('sureButton').addEventListener('click', resolve);
+        document.getElementById('cancelButton').addEventListener('click', reject);
+    });
+
+    buttonClicked.then(async () => {
+        // Restore the project
+        const response = await $.ajax({
+            type: "POST",
+            url: "../../projectManager.php",
+            data: { mode: "restoreProject", projectID: projectID },
+        });
+
+        if (response == 200) {
+            await refreshProjects();
+            successToast("Projekt beállítások sikeresen mentve!");
+            $('#areyousureModal').modal('hide');
+            showArchivedProjects();
+        } else {
+            serverErrorToast();
+        }
+    }).catch(() => {
+        // Do nothing
+        console.log("Restoring cancelled");
+        $('#areyousureModal').modal('hide');
+        showArchivedProjects();
+        return;
+    });
 }
 
 
