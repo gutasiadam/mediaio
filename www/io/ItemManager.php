@@ -51,9 +51,13 @@ class takeOutManager
         $rangeStart = strtotime($row['StartTime']);
         $rangeEnd = strtotime($row['ReturnTime']);
 
+        if($row['eventState'] == 2 || $row['eventState'] == -1) continue; // Skip if the event is already returned or disabled
+
         // If the submitted time frame matches with any planned takeout
-        if (($plannedStart > $rangeStart && $plannedStart < $rangeEnd) || 
-        ($plannedEnd > $rangeStart && $plannedEnd < $rangeEnd)) {
+        if (
+          ($plannedStart > $rangeStart && $plannedStart < $rangeEnd) ||
+          ($plannedEnd > $rangeStart && $plannedEnd < $rangeEnd)
+        ) {
           // Check if there are any conflicts with the items
           $conflict = array_intersect(array_column($items, 'uid'), array_column($plannedItems, 'uid'));
           if (count($conflict) > 0) {
@@ -312,6 +316,9 @@ class retrieveManager
 class itemDataManager
 {
 
+  // TAKEOUT PLANNING FUNCTIONS ---------------------------
+
+
   static function getPlannedTakeouts()
   {
     $sql = "SELECT * FROM takeoutPlanner";
@@ -364,6 +371,34 @@ class itemDataManager
   }
 
 
+  static function disableTakeout($eventID)
+  { 
+    // Get details of the event
+    $sql = "SELECT * FROM takeoutPlanner WHERE ID=" . $eventID;
+    //Get a new database connection
+    $connection = Database::runQuery_mysqli();
+    $result = $connection->query($sql);
+    $result = $result->fetch_assoc();
+
+    $userID = $result['UserID'];
+    $takelogID = $result['takelogID'];
+
+    $sql = "UPDATE takeoutPlanner SET eventState=-1 WHERE ID=" . $eventID;
+    $connection->query($sql);
+
+    // Update leltar TODO: Implement this
+    //$sql = "UPDATE leltar SET Status=1, RentBy=NULL WHERE RentBy='" . $userID . "'";
+    //$connection->query($sql);
+
+    // Update takelog
+    $sql = "UPDATE takelog SET Event='DISABLED' WHERE ID=" . $takelogID;
+    $connection->query($sql);
+
+    $connection->close();
+    return 200;
+  }
+
+
   static function deletePlannedTakeout($eventID)
   {
     $sql = "SELECT * FROM takeoutPlanner WHERE ID=" . $eventID;
@@ -397,6 +432,8 @@ class itemDataManager
     $connection->query($sql);
     return 200;
   }
+
+  // ______________________________________________________________________________________
 
   /*
 

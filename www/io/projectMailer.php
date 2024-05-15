@@ -12,12 +12,12 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 
-class ProjectMailer extends MailService
+class ProjectMailer
 {
     private static $schema = "am_projects";
     public static function sendMail($to, $subject, $message)
     {
-        MailService::sendContactMail('Média IO - projektek', $to, $subject, $message);
+        MailService::sendContactMail($to, $subject, $message);
     }
 
     public static function sendNewProjectMail($project_id, $member)
@@ -51,7 +51,7 @@ class ProjectMailer extends MailService
         $message = '
                     <html>
                     <head>
-                    <title>Arpad Media IO</title>
+                    <title>Árpad Média IO</title>
                     </head>
                     <body>
                     <h3>Kedves ' . $name . '!</h3>

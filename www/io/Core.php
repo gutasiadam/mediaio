@@ -238,7 +238,7 @@ class Core
                                 </html>
                                 ';
                     try {
-                        MailService::sendContactMail('MediaIO - jelszócsere', $_SESSION['email'], 'Sikeres jelszócsere!', $content);
+                        MailService::sendContactMail($_SESSION['email'], 'Sikeres jelszócsere!', $content);
                         //logout the user with userlogging
                         $this->logoutUser();
                         header("Location: ./index.php?logout=pwChange");
@@ -458,7 +458,7 @@ class Core
                           <h6>Ez egy automatikus üzenet. Kérem ne küldjön vissza semmit.<br>Üdvözlettel: <br> Arpad Media Admin</h6>
                         </body>
                         </html>';
-                    MailService::sendContactMail('MediaIO', $postData['email'], 'Sikeres Regisztráció', $message);
+                    MailService::sendContactMail($postData['email'], 'Sikeres Regisztráció', $message);
                     header("Location: ./index.php?signup=success");
                 }
             }
@@ -577,7 +577,7 @@ if (isset($_POST['pwdLost-submit'])) {
                           <h6>Ha ezt a tokent nem te kérted, kérlek lépj kapcsolatba egy vezetőségi taggal. Üdvözlettel: <br> Arpad Media Admin</h6>
                         </body>
                         </html>';
-        MailService::sendContactMail('MediaIO', $emailAddr, 'Jelszó helyreállítási token', $message);
+        MailService::sendContactMail($emailAddr, 'Jelszó helyreállítási token', $message);
         header("Location: ./profile/lostPwd.php?error=tokenSent");
     }
 }
@@ -615,7 +615,7 @@ if (isset($_POST['pwdLost-change-submit'])) {
                                 </html>
                                 ';
             try {
-                MailService::sendContactMail('MediaIO - jelszócsere', $_POST['emailAddr'], 'Sikeres jelszócsere!', $content);
+                MailService::sendContactMail($_POST['emailAddr'], 'Sikeres jelszócsere!', $content);
                 header("Location: ./profile/lostPwd.php?error=none");
             } catch (\Exception $e) {
                 echo "Mailer Error: " . $e;

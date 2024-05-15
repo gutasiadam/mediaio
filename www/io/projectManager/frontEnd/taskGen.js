@@ -1,18 +1,22 @@
 
 async function generateTasks(projectID, canEdit) {
-    let taskHolder = document.createElement("div");
+    const taskHolder = document.createElement("div");
     taskHolder.classList.add("taskHolder");
-    taskHolder.id = projectID + "-taskHolder";
+    taskHolder.id = `${projectID}-taskHolder`;
 
     // Fetch the tasks
     let tasks = await fetchTask(projectID);
     // Parse the tasks
     tasks = JSON.parse(tasks);
 
-    // Append each task to taskHolder
-    for (let i = 0; i < tasks.length; i++) {
-        taskHolder.appendChild(await createTask(tasks[i], projectID, canEdit));
+    // Check if tasks is an array (are there any tasks?)
+    if (!Array.isArray(tasks)) {
+        tasks = [];
     }
+
+    // Append each task to taskHolder
+    const taskElements = await Promise.all(tasks.map(task => createTask(task, projectID, canEdit)));
+    taskElements.forEach(taskElement => taskHolder.appendChild(taskElement));
 
     return taskHolder;
 }
@@ -20,7 +24,25 @@ async function generateTasks(projectID, canEdit) {
 async function createTask(task, projectID, canEdit) {
     var uData = JSON.parse(await userTaskData(task.ID, 'card', projectID));
 
-    let taskCard = document.createElement("div");
+    const taskCard = createTaskCard(task, projectID, canEdit);
+    const taskHeader = createTaskHeader(task);
+    const taskBody = createTaskBody(task);
+    const taskFooter = await createTaskFooter(task, taskHeader, projectID, uData);
+
+
+    taskCard.appendChild(taskHeader);
+    taskCard.appendChild(taskBody);
+
+    if ((uData.isTaskMember || uData.isAdmin) && taskFooter.childElementCount != 0) {
+        taskCard.appendChild(taskFooter);
+    }
+
+    return taskCard;
+}
+
+function createTaskCard(task, projectID, canEdit) {
+
+    const taskCard = document.createElement("div");
     taskCard.classList.add("card", "taskCard");
     taskCard.id = "task-" + task.ID;
     taskCard.draggable = false;
@@ -50,21 +72,15 @@ async function createTask(task, projectID, canEdit) {
         });
     }
 
-    // Add task editor tooltip
-    let lastEditorfirstName = task.EditorFirstName;
-    let lastEditorlastName = task.EditorLastName;
-    let lastEditorUsername = task.EditorUsername;
+    return taskCard;
+}
 
-    let lastEditedTime = task.Last_edit;
-
-
-    let creatorTooltip = `<a data-bs-toggle="tooltip" data-bs-html="true" data-bs-title="<i class='fas fa-pencil-alt'></i>: ${lastEditorlastName} ${lastEditorfirstName} (${lastEditorUsername})<br>${lastEditedTime}"><i class="fas fa-info-circle"></i></a>`;
-
+function createTaskHeader(task) {
     const taskHeader = document.createElement("div");
     taskHeader.classList.add("card-header", "taskHeader");
 
     if (task.Task_title) {
-        let taskTitle = document.createElement("p");
+        const taskTitle = document.createElement("p");
         taskTitle.classList.add("card-title", "taskTitle");
         taskTitle.style.marginBottom = "0px";
         taskTitle.innerHTML = task.Task_title;
@@ -72,6 +88,15 @@ async function createTask(task, projectID, canEdit) {
     } else {
         taskHeader.style.justifyContent = "end";
     }
+    // Add task editor tooltip
+    const lastEditorfirstName = task.EditorFirstName;
+    const lastEditorlastName = task.EditorLastName;
+    const lastEditorUsername = task.EditorUsername;
+
+    const lastEditedTime = task.Last_edit;
+
+    const creatorTooltip = `<a data-bs-toggle="tooltip" data-bs-html="true" data-bs-title="<i class='fas fa-pencil-alt'></i>: ${lastEditorlastName} ${lastEditorfirstName} (${lastEditorUsername})<br>${lastEditedTime}"><i class="fas fa-info-circle"></i></a>`;
+
     const creatorSpan = document.createElement("div");
     //creatorSpan.classList.add("badge", "bg-light", "text-dark");
     creatorSpan.innerHTML = creatorTooltip;
@@ -88,9 +113,11 @@ async function createTask(task, projectID, canEdit) {
         creatorSpan.appendChild(dragHandle);
     }
 
-    taskCard.appendChild(taskHeader);
+    return taskHeader;
+}
 
-    let taskBody = document.createElement("div");
+function createTaskBody(task) {
+    const taskBody = document.createElement("div");
     taskBody.classList.add("card-body", "taskBody");
 
     // Generate certain task elements
@@ -101,21 +128,21 @@ async function createTask(task, projectID, canEdit) {
             var taskData = JSON.parse(task.Task_data);
 
             if (taskData.image == '') {
-                let caption = document.createElement("p");
+                const caption = document.createElement("p");
                 caption.classList.add("card-text", "taskText");
                 caption.innerHTML = makeFormatting(taskData.text);
                 taskBody.appendChild(caption);
             } else {
 
-                let imageContainer = document.createElement("div");
+                const imageContainer = document.createElement("div");
                 imageContainer.style.position = "relative";
 
-                let image = document.createElement("img");
+                const image = document.createElement("img");
                 image.classList.add("card-img-top", "taskImage");
                 image.src = taskData.image;
                 imageContainer.appendChild(image);
 
-                var expandButton = document.createElement("button");
+                const expandButton = document.createElement("button");
                 expandButton.classList.add("btn", "btn-sm", "expandButton");
                 expandButton.style.position = "absolute";
                 expandButton.style.top = "10px";
@@ -141,7 +168,7 @@ async function createTask(task, projectID, canEdit) {
 
                 taskBody.appendChild(imageContainer);
 
-                let caption = document.createElement("p");
+                const caption = document.createElement("p");
                 caption.classList.add("card-text", "taskText");
                 caption.innerHTML = makeFormatting(taskData.text);
                 taskBody.appendChild(caption);
@@ -179,11 +206,12 @@ async function createTask(task, projectID, canEdit) {
             break;
     }
 
-    taskCard.appendChild(taskBody);
+    return taskBody;
+}
 
-
-    cardFooter = document.createElement("div");
-    cardFooter.classList.add("card-footer", "taskFooter");
+async function createTaskFooter(task, taskHeader, projectID, uData) {
+    const taskFooter = document.createElement("div");
+    taskFooter.classList.add("card-footer", "taskFooter");
 
     // check deadline and color the card accordingly
     if (task.Deadline) {
@@ -209,7 +237,7 @@ async function createTask(task, projectID, canEdit) {
                     deadline.classList.add("bg-success", "text-white");
                     break;
             }
-            cardFooter.appendChild(deadline);
+            taskFooter.appendChild(deadline);
         }
     }
 
@@ -224,7 +252,7 @@ async function createTask(task, projectID, canEdit) {
             showAnswersButton.onclick = function () {
                 openTaskAnswers(task.ID, projectID);
             }
-            cardFooter.appendChild(showAnswersButton);
+            taskFooter.appendChild(showAnswersButton);
         }
         if (uData.isTaskMember) {
             let shouldAddButton = task.SingleAnswer == '0' || !uData.filled;
@@ -236,58 +264,47 @@ async function createTask(task, projectID, canEdit) {
                 fillOutButton.onclick = function () {
                     fillOutTask(task.ID);
                 }
-                cardFooter.appendChild(fillOutButton);
+                taskFooter.appendChild(fillOutButton);
             } else if (task.SingleAnswer == '1' && uData.filled) {
                 // Add "Leadva" text
                 let filledOutText = document.createElement("p");
                 filledOutText.classList.add("card-text", "taskText");
                 filledOutText.innerHTML = "<i>Leadva</i>";
-                cardFooter.appendChild(filledOutText);
+                taskFooter.appendChild(filledOutText);
             }
         }
     }
 
     // Based on the number of items in the taskFooter, adjust the justify-content
     if (task.Deadline && !task.isInteractable) {
-        cardFooter.style.justifyContent = "start";
+        taskFooter.style.justifyContent = "start";
     } else {
-        cardFooter.style.justifyContent = "space-between";
+        taskFooter.style.justifyContent = "space-between";
     }
 
-    if ((uData.isTaskMember || uData.isAdmin) && cardFooter.childElementCount != 0) {
-        taskCard.appendChild(cardFooter);
-    }
-
-    return taskCard;
+    return taskFooter;
 }
 
-
-
 async function openTask(TaskId, projectID) {
-    console.log("Opening task: " + TaskId);
+    // Display task editor modal
+    $('#taskEditorModal').modal('show');
 
     // Fetch task
-    let task = await fetchTask(null, TaskId);
+    const task = JSON.parse(await fetchTask(null, TaskId));
     if (task == 403) {
         noAccessToast();
         return;
     }
-    //console.log(task);
-    task = JSON.parse(task);
 
-    let modalTitle = document.getElementById("taskTitle");
+    const modalTitle = document.getElementById("taskTitle");
     modalTitle.innerHTML = "Feladat szerkesztése";
 
     // Get the task data holder
-    let taskDataHolder = document.getElementById("taskData");
+    const taskDataHolder = document.getElementById("taskData");
     taskDataHolder.innerHTML = "";
 
     // Get the task title
-    let taskTitle = task.Task_title;
-    document.getElementById("textTaskName").value = taskTitle;
-
-    // Get the task data
-    let taskData = task.Task_data;
+    document.getElementById("textTaskName").value = task.Task_title;
 
     const filediv = document.getElementById("taskFileManager");
     filediv.style.display = "none";
@@ -297,27 +314,24 @@ async function openTask(TaskId, projectID) {
 
     switch (task.Task_type) {
         case "task":
-            await taskBodyGenerator(projectID, TaskId, taskDataHolder, taskData);
+            await taskBodyGenerator(projectID, TaskId, taskDataHolder, task.Task_data);
             break;
         case "checklist":
         case "radio":
-            generateCheckOrRadioEditor(taskDataHolder, task.Task_type, taskData);
+            generateCheckOrRadioEditor(taskDataHolder, task.Task_type, task.Task_data);
             break;
     }
 
     // Get task assigned users
+    let taskMembers = JSON.parse(await fetchTaskMembers(TaskId, projectID));
 
-    let taskMembers = await fetchTaskMembers(TaskId, projectID);
-    taskMembers = JSON.parse(taskMembers);
-
-
-    let taskMembersHolder = document.getElementById("taskMembers");
+    const taskMembersHolder = document.getElementById("taskMembers");
     taskMembersHolder.innerHTML = "<i>Adj hozzá tagokat a projekthez először!</i>";
 
     if (taskMembers != null) {
         taskMembersHolder.innerHTML = "";
         taskMembers.forEach(member => {
-            var option = document.createElement("div");
+            const option = document.createElement("div");
             option.classList.add("availableMember");
             option.style.cursor = "pointer";
             option.id = member.UserId;
@@ -334,39 +348,31 @@ async function openTask(TaskId, projectID) {
         });
     }
 
-
     // Get the task deadline
-    let deadline = task.Deadline;
-    let [date, time] = deadline ? deadline.split(" ") : ["", ""];
-    time = time ? time.split(':').slice(0, 2).join(':') : "";
+    const [date, time] = task.Deadline ? task.Deadline.split(" ").map((val, i) => i ? val.split(':').slice(0, 2).join(':') : val) : ["", ""];
 
     document.getElementById("taskDate").value = date;
     document.getElementById("taskTime").value = time;
 
     // Set max date to project deadline
-    let projectDeadline = task.ProjectDeadline;
-    if (projectDeadline) {
-        document.getElementById("taskDate").max = projectDeadline.split(" ")[0];
+    if (task.ProjectDeadline) {
+        document.getElementById("taskDate").max = task.ProjectDeadline.split(" ")[0];
     }
 
     // Set the task submission settings
     await submissionSettings(task.Task_type, task);
 
-
     // Add delete button
+    const deleteButton = document.getElementById("deleteTask");
+    deleteButton.style.display = task.canDelete ? "block" : "none";
     if (task.canDelete) {
-        let deleteButton = document.getElementById("deleteTask");
-        deleteButton.style.display = "block";
         deleteButton.onclick = function () {
             deleteTask(TaskId);
         }
-    } else {
-        let deleteButton = document.getElementById("deleteTask");
-        deleteButton.style.display = "none";
     }
 
     // Add save button
-    let saveButton = document.getElementById("saveNewTask");
+    const saveButton = document.getElementById("saveNewTask");
 
     // Enable the button and remove the previous event listener
     saveButton.disabled = false;
@@ -382,12 +388,7 @@ async function openTask(TaskId, projectID) {
     saveButton.addEventListener('click', saveButtonHandler);
 
     // For development purposes, add task id to modal footer
-    let idSpan = document.getElementById("taskEditorIDspan");
-    idSpan.innerHTML = `ID: ${TaskId}`;
-
-
-    // Display task editor modal
-    $('#taskEditorModal').modal('show');
+    document.getElementById("taskEditorIDspan").innerHTML = `ID: ${TaskId}`;
 }
 
 // Define the event handler function outside of the settings function

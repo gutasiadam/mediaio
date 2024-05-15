@@ -3,28 +3,22 @@
 function generateProjects(project, mobile = false) {
     return new Promise(async (resolve, reject) => {
         try {
+            const container = document.getElementsByClassName("container")[0];
             if (mobile) {
                 // Generating accordion
                 let accordion = document.createElement("div");
                 accordion.classList.add("accordion");
                 accordion.id = "accordion";
 
-                document.getElementsByClassName("container")[0].innerHTML = "";
-                document.getElementsByClassName("container")[0].appendChild(accordion);
+                container.innerHTML = "";
+                container.appendChild(accordion);
 
-                for (let i = 0; i < project.length; i++) {
-                    await generateMobileProjectBody(project[i], accordion);
-                }
+                await Promise.all(project.map(p => generateMobileProjectBody(p, accordion)));
             } else {
-                for (let i = 0; i < project.length; i++) {
-                    await generateProjectBody(project[i]);
-                }
+                await Promise.all(project.map(generateProjectBody));
             }
-            try {
-                await generateNewProjectButton(mobile);
-            } catch (error) {
-                ;
-            }
+
+            await generateNewProjectButton(mobile);
             resolve();
         } catch (error) {
             reject(error);

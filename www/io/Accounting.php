@@ -76,23 +76,19 @@ class Accounting
 
     }
 
-}
-
-
-class userManager
-{
-    static function getPublicUserInfo()
+    static function getPublicUserInfo($userID = NULL)
     {
-        $sql = "SELECT `idUsers`, `usernameUsers`, `firstName`, `lastName`, `teleNum`, `emailUsers` FROM `users`;";
+        if ($userID != NULL) {
+            $sql = "SELECT `usernameUsers`, `firstName`, `lastName`, `teleNum`, `emailUsers` FROM `users` WHERE `idUsers` = " . $userID . ";";
+        } else {
+            $sql = "SELECT `idUsers`, `usernameUsers`, `firstName`, `lastName`, `teleNum`, `emailUsers` FROM `users`;";
+        }
         $connection = Database::runQuery_mysqli();
         $result = $connection->query($sql);
         $connection->close();
 
         if ($result->num_rows > 0) {
-            $users = array();
-            while ($row = $result->fetch_assoc()) {
-                $users[] = $row;
-            }
+            $users = $result->fetch_all(MYSQLI_ASSOC);
             return json_encode($users);
         } else {
             return 500;
@@ -105,7 +101,7 @@ class userManager
 if (isset($_POST['mode'])) {
     switch ($_POST['mode']) {
         case 'getPublicUserInfo':
-            echo userManager::getPublicUserInfo();
+            echo Accounting::getPublicUserInfo();
             break;
 
 

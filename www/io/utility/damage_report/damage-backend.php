@@ -50,7 +50,7 @@ if (isset($_POST['method'])){
         $content .= '<br><button><a href="https://io.arpadmedia.hu/uploads/images/'.$_POST['zip-file'].'.zip">Képek letöltése</a></button>
                 ';
         /* Finally send the mail using MailService */
-        MailService::sendContactMail('MediaIO-sérülésbejelntő','arpadmedia.io@gmail.com',$subject,$content);
+        MailService::sendContactMail('arpadmedia.io@gmail.com',$subject,$content);
         echo 200;
         exit();
     }

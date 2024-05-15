@@ -153,7 +153,7 @@ include "../../ItemManager.php";
 
 function getUserCount()
 {
-  $users = userManager::getPublicUserInfo();
+  $users = Accounting::getPublicUserInfo();
   //Count the number of users
   $userCount = count(json_decode($users));
   return $userCount;
