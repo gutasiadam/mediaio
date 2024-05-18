@@ -55,14 +55,14 @@ class ProjectMailer
                     </head>
                     <body>
                     <h3>Kedves ' . $name . '!</h3>
-                    <p>Hozzá lettél adva a "' . $projectName . '" projekthez.</p>
-
-                    <i>Ez egy tájékoztató üzenet, kérlek ne válaszolj rá!</i>
+                    <p>Hozzá lettél adva a(z) "' . $projectName . '" projekthez.</p>
+                    
                     <h5>Projekt vezető: <br> ' . $managerName . '</h5>
+                    <i>Ez egy tájékoztató üzenet, kérlek ne válaszolj rá!</i>
                     </body>
                     </html>
                     ';
-        $subject = "Hozzá lettél adva a " . $projectName . " projekthez.";
+        $subject = "Hozzá lettél adva a(z) " . $projectName . " projekthez.";
 
         self::sendMail($email, $subject, $message);
     }

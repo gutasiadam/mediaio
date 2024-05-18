@@ -59,9 +59,11 @@ class DailySchedule
                     <p>Ez egy emlékeztető arról, hogy holnap lesz esedékes egy előre tervezett eszköz elviteled.</p>
                     <p>Kezdési idő: ' . $takeout['StartTime'] . '</p>
                     <p>Leírás: ' . $takeout['Description'] . '</p>
+                    <br>
                     <ul>Általad kiválaszott eszközök:' . $deviceList . '</ul>
 
                     <p>Üdvözlettel, Média IO</p>
+                    <i>Ez egy tájékoztató üzenet, kérlek ne válaszolj rá!</i>
                     </body>
                     </html>
                     ';

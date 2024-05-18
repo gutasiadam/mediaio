@@ -54,11 +54,11 @@
                 <div class="input-group mb-2">
                     <span class="input-group-text"><span style='color: red;'>*</span>Elvitel időpontja:</span>
                     <input type="date" min="<?php echo date('Y-m-d'); ?>" class="form-control" id="startingDate"
-                        value="<?php echo date('Y-m-d'); ?>">
+                        value="<?php echo date('Y-m-d'); ?>" required>
                 </div>
                 <div class="input-group mb-2">
                     <span class="input-group-text"><span style='color: red;'>*</span>Tervezett visszahozás:</span>
-                    <input type="date" min="<?php echo date('Y-m-d'); ?>" class="form-control" id="endDate">
+                    <input type="date" min="<?php echo date('Y-m-d'); ?>" class="form-control" id="endDate" required>
                 </div>
                 <div class="input-group mb-3">
                     <span class="input-group-text">Egész napos:</span>
@@ -114,7 +114,18 @@
                 </button>
             </div>
             <div class="modal-body">
-                <span id="plannedEventsDescription"></span>
+                <div class="mb-2">
+                    <label class="form-label" id="plannedEventsDescription"></label>
+                </div>
+                <label class="form-label">Idősáv:</label>
+                <div class="input-group mb-2">
+                    <span class="input-group-text">Elvitel időpontja:</span>
+                    <input type="date" min="<?php echo date('Y-m-d'); ?>" class="form-control" id="startDateSettings">
+                </div>
+                <div class="input-group mb-3">
+                    <span class="input-group-text">Tervezett visszahozás:</span>
+                    <input type="date" min="<?php echo date('Y-m-d'); ?>" class="form-control" id="endDateSettings">
+                </div>
                 <div>
                     <label class="form-label">Tárgyak:</label>
                 </div>

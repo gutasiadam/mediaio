@@ -39,6 +39,8 @@ async function loadUserItems() {
         }
     }));
 
+    //console.log(response);
+
     const itemHolder = document.getElementById("itemsHolder");
     itemHolder.innerHTML = "";
 

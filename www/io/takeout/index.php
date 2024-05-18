@@ -60,14 +60,14 @@ error_reporting(E_ALL ^ E_NOTICE);
 
     <ul class="nav nav-underline mt-1 mb-2" id="selectMenu" role="tablist">
         <li class="nav-item" role="presentation">
-            <a class="nav-link active" id="takeout-tab" data-bs-toggle="tab" data-bs-target="#takeout-tab-pane"
-                aria-current="page" href="#">
+            <a class="nav-link active" href="" id="takeout-tab" data-bs-toggle="tab" data-bs-target="#takeout-tab-pane"
+                aria-current="page">
                 <h2 class="rainbow" style="font-size: 40px; margin: 0;">Elvitel</h2>
             </a>
         </li>
         <h2 class="rainbow"> - </h2>
         <li class="nav-item" role="presentation">
-            <a class="nav-link" href="#" onclick="loadTakeOutPlanner();" id="prepared-tab" data-bs-toggle="tab"
+            <a class="nav-link" href="" onclick="loadTakeOutPlanner();" id="prepared-tab" data-bs-toggle="tab"
                 data-bs-target="#prepared-tab-pane">
                 <h2 class="rainbow" style="margin: 0; font-size: 40px;">Előjegyzések</h2>
             </a>
@@ -178,12 +178,36 @@ error_reporting(E_ALL ^ E_NOTICE);
 
 </body>
 
-
 <script>
+    // Add event listener to each tab
+    document.querySelectorAll('.nav-link').forEach(function (tab) {
+        tab.addEventListener('click', function () {
+            // Store the id of the clicked tab in local storage
+            localStorage.setItem('activeTab', this.id);
+        });
+    });
+
+    // On page load
+    function restoreActiveTab() {
+        // Check if there is a tab id stored in local storage
+        var activeTab = localStorage.getItem('activeTab');
+        if (activeTab) {
+            if (activeTab == "prepared-tab") {
+                loadTakeOutPlanner();
+            }
+            // If there is, activate the tab with that id
+            var tab = document.getElementById(activeTab);
+            var bsTab = new bootstrap.Tab(tab);
+            bsTab.show();
+        }
+    };
+
+
     //Selected items badge counter
     var badge = document.getElementById("selectedCount");
 
     $(document).ready(function () {
+        restoreActiveTab();
         loadPage();
 
         $('#itemsList').scroll(function () {
@@ -244,7 +268,7 @@ error_reporting(E_ALL ^ E_NOTICE);
         console.log(takeoutItems);
 
         // Planned data
-        const Name = document.getElementById("plannedName").value;
+        const Name = document.getElementById("plannedName")?.value || "";
         const StartingDate = document.getElementById("startingDate").value;
 
         if (StartingDate == "") {

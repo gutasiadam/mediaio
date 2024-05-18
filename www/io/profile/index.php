@@ -54,14 +54,20 @@ include ("header.php");
   <table class="help-logintable">
     <tr>
       <td>
+        <form action="notifications.php"><button class="btn btn-secondary w-100" disabled>Értesítések <i
+              class="fas fa-mail-bulk"></i> (hamarosan)</button></form>
+      </td>
+    </tr>
+    <tr>
+      <td>
         <form action="userlist.php"><button class="btn btn-dark w-100">Elérhetőségek <i
-              class="fas fa-address-book"></i></i></button></form>
+              class="fas fa-address-book"></i></button></form>
       </td>
     </tr>
     <tr>
       <td>
         <form action="rules.php"><button class="btn btn-dark w-100">Dokumentumok <i
-              class="fas fa-folder-open"></i></i></button></form>
+              class="fas fa-folder-open"></i></button></form>
       </td>
     </tr>
     <tr>
@@ -147,24 +153,28 @@ include ("header.php");
 
 </html>
 
-<script>
-  //Make a Jquery call to the ItemManager.php to get the number of items in the service
+<?php
+if (in_array("admin", $_SESSION["groups"])): ?>
+  <script>
+    //Make a Jquery call to the ItemManager.php to get the number of items in the service
 
-  $.ajax({
-    url: "../ItemManager.php",
-    type: "POST",
-    data: {
-      mode: "getProfileItemCounts",
-    },
-    success: function (data) {
-      var dataArray = data.split(",");
-      //Set the service item count
-      document.getElementById("serviceItemCount").innerHTML = dataArray[0];
-      //Set the user check item count
-      document.getElementById("usercheckItemCount").innerHTML = dataArray[1];
+    $.ajax({
+      url: "../ItemManager.php",
+      type: "POST",
+      data: {
+        mode: "getProfileItemCounts",
+      },
+      success: function (data) {
+        var dataArray = data.split(",");
+        //Set the service item count
+        document.getElementById("serviceItemCount").innerHTML = dataArray[0];
+        //Set the user check item count
+        document.getElementById("usercheckItemCount").innerHTML = dataArray[1];
 
-    }
+      }
 
-  });
+    });
 
-</script>
+  </script>
+
+<?php endif; ?>

@@ -86,7 +86,7 @@ async function getTakeOutEvents() {
     let events = [];
     const resEvents = response.events;
 
-    console.log(resEvents);
+    //console.log(resEvents);
 
     if (response.events.length == 0) {
         return [];

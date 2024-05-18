@@ -80,6 +80,8 @@ async function loadItems() {
         }
     }));
 
+    //console.log(response);
+
     //Get userinfo
 
     const users = JSON.parse(await $.ajax({
@@ -139,7 +141,7 @@ async function loadItems() {
                 itemElement.classList.add("studio");
                 break;
             default:
-                checkBox.disabled = item.Status == 0 || item.Status == 2;
+                checkBox.disabled = item.Status == 0 || item.Status == 2 || item.Status == -1;
                 itemElement.setAttribute("data-available", "true");
                 if (availability) {
                     itemElement.onclick = () => {
