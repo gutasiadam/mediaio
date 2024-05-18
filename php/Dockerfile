@@ -21,14 +21,14 @@ ENV COMPOSER_MEMORY_LIMIT=-1
 # Optain Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Clear cache
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
-
 # Copy startup script
 COPY ./start-composer.sh /start-composer.sh
 
 # Make the script executable
 RUN chmod +x /start-composer.sh
+
+# Clear cache
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Run the script when the container starts
 CMD ["/start-composer.sh"]

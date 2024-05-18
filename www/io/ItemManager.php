@@ -22,6 +22,12 @@ class takeOutManager
   */
   static function stageTakeout($takeoutItems, $plannedData = NULL)
   {
+    $takeoutItems = json_decode($takeoutItems, true);
+    // Escape special characters in the item names like "
+    foreach ($takeoutItems as &$item) {
+      $item['name'] = addslashes($item['name']);
+    }
+    $takeoutItems = json_encode($takeoutItems, JSON_UNESCAPED_UNICODE);
     //Accesses post and Session Data.
     // Set time zone to Budapest
     date_default_timezone_set('Europe/Budapest');
@@ -51,7 +57,8 @@ class takeOutManager
         $rangeStart = strtotime($row['StartTime']);
         $rangeEnd = strtotime($row['ReturnTime']);
 
-        if($row['eventState'] == 2 || $row['eventState'] == -1) continue; // Skip if the event is already returned or disabled
+        if ($row['eventState'] == 2 || $row['eventState'] == -1)
+          continue; // Skip if the event is already returned or disabled
 
         // If the submitted time frame matches with any planned takeout
         if (
@@ -372,7 +379,7 @@ class itemDataManager
 
 
   static function disableTakeout($eventID)
-  { 
+  {
     // Get details of the event
     $sql = "SELECT * FROM takeoutPlanner WHERE ID=" . $eventID;
     //Get a new database connection
