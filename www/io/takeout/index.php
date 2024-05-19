@@ -307,7 +307,7 @@ error_reporting(E_ALL ^ E_NOTICE);
         });
 
         if (response == 409) {
-            errorToast("Az általad megadott időre már valaki lefoglalta valamelyik eszközt!");
+            errorToast("Az általad megadott időre nem elérhető valamelyik eszközt!");
         }
         else if (response == 200) {
             deselect_all();

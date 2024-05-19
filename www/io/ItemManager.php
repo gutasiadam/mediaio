@@ -47,13 +47,13 @@ class takeOutManager
     if ($result->num_rows > 0) {
       $rows = $result->fetch_all(MYSQLI_ASSOC);
 
+      $plannedStart = strtotime($plannedData['StartingDate']);
+      $plannedEnd = strtotime($plannedData['EndDate']);
+
       $plannedItems = json_decode($takeoutItems, true);
       foreach ($rows as $row) {
         $items = json_decode($row['Items'], true);
 
-
-        $plannedStart = strtotime($plannedData['StartingDate']);
-        $plannedEnd = strtotime($plannedData['EndDate']);
         $rangeStart = strtotime($row['StartTime']);
         $rangeEnd = strtotime($row['ReturnTime']);
 
@@ -111,13 +111,18 @@ class takeOutManager
       // Start transaction
       $connection->begin_transaction();
       // Check if planned takeout start time is in the future
-      $status = $instantTakeOut ? (in_array("admin", $_SESSION['groups']) ? 0 : 2) : 3;
+      $status = in_array("admin", $_SESSION['groups']) ? 0 : 2;
 
+      if ($instantTakeOut) {
+        $sql = "UPDATE leltar SET Status = $status, RentBy = '" . $_SESSION['userId'] . "' WHERE `UID` = ?";
+      } else {
+        $sql = "UPDATE leltar SET isPlanned=1 WHERE `UID` = ?";
+      }
 
       // Update leltar
-      $stmt = $connection->prepare("UPDATE leltar SET Status=? WHERE UID=?;");
+      $stmt = $connection->prepare($sql);
       foreach ($takeoutItems as $item) {
-        $stmt->bind_param("ss", $status, $item['uid']);
+        $stmt->bind_param("s", $item['uid']);
         $stmt->execute();
       }
 
@@ -225,36 +230,41 @@ class takeOutManager
 class retrieveManager
 {
   // Function to list the items that are taken out by the user
-  static function listUserItems()
+  static function listUserItems($COUNT = false)
   {
     //Get the items that are currently by the user
     $connection = Database::runQuery_mysqli();
 
-    // Get the items from the planner
-    $sql = "SELECT * FROM takeoutPlanner WHERE eventState=1 AND UserID=" . $_SESSION['userId'];
-    $result = $connection->query($sql);
-    $rows = array();
-    $response = array();
-    if ($result->num_rows > 0) {
-      $rows = $result->fetch_all(MYSQLI_ASSOC);
+    $sql = "SELECT * FROM leltar WHERE RentBy = ? AND Status = 0";
+    $stmt = $connection->prepare($sql);
+    $stmt->bind_param("s", $_SESSION['userId']);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $response = $result->fetch_all(MYSQLI_ASSOC);
 
-      // Get the items from the leltar
-      $items = array();
-      foreach ($rows as $row) {
-        $items = array_merge($items, json_decode($row['Items'], true));
-      }
+    $itemCount = count($response);
 
-      // Get the items from the leltar
+    // Add prepared items to the response
+    $sql = "SELECT * FROM takeoutPlanner WHERE UserID = ? AND eventState=0";
+    $stmt = $connection->prepare($sql);
+    $stmt->bind_param("s", $_SESSION['userId']);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $rows = $result->fetch_all(MYSQLI_ASSOC);
+    foreach ($rows as $row) {
+      $items = json_decode($row['Items'], true);
       foreach ($items as $item) {
-        $sql = "SELECT * FROM `leltar` WHERE `Status`=0 AND `UID`='" . $item['uid'] . "'";
-        $result = $connection->query($sql);
-        $rows = $result->fetch_assoc();
-        if ($result->num_rows > 0) {
-          $response[] = $rows;
-        }
+        $response[] = array(
+          'UID' => $item['uid'],
+          'Nev' => $item['name'],
+          'Status' => 1,
+          'RentBy' => $_SESSION['userId'],
+          'isPlanned' => 1
+        );
       }
     }
-    return json_encode($response);
+
+    return $COUNT ? $itemCount : json_encode($response);
   }
 
   /*
@@ -282,14 +292,15 @@ class retrieveManager
     $status = in_array("admin", $_SESSION['groups']) ? 1 : 2;
     $acknowledged = in_array("admin", $_SESSION['groups']) ? 1 : 0;
     $ackBy = in_array("admin", $_SESSION['groups']) ? $_SESSION['UserUserName'] : NULL;
+    $RentBy = in_array("admin", $_SESSION['groups']) ? 'NULL' : $_SESSION['userId'];
     try {
       // Start transaction
       $connection->begin_transaction();
 
       // Update leltar
-      $stmt = $connection->prepare("UPDATE leltar SET Status=? WHERE UID=?;");
+      $stmt = $connection->prepare("UPDATE `leltar` SET `Status`=$status, `RentBy`=$RentBy WHERE `UID`=?;");
       foreach ($retrieveItems as $item) {
-        $stmt->bind_param("is", $status, $item['uid']);
+        $stmt->bind_param("s", $item['uid']);
         $stmt->execute();
       }
 
@@ -299,7 +310,7 @@ class retrieveManager
       $stmt->execute();
 
       // Update takeoutPlanner table
-      $sql = "SELECT * FROM takeoutPlanner WHERE eventState=1";
+      $sql = "SELECT * FROM takeoutPlanner WHERE eventState=1 AND UserID=" . $_SESSION['userId'];
       $result = $connection->query($sql);
 
       if ($result->num_rows > 0) { // For safety reasons
@@ -314,7 +325,7 @@ class retrieveManager
           }, $items);
 
           // Check if all the items are returned
-          $sql = "SELECT * FROM leltar WHERE UID IN (" . implode(",", $items) . ") AND Status=0";
+          $sql = "SELECT * FROM leltar WHERE UID IN (" . implode(",", $items) . ") AND Status=0 AND RentBy=" . $_SESSION['userId'];
           $result = $connection->query($sql);
 
           if ($result->num_rows == 0) {
@@ -386,9 +397,9 @@ class itemDataManager
     // Change every item as taken in the database
     $items = json_decode($result['Items'], true);
     $status = in_array("admin", $_SESSION['groups']) ? 0 : 2;
-    $stmt = $connection->prepare("UPDATE leltar SET Status = $status WHERE `UID` = ?");
+    $stmt = $connection->prepare("UPDATE leltar SET Status = $status, RentBy=? WHERE `UID` = ?");
     foreach ($items as $i) {
-      $stmt->bind_param("s", $i['uid']);
+      $stmt->bind_param("ss", $_SESSION['userId'], $i['uid']);
       $stmt->execute();
     }
 
@@ -492,7 +503,8 @@ class itemDataManager
     foreach ($items as $item) {
       if ($item['declined'] == 'true') {
         $status = ($direction == 'OUT') ? 1 : 0;
-        $sql = "UPDATE `leltar` SET `Status` = $status WHERE `UID` = '" . $item['uid'] . "'";
+        $RentBy = ($direction == 'OUT') ? 'NULL' : $transUser;
+        $sql = "UPDATE `leltar` SET `Status` = $status, `RentBy`=$RentBy WHERE `UID` = '" . $item['uid'] . "'";
         $connection->query($sql);
         // Add the declined item to the list
         $declinedItems[] = $item['uid'];
@@ -502,7 +514,7 @@ class itemDataManager
       if ($direction == 'OUT') {
         $sql = "UPDATE `leltar` SET `Status` = 0 WHERE `UID` = '" . $item['uid'] . "'";
       } else {
-        $sql = "UPDATE `leltar` SET `Status` = 1 WHERE `UID` = '" . $item['uid'] . "'";
+        $sql = "UPDATE `leltar` SET `Status` = 1, `RentBy`=NULL WHERE `UID` = '" . $item['uid'] . "'";
       }
       $connection->query($sql);
     }
@@ -557,66 +569,6 @@ class itemDataManager
     return 500;
   }
 
-  static function getItemData($itemTypes)
-  {
-    $displayed = "";
-    if ($itemTypes['rentable'] != 1 & $itemTypes['studio'] != 2 & $itemTypes['nonRentable'] != 3 & $itemTypes['Out'] != 4 & $itemTypes['Event'] != 5) {
-      return NULL;
-    }
-    $sql = '';
-    //Kölcsönözhető
-    if ($itemTypes['rentable'] == 1) {
-      $sql .= 'SELECT * FROM leltar WHERE TakeRestrict=""';
-      $displayed = $displayed . " Médiás";
-    }
-    //Stúdiós
-    if ($itemTypes['studio'] == 2) {
-      if (isset($_GET['rentable'])) {
-        $sql .= 'UNION SELECT * FROM leltar WHERE TakeRestrict="s"';
-        $displayed = $displayed . ", Stúdiós";
-      } else {
-        $sql = 'SELECT * FROM leltar WHERE TakeRestrict="s"';
-        $displayed = $displayed . " Stúdiós";
-      }
-    }
-
-    //Eventes
-    if ($itemTypes['Event'] == 5) {
-      if (isset($_GET['rentable']) || isset($_GET['studio'])) {
-        $sql .= 'UNION SELECT * FROM leltar WHERE TakeRestrict="e"';
-        $displayed = $displayed . ", Eventes";
-      } else {
-        $sql = ' SELECT * FROM leltar WHERE TakeRestrict="e"';
-        $displayed = $displayed . "eventes";
-      }
-    }
-    //Nem kölcsönözhető
-    if ($itemTypes['nonRentable'] == 3) {
-      //Speciális eset, ha csak a nem kölcsönözhető, stúdiós elemeket akarjuk kilistázni
-      if (isset($_GET['rentable']) || isset($_GET['studio']) || isset($_GET['Event'])) {
-        $sql .= 'UNION SELECT * FROM leltar WHERE TakeRestrict="*"';
-        $displayed = $displayed . ", Nem kölcsönözhető";
-      } else {
-        $sql = ' SELECT * FROM leltar WHERE TakeRestrict="*"';
-        $displayed = $displayed . "Nem kölcsönözhető";
-      }
-    }
-    //Kinnlevő
-    if ($itemTypes['Out'] == 4) {
-      if (isset($_GET['rentable']) || isset($_GET['studio']) || isset($_GET['nonRentable']) || isset($_GET['Event'])) {
-        $sql .= 'UNION SELECT * FROM leltar WHERE RentBy IS NOT NULL';
-        $displayed = $displayed . ", Kinnlevő";
-      } else {
-        $sql = 'SELECT * FROM leltar WHERE RentBy IS NOT NULL';
-        $displayed = $displayed . "Kinnlevő";
-      }
-    }
-
-
-    $sql = $sql . " ORDER BY " . $_GET['orderByField'] . " " . $_GET['order'];
-    //echo $sql;
-    return Database::runQuery($sql);
-  }
 
   static function getPresets()
   {
@@ -641,15 +593,21 @@ class itemDataManager
     $connection = Database::runQuery_mysqli();
 
     // Prepare the SQL query
-    $sql = "SELECT leltar.*, plannedTakeouts.UserID as RentBy, leltar.UID
-        FROM leltar
-          LEFT JOIN (
-          SELECT Items, UserID
-          FROM takeoutPlanner
-          WHERE eventState=1 OR eventState=0
-          ) as plannedTakeouts
-      ON JSON_EXTRACT(plannedTakeouts.Items, '$[*].uid') LIKE CONCAT('%\"', leltar.UID, '\"%')";
-
+    $sql = "SELECT leltar.*, COALESCE(leltar.RentBy, tp.UserID) as RentBy
+    FROM leltar
+    LEFT JOIN (
+        SELECT tp1.Items, tp1.UserID, tp1.StartTime
+        FROM takeoutPlanner tp1
+        JOIN (
+            SELECT Items, MIN(StartTime) as MinStartTime
+            FROM takeoutPlanner
+            WHERE eventState=0
+            GROUP BY Items
+        ) as tp2
+        ON tp1.Items = tp2.Items AND tp1.StartTime = tp2.MinStartTime
+    ) as tp
+    ON leltar.isPlanned = 1 AND leltar.Status = 1 AND JSON_EXTRACT(tp.Items, '$[*].uid') LIKE CONCAT('%\"', leltar.UID, '\"%')
+    ORDER BY leltar.ID";
 
     // Execute the query
     $stmt = $connection->prepare($sql);
@@ -679,7 +637,7 @@ class itemDataManager
 
     $stateArray = array(
       'in' => 'Status = 1',
-      'out' => 'Status = 0',
+      'out' => '(Status = 0 OR Status = 2)',
       'all' => '1=1'
     );
 
@@ -698,15 +656,7 @@ class itemDataManager
       'desc' => 'DESC',
     );
 
-    $sql = "SELECT leltar.*, plannedTakeouts.UserID as RentBy, leltar.UID
-    FROM leltar
-    LEFT JOIN (
-        SELECT Items, UserID
-        FROM takeoutPlanner
-        WHERE eventState=1 OR eventState=0
-    ) as plannedTakeouts
-    ON JSON_EXTRACT(plannedTakeouts.Items, '$[*].uid') LIKE CONCAT('%\"', leltar.UID, '\"%')
-    WHERE " . $takeRestrictArray[$takeRestrict] . " AND " . $stateArray[$itemState] .
+    $sql = "SELECT * FROM leltar WHERE " . $takeRestrictArray[$takeRestrict] . " AND " . $stateArray[$itemState] .
       " ORDER BY " . $orderbyArray[$orderCriteria] . " " . $orderDirARR[$orderDirection];
 
     // Get a new database connection
@@ -722,29 +672,6 @@ class itemDataManager
     return $result;
   }
 
-  //Returns how many items the user has taken out.
-  static function getUserItemCount()
-  {
-      // Prepare the SQL query
-      $sql = "SELECT leltar.* 
-              FROM leltar
-              INNER JOIN (
-                  SELECT Items
-                  FROM takeoutPlanner
-                  WHERE eventState=1 AND UserID=" . $_SESSION['userId'] . "
-              ) as plannedTakeouts
-              ON JSON_EXTRACT(plannedTakeouts.Items, '$[*].uid') LIKE CONCAT('%\"', leltar.UID, '\"%')
-              WHERE leltar.Status=0";
-  
-      // Get a new database connection
-      $connection = Database::runQuery_mysqli();
-      $stmt = $connection->prepare($sql);
-      $stmt->execute();
-      $result = $stmt->get_result();
-      $rows = $result->fetch_all(MYSQLI_ASSOC);
-  
-      return count($rows);
-  }
 
   static function getItemsForConfirmation()
   {
@@ -890,7 +817,7 @@ if (isset($_POST['mode'])) {
     echo ",";
     echo itemDataManager::getToBeUserCheckedCount();
     echo ",";
-    echo itemDataManager::getUserItemCount();
+    echo retrieveManager::listUserItems(true);
   }
   exit();
 }

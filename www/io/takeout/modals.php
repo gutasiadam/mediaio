@@ -156,7 +156,7 @@
                 <div class="mt-3" id="notAvailableItems"></div>
             </div>
             <div class="modal-footer">
-                <!-- dynamic buttons -->
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Mégse</button>
             </div>
         </div>
     </div>

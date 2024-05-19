@@ -237,22 +237,40 @@
 }
 
 .planned {
-    animation: textColor 1s infinite alternate;
+    animation: orangeColor 1s infinite alternate;
 }
 
 .planned-card {
     animation: plannedBackground 2s infinite alternate;
 }
 
+.taken {
+    animation: grayColor 1s infinite alternate;
+}
+
+.taken-card {
+    animation: takenBackground 2s infinite alternate;
+}
+
 /* Animations */
 
-@keyframes textColor {
+@keyframes orangeColor {
     0% {
         color: #000;
     }
 
     100% {
         color: rgb(219, 135, 40);
+    }
+}
+
+@keyframes grayColor {
+    0% {
+        color: #000;
+    }
+
+    100% {
+        color: rgb(179, 179, 179);
     }
 }
 
@@ -263,6 +281,16 @@
 
     100% {
         background-color: rgb(226, 179, 78);
+    }
+}
+
+@keyframes takenBackground {
+    20% {
+        background-color: white;
+    }
+
+    100% {
+        background-color: rgb(179, 179, 179);
     }
 }
 

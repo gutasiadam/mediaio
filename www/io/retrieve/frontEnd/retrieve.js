@@ -69,14 +69,14 @@ async function loadUserItems() {
 
 
 function createItemCard(item) {
-    const itemStatus = item.Status;
+    const isPlanned = item.isPlanned && item.Status == 1;
     const itemHolder = document.getElementById("itemsHolder");
 
     const itemCard = document.createElement("div");
     itemCard.classList.add("card", "itemCard");
     itemCard.id = item.UID;
     itemCard.setAttribute("data-name", item.Nev);
-    itemStatus == 3 ? itemCard.classList.add("planned") : null;
+    isPlanned ? itemCard.classList.add("planned") : null;
     itemCard.onclick = function () {
         if (this.classList.contains("selectable")) {
             toggleSelectItem(item);
@@ -108,7 +108,7 @@ function createItemCard(item) {
 
     cardBody.appendChild(textHolder);
 
-    if (itemStatus == 3) {
+    if (isPlanned) {
         cardBody.classList.add("d-flex", "justify-content-between");
         const loadingSpinner = document.createElement("div");
         loadingSpinner.classList.add("spinner-border", "text-secondary", "spinner-border-sm");
@@ -126,7 +126,7 @@ function createItemCard(item) {
 
 
 function toggleSelectItem(item) {
-    if (item.Status == 3) {
+    if (item.isPlanned && item.Status == 1) {
         warningToast("Ez a tárgy még nincs nálad, csak időzítve van!");
         return;
     }
