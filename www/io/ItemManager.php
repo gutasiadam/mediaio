@@ -62,8 +62,8 @@ class takeOutManager
 
         // If the submitted time frame matches with any planned takeout
         if (
-          ($plannedStart > $rangeStart && $plannedStart < $rangeEnd) ||
-          ($plannedEnd > $rangeStart && $plannedEnd < $rangeEnd)
+          ($plannedStart >= $rangeStart && $plannedStart < $rangeEnd) ||
+          ($plannedEnd > $rangeStart && $plannedEnd <= $rangeEnd)
         ) {
           // Check if there are any conflicts with the items
           $conflict = array_intersect(array_column($items, 'uid'), array_column($plannedItems, 'uid'));
@@ -73,7 +73,6 @@ class takeOutManager
         }
       }
     }
-
     // Check if the planned takeout is in the past
     if (strtotime($plannedData['StartingDate']) < strtotime($currDate)) {
       $instantTakeOut = true;

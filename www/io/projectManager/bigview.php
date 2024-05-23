@@ -104,7 +104,7 @@ include ("../translation.php"); ?>
       spinner.innerHTML = '<span class="visually-hidden">Loading...</span>';
       projectHolder.appendChild(spinner);
 
-      await generateBigView(project);
+      await generateMobileView(project);
       //TODO: ORDER FUNCTIONALITY NEEDED HERE
       await toolTipRender();
 

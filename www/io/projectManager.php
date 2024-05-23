@@ -205,10 +205,25 @@ class projectManager
     {
         if ($_POST['task_id'] == null) {
             // Get all tasks of the project
-            $sql = "SELECT * FROM project_components WHERE ProjectId=" . $_POST['proj_id'] . " ORDER BY COALESCE(Position, Deadline);";
+            $sql = "SELECT pc.*, p.Deadline as ProjectDeadline, p.managerUID, p.NAS_path as NASPath,
+                    u1.firstName as CreatorFirstName, u1.lastName as CreatorLastName, u1.usernameUsers as CreatorUsername, 
+                    u2.firstName as EditorFirstName, u2.lastName as EditorLastName, u2.usernameUsers as EditorUsername
+                    FROM am_projects.project_components pc
+                    LEFT JOIN am_projects.projects p ON pc.ProjectId = p.ID
+                    LEFT JOIN arpadmedia.users u1 ON pc.AddedByUID = u1.idUsers
+                    LEFT JOIN arpadmedia.users u2 ON pc.EditedByUID = u2.idUsers
+                    WHERE pc.ProjectId=" . $_POST['proj_id'] . " 
+                    ORDER BY COALESCE(pc.Position, pc.Deadline);";
         } else {
             // Get the task with the specified ID
-            $sql = "SELECT * FROM project_components WHERE ID=" . $_POST['task_id'] . ";";
+            $sql = "SELECT pc.*, p.Deadline as ProjectDeadline, p.managerUID, p.NAS_path as NASPath,
+                    u1.firstName as CreatorFirstName, u1.lastName as CreatorLastName, u1.usernameUsers as CreatorUsername, 
+                    u2.firstName as EditorFirstName, u2.lastName as EditorLastName, u2.usernameUsers as EditorUsername
+                    FROM am_projects.project_components pc
+                    LEFT JOIN am_projects.projects p ON pc.ProjectId = p.ID
+                    LEFT JOIN arpadmedia.users u1 ON pc.AddedByUID = u1.idUsers
+                    LEFT JOIN arpadmedia.users u2 ON pc.EditedByUID = u2.idUsers
+                    WHERE pc.ID=" . $_POST['task_id'] . ";";
         }
 
         $connection = Database::runQuery_mysqli(self::$schema);
@@ -220,36 +235,12 @@ class projectManager
                 echo 404;
                 exit();
             }
-            // Get the creator UID of the task
-            $sql = "SELECT `AddedByUID`, `EditedByUID` FROM `project_components` WHERE `ID`=" . $_POST['task_id'] . ";";
-            $result = $connection->query($sql);
-            $creatorUID = $result->fetch_assoc()['AddedByUID'];
-            $editorUID = $result->fetch_assoc()['EditedByUID'];
 
-            // Get the creator's name and username
-            $creatorUserArray = self::getUsers($creatorUID);
-            $row['CreatorFirstName'] = $creatorUserArray[0]['firstName'];
-            $row['CreatorLastName'] = $creatorUserArray[0]['lastName'];
-            $row['CreatorUsername'] = $creatorUserArray[0]['usernameUsers'];
+            // Get the creator UID and editor UID of the task
+            $creatorUID = $row['AddedByUID'];
 
-            // Get the editor's name and username
-            $editorUserArray = self::getUsers($editorUID);
-            $row['EditorFirstName'] = $editorUserArray[0]['firstName'];
-            $row['EditorLastName'] = $editorUserArray[0]['lastName'];
-            $row['EditorUsername'] = $editorUserArray[0]['usernameUsers'];
-
-
-            // Add the project deadline to the task
-            $sql = "SELECT `Deadline` FROM `projects` WHERE `ID`=" . $row['ProjectId'] . ";";
-            $result = $connection->query($sql);
-            $row['ProjectDeadline'] = $result->fetch_assoc()['Deadline'];
-
-
-            // Get the project manager
-            $sql = "SELECT `managerUID` FROM `projects` WHERE `ID`=" . $row['ProjectId'] . ";";
-            $result = $connection->query($sql);
-            $projectManagerUID = $result->fetch_assoc()['managerUID'];
-
+            // Get the project deadline and manager UID
+            $projectManagerUID = $row['managerUID'];
 
             //Check if user is allowed to delete the task
             if (in_array("admin", $_SESSION['groups'])) {
@@ -278,7 +269,6 @@ class projectManager
             } else {
                 echo (json_encode($row));
             }
-            $connection->close();
 
         } else {
             $rows = $result->fetch_all(MYSQLI_ASSOC);
@@ -286,28 +276,9 @@ class projectManager
                 echo 404;
                 exit();
             }
-            // Get the creator UID of the task
-            foreach ($rows as $key => $row) {
-                $creatorUID = $row['AddedByUID'];
-                $editorUID = $row['EditedByUID'];
-
-                // Get the creator's name and username
-                $creatorUserArray = self::getUsers($creatorUID);
-                $rows[$key]['CreatorFirstName'] = $creatorUserArray[0]['firstName'];
-                $rows[$key]['CreatorLastName'] = $creatorUserArray[0]['lastName'];
-                $rows[$key]['CreatorUsername'] = $creatorUserArray[0]['usernameUsers'];
-
-                // Get the editor's name and username
-                $editorUserArray = self::getUsers($editorUID);
-                $rows[$key]['EditorFirstName'] = $editorUserArray[0]['firstName'];
-                $rows[$key]['EditorLastName'] = $editorUserArray[0]['lastName'];
-                $rows[$key]['EditorUsername'] = $editorUserArray[0]['usernameUsers'];
-
-            }
-            $connection->close();
-
             echo (json_encode($rows));
         }
+        $connection->close();
     }
 
     static function saveTask()
@@ -596,29 +567,21 @@ class projectManager
 
     static function getTaskMembers()
     {
-        $projectMembers = self::getProjectMembers($_POST['proj_id']);
+        $projectId = $_POST['proj_id'];
+        $taskId = $_POST['task_id'];
 
-        $sql = "SELECT * FROM `project_task_members` WHERE TaskId=" . $_POST['task_id'] . ";";
+        $sql = "SELECT pm.UserID, u.firstName, u.lastName, 
+        IF(ptm.UserId IS NULL, 0, 1) as assignedToTask
+        FROM am_projects.project_members pm
+        LEFT JOIN arpadmedia.users u ON pm.UserID = u.idUsers
+        LEFT JOIN am_projects.project_task_members ptm ON pm.UserID = ptm.UserId AND ptm.TaskId = $taskId
+        WHERE pm.ProjectId = $projectId";
+
         $connection = Database::runQuery_mysqli(self::$schema);
         $result = $connection->query($sql);
-        $taskMembers = array();
+        $resultItems = array();
         while ($row = $result->fetch_assoc()) {
-            $taskMembers[] = $row;
-        }
-        $connection->close();
-
-        $connection = Database::runQuery_mysqli();
-        // Getting the names of the users
-        foreach ($projectMembers as $key => $item) {
-            $sql = "SELECT `firstName`, `lastName` FROM `users` WHERE `idUsers`=" . $item['UserID'] . ";";
-            $result = $connection->query($sql);
-            $user = $result->fetch_assoc();
-            $resultItems[$key]['UserId'] = $item['UserID'];
-            $resultItems[$key]['firstName'] = $user['firstName'];
-            $resultItems[$key]['lastName'] = $user['lastName'];
-
-            // Add the 'assignedToTask' field
-            $resultItems[$key]['assignedToTask'] = in_array($item['UserID'], array_column($taskMembers, 'UserId')) ? 1 : 0;
+            $resultItems[] = $row;
         }
         $connection->close();
 
@@ -825,8 +788,6 @@ class projectManager
 }
 
 if (isset($_POST['mode'])) {
-    //Set timezone to the computer's timezone.
-    date_default_timezone_set('Europe/Budapest');
 
     switch ($_POST['mode']) {
         case 'createNewProject':

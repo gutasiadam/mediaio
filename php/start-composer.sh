@@ -9,7 +9,7 @@ cd /var/www/io
 composer install --prefer-dist --no-dev --no-scripts --no-progress --no-interaction -vvv
 
 # Composer dump autoload
-composer dump-autoload --optimize 
+composer dump-autoload --classmap-authoritative
 
 # Run the main process (e.g., Apache or PHP-FPM)
 exec php-fpm

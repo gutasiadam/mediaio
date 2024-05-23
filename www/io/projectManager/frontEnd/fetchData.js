@@ -573,10 +573,6 @@ async function fetchTaskMembers(task_id, proj_id) {
                 data: { mode: "getTaskMembers", task_id: task_id, proj_id: proj_id }
             });
 
-            if (response == 500) {
-                window.location.href = "index.php?serverError";
-            }
-
             //console.log(response);
 
             resolve(response);

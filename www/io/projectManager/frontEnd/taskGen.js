@@ -1,5 +1,6 @@
 
 async function generateTasks(projectID, canEdit) {
+
     const taskHolder = document.createElement("div");
     taskHolder.classList.add("taskHolder");
     taskHolder.id = `${projectID}-taskHolder`;
@@ -8,26 +9,32 @@ async function generateTasks(projectID, canEdit) {
     let tasks = await fetchTask(projectID);
     // Parse the tasks
     tasks = JSON.parse(tasks);
-
     // Check if tasks is an array (are there any tasks?)
     if (!Array.isArray(tasks)) {
         tasks = [];
     }
 
-    // Append each task to taskHolder
+    // Create a document fragment
+    const fragment = document.createDocumentFragment();
+
+    // Append each task to the fragment
     const taskElements = await Promise.all(tasks.map(task => createTask(task, projectID, canEdit)));
-    taskElements.forEach(taskElement => taskHolder.appendChild(taskElement));
+    taskElements.forEach(taskElement => fragment.appendChild(taskElement));
+
+    // Append the fragment to taskHolder
+    taskHolder.appendChild(fragment);
+
 
     return taskHolder;
 }
 
 async function createTask(task, projectID, canEdit) {
-    var uData = JSON.parse(await userTaskData(task.ID, 'card', projectID));
-
+    let uData = JSON.parse(await userTaskData(task.ID, 'card', projectID)); /////// TAKES A LOT OF TIME
+    //console.log(uData);
     const taskCard = createTaskCard(task, projectID, canEdit);
     const taskHeader = createTaskHeader(task);
     const taskBody = createTaskBody(task);
-    const taskFooter = await createTaskFooter(task, taskHeader, projectID, uData);
+    const taskFooter = createTaskFooter(task, taskHeader, projectID, uData);
 
 
     taskCard.appendChild(taskHeader);
@@ -209,13 +216,13 @@ function createTaskBody(task) {
     return taskBody;
 }
 
-async function createTaskFooter(task, taskHeader, projectID, uData) {
+function createTaskFooter(task, taskHeader, projectID, uData) {
     const taskFooter = document.createElement("div");
     taskFooter.classList.add("card-footer", "taskFooter");
 
     // check deadline and color the card accordingly
     if (task.Deadline) {
-        var deadlineText = await getDeadline(task.Deadline);
+        var deadlineText = getDeadline(task.Deadline);
         let shouldDisplayDeadline = uData.isAdmin || (uData.isTaskMember && !uData.filled) && task.isInteractable;
         if (shouldDisplayDeadline) {
             colorTaskCard(taskHeader, task.Deadline);
@@ -291,6 +298,7 @@ async function openTask(TaskId, projectID) {
 
     // Fetch task
     const task = JSON.parse(await fetchTask(null, TaskId));
+    console.log(task);
     if (task == 403) {
         noAccessToast();
         return;
@@ -311,10 +319,9 @@ async function openTask(TaskId, projectID) {
 
     const fileHolder = document.getElementById("taskFiles");
     fileHolder.innerHTML = "";
-
     switch (task.Task_type) {
         case "task":
-            await taskBodyGenerator(projectID, TaskId, taskDataHolder, task.Task_data);
+            taskBodyGenerator(projectID, TaskId, taskDataHolder, task.Task_data, task.NASPath);
             break;
         case "checklist":
         case "radio":
@@ -322,20 +329,23 @@ async function openTask(TaskId, projectID) {
             break;
     }
 
+    console.time("fetchTaskMembers");
     // Get task assigned users
-    let taskMembers = JSON.parse(await fetchTaskMembers(TaskId, projectID));
+    let taskMembers = JSON.parse(await fetchTaskMembers(TaskId, projectID)); ///// TAKES A LOT OF TIME
 
     const taskMembersHolder = document.getElementById("taskMembers");
     taskMembersHolder.innerHTML = "<i>Adj hozzá tagokat a projekthez először!</i>";
 
     if (taskMembers != null) {
+        const fragment = document.createDocumentFragment();
         taskMembersHolder.innerHTML = "";
+
         taskMembers.forEach(member => {
             const option = document.createElement("div");
             option.classList.add("availableMember");
             option.style.cursor = "pointer";
             option.id = member.UserId;
-            option.innerHTML = `${member.lastName} ${member.firstName}`;
+            option.textContent = `${member.lastName} ${member.firstName}`;
             option.onclick = function () {
                 this.classList.toggle("selectedMember");
             }
@@ -344,10 +354,12 @@ async function openTask(TaskId, projectID) {
                 option.classList.add("selectedMember");
             }
 
-            taskMembersHolder.appendChild(option);
+            fragment.appendChild(option);
         });
-    }
 
+        taskMembersHolder.appendChild(fragment);
+    }
+    console.timeEnd("fetchTaskMembers");
     // Get the task deadline
     const [date, time] = task.Deadline ? task.Deadline.split(" ").map((val, i) => i ? val.split(':').slice(0, 2).join(':') : val) : ["", ""];
 
@@ -540,7 +552,7 @@ async function addNewTask(projectID, taskType, deadline = null) {
     switch (taskType) {
         case "task":
             modalTitle.innerHTML = "Új feladat hozzáadása";
-            await taskBodyGenerator(projectID, null, taskDataHolder);
+            taskBodyGenerator(projectID, null, taskDataHolder);
             break;
 
         case "checklist":
@@ -982,7 +994,7 @@ function textEditor(taskDataHolder, taskData = "", height = "250px", inputAreaId
     taskDataHolder.appendChild(textArea);
 }
 
-async function taskBodyGenerator(projectID, TaskId, taskDataHolder, taskData = null) {
+function taskBodyGenerator(projectID, TaskId, taskDataHolder, taskData = null, projectRoot = "/Munka") {
     taskData = taskData ? JSON.parse(taskData) : null;
 
     textEditor(taskDataHolder, taskData ? taskData.text : "", "150px");
@@ -1099,8 +1111,6 @@ async function taskBodyGenerator(projectID, TaskId, taskDataHolder, taskData = n
             fileHolder.appendChild(fileDiv);
         });
     }
-
-    const projectRoot = await fetchProjectRoot(projectID);
 
     const openBrowserButton = document.getElementById("browseProjectFiles");
 

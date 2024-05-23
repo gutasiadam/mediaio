@@ -19,15 +19,16 @@ function generateProjects(project, mobile = false) {
             }
 
             await generateNewProjectButton(mobile);
-            resolve();
         } catch (error) {
-            reject(error);
+            console.error("Error generating projects:", error);
         }
+        resolve();
     });
 }
 
 
-async function generateBigView(project) {
+async function generateMobileView(project) {
+    
     let projectName = project.Name;
     let projectID = project.ID;
 
@@ -65,19 +66,19 @@ async function generateBigView(project) {
     if (project.Deadline) {
         let deadline = document.createElement("li");
         deadline.classList.add("nav-item");
-        deadline.innerHTML = "<a class='nav-link disabled' aria-disabled='true'><b>" + await getDeadline(project.Deadline) + "</b></a>";
+        deadline.innerHTML = "<a class='nav-link disabled' aria-disabled='true'><b>" + getDeadline(project.Deadline) + "</b></a>";
         nav.appendChild(deadline);
     }
 
     projectCard.appendChild(nav);
-
+    
     // Add settings button to project title
     try {
         nav.appendChild(changeProjectSettingsButton(projectID));
     } catch (error) {
         ;
     }
-
+    
     // Create a nav div
     let navDiv = document.createElement("div");
     navDiv.classList.add("tab-content");
@@ -94,7 +95,7 @@ async function generateBigView(project) {
 
     // Create a new project description
     projectBody.appendChild(createDiscription(projectID, project.Description));
-
+    
     // Generating the project tasks
     projectBody.appendChild(await generateTasks(projectID, project.canEdit));
 
@@ -155,7 +156,7 @@ async function generateBigView(project) {
     }
     // Adding members to the project body
     membersBody.appendChild(await generateMembers(projectID));
-
+    
 }
 // Function to generate a mobile project list
 
@@ -543,7 +544,7 @@ async function createMember(member, projectID) {
 
 
 
-async function getDeadline(deadline) {
+function getDeadline(deadline) {
     // If there is no deadline
     if (!deadline) {
         return "";
