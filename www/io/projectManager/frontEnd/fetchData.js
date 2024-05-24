@@ -565,15 +565,13 @@ async function fetchTaskMembers(task_id, proj_id) {
 
     return new Promise(async (resolve, reject) => {
         try {
-            let response;
-
-            response = await $.ajax({
+            let response = await $.ajax({
                 type: "POST",
                 url: "../../projectManager.php",
                 data: { mode: "getTaskMembers", task_id: task_id, proj_id: proj_id }
             });
 
-            //console.log(response);
+            console.log(response);
 
             resolve(response);
         } catch (error) {

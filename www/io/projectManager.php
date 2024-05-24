@@ -579,10 +579,7 @@ class projectManager
 
         $connection = Database::runQuery_mysqli(self::$schema);
         $result = $connection->query($sql);
-        $resultItems = array();
-        while ($row = $result->fetch_assoc()) {
-            $resultItems[] = $row;
-        }
+        $resultItems = $result->fetch_all(MYSQLI_ASSOC);
         $connection->close();
 
         // Sort the array by lastname and firstname

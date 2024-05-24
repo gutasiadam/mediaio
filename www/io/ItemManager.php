@@ -83,15 +83,17 @@ class takeOutManager
     $acknowledged = in_array("admin", $_SESSION['groups']) ? 1 : 0; // Stageing happens here
     // Set the ackBy field to the user's name if the user is an admin
     $ackBy = $acknowledged ? $_SESSION['UserUserName'] : NULL;
-    // Check if the takeout is instant or planned
-    $direction = $instantTakeOut ? 'OUT' : 'PLANNED';
 
     try {
       // TAKELOG
-      $sql = "INSERT INTO takelog (`ID`, `Date`, `UserID`, `Items`, `Event`,`Acknowledged`,`ACKBY`) 
-            VALUES (NULL, '$currDate', '$UID', '$takeoutItems', '$direction', $acknowledged, '$ackBy')";
-      $connection->query($sql);
-      $takelogID = $connection->insert_id;
+      if ($instantTakeOut) {
+        $sql = "INSERT INTO takelog (`ID`, `Date`, `UserID`, `Items`, `Event`,`Acknowledged`,`ACKBY`) 
+            VALUES (NULL, '$currDate', '$UID', '$takeoutItems', 'OUT', $acknowledged, '$ackBy')";
+        $connection->query($sql);
+        $takelogID = $connection->insert_id;
+      } else {
+        $takelogID = 0;
+      }
 
       // TAKEOUTPLANNER
       $sql = "INSERT INTO takeoutPlanner (`ID`, `Name`, `Description`, `UserID`, `Items`, `takelogID`, `StartTime`, `ReturnTime`, `eventState`) 
@@ -297,8 +299,10 @@ class retrieveManager
       $connection->begin_transaction();
 
       // Update leltar
-      $stmt = $connection->prepare("UPDATE `leltar` SET `Status`=$status, `RentBy`=$RentBy WHERE `UID`=?;");
+      $stmt = $connection->prepare("UPDATE `leltar` SET `Status`=$status, `RentBy`=$RentBy, `isPlanned`=? WHERE `UID`=?;");
       foreach ($retrieveItems as $item) {
+        
+
         $stmt->bind_param("s", $item['uid']);
         $stmt->execute();
       }
@@ -376,6 +380,9 @@ class itemDataManager
 
   static function startPlannedTakeout($eventID)
   {
+    date_default_timezone_set('Europe/Budapest');
+    $currDate = date("Y/m/d H:i:s");
+
     $sql = "SELECT * FROM takeoutPlanner WHERE ID=" . $eventID;
     //Get a new database connection
     $connection = Database::runQuery_mysqli();
@@ -386,12 +393,18 @@ class itemDataManager
       return 403;
     }
 
-    $sql = "UPDATE takeoutPlanner SET eventState=1 WHERE ID=" . $eventID;
-    $connection->query($sql);
+    $acknowledged = in_array("admin", $_SESSION['groups']) ? 1 : 0;
+    $ackBy = in_array("admin", $_SESSION['groups']) ? $_SESSION['UserUserName'] : NULL;
 
     // Update takelog
-    $sql = "UPDATE takelog SET Event='OUT' WHERE ID=" . $result['takelogID'];
+    $sql = "INSERT INTO takelog (`ID`, `Date`, `UserID`, `Items`, `Event`,`Acknowledged`,`ACKBY`) 
+          VALUES (NULL, '$currDate', " . $result['UserID'] . ", '" . $result['Items'] . "', 'OUT', $acknowledged, '$ackBy')";
     $connection->query($sql);
+    $takelogID = $connection->insert_id;
+
+    $sql = "UPDATE takeoutPlanner SET eventState=1, takelogID=$takelogID WHERE ID=" . $eventID;
+    $connection->query($sql);
+
 
     // Change every item as taken in the database
     $items = json_decode($result['Items'], true);
@@ -450,14 +463,13 @@ class itemDataManager
     if ($result['UserID'] != $_SESSION['userId'] && !in_array("admin", $_SESSION['groups'])) {
       return 403;
     }
+    // Check if deleting is aviavable
+    if ($result['eventState'] == 1 || $result['eventState'] == 2) {
+      return 409;
+    }
 
     // If the items have been taken out or already returned, dont delete the event
     if ($result['eventState'] != 1 && $result['eventState'] != 2) {
-
-      // Delete from takelog
-      $sql = "DELETE FROM takelog WHERE ID=" . $result['takelogID'] . ";";
-      $connection->query($sql);
-
 
       // Change every item as taken in the database
       $items = json_decode($result['Items'], true);

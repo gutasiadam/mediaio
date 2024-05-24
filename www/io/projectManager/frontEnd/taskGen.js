@@ -298,7 +298,7 @@ async function openTask(TaskId, projectID) {
 
     // Fetch task
     const task = JSON.parse(await fetchTask(null, TaskId));
-    console.log(task);
+    //console.log(task);
     if (task == 403) {
         noAccessToast();
         return;
