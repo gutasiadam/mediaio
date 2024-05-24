@@ -11,8 +11,8 @@
     
 
     if (isset($_POST['login-submit']) ){
-        $userName = $_POST['useremail'];
-        $password = $_POST['pwd'];
+        //$userName = $_POST['useremail'];
+        //$password = $_POST['pwd'];
         $c=new Core();
         $c->loginUser($_POST);
     }

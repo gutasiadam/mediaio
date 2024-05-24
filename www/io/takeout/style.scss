@@ -303,6 +303,9 @@
         text-decoration: none;
         color: inherit;
     }
+
+    margin-left: 10px;
+    margin-right: 10px;
 }
 
 .fc-scroller {
@@ -326,4 +329,28 @@
 
 .fc-daygrid-event-harness {
     cursor: pointer;
+}
+
+#plannedEventsItems {
+    margin-left: 10px;
+    max-height: 300px;
+    height: 100%;
+    overflow: auto;
+
+    &::-webkit-scrollbar-track {
+        background: rgb(255, 255, 255);
+        /* color of the tracking area */
+    }
+
+    &::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+        /* width of the entire scrollbar */
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background-color: rgb(179, 179, 179);
+        /* color of the scroll thumb */
+        border-radius: 20px;
+    }
 }

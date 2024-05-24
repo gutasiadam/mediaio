@@ -117,8 +117,8 @@ error_reporting(E_ALL ^ E_NOTICE);
                                 </li>
                                 <li>
                                     <div class="dropdown-item">
-                                        <input class="form-check-input" type="checkbox" autocomplete="off"
-                                            id="show_unavailable">
+                                        <input class="form-check-input filterCheckbox" type="checkbox" autocomplete="off"
+                                            id="show_unavailable" data-filter="">
                                         <label class="form-check-label" for="show_unavailable">Csak elérhető</label>
                                     </div>
                                 </li>

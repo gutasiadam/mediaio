@@ -118,7 +118,7 @@ include ("header.php");
 
     <?php endif;
     if (in_array("system", $_SESSION["groups"]) or in_array("teacher", $_SESSION["groups"])): ?>
-      <tr>
+      <!-- <tr>
         <td>
           <form action="../budget/">
             <button class="btn btn-info w-100" disabled>Költségvetés <i class="fas fa-coins"></i></button>
@@ -131,7 +131,7 @@ include ("header.php");
             <button class="btn btn-success w-100" disabled>Pontszámok <i class="fas fa-calculator"></i></button>
           </form>
         </td>
-      </tr>
+      </tr> -->
     <?php endif;
     if (in_array("system", $_SESSION["groups"])): ?>
       <tr>

@@ -106,7 +106,7 @@
 <!-- plannedEventsModal -->
 <div class="modal fade" id="plannedEventsModal" tabindex="-1" role="dialog" aria-labelledby="plannedEventsModalLabel"
     aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable" role="document">
+    <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="plannedEventsModalLabel">Elvitel adatai</h5>
@@ -117,17 +117,12 @@
                 <div class="mb-2">
                     <label class="form-label" id="plannedEventsDescription"></label>
                 </div>
-                <label class="form-label">Idősáv:</label>
-                <div class="input-group mb-2">
-                    <span class="input-group-text">Elvitel időpontja:</span>
-                    <input type="date" min="<?php echo date('Y-m-d'); ?>" class="form-control" id="startDateSettings">
+                <div id="timeRangeEdit">
+                    <!--- Time range -->
                 </div>
-                <div class="input-group mb-3">
-                    <span class="input-group-text">Tervezett visszahozás:</span>
-                    <input type="date" min="<?php echo date('Y-m-d'); ?>" class="form-control" id="endDateSettings">
-                </div>
-                <div>
-                    <label class="form-label">Tárgyak:</label>
+                <div class="d-flex align-items-center justify-content-between">
+                    <label>Tárgyak:</label>
+                    <button class="btn btn-sm" id="editItems" style=""><i class="fas fa-pen"></i></button>
                 </div>
                 <div id="plannedEventsItems"></div>
                 <div id="plannedEventsLoading" class="spinner-grow text-secondary" role="status"></div>

@@ -67,7 +67,7 @@ class ProjectMailer
         self::sendMail($email, $subject, $message);
     }
 
-    public static function sendProjectDeadlineMailToAll($project_id)
+    /* public static function sendProjectDeadlineMailToAll($project_id)
     {
         $connection = Database::runQuery_mysqli(self::$schema);
 
@@ -109,6 +109,6 @@ class ProjectMailer
         }
 
         $connection->close();
-    }
+    } */
 
 }

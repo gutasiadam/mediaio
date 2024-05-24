@@ -45,14 +45,6 @@ $(document).ready(function () {
         });
     });
 
-    // Add event listener to only show unavailable items checkbox
-    const showUnavailableCheckbox = document.getElementById("show_unavailable");
-
-    showUnavailableCheckbox.addEventListener("change", function () {
-        searchInput.dispatchEvent(new Event("input"));
-    });
-
-
     // Add event listeners to filter checkboxes and their divs
     const holderDivs = document.querySelectorAll(".dropdown-item");
 
@@ -80,7 +72,7 @@ async function loadItems() {
         }
     }));
 
-    console.log(response);
+    //console.log(response);
 
     //Get userinfo
 
@@ -221,7 +213,7 @@ function addItemCard(item) {
 
     const card = document.createElement("div");
     card.classList.add("card", "mb-2", "selected-card");
-    item.Status == 3 ? card.classList.add("planned-card") : item.Status == 0 || item.Status == 2 ? card.classList.add("taken-card") : null;
+    item.isPlanned ? card.classList.add("planned-card") : item.Status == 0 || item.Status == 2 ? card.classList.add("taken-card") : null;
     card.id = `selected-${item.UID}`;
 
     const cardBody = document.createElement("div");

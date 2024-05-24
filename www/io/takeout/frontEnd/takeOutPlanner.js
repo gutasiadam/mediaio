@@ -47,6 +47,9 @@ async function loadTakeOutPlanner() {
 
         // other options...
         eventDidMount: function (info) {
+            if (screen.width < 768) {
+                return;
+            }
             var tooltip = new bootstrap.Tooltip(info.el, {
                 title: info.event.extendedProps.Description,
                 placement: 'top',
@@ -137,7 +140,13 @@ async function openEventModal(info) {
     $('#plannedEventsModal').modal('show');
 
     const eventDescription = document.getElementById('plannedEventsDescription');
-    eventDescription.innerHTML = info.event.extendedProps.Description;
+    eventDescription.innerHTML = info.event.extendedProps.Description == "" ? "<i>Nincs leírás</i>" : info.event.extendedProps.Description;
+
+    // Time range
+
+    createTimeRange(info.event.start, info.event.end, info.event.extendedProps.eventState);
+
+    //____________________________________________________
 
     const eventItems = document.getElementById('plannedEventsItems');
     eventItems.innerHTML = "";
@@ -210,6 +219,94 @@ async function openEventModal(info) {
     spinner.style.display = "none";
 }
 
+function createTimeRange(start, end, eventState) {
+    const timeRangeEdit = document.getElementById('timeRangeEdit'); // Container
+    timeRangeEdit.innerHTML = "";
+
+    const headerDiv = document.createElement('div');
+    headerDiv.className = 'd-flex justify-content-between';
+
+    const label = document.createElement('label');
+    label.className = 'form-label';
+    label.textContent = 'Idősáv:';
+    headerDiv.appendChild(label);
+
+    timeRangeEdit.appendChild(headerDiv);
+
+    let startDate = new Date(start);
+    let endDate = new Date(end);
+    if (eventState != 0) {
+        let formattedStart = `${(startDate.getMonth() + 1).toString().padStart(2, '0')}.${startDate.getDate()} ${(startDate.getHours()).toString().padStart(2, '0')}:${startDate.getMinutes() < 10 ? '0' : ''}${startDate.getMinutes()}`;
+        let formattedEnd = `${(endDate.getMonth() + 1).toString().padStart(2, '0')}.${endDate.getDate()} ${(endDate.getHours()).toString().padStart(2, '0')}:${endDate.getMinutes() < 10 ? '0' : ''}${endDate.getMinutes()}`;
+
+        // Create a p element
+        const timeRange = document.createElement('p');
+        timeRange.textContent = `${formattedStart} - ${formattedEnd}`;
+        timeRangeEdit.appendChild(timeRange);
+        return;
+    }
+
+    const button = document.createElement('button');
+    button.className = 'btn btn-sm';
+    button.onclick = function () {
+        console.log("Edit time range");
+    }
+
+    const icon = document.createElement('i');
+    icon.className = 'fas fa-pen';
+    button.appendChild(icon);
+    headerDiv.appendChild(button);
+
+    const startDateGroup = document.createElement('div');
+    startDateGroup.className = 'input-group mb-2';
+
+    const startDateLabel = document.createElement('span');
+    startDateLabel.className = 'input-group-text';
+    startDateLabel.textContent = 'Elvitel időpontja:';
+
+    const startDateInput = document.createElement('input');
+    startDateInput.type = 'datetime-local';
+    startDateInput.min = new Date().toISOString().split('T')[0];
+    startDateInput.className = 'form-control';
+    startDateInput.id = 'startDateSettings';
+    startDateInput.disabled = true; // IN DEVELOPMENT
+    // Add "startDate" in the correct format
+    startDateInput.value = `${startDate.getFullYear()}-${(startDate.getMonth() + 1).toString().padStart(2, '0')}-${startDate.getDate().toString().padStart(2, '0')}T${startDate.getHours().toString().padStart(2, '0')}:${startDate.getMinutes().toString().padStart(2, '0')}`;
+
+    startDateGroup.appendChild(startDateLabel);
+    startDateGroup.appendChild(startDateInput);
+
+    const endDateGroup = document.createElement('div');
+    endDateGroup.className = 'input-group mb-3';
+
+    const endDateLabel = document.createElement('span');
+    endDateLabel.className = 'input-group-text';
+    endDateLabel.textContent = 'Tervezett visszahozás:';
+
+    const endDateInput = document.createElement('input');
+    endDateInput.type = 'datetime-local';
+    endDateInput.min = new Date().toISOString().split('T')[0];
+    endDateInput.className = 'form-control';
+    endDateInput.id = 'endDateSettings';
+    endDateInput.disabled = true; // IN DEVELOPMENT
+    // Add "endDate" in the correct format
+    endDateInput.value = `${endDate.getFullYear()}-${(endDate.getMonth() + 1).toString().padStart(2, '0')}-${endDate.getDate().toString().padStart(2, '0')}T${endDate.getHours().toString().padStart(2, '0')}:${endDate.getMinutes().toString().padStart(2, '0')}`;
+
+    endDateGroup.appendChild(endDateLabel);
+    endDateGroup.appendChild(endDateInput);
+
+    timeRangeEdit.appendChild(startDateGroup);
+    timeRangeEdit.appendChild(endDateGroup);
+
+}
+
+async function editTimeRange() {
+    // IN DEVELOPMENT
+}
+
+async function editItems() {
+    // IN DEVELOPMENT
+}
 
 async function deleteEvent(eventId) {
 

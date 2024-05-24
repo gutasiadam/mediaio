@@ -95,6 +95,10 @@ class takeOutManager
         $takelogID = 0;
       }
 
+      // Prevent XSS attacks by html special characters
+      $plannedData['Name'] = htmlspecialchars($plannedData['Name']);
+      $plannedData['Desc'] = htmlspecialchars($plannedData['Desc']);
+
       // TAKEOUTPLANNER
       $sql = "INSERT INTO takeoutPlanner (`ID`, `Name`, `Description`, `UserID`, `Items`, `takelogID`, `StartTime`, `ReturnTime`, `eventState`) 
               VALUES (NULL, '" . $plannedData['Name'] . "', '" . $plannedData['Desc'] . "', '" . $_SESSION['userId'] . "', '" . $takeoutItems . "', $takelogID, '" . $plannedData['StartingDate'] . "', '" . $plannedData['EndDate'] . "', $eventState)";
@@ -274,18 +278,9 @@ class retrieveManager
   */
   static function stageRetrieve()
   {
-    //Accesses post and Session Data.
-    //CHECK if sesison data is empty!
-    $userName = $_SESSION['UserUserName'];
-    if (empty($userName)) {
-      return 400; // Session data is empty (e.g User is not loggged in.)
-    }
     date_default_timezone_set('Europe/Budapest');
     $currDate = date("Y/m/d H:i:s");
     $retrieveItems = json_decode($_POST['data'], true);
-
-    //Convert data to JSON
-    $dataJSON = json_encode($retrieveItems);
 
     // Database init  - create a mysqli object
     $connection = Database::runQuery_mysqli();
@@ -298,14 +293,38 @@ class retrieveManager
       // Start transaction
       $connection->begin_transaction();
 
+      // Get the uids from retrieveItems
+      $uids = array_map(function ($item) {
+        return $item['uid'];
+      }, $retrieveItems);
+
+      // Convert the uids to a string for the SQL query
+      $uids_str = implode(',', array_map('intval', $uids));
+
+      // Get the planned takeouts that are in retrieveItems
+      $sql = "SELECT * FROM takeoutPlanner WHERE eventState=0 AND Items IN ($uids_str)";
+      $result = $connection->query($sql);
+      $plannedTakeouts = $result->fetch_all(MYSQLI_ASSOC);
+
+      // Convert the items from JSON to arrays
+      $plannedTakeouts = array_map(function ($item) {
+        return json_decode($item['Items'], true);
+      }, $plannedTakeouts);
+
+      // Flatten the array
+      $plannedTakeouts = array_merge(...$plannedTakeouts);
+
       // Update leltar
       $stmt = $connection->prepare("UPDATE `leltar` SET `Status`=$status, `RentBy`=$RentBy, `isPlanned`=? WHERE `UID`=?;");
       foreach ($retrieveItems as $item) {
-        
-
-        $stmt->bind_param("s", $item['uid']);
+        // Check if the item is in the planned takeouts
+        $isPlanned = in_array($item['uid'], array_column($plannedTakeouts, 'uid')) ? 1 : 0;
+        $stmt->bind_param("is", $isPlanned, $item['uid']);
         $stmt->execute();
       }
+
+      //Convert data to JSON
+      $dataJSON = json_encode($retrieveItems);
 
       // Insert into takelog
       $stmt = $connection->prepare("INSERT INTO takelog VALUES (NULL, ?, ?, ?, 'IN', ?, ?);");
@@ -313,8 +332,10 @@ class retrieveManager
       $stmt->execute();
 
       // Update takeoutPlanner table
-      $sql = "SELECT * FROM takeoutPlanner WHERE eventState=1 AND UserID=" . $_SESSION['userId'];
-      $result = $connection->query($sql);
+      $stmt = $connection->prepare("SELECT * FROM takeoutPlanner WHERE eventState=1 AND UserID=?");
+      $stmt->bind_param("s", $_SESSION['userId']);
+      $stmt->execute();
+      $result = $stmt->get_result();
 
       if ($result->num_rows > 0) { // For safety reasons
         $rows = $result->fetch_all(MYSQLI_ASSOC);
@@ -328,13 +349,18 @@ class retrieveManager
           }, $items);
 
           // Check if all the items are returned
-          $sql = "SELECT * FROM leltar WHERE UID IN (" . implode(",", $items) . ") AND Status=0 AND RentBy=" . $_SESSION['userId'];
-          $result = $connection->query($sql);
-
-          if ($result->num_rows == 0) {
-            $sql = "UPDATE takeoutPlanner SET eventState=2 WHERE ID=" . $row['ID'];
-            $connection->query($sql);
-          }
+          $items_str = implode(",", $items);
+          $sql = "UPDATE takeoutPlanner 
+              SET eventState=2 
+              WHERE ID='{$row['ID']}' 
+              AND (
+                  SELECT COUNT(*) 
+                  FROM leltar 
+                  WHERE UID IN ($items_str) 
+                  AND Status=0 
+                  AND RentBy='{$_SESSION['userId']}'
+              ) = 0";
+          $connection->query($sql);
         }
       }
 
@@ -356,7 +382,6 @@ class itemDataManager
 {
 
   // TAKEOUT PLANNING FUNCTIONS ---------------------------
-
 
   static function getPlannedTakeouts()
   {

@@ -183,10 +183,18 @@ class Core
     }
     function logoutUser()
     {
-        Accounting::logEvent($_SESSION['userId'], "logout");
+        // Check if userId is set in session
+        if (isset($_SESSION['userId'])) {
+            Accounting::logEvent($_SESSION['userId'], "logout");
+        }
+        // Use output buffering to prevent headers already sent warning
+        ob_start();
+
         session_unset();
         session_destroy();
+
         header("Location: ../index.php?logout=success");
+        ob_end_flush(); // Send the buffer output and turn off output buffering
     }
     function changePassword($postData)
     {
