@@ -20,7 +20,7 @@ function generateProjects(project, mobile = false) {
 
             await generateNewProjectButton(mobile);
         } catch (error) {
-            console.error("Error generating projects:", error);
+            console.error(error);
         }
         resolve();
     });

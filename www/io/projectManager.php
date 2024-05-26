@@ -1,15 +1,14 @@
 <?php
 namespace Mediaio;
 
-require_once __DIR__ . '/Database.php';
-require_once __DIR__ . '/projectMailer.php';
+require_once 'Database.php';
+require_once 'projectMailer.php';
 require_once __DIR__ . '/projectManager/upload-handler.php';
 
 use Mediaio\Database;
-use Mediaio\ProjectMailer;
 use Mediaio\projectPictureManager;
 
-error_reporting(E_ERROR | E_PARSE);
+//error_reporting(E_ERROR | E_PARSE);
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -567,6 +566,7 @@ class projectManager
 
     static function getTaskMembers()
     {
+
         $projectId = $_POST['proj_id'];
         $taskId = $_POST['task_id'];
 
@@ -588,8 +588,7 @@ class projectManager
         });
 
         if ($_POST['mode'] == "getTaskMembers") {
-            echo (json_encode($resultItems));
-            exit();
+            return json_encode($resultItems);
         }
         return $resultItems;
     }
@@ -608,14 +607,13 @@ class projectManager
             if ($row == null) {
                 $responseJSON['filled'] = false;
                 $taskMembers = self::getTaskMembers();
-
                 // If the task has members
                 if ($taskMembers != null) {
 
                     // Check if the user is a member of the task
                     $taskMembers = array_map(function ($item) {
                         if ($item['assignedToTask'] == 1) {
-                            return intval($item['UserId']);
+                            return intval($item['UserID']);
                         }
                     }, $taskMembers);
 
@@ -871,5 +869,5 @@ if (isset($_POST['mode'])) {
             echo projectManager::saveNASPath($_POST['path'], $_POST['projectID']);
             break;
     }
-    exit();
+    
 }

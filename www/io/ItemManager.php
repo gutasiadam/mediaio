@@ -8,10 +8,12 @@
 namespace Mediaio;
 
 require_once __DIR__ . '/Database.php';
-require_once __DIR__ . '/Core.php';
 
-use Mediaio\Core;
 use Mediaio\Database;
+
+if (session_status() === PHP_SESSION_NONE) {
+  session_start();
+}
 
 
 class takeOutManager
@@ -392,10 +394,7 @@ class itemDataManager
     $stmt->execute();
     $result = $stmt->get_result();
     $rows = array();
-    $rows['events'] = array();
-    while ($row = $result->fetch_assoc()) {
-      $rows['events'][] = $row;
-    }
+    $rows['events'] = $result->fetch_all(MYSQLI_ASSOC);
     $rows['currentUser'] = $_SESSION['userId'];
     $rows['isAdmin'] = in_array("admin", $_SESSION['groups']);
     $result = json_encode($rows);
@@ -461,7 +460,7 @@ class itemDataManager
     }
 
     // Check for any conflicts with the planned takeouts
-    $sql = "SELECT * FROM takeoutPlanner WHERE eventState=0";
+    $sql = "SELECT * FROM takeoutPlanner WHERE eventState=0 AND ID!=" . $eventID;
     $result = $connection->query($sql);
     $rows = $result->fetch_all(MYSQLI_ASSOC);
 
@@ -489,7 +488,6 @@ class itemDataManager
         }
       }
     }
-
 
     $sql = "UPDATE takeoutPlanner SET StartTime='$newStartTime', ReturnTime='$newEndTime' WHERE ID=" . $eventID;
     $connection->query($sql);
@@ -912,6 +910,9 @@ if (isset($_POST['mode'])) {
   }
   if ($_POST['mode'] == 'startPlannedTakeout') {
     echo itemDataManager::startPlannedTakeout($_POST['eventID']);
+  }
+  if ($_POST['mode'] == 'changeTakeoutTime') {
+    echo itemDataManager::changeTakeoutTime($_POST['eventID'], $_POST['startTime'], $_POST['endTime']);
   }
 
   if ($_POST['mode'] == 'deletePlannedTakeout') {

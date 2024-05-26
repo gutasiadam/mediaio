@@ -76,7 +76,6 @@ async function getTakeOutEvents() {
             mode: "getPlannedTakeouts"
         }
     }));
-
     const users = JSON.parse(await $.ajax({
         url: "../../Accounting.php",
         type: "POST",
@@ -98,7 +97,11 @@ async function getTakeOutEvents() {
     resEvents.forEach(element => {
 
         let isAllDay = false;
-        if (element.StartTime.substring(11, 16) == "00:00" && element.ReturnTime.substring(11, 16) == "00:00") {
+        var startTime = new Date(element.StartTime);
+        var returnTime = new Date(element.ReturnTime);
+        var durationInHours = (returnTime - startTime) / (1000 * 60 * 60);
+
+        if (durationInHours >= 24) {
             isAllDay = true;
         }
 
@@ -115,6 +118,7 @@ async function getTakeOutEvents() {
             allDay: isAllDay,
             color: color,
             extendedProps: {
+                originalTimes: { "start": element.StartTime, "end": element.ReturnTime },
                 Description: element.Description,
                 itemsList: element.Items,
                 isAdmin: response.isAdmin,
@@ -128,7 +132,6 @@ async function getTakeOutEvents() {
     return events;
 
 }
-
 
 // Open event modal
 
@@ -144,10 +147,15 @@ async function openEventModal(info) {
     eventDescription.innerHTML = info.event.extendedProps.Description == "" ? "<i>Nincs leírás</i>" : info.event.extendedProps.Description;
 
     // Time range
-
-    createTimeRange(info.event.start, info.event.end, info.event.extendedProps.eventState);
+    createTimeRange(info.event.id, info.event.extendedProps.originalTimes.start, info.event.extendedProps.originalTimes.end, info.event.extendedProps.eventState);
 
     //____________________________________________________
+
+    if (info.event.extendedProps.eventState == 0) {
+        document.getElementById('editItems').style.display = "block";
+    } else {
+        document.getElementById('editItems').style.display = "none";
+    }
 
     const eventItems = document.getElementById('plannedEventsItems');
     eventItems.innerHTML = "";
@@ -225,7 +233,7 @@ async function openEventModal(info) {
     spinner.style.display = "none";
 }
 
-function createTimeRange(start, end, eventState) {
+function createTimeRange(eventID, start, end, eventState) {
     const timeRangeEdit = document.getElementById('timeRangeEdit'); // Container
     timeRangeEdit.innerHTML = "";
 
@@ -239,74 +247,99 @@ function createTimeRange(start, end, eventState) {
 
     timeRangeEdit.appendChild(headerDiv);
 
+
+    const mainDiv = document.createElement('div');
+    mainDiv.className = 'input-group mb-2';
+    mainDiv.id = 'timeRangeMain';
+    timeRangeEdit.appendChild(mainDiv);
+
     let startDate = new Date(start);
     let endDate = new Date(end);
-    if (eventState != 0) {
-        let formattedStart = `${(startDate.getMonth() + 1).toString().padStart(2, '0')}.${startDate.getDate()} ${(startDate.getHours()).toString().padStart(2, '0')}:${startDate.getMinutes() < 10 ? '0' : ''}${startDate.getMinutes()}`;
-        let formattedEnd = `${(endDate.getMonth() + 1).toString().padStart(2, '0')}.${endDate.getDate()} ${(endDate.getHours()).toString().padStart(2, '0')}:${endDate.getMinutes() < 10 ? '0' : ''}${endDate.getMinutes()}`;
 
-        // Create a p element
-        const timeRange = document.createElement('p');
-        timeRange.textContent = `${formattedStart} - ${formattedEnd}`;
-        timeRangeEdit.appendChild(timeRange);
-        return;
+    let formattedStart = `${(startDate.getMonth() + 1).toString().padStart(2, '0')}.${startDate.getDate()} ${(startDate.getHours()).toString().padStart(2, '0')}:${startDate.getMinutes() < 10 ? '0' : ''}${startDate.getMinutes()}`;
+    let formattedEnd = `${(endDate.getMonth() + 1).toString().padStart(2, '0')}.${endDate.getDate()} ${(endDate.getHours()).toString().padStart(2, '0')}:${endDate.getMinutes() < 10 ? '0' : ''}${endDate.getMinutes()}`;
+
+    // Create a p element
+    const timeRange = document.createElement('p');
+    timeRange.textContent = `${formattedStart} - ${formattedEnd}`;
+    mainDiv.appendChild(timeRange);
+
+
+    // Edit button
+    if (eventState == 0) {
+        const button = document.createElement('button');
+        button.className = 'btn btn-sm';
+        button.onclick = function () {
+            openTimeRangeEditor(eventID, startDate, endDate);
+        };
+
+        const icon = document.createElement('i');
+        icon.className = 'fas fa-pen';
+        button.appendChild(icon);
+        headerDiv.appendChild(button);
     }
-
-    const button = document.createElement('button');
-    button.className = 'btn btn-sm';
-    button.onclick = editTimeRange;
-
-    const icon = document.createElement('i');
-    icon.className = 'fas fa-pen';
-    button.appendChild(icon);
-    headerDiv.appendChild(button);
-
-    const startDateGroup = document.createElement('div');
-    startDateGroup.className = 'input-group mb-2';
-
-    const startDateLabel = document.createElement('span');
-    startDateLabel.className = 'input-group-text';
-    startDateLabel.textContent = 'Elvitel időpontja:';
-
-    const startDateInput = document.createElement('input');
-    startDateInput.type = 'datetime-local';
-    startDateInput.min = new Date().toISOString().split('T')[0];
-    startDateInput.className = 'form-control';
-    startDateInput.id = 'startDateSettings';
-    startDateInput.disabled = true; // IN DEVELOPMENT
-    // Add "startDate" in the correct format
-    startDateInput.value = `${startDate.getFullYear()}-${(startDate.getMonth() + 1).toString().padStart(2, '0')}-${startDate.getDate().toString().padStart(2, '0')}T${startDate.getHours().toString().padStart(2, '0')}:${startDate.getMinutes().toString().padStart(2, '0')}`;
-
-    startDateGroup.appendChild(startDateLabel);
-    startDateGroup.appendChild(startDateInput);
-
-    const endDateGroup = document.createElement('div');
-    endDateGroup.className = 'input-group mb-2';
-
-    const endDateLabel = document.createElement('span');
-    endDateLabel.className = 'input-group-text';
-    endDateLabel.textContent = 'Tervezett visszahozás:';
-
-    const endDateInput = document.createElement('input');
-    endDateInput.type = 'datetime-local';
-    endDateInput.min = new Date().toISOString().split('T')[0];
-    endDateInput.className = 'form-control';
-    endDateInput.id = 'endDateSettings';
-    endDateInput.disabled = true; // IN DEVELOPMENT
-    // Add "endDate" in the correct format
-    endDateInput.value = `${endDate.getFullYear()}-${(endDate.getMonth() + 1).toString().padStart(2, '0')}-${endDate.getDate().toString().padStart(2, '0')}T${endDate.getHours().toString().padStart(2, '0')}:${endDate.getMinutes().toString().padStart(2, '0')}`;
-
-    endDateGroup.appendChild(endDateLabel);
-    endDateGroup.appendChild(endDateInput);
-
-    timeRangeEdit.appendChild(startDateGroup);
-    timeRangeEdit.appendChild(endDateGroup);
+    //____________________________________________________
 
 }
 
-async function editTimeRange() {
-    // IN DEVELOPMENT
-    simpleToast("Még nem elérhető", "info");
+let timeRangeCalendar = null;
+
+function openTimeRangeEditor(eventID, startDate, endDate) {
+    const container = document.getElementById('timeRangeMain');
+    container.innerHTML = "";
+
+    const timeRangeInput = document.createElement('input');
+    timeRangeInput.id = 'timeRangeInput';
+    timeRangeInput.className = 'form-control';
+    timeRangeInput.type = 'text';
+    container.appendChild(timeRangeInput);
+
+    timeRangeCalendar = loadPicker("#timeRangeInput", startDate, endDate);
+
+    const saveButton = document.createElement('button');
+    saveButton.className = 'btn btn-success';
+    saveButton.innerHTML = `<i class="fas fa-save"></i>`;
+    saveButton.onclick = function () {
+        editTimeRange(eventID);
+    };
+    container.appendChild(saveButton);
+}
+
+async function editTimeRange(eventID) {
+    let startTime = timeRangeCalendar.getStartDate();
+    let endTime = timeRangeCalendar.getEndDate();
+
+
+    // Format the dates in 'YYYY-MM-DD HH:MM:SS' format
+    function formatDateTime(date) {
+        let d = new Date(date);
+        let timezoneOffset = d.getTimezoneOffset() * 60000; // Get timezone offset in milliseconds
+        let localDate = new Date(d.getTime() - timezoneOffset); // Adjust the date to local timezone
+        return localDate.toISOString().slice(0, 19).replace('T', ' ');
+    }
+
+    const response = JSON.parse(await $.ajax({
+        url: "../../ItemManager.php",
+        method: "POST",
+        data: {
+            mode: "changeTakeoutTime",
+            eventID: eventID,
+            startTime: formatDateTime(startTime),
+            endTime: formatDateTime(endTime),
+        }
+    }));
+
+    if (response == 200) {
+        successToast("Sikeres módosítás");
+        createTimeRange(eventID, startTime, endTime, 0);
+        document.getElementById('prepared-tab').click(); // Refresh the calendar
+    } else if (response == 409) {
+        errorToast("Az időpontok ütköznek");
+    }
+    else {
+        serverErrorToast();
+    }
+
 }
 
 async function editItems() {

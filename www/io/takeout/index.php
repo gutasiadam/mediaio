@@ -117,8 +117,8 @@ error_reporting(E_ALL ^ E_NOTICE);
                                 </li>
                                 <li>
                                     <div class="dropdown-item">
-                                        <input class="form-check-input filterCheckbox" type="checkbox" autocomplete="off"
-                                            id="show_unavailable" data-filter="">
+                                        <input class="form-check-input filterCheckbox" type="checkbox"
+                                            autocomplete="off" id="show_unavailable" data-filter="">
                                         <label class="form-check-label" for="show_unavailable">Csak elérhető</label>
                                     </div>
                                 </li>
@@ -269,17 +269,17 @@ error_reporting(E_ALL ^ E_NOTICE);
 
         // Planned data
         const Name = document.getElementById("plannedName")?.value || "";
-        const StartingDate = document.getElementById("startingDate").value;
+
+        let StartingDate = picker.getStartDate();
 
         if (StartingDate == "") {
             errorToast("Nem adtál meg kezdési időpontot!");
             return;
         }
 
-        const EndDate = document.getElementById("endDate").value;
+        let EndDate = picker.getEndDate();
 
         if (EndDate == "") {
-            document.getElementById("endDate").focus();
             errorToast("Nem adtál meg visszahozás időpontot!");
             return;
         }
@@ -287,6 +287,18 @@ error_reporting(E_ALL ^ E_NOTICE);
             errorToast("A visszahozás időpontja nem lehet korábbi a kezdetinél!");
             return;
         }
+        // Format the dates in 'YYYY-MM-DD HH:MM:SS' format
+        StartingDate = formatDateTime(StartingDate);
+        EndDate = formatDateTime(EndDate);
+
+        function formatDateTime(date) {
+            let d = new Date(date);
+            let timezoneOffset = d.getTimezoneOffset() * 60000; // Get timezone offset in milliseconds
+            let localDate = new Date(d.getTime() - timezoneOffset); // Adjust the date to local timezone
+            return localDate.toISOString().slice(0, 19).replace('T', ' ');
+        }
+
+
         const Desc = document.getElementById("plannedDesc").value;
 
         const PlannedData = {

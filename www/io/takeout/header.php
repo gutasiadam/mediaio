@@ -32,6 +32,9 @@
   <script src="../utility/qr_scanner/html5-qrcode.min.js" type="text/javascript" defer></script>
   <script src="../utility/qr_scanner/io_qr_scanner.js" type="text/javascript" defer></script>
 
+  <script src="https://cdn.jsdelivr.net/npm/@easepick/bundle@1.2.1/dist/index.umd.min.js"></script>
+
+
 </head>
 <div class="UI_loading"><img class="loadingAnimation" src="../utility/mediaIO_loading_logo.gif"></div>
 

@@ -32,7 +32,7 @@
 <!-- takeoutSettingsModal Modal -->
 <div class="modal fade" id="takeoutSettingsModal" tabindex="-1" role="dialog"
     aria-labelledby="takeoutSettingsModal_Modal_Label" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="takeoutSettingsModal_Label">Elvitel beállítások</h5>
@@ -52,20 +52,8 @@
                 endif;
                 ?>
                 <div class="input-group mb-2">
-                    <span class="input-group-text"><span style='color: red;'>*</span>Elvitel időpontja:</span>
-                    <input type="date" min="<?php echo date('Y-m-d'); ?>" class="form-control" id="startingDate"
-                        value="<?php echo date('Y-m-d'); ?>" required>
-                </div>
-                <div class="input-group mb-2">
-                    <span class="input-group-text"><span style='color: red;'>*</span>Tervezett visszahozás:</span>
-                    <input type="date" min="<?php echo date('Y-m-d'); ?>" class="form-control" id="endDate" required>
-                </div>
-                <div class="input-group mb-3">
-                    <span class="input-group-text">Egész napos:</span>
-                    <div class="input-group-text">
-                        <input class="form-check-input mt-0" type="checkbox" id="isFullDay" checked>
-                    </div>
-                    <span class="input-group-text" style="font-style: italic;">(Naptárban jobban néz ki)</span>
+                    <span class="input-group-text"><span style='color: red;'>*</span>Tervezett időtartam:</span>
+                    <input class="form-control" type="text" id="datepicker" required />
                 </div>
                 <div class="input-group mb-3">
                     <span class="input-group-text">Megjegyzés:</span>
@@ -80,27 +68,6 @@
         </div>
     </div>
 </div>
-
-<script>
-    document.getElementById("isFullDay").addEventListener("change", function () {
-        const startingDate = document.getElementById("startingDate");
-        const endDate = document.getElementById("endDate");
-        const startDateValue = new Date(startingDate.value);
-        const endDateValue = new Date(endDate.value);
-        if (this.checked) {
-            startingDate.type = "date";
-            endDate.type = "date";
-            startingDate.value = startDateValue.toISOString().split('T')[0];
-            endDate.value = endDateValue.toISOString().split('T')[0];
-        } else {
-            //Convert to datetime
-            startingDate.type = "datetime-local";
-            endDate.type = "datetime-local";
-            startingDate.value = startDateValue.toISOString().split('T')[0] + "T" + startDateValue.toTimeString().split(' ')[0].substring(0, 5);
-            endDate.value = endDateValue.toISOString().split('T')[0] + "T" + endDateValue.toTimeString().split(' ')[0].substring(0, 5);
-        }
-    });
-</script>
 
 
 <!-- plannedEventsModal -->
@@ -122,7 +89,8 @@
                 </div>
                 <div class="d-flex align-items-center justify-content-between">
                     <b><label>Tárgyak:</label></b>
-                    <button class="btn btn-sm" id="editItems" onclick="editItems();" style=""><i class="fas fa-pen"></i></button>
+                    <button class="btn btn-sm" id="editItems" onclick="editItems();" style=""><i
+                            class="fas fa-pen"></i></button>
                 </div>
                 <div class="mb-3" id="plannedEventsItems"></div>
                 <div class="">

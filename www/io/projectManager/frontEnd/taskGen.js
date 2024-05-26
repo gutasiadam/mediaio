@@ -29,7 +29,7 @@ async function generateTasks(projectID, canEdit) {
 }
 
 async function createTask(task, projectID, canEdit) {
-    let uData = JSON.parse(await userTaskData(task.ID, 'card', projectID)); /////// TAKES A LOT OF TIME
+    let uData = JSON.parse(await userTaskData(task.ID, 'card', projectID));
     //console.log(uData);
     const taskCard = createTaskCard(task, projectID, canEdit);
     const taskHeader = createTaskHeader(task);
@@ -329,10 +329,8 @@ async function openTask(TaskId, projectID) {
             break;
     }
 
-    console.time("fetchTaskMembers");
     // Get task assigned users
-    let taskMembers = JSON.parse(await fetchTaskMembers(TaskId, projectID)); ///// TAKES A LOT OF TIME
-
+    const taskMembers = JSON.parse(await fetchTaskMembers(TaskId, projectID));
     const taskMembersHolder = document.getElementById("taskMembers");
     taskMembersHolder.innerHTML = "<i>Adj hozzá tagokat a projekthez először!</i>";
 
@@ -359,7 +357,7 @@ async function openTask(TaskId, projectID) {
 
         taskMembersHolder.appendChild(fragment);
     }
-    console.timeEnd("fetchTaskMembers");
+
     // Get the task deadline
     const [date, time] = task.Deadline ? task.Deadline.split(" ").map((val, i) => i ? val.split(':').slice(0, 2).join(':') : val) : ["", ""];
 

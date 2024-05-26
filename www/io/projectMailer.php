@@ -2,7 +2,6 @@
 namespace Mediaio;
 
 require_once __DIR__ . '/Database.php';
-require_once __DIR__ . '/Mailer.php';
 use Mediaio\Database;
 
 error_reporting(E_ERROR | E_PARSE);
@@ -17,6 +16,7 @@ class ProjectMailer
     private static $schema = "am_projects";
     public static function sendMail($to, $subject, $message)
     {
+        require_once __DIR__ . '/Mailer.php';
         MailService::sendContactMail($to, $subject, $message);
     }
 

@@ -1,3 +1,5 @@
+let picker = null;
+
 
 $(document).ready(function () {
     // Search
@@ -55,9 +57,50 @@ $(document).ready(function () {
             searchInput.dispatchEvent(new Event("input"));
         });
     });
+
+    picker = loadPicker("#datepicker");
 });
 
+function loadPicker(calendarId, startDate = new Date(), endDate = null) {
+    if (endDate == null) {
+        endDate = new Date();
+        endDate.setHours(endDate.getHours() + 48);
+        endDate.setMinutes(0, 0, 0);
+    }
 
+    return new easepick.create({
+        element: calendarId,
+        css: [
+            "https://cdn.jsdelivr.net/npm/@easepick/bundle@1.2.1/dist/index.css",
+            // Include local css file
+            "calendarSelect.css"
+        ],
+        zIndex: 10,
+        autoApply: false,
+        format: 'YYYY-MM-DD HH:mm',
+        locale: {
+            cancel: 'Mégsem',
+            apply: 'Mehet',
+        },
+        lang: "hu",
+        TimePlugin: {
+            stepMinutes: 15,
+            stepSeconds: 60
+        },
+        LockPlugin: {
+            minDate: new Date(),
+        },
+        RangePlugin: {
+            startDate: startDate,
+            endDate: endDate,
+        },
+        plugins: [
+            "RangePlugin",
+            "TimePlugin",
+            "LockPlugin",
+        ]
+    });
+}
 
 async function loadItems() {
     const itemsList = document.getElementById("itemsList");
