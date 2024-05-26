@@ -29,13 +29,13 @@
     .itemCard {
         cursor: not-allowed;
         opacity: 0.5;
-        transition: all 0.2s;
+        transition: all 0.1s;
     }
 
     .selectable {
         cursor: pointer;
         opacity: 1;
-        transition: all 0.2s;
+        transition: all 0.1s;
     }
 
     @media (max-width: 575px) {

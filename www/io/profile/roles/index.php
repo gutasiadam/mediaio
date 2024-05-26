@@ -21,7 +21,7 @@ if (!in_array("system", $_SESSION["groups"])) {
 ?>
 
 <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-dark">
-  <a class="navbar-brand" href="index.php">
+  <a class="navbar-brand" href="../index.php">
     <img src="../../utility/logo2.png" height="50">
   </a>
   <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"

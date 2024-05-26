@@ -444,6 +444,105 @@ class itemDataManager
   }
 
 
+  static function changeTakeoutTime($eventID, $newStartTime, $newEndTime) // Not tested
+  {
+    $sql = "SELECT * FROM takeoutPlanner WHERE ID=" . $eventID . " AND eventState=0";
+    //Get a new database connection
+    $connection = Database::runQuery_mysqli();
+    $result = $connection->query($sql);
+    $result = $result->fetch_assoc();
+    if ($result == NULL) {
+      return 409;
+    }
+    $plannedItems = json_decode($result['Items'], true);
+
+    if ($result['UserID'] != $_SESSION['userId'] && !in_array("admin", $_SESSION['groups'])) {
+      return 403;
+    }
+
+    // Check for any conflicts with the planned takeouts
+    $sql = "SELECT * FROM takeoutPlanner WHERE eventState=0";
+    $result = $connection->query($sql);
+    $rows = $result->fetch_all(MYSQLI_ASSOC);
+
+    $plannedStart = strtotime($newStartTime);
+    $plannedEnd = strtotime($newEndTime);
+
+    foreach ($rows as $row) {
+      $items = json_decode($row['Items'], true);
+
+      $rangeStart = strtotime($row['StartTime']);
+      $rangeEnd = strtotime($row['ReturnTime']);
+
+      if ($row['eventState'] == 2 || $row['eventState'] == -1)
+        continue; // Skip if the event is already returned or disabled
+
+      // If the submitted time frame matches with any planned takeout
+      if (
+        ($plannedStart >= $rangeStart && $plannedStart < $rangeEnd) ||
+        ($plannedEnd > $rangeStart && $plannedEnd <= $rangeEnd)
+      ) {
+        // Check if there are any conflicts with the items
+        $conflict = array_intersect(array_column($items, 'uid'), array_column($plannedItems, 'uid'));
+        if (count($conflict) > 0) {
+          return 409;
+        }
+      }
+    }
+
+
+    $sql = "UPDATE takeoutPlanner SET StartTime='$newStartTime', ReturnTime='$newEndTime' WHERE ID=" . $eventID;
+    $connection->query($sql);
+    return 200;
+  }
+
+
+  static function changeItems($eventID, $newItems) // Not tested
+  {
+    $sql = "SELECT * FROM takeoutPlanner WHERE ID=" . $eventID . " AND eventState=0";
+    //Get a new database connection
+    $connection = Database::runQuery_mysqli();
+    $result = $connection->query($sql);
+    $result = $result->fetch_assoc();
+    if ($result == NULL) {
+      return 409;
+    }
+
+    if ($result['UserID'] != $_SESSION['userId'] && !in_array("admin", $_SESSION['groups'])) {
+      return 403;
+    }
+
+    $newItemsDecoded = json_decode($newItems, true);
+    // Escape special characters in the item names like "
+    foreach ($newItemsDecoded as &$item) {
+      $item['name'] = addslashes($item['name']);
+    }
+    $newItems = json_encode($newItemsDecoded, JSON_UNESCAPED_UNICODE);
+
+
+    // Check for any conflicts with the planned takeouts
+    $sql = "SELECT * FROM takeoutPlanner WHERE eventState=0";
+    $result = $connection->query($sql);
+    $rows = $result->fetch_all(MYSQLI_ASSOC);
+
+    foreach ($rows as $row) {
+      $items = json_decode($row['Items'], true);
+
+      if ($row['ID'] == $eventID)
+        continue;
+
+      $conflict = array_intersect(array_column($items, 'uid'), array_column($newItemsDecoded, 'uid'));
+      if (count($conflict) > 0) {
+        return 409;
+      }
+    }
+
+    $sql = "UPDATE takeoutPlanner SET Items='$newItems' WHERE ID=" . $eventID;
+    $connection->query($sql);
+    return 200;
+  }
+
+
   static function disableTakeout($eventID)
   {
     // Get details of the event
@@ -453,24 +552,23 @@ class itemDataManager
     $result = $connection->query($sql);
     $result = $result->fetch_assoc();
 
-    $userID = $result['UserID'];
-    $takelogID = $result['takelogID'];
-
     $sql = "UPDATE takeoutPlanner SET eventState=-1 WHERE ID=" . $eventID;
     $connection->query($sql);
 
     //Update leltar
-    $sql = "UPDATE `leltar` SET `Status`=1 WHERE `UID`=?";
+    $sql = "UPDATE `leltar` 
+    SET `isPlanned`=0 
+    WHERE `UID`=? 
+    AND NOT EXISTS (
+        SELECT 1 FROM `takeoutPlanner` 
+        WHERE `eventState`=0 
+        AND JSON_CONTAINS(`Items`, CONCAT('\"', ?, '\"'), '$'))";
+
     foreach (json_decode($result['Items'], true) as $item) {
       $stmt = $connection->prepare($sql);
-      $stmt->bind_param("s", $item['uid']);
+      $stmt->bind_param("ss", $item['uid'], $item['uid']);
       $stmt->execute();
     }
-    $connection->query($sql);
-
-    // Update takelog
-    $sql = "UPDATE takelog SET Event='DISABLED' WHERE ID=" . $takelogID;
-    $connection->query($sql);
 
     $connection->close();
     return 200;

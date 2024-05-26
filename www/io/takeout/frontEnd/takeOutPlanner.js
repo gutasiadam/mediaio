@@ -118,7 +118,7 @@ async function getTakeOutEvents() {
                 Description: element.Description,
                 itemsList: element.Items,
                 isAdmin: response.isAdmin,
-                ownerId: element.UserID,
+                owner: user,
                 currentUser: response.currentUser,
                 eventState: element.eventState
             },
@@ -139,6 +139,7 @@ async function openEventModal(info) {
     headerTitle.innerHTML = info.event.title;
     $('#plannedEventsModal').modal('show');
 
+
     const eventDescription = document.getElementById('plannedEventsDescription');
     eventDescription.innerHTML = info.event.extendedProps.Description == "" ? "<i>Nincs leírás</i>" : info.event.extendedProps.Description;
 
@@ -158,11 +159,16 @@ async function openEventModal(info) {
         eventItems.appendChild(item);
     });
 
+    // Owner label
+
+    const ownerLabel = document.getElementById('plannedEventOwner');
+    ownerLabel.innerHTML = `Tulajdonos: ${info.event.extendedProps.owner.lastName} ${info.event.extendedProps.owner.firstName}`;
+
 
     const footer = document.getElementById('plannedEventsFooter');
     footer.innerHTML = "";
 
-    let isOwner = info.event.extendedProps.ownerId == info.event.extendedProps.currentUser;
+    let isOwner = info.event.extendedProps.owner.idUsers == info.event.extendedProps.currentUser;
     let canStart = info.event.start.getTime() < new Date().getTime();
     // Add start button
     if (isOwner && canStart && info.event.extendedProps.eventState == 0) {
@@ -248,9 +254,7 @@ function createTimeRange(start, end, eventState) {
 
     const button = document.createElement('button');
     button.className = 'btn btn-sm';
-    button.onclick = function () {
-        console.log("Edit time range");
-    }
+    button.onclick = editTimeRange;
 
     const icon = document.createElement('i');
     icon.className = 'fas fa-pen';
@@ -277,7 +281,7 @@ function createTimeRange(start, end, eventState) {
     startDateGroup.appendChild(startDateInput);
 
     const endDateGroup = document.createElement('div');
-    endDateGroup.className = 'input-group mb-3';
+    endDateGroup.className = 'input-group mb-2';
 
     const endDateLabel = document.createElement('span');
     endDateLabel.className = 'input-group-text';
@@ -302,10 +306,12 @@ function createTimeRange(start, end, eventState) {
 
 async function editTimeRange() {
     // IN DEVELOPMENT
+    simpleToast("Még nem elérhető", "info");
 }
 
 async function editItems() {
     // IN DEVELOPMENT
+    simpleToast("Még nem elérhető", "info");
 }
 
 async function deleteEvent(eventId) {

@@ -121,10 +121,13 @@
                     <!--- Time range -->
                 </div>
                 <div class="d-flex align-items-center justify-content-between">
-                    <label>Tárgyak:</label>
-                    <button class="btn btn-sm" id="editItems" style=""><i class="fas fa-pen"></i></button>
+                    <b><label>Tárgyak:</label></b>
+                    <button class="btn btn-sm" id="editItems" onclick="editItems();" style=""><i class="fas fa-pen"></i></button>
                 </div>
-                <div id="plannedEventsItems"></div>
+                <div class="mb-3" id="plannedEventsItems"></div>
+                <div class="">
+                    <b><label class="" id="plannedEventOwner"></label></b>
+                </div>
                 <div id="plannedEventsLoading" class="spinner-grow text-secondary" role="status"></div>
             </div>
             <div class="modal-footer" id="plannedEventsFooter">
