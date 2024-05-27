@@ -726,7 +726,7 @@ class itemDataManager
 
     // Prepare the SQL query
     $sql = "SELECT leltar.*, COALESCE(leltar.RentBy, tp.UserID) as RentBy
-    FROM leltar
+    FROM leltars
     LEFT JOIN (
         SELECT tp1.Items, tp1.UserID, tp1.StartTime
         FROM takeoutPlanner tp1
