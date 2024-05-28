@@ -393,12 +393,17 @@ class itemDataManager
     $stmt = $connection->prepare($sql);
     $stmt->execute();
     $result = $stmt->get_result();
-    $rows = array();
-    $rows['events'] = $result->fetch_all(MYSQLI_ASSOC);
-    $rows['currentUser'] = $_SESSION['userId'];
-    $rows['isAdmin'] = in_array("admin", $_SESSION['groups']);
-    $result = json_encode($rows);
-    return $result;
+    if ($_POST['mode'] == 'getPlannedTakeouts') {
+      $rows = array();
+      $rows['events'] = $result->fetch_all(MYSQLI_ASSOC);
+      $rows['currentUser'] = $_SESSION['userId'];
+      $rows['isAdmin'] = in_array("admin", $_SESSION['groups']);
+      $result = json_encode($rows);
+      return $result;
+    } else {
+      $rows = $result->fetch_all(MYSQLI_ASSOC);
+      return $rows;
+    }
   }
 
 

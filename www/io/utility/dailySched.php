@@ -20,12 +20,11 @@ class DailySchedule
     static function plannedTakeoutReminder()
     {
         try {
-            $takeoutsJSON = itemDataManager::getPlannedTakeouts();
-            $takeouts = json_decode($takeoutsJSON, true);
-            $takeouts = $takeouts['events'];
+            $takeouts = itemDataManager::getPlannedTakeouts();
 
             foreach ($takeouts as $takeout) {
-                if ($takeout['eventState'] != 0) continue; // Skip if the takeout is already initiated
+                if ($takeout['eventState'] != 0)
+                    continue; // Skip if the takeout is already initiated
 
                 // Check if the takeout starts in less than 24 hours
                 $startTime = strtotime($takeout['StartTime']);
@@ -83,9 +82,7 @@ class DailySchedule
     static function notInitiatedTakeoutDisable()
     {
         try {
-            $takeoutsJSON = itemDataManager::getPlannedTakeouts();
-            $takeouts = json_decode($takeoutsJSON, true);
-            $takeouts = $takeouts['events'];
+            $takeouts = itemDataManager::getPlannedTakeouts();
 
             foreach ($takeouts as $takeout) {
                 // Check if the takeout is older than 24 hours
@@ -100,7 +97,7 @@ class DailySchedule
                     // TODO: Send an email to the user if needed
                 }
             }
-            echo 'Not initiated takeout disabled successfully!';
+            //echo 'Not initiated takeout disabled successfully!';
         } catch (\Exception $e) {
             // Log the error
             error_log($e->getMessage());
@@ -110,12 +107,12 @@ class DailySchedule
     static function takeoutEndReminder()
     {
         try {
-            $takeoutsJSON = itemDataManager::getPlannedTakeouts();
-            $takeouts = json_decode($takeoutsJSON, true);
-            $takeouts = $takeouts['events'];
+            $takeouts = itemDataManager::getPlannedTakeouts();
+            //$takeouts = json_decode($takeoutsJSON, true);
 
             foreach ($takeouts as $takeout) {
-                if ($takeout['eventState'] != 1) continue; // Skip if the takeout is not initiated
+                if ($takeout['eventState'] != 1)
+                    continue; // Skip if the takeout is not initiated
 
                 // Check if the takeout starts in less than 24 hours
                 $endTime = strtotime($takeout['ReturnTime']);
