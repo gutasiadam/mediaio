@@ -385,6 +385,52 @@ class itemDataManager
 
   // TAKEOUT PLANNING FUNCTIONS ---------------------------
 
+  //Update item attributes in the database
+  //item: JSON-encoded data
+  static function updateItemAttributes($item){
+    $item = json_decode($item,'true');
+
+  //Check if item data is invalid
+  if(($item['UID']=='') || ($item['Nev'])==''){
+    echo 500;
+    return;
+  }
+
+  //modify TakeRestrict: if it is null, set it to ''
+
+  if($item['TakeRestrict']==NULL){
+    $item['TakeRestrict']='';
+  }
+
+    $sql = "UPDATE leltar SET UID=?, Nev=?, Tipus=?, Category=?, TakeRestrict=? WHERE ID=?";
+    $connection = Database::runQuery_mysqli();
+    $stmt = $connection->prepare($sql);
+    $stmt->bind_param("ssssss", $item['UID'], $item['Nev'], $item['Tipus'],$item['Category'], $item['TakeRestrict'], $item['ID']);
+    $stmt->execute();
+    //$result = $stmt->get_result();
+    return 200;
+  }
+
+static function createItem($item){
+  $item = json_decode($item,'true');
+
+  //Check if item data is invalid
+  if(($item['UID']=='') || ($item['Nev'])==''){
+    echo 500;
+    return;
+  }
+  
+  $sql = "INSERT INTO `leltar` (`UID`, `Nev`, `Tipus`, `Category`, `Status`, `RentBy`, `isPlanned`, `TakeRestrict`, `ConnectsToItems`)";
+  $sql .= "VALUES (?, ?, ?, ?, '1', NULL, '0', ?, NULL)";
+  //echo $sql;
+  $connection = Database::runQuery_mysqli();
+  $stmt = $connection->prepare($sql);
+  $stmt->bind_param("sssss",$item['UID'],$item['Nev'],$item['Tipus'],$item['Category'],$item['TakeRestrict']);
+  $stmt->execute();
+  $result = $stmt->get_result();
+  return 200;
+}
+
   static function getPlannedTakeouts()
   {
     $sql = "SELECT * FROM takeoutPlanner";
@@ -731,7 +777,7 @@ class itemDataManager
 
     // Prepare the SQL query
     $sql = "SELECT leltar.*, COALESCE(leltar.RentBy, tp.UserID) as RentBy
-    FROM leltars
+    FROM leltar
     LEFT JOIN (
         SELECT tp1.Items, tp1.UserID, tp1.StartTime
         FROM takeoutPlanner tp1
@@ -950,6 +996,15 @@ if (isset($_POST['mode'])) {
 
   if ($_POST['mode'] == 'getItemsForConfirmation') {
     echo itemDataManager::getItemsForConfirmation();
+  }
+
+  if ($_POST['mode'] == 'updateItemAttributes') { 
+    echo itemDataManager::updateItemAttributes($_POST['item']);
+  }
+
+  
+  if ($_POST['mode'] == 'createItem') { 
+    echo itemDataManager::createItem($_POST['item']);
   }
 
   if ($_POST['mode'] == 'getProfileItemCounts') {

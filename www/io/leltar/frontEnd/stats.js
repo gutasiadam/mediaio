@@ -1,3 +1,5 @@
+var editModal;
+var createModal;
 
 $(document).ready(function () {
 
@@ -26,6 +28,13 @@ $(document).ready(function () {
             scrollTop: 0
         }, 700);
     });
+
+    editModal = new bootstrap.Modal(document.getElementById('editItemModal'), {
+        keyboard: false
+      })
+    createModal = new bootstrap.Modal(document.getElementById('newItemModal'), {
+        keyboard: false
+      })
 
 });
 
@@ -152,11 +161,18 @@ async function loadTableData(takeRestrict = "none", itemState = "all", orderCrit
             break;
     }
 
-    //console.log(response);
-
     const table = document.createElement("table");
     table.id = "itemTable";
     table.className = "table table-striped table-bordered table-hover";
+
+    //clear table
+    try {
+        $("#itemTable > tbody")[0].remove();
+    }
+    catch {
+        console.log('table is empty');
+    }
+
 
     const header = table.createTHead();
     const headerRow = header.insertRow(0);
@@ -185,11 +201,38 @@ async function loadTableData(takeRestrict = "none", itemState = "all", orderCrit
         item.TakeRestrict == '*' ? row.classList.add("table-danger") : null;
         item.TakeRestrict == 's' ? row.classList.add("table-primary") : null;
         item.TakeRestrict == 'e' ? row.classList.add("table-success") : null;
+        
         item.RentBy != null ? row.classList.add("table-warning") : null;
 
         if (item.Status == 2) {
             row.classList.add("waitForConfirm");
         }
+
+        //Adds right-click functionality for editing item values
+        row.addEventListener('contextmenu', function(ev) {
+            ev.preventDefault();
+            showEditModal(item);
+            return false;
+        }, false);
+
+
+                //MOBILE DOUBLE TAP
+                let touchCount = 0;
+        row.addEventListener('touchend', function (event) {
+            touchCount++;
+            if (touchCount === 1) {
+                setTimeout(function () {
+                    if (touchCount === 2) {
+                        if ('vibrate' in navigator) {
+                            // Vibration supported
+                            navigator.vibrate(100);
+                        }
+                        showEditModal(item);
+                    }
+                    touchCount = 0;
+                }, 300); // 300 milliseconds = 0.3 seconds
+            }
+        });
 
         const RentByUsername = users.find((user) => user.idUsers == item.RentBy)?.usernameUsers || '';
         const cellValues = [item.UID, item.Nev, item.Tipus, RentByUsername];
@@ -206,7 +249,96 @@ async function loadTableData(takeRestrict = "none", itemState = "all", orderCrit
 
 }
 
+/* Displays the edit modal with a specific item:
+   WARNING! This naming scheme might break in case a new form is added to the site!*/
+function showEditModal(item) {
 
+    //Title
+    document.getElementById("editItemModalLabel").innerText="Szerkesztés -"+item.UID
+
+    //ID
+    document.getElementsByTagName("form")[1][0].value=item.ID
+
+    //UID
+    document.getElementsByTagName("form")[1][1].value=item.UID
+    
+    //Név
+    document.getElementsByTagName("form")[1][2].value=item.Nev
+    
+    //Típus
+    document.getElementsByTagName("form")[1][3].value=item.Tipus
+    
+    //Kategória
+    document.getElementsByTagName("form")[1][4].value=item.Category
+
+    //takeRestrict
+    document.getElementsByTagName("form")[1][5].value=item.TakeRestrict
+
+    //toggle Bootstrap Modal
+    editModal.toggle();
+
+}
+
+//Creates a new item in the Database
+function createItem() {
+    var item = {}
+    var createItemForm=document.getElementsByTagName("form")[2]
+
+    item.UID=createItemForm[0].value
+    item.Nev=createItemForm[1].value
+    item.Tipus=createItemForm[2].value
+    item.Category=createItemForm[3].value
+    item.TakeRestrict=createItemForm[4].value;
+
+    const response = ($.ajax({
+        url: "../ItemManager.php",
+        type: "POST",
+        data: {
+            mode: "createItem",
+            item: JSON.stringify(item),
+        },
+        success: function(response){
+            console.log(response);
+            if(response==200){
+                document.getElementById("newItemModalLabel").innerText="Sikeres létrehozás!";
+                const myTimeout = setTimeout(() => getSearchQuery(), 400);
+                createModal.toggle();
+
+            }else{
+                document.getElementById("newItemModalLabel").innerText="Sikertelen létrehozás!";
+            }
+        }
+    }));
+}
+
+// Update item data on the server
+function updateItemData() {
+
+    //Collect updated values from the form
+    var item= {};
+    item.ID=document.getElementsByTagName("form")[1][0].value
+    item.UID=document.getElementsByTagName("form")[1][1].value
+    item.Nev=document.getElementsByTagName("form")[1][2].value
+    item.Tipus=document.getElementsByTagName("form")[1][3].value
+    item.Category=document.getElementsByTagName("form")[1][4].value
+    item.TakeRestrict=document.getElementsByTagName("form")[1][5].value
+
+    
+    const response = ($.ajax({
+        url: "../ItemManager.php",
+        type: "POST",
+        data: {
+            mode: "updateItemAttributes",
+            item: JSON.stringify(item),
+        },
+    }));
+    if(response){
+        document.getElementById("editItemModalLabel").innerText="Sikeres módosítás!";
+        editModal.toggle();
+        getSearchQuery();
+
+    }
+}
 
 async function setHeaderSortIcon(header) {
     // Clear all other sort icons
