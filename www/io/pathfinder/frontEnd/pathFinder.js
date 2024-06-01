@@ -102,7 +102,7 @@ async function loadItemsList() {
         url: "../ItemManager.php",
         method: "POST",
         data: {
-            mode: "getItems"
+            mode: "getItemNames"
         },
     });
 

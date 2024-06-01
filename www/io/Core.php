@@ -131,15 +131,11 @@ class Core
                         }
 
                         if ($RESTAPImode == true) {
-                            //echo "OK";
-                            //Generate a 2048 character long, base64 encoded token.
                             $token = base64_encode(openssl_random_pseudo_bytes(128));
                             //Store key in database
                             $sql = "UPDATE users SET apikey='$token' WHERE usernameUsers='$userName' OR emailUsers='$userName';"; // SQL INJECTION VULNERABILITY !!!!!!!!!!!!!!!!!!!
                             $conn = Database::runQuery_mysqli();
                             $result = mysqli_query($conn, $sql);
-                            //echo $sql;
-                            //Check affected rows
                             if ($conn->affected_rows != 1) {
                                 return array('code' => 500);
                             } else {

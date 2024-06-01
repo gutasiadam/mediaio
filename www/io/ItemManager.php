@@ -770,6 +770,20 @@ static function createItem($item){
     return;
   }
 
+
+  //Obtains items UID and Name from the database
+  static function getItemNames(){
+    $connection = Database::runQuery_mysqli();
+    $sql = "SELECT UID, Nev FROM leltar";
+    $stmt = $connection->prepare($sql);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $rows = $result->fetch_all(MYSQLI_ASSOC);
+    $result = json_encode($rows);
+    return $result;
+  }
+
+  //Obtains every item data from the database
   static function getItems()
   {
     // Get a new database connection
@@ -976,6 +990,10 @@ if (isset($_POST['mode'])) {
   }
   if ($_POST['mode'] == 'getItems') {
     echo itemDataManager::getItems();
+  }
+
+  if ($_POST['mode'] == 'getItemNames') {
+    echo itemDataManager::getItemNames();
   }
 
   if ($_POST['mode'] == 'listByCriteria') {
