@@ -28,6 +28,7 @@ class takeOutManager
     // Escape special characters in the item names like "
     foreach ($takeoutItems as &$item) {
       $item['name'] = addslashes($item['name']);
+      $item['holderUserID'] = $_SESSION['userId'];
     }
     $takeoutItems = json_encode($takeoutItems, JSON_UNESCAPED_UNICODE);
     //Accesses post and Session Data.
@@ -385,52 +386,6 @@ class itemDataManager
 
   // TAKEOUT PLANNING FUNCTIONS ---------------------------
 
-  //Update item attributes in the database
-  //item: JSON-encoded data
-  static function updateItemAttributes($item){
-    $item = json_decode($item,'true');
-
-  //Check if item data is invalid
-  if(($item['UID']=='') || ($item['Nev'])==''){
-    echo 500;
-    return;
-  }
-
-  //modify TakeRestrict: if it is null, set it to ''
-
-  if($item['TakeRestrict']==NULL){
-    $item['TakeRestrict']='';
-  }
-
-    $sql = "UPDATE leltar SET UID=?, Nev=?, Tipus=?, Category=?, TakeRestrict=? WHERE ID=?";
-    $connection = Database::runQuery_mysqli();
-    $stmt = $connection->prepare($sql);
-    $stmt->bind_param("ssssss", $item['UID'], $item['Nev'], $item['Tipus'],$item['Category'], $item['TakeRestrict'], $item['ID']);
-    $stmt->execute();
-    //$result = $stmt->get_result();
-    return 200;
-  }
-
-static function createItem($item){
-  $item = json_decode($item,'true');
-
-  //Check if item data is invalid
-  if(($item['UID']=='') || ($item['Nev'])==''){
-    echo 500;
-    return;
-  }
-  
-  $sql = "INSERT INTO `leltar` (`UID`, `Nev`, `Tipus`, `Category`, `Status`, `RentBy`, `isPlanned`, `TakeRestrict`, `ConnectsToItems`)";
-  $sql .= "VALUES (?, ?, ?, ?, '1', NULL, '0', ?, NULL)";
-  //echo $sql;
-  $connection = Database::runQuery_mysqli();
-  $stmt = $connection->prepare($sql);
-  $stmt->bind_param("sssss",$item['UID'],$item['Nev'],$item['Tipus'],$item['Category'],$item['TakeRestrict']);
-  $stmt->execute();
-  $result = $stmt->get_result();
-  return 200;
-}
-
   static function getPlannedTakeouts()
   {
     $sql = "SELECT * FROM takeoutPlanner";
@@ -645,9 +600,19 @@ static function createItem($item){
 
       // Change every item as taken in the database
       $items = json_decode($result['Items'], true);
-      $stmt = $connection->prepare("UPDATE leltar SET Status = 1 WHERE `UID` = ?");
+
+      $sql = "UPDATE `leltar` 
+      SET `Status` = 1, `isPlanned` = 0 
+      WHERE `UID` = ? 
+      AND NOT EXISTS (
+        SELECT 1 FROM `takeoutPlanner` 
+        WHERE `eventState`=0 
+        AND JSON_CONTAINS(`Items`, CONCAT('\"', ?, '\"'), '$'))";
+
+      $stmt = $connection->prepare($sql);
+
       foreach ($items as $i) {
-        $stmt->bind_param("s", $i['uid']);
+        $stmt->bind_param("ss", $i['uid'], $i['uid']);
         $stmt->execute();
       }
 
@@ -869,6 +834,54 @@ static function createItem($item){
     return $result;
   }
 
+  //Update item attributes in the database
+  //item: JSON-encoded data
+  static function updateItemAttributes($item)
+  {
+    $item = json_decode($item, true);
+
+    //Check if item data is invalid
+    if (($item['UID'] == '') || ($item['Nev']) == '') {
+      echo 500;
+      return;
+    }
+
+    //modify TakeRestrict: if it is null, set it to ''
+
+    if ($item['TakeRestrict'] == NULL) {
+      $item['TakeRestrict'] = '';
+    }
+
+    $sql = "UPDATE leltar SET UID=?, Nev=?, Tipus=?, Category=?, TakeRestrict=? WHERE ID=?";
+    $connection = Database::runQuery_mysqli();
+    $stmt = $connection->prepare($sql);
+    $stmt->bind_param("ssssss", $item['UID'], $item['Nev'], $item['Tipus'], $item['Category'], $item['TakeRestrict'], $item['ID']);
+    $stmt->execute();
+    //$result = $stmt->get_result();
+    return 200;
+  }
+
+  static function createItem($item)
+  {
+    $item = json_decode($item, true);
+
+    //Check if item data is invalid
+    if (($item['UID'] == '') || ($item['Nev']) == '') {
+      echo 500;
+      return;
+    }
+
+    $sql = "INSERT INTO `leltar` (`UID`, `Nev`, `Tipus`, `Category`, `Status`, `RentBy`, `isPlanned`, `TakeRestrict`, `ConnectsToItems`)";
+    $sql .= "VALUES (?, ?, ?, ?, '1', NULL, '0', ?, NULL)";
+    //echo $sql;
+    $connection = Database::runQuery_mysqli();
+    $stmt = $connection->prepare($sql);
+    $stmt->bind_param("sssss", $item['UID'], $item['Nev'], $item['Tipus'], $item['Category'], $item['TakeRestrict']);
+    $stmt->execute();
+    //$result = $stmt->get_result();
+    return 200;
+  }
+
 
   static function getItemsForConfirmation()
   {
@@ -1016,12 +1029,12 @@ if (isset($_POST['mode'])) {
     echo itemDataManager::getItemsForConfirmation();
   }
 
-  if ($_POST['mode'] == 'updateItemAttributes') { 
+  if ($_POST['mode'] == 'updateItemAttributes') {
     echo itemDataManager::updateItemAttributes($_POST['item']);
   }
 
-  
-  if ($_POST['mode'] == 'createItem') { 
+
+  if ($_POST['mode'] == 'createItem') {
     echo itemDataManager::createItem($_POST['item']);
   }
 

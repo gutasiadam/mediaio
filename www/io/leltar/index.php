@@ -55,8 +55,30 @@ error_reporting(E_ERROR | E_PARSE);
       </div>
    </nav>
 
+   <!-- Info toast -->
+   <div class="toast-container bottom-0 start-50 translate-middle-x p-3" style="z-index: 9999;">
+      <div class="toast" id="infoToast" role="alert" aria-live="assertive" aria-atomic="true">
+         <div class="toast-header">
+            <img src="../logo.ico" class="rounded me-2" alt="..." style="height: 20px; filter: invert(1);">
+            <strong class="me-auto" id="infoToastTitle">Projektek</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+         </div>
+         <div class="toast-body">
+         </div>
+      </div>
+   </div>
 
-   <h2 class="rainbow">Leltár adatok</h2>
+
+   <h2 class="rainbow">
+      <?php if (in_array("admin", $_SESSION["groups"])) { ?>
+         <input type="checkbox" class="btn-check filterButton" id="showEmpty" autocomplete="off">
+         <label class="btn btn-outline-secondary" for="showEmpty">Üresek</label>
+      <?php } ?>
+      Leltár adatok&nbsp
+      <?php if (in_array("admin", $_SESSION["groups"])) { ?>
+         <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#newItemModal">Új</button>
+      <?php } ?>
+   </h2>
 
    <div class="container">
       <div class="row justify-content-center">
@@ -78,17 +100,6 @@ error_reporting(E_ERROR | E_PARSE);
          </div>
       </div>
 
-      <?php if (in_array("admin", $_SESSION["groups"])){?>
-
-         <div class="row justify-content-center">
-            <div class="btn-group mb-1" style="width: 5rem;" role="group" id="insertNewItem" aria-label="Hozzáadás">
-            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#newItemModal">Új</button>
-            </div>
-         </div>
-      </div>
-
-      <?php } ?>
-
       <div class="statsTable" id="tableContainer">
 
       </div>
@@ -99,92 +110,102 @@ error_reporting(E_ERROR | E_PARSE);
 
 
 
-   <?php if (in_array("admin", $_SESSION["groups"])){?>
+   <?php if (in_array("admin", $_SESSION["groups"])) { ?>
 
-<!-- Edit Item Modal -->
-<div class="modal fade" id="editItemModal" tabindex="-1" aria-labelledby="editItemModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="editItemModalLabel">Szerkesztés - xxxXXX</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <!-- A form for editing Items Attributes-->
-        <form>
-        <input type="text" class="form-control" id="IDInput" aria-describedby="IDHelp" disabled="true" placeholder="ID">
-         <div class="form-group">
-         <label for="UIDInput">UID</label>
-         <input type="text" class="form-control" id="UIDInput" aria-describedby="UIDHelp" placeholder="UID">
-         </div>
-         <div class="form-group">
-         <label for="NameInput">Név</label>
-         <input type="text" class="form-control" id="NameInput" aria-describedby="NameHelp" placeholder="Név">
-         </div>
-         <div class="form-group">
-         <label for="TypeInput">Típus</label>
-         <input type="text" class="form-control" id="TypeInput" aria-describedby="TypeHelp" placeholder="Típus">
-         </div>
-         <div class="form-group">
-         <label for="CategoryInput">Kategória</label>
-         <input type="text" class="form-control" id="CategoryInput" aria-describedby="CategoryHelp" placeholder="Kategória">
-         </div>
-         <div class="form-group">
-         <label for="TakeRestrictInput">TakeRestrict</label>
-         <input type="text" class="form-control" id="TakeRestrictInput" aria-describedby="TakeRestrictHelp" placeholder="TakeRestrict">
-         </div>
-        </form>
+      <!-- Edit Item Modal -->
+      <div class="modal fade" id="editItemModal" tabindex="-1" aria-labelledby="editItemModalLabel" aria-hidden="true">
+         <div class="modal-dialog">
+            <div class="modal-content">
+               <div class="modal-header">
+                  <h5 class="modal-title" id="editItemModalLabel">Szerkesztés - xxxXXX</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+               </div>
+               <div class="modal-body">
+                  <!-- A form for editing Items Attributes-->
+                  <form>
+                     <input type="text" class="form-control" id="IDInput" aria-describedby="IDHelp" disabled="true"
+                        placeholder="ID">
+                     <div class="form-group">
+                        <label for="UIDInput">UID</label>
+                        <input type="text" class="form-control" id="UIDInput" aria-describedby="UIDHelp" placeholder="UID">
+                     </div>
+                     <div class="form-group">
+                        <label for="NameInput">Név</label>
+                        <input type="text" class="form-control" id="NameInput" aria-describedby="NameHelp"
+                           placeholder="Név">
+                     </div>
+                     <div class="form-group">
+                        <label for="TypeInput">Típus</label>
+                        <input type="text" class="form-control" id="TypeInput" aria-describedby="TypeHelp"
+                           placeholder="Típus">
+                     </div>
+                     <div class="form-group">
+                        <label for="CategoryInput">Kategória</label>
+                        <input type="text" class="form-control" id="CategoryInput" aria-describedby="CategoryHelp"
+                           placeholder="Kategória">
+                     </div>
+                     <div class="form-group">
+                        <label for="TakeRestrictInput">TakeRestrict</label>
+                        <input type="text" class="form-control" id="TakeRestrictInput" aria-describedby="TakeRestrictHelp"
+                           placeholder="TakeRestrict">
+                     </div>
+                  </form>
 
 
+               </div>
+               <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Mégse</button>
+                  <button type="button" class="btn btn-warning" onclick="updateItemData()">Módosítás</button>
+               </div>
+            </div>
+         </div>
       </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Mégse</button>
-        <button type="button" class="btn btn-warning" onclick="updateItemData()">Módosítás</button>
-      </div>
-    </div>
-  </div>
-</div>
 
-<!-- New Item Modal -->
-<div class="modal fade" id="newItemModal" tabindex="-1" aria-labelledby="newItemModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="newItemModalLabel">Új Eszköz hozzáadása</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      <!-- New Item Modal -->
+      <div class="modal fade" id="newItemModal" tabindex="-1" aria-labelledby="newItemModalLabel" aria-hidden="true">
+         <div class="modal-dialog">
+            <div class="modal-content">
+               <div class="modal-header">
+                  <h5 class="modal-title" id="newItemModalLabel">Új Eszköz hozzáadása</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+               </div>
+               <div class="modal-body">
+                  <!-- A form for adding a new Item Attributes-->
+                  <form>
+                     <div class="form-group">
+                        <label for="UIDInput"><strong>UID</strong></label>
+                        <input type="text" class="form-control" id="UIDInput" aria-describedby="UIDHelp" placeholder="UID"
+                           required>
+                     </div>
+                     <div class="form-group">
+                        <label for="NameInput">Név</label>
+                        <input type="text" class="form-control" id="NameInput" aria-describedby="NameHelp"
+                           placeholder="Név" required>
+                     </div>
+                     <div class="form-group">
+                        <label for="TypeInput">Típus</label>
+                        <input type="text" class="form-control" id="TypeInput" aria-describedby="TypeHelp"
+                           placeholder="Típus">
+                     </div>
+                     <div class="form-group">
+                        <label for="CategoryInput">Kategória</label>
+                        <input type="text" class="form-control" id="CategoryInput" aria-describedby="CategoryHelp"
+                           placeholder="Kategória">
+                     </div>
+                     <div class="form-group">
+                        <label for="takeRestrictInput">TakeRestrict</label>
+                        <input type="text" class="form-control" id="TakeRestrict" aria-describedby="takeRestrictHelp"
+                           placeholder="TakeRestrict">
+                     </div>
+                  </form>
+               </div>
+               <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Mégse</button>
+                  <button type="button" class="btn btn-success" onclick="createItem()">Létrehozás</button>
+               </div>
+            </div>
+         </div>
       </div>
-      <div class="modal-body">
-        <!-- A form for adding a new Item Attributes-->
-        <form>
-         <div class="form-group">
-         <label for="UIDInput"><strong>UID</strong></label>
-         <input type="text" class="form-control" id="UIDInput" aria-describedby="UIDHelp" placeholder="UID" required>
-         </div>
-         <div class="form-group">
-         <label for="NameInput">Név</label>
-         <input type="text" class="form-control" id="NameInput" aria-describedby="NameHelp" placeholder="Név" required>
-         </div>
-         <div class="form-group">
-         <label for="TypeInput">Típus</label>
-         <input type="text" class="form-control" id="TypeInput" aria-describedby="TypeHelp" placeholder="Típus">
-         </div>
-         <div class="form-group">
-         <label for="CategoryInput">Kategória</label>
-         <input type="text" class="form-control" id="CategoryInput" aria-describedby="CategoryHelp" placeholder="Kategória">
-         </div>
-         <div class="form-group">
-         <label for="takeRestrictInput">TakeRestrict</label>
-         <input type="text" class="form-control" id="TakeRestrict" aria-describedby="takeRestrictHelp" placeholder="TakeRestrict">
-         </div>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Mégse</button>
-        <button type="button" class="btn btn-success" onclick="createItem()">Létrehozás</button>
-      </div>
-    </div>
-  </div>
-</div>
-<?php } ?>
+   <?php } ?>
 
 </body>

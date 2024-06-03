@@ -31,10 +31,10 @@ $(document).ready(function () {
 
     editModal = new bootstrap.Modal(document.getElementById('editItemModal'), {
         keyboard: false
-      })
+    })
     createModal = new bootstrap.Modal(document.getElementById('newItemModal'), {
         keyboard: false
-      })
+    })
 
 });
 
@@ -165,14 +165,6 @@ async function loadTableData(takeRestrict = "none", itemState = "all", orderCrit
     table.id = "itemTable";
     table.className = "table table-striped table-bordered table-hover";
 
-    //clear table
-    try {
-        $("#itemTable > tbody")[0].remove();
-    }
-    catch {
-        console.log('table is empty');
-    }
-
 
     const header = table.createTHead();
     const headerRow = header.insertRow(0);
@@ -191,7 +183,7 @@ async function loadTableData(takeRestrict = "none", itemState = "all", orderCrit
 
     const body = table.createTBody();
     response.forEach((item) => {
-        if (item.TakeRestrict == 'ü') {
+        if (item.TakeRestrict == 'ü' && !document.getElementById("showEmpty").checked) {
             return;
         }
         const row = body.insertRow(-1);
@@ -201,7 +193,7 @@ async function loadTableData(takeRestrict = "none", itemState = "all", orderCrit
         item.TakeRestrict == '*' ? row.classList.add("table-danger") : null;
         item.TakeRestrict == 's' ? row.classList.add("table-primary") : null;
         item.TakeRestrict == 'e' ? row.classList.add("table-success") : null;
-        
+
         item.RentBy != null ? row.classList.add("table-warning") : null;
 
         if (item.Status == 2) {
@@ -209,15 +201,15 @@ async function loadTableData(takeRestrict = "none", itemState = "all", orderCrit
         }
 
         //Adds right-click functionality for editing item values
-        row.addEventListener('contextmenu', function(ev) {
+        row.addEventListener('contextmenu', function (ev) {
             ev.preventDefault();
             showEditModal(item);
             return false;
         }, false);
 
 
-                //MOBILE DOUBLE TAP
-                let touchCount = 0;
+        //MOBILE DOUBLE TAP
+        let touchCount = 0;
         row.addEventListener('touchend', function (event) {
             touchCount++;
             if (touchCount === 1) {
@@ -243,7 +235,7 @@ async function loadTableData(takeRestrict = "none", itemState = "all", orderCrit
         });
     });
 
-
+    // Clearing the table
     document.getElementById("tableContainer").innerHTML = "";
     document.getElementById("tableContainer").appendChild(table);
 
@@ -252,91 +244,85 @@ async function loadTableData(takeRestrict = "none", itemState = "all", orderCrit
 /* Displays the edit modal with a specific item:
    WARNING! This naming scheme might break in case a new form is added to the site!*/
 function showEditModal(item) {
-
     //Title
-    document.getElementById("editItemModalLabel").innerText="Szerkesztés -"+item.UID
+    document.getElementById("editItemModalLabel").innerText = "Szerkesztés -" + item.UID
 
+    // Get the form
+    var form = document.getElementsByTagName("form")[1];
     //ID
-    document.getElementsByTagName("form")[1][0].value=item.ID
-
+    form[0].value = item.ID
     //UID
-    document.getElementsByTagName("form")[1][1].value=item.UID
-    
+    form[1].value = item.UID
     //Név
-    document.getElementsByTagName("form")[1][2].value=item.Nev
-    
+    form[2].value = item.Nev
     //Típus
-    document.getElementsByTagName("form")[1][3].value=item.Tipus
-    
+    form[3].value = item.Tipus
     //Kategória
-    document.getElementsByTagName("form")[1][4].value=item.Category
-
+    form[4].value = item.Category
     //takeRestrict
-    document.getElementsByTagName("form")[1][5].value=item.TakeRestrict
-
+    form[5].value = item.TakeRestrict
     //toggle Bootstrap Modal
     editModal.toggle();
-
 }
 
 //Creates a new item in the Database
-function createItem() {
+async function createItem() {
     var item = {}
-    var createItemForm=document.getElementsByTagName("form")[2]
+    var createItemForm = document.getElementsByTagName("form")[2]
 
-    item.UID=createItemForm[0].value
-    item.Nev=createItemForm[1].value
-    item.Tipus=createItemForm[2].value
-    item.Category=createItemForm[3].value
-    item.TakeRestrict=createItemForm[4].value;
+    item.UID = createItemForm[0].value
+    item.Nev = createItemForm[1].value
+    item.Tipus = createItemForm[2].value
+    item.Category = createItemForm[3].value
+    item.TakeRestrict = createItemForm[4].value;
 
-    const response = ($.ajax({
+    const response = await $.ajax({
         url: "../ItemManager.php",
         type: "POST",
         data: {
             mode: "createItem",
             item: JSON.stringify(item),
         },
-        success: function(response){
-            console.log(response);
-            if(response==200){
-                document.getElementById("newItemModalLabel").innerText="Sikeres létrehozás!";
-                const myTimeout = setTimeout(() => getSearchQuery(), 400);
-                createModal.toggle();
+    });
 
-            }else{
-                document.getElementById("newItemModalLabel").innerText="Sikertelen létrehozás!";
-            }
-        }
-    }));
+    if (response == 200) {
+        successToast("Sikeres létrehozás!");
+        getSearchQuery();
+        createModal.toggle();
+    } else {
+        serverErrorToast();
+    }
 }
 
 // Update item data on the server
-function updateItemData() {
+async function updateItemData() {
 
     //Collect updated values from the form
-    var item= {};
-    item.ID=document.getElementsByTagName("form")[1][0].value
-    item.UID=document.getElementsByTagName("form")[1][1].value
-    item.Nev=document.getElementsByTagName("form")[1][2].value
-    item.Tipus=document.getElementsByTagName("form")[1][3].value
-    item.Category=document.getElementsByTagName("form")[1][4].value
-    item.TakeRestrict=document.getElementsByTagName("form")[1][5].value
+    let formElements = document.getElementsByTagName("form")[1];
+    let item = {
+        ID: formElements[0].value,
+        UID: formElements[1].value,
+        Nev: formElements[2].value,
+        Tipus: formElements[3].value,
+        Category: formElements[4].value,
+        TakeRestrict: formElements[5].value
+    };
 
-    
-    const response = ($.ajax({
+
+    const response = await $.ajax({
         url: "../ItemManager.php",
         type: "POST",
         data: {
             mode: "updateItemAttributes",
             item: JSON.stringify(item),
         },
-    }));
-    if(response){
-        document.getElementById("editItemModalLabel").innerText="Sikeres módosítás!";
+    });
+    if (response == 200) {
+        successToast("Sikeres módosítás!");
         editModal.toggle();
         getSearchQuery();
-
+    } else {
+        errorToast("Sikertelen módosítás!");
     }
 }
 
