@@ -8,7 +8,6 @@ if (!isset($_SESSION["userId"])) {
 }
 include ("header.php");
 ?>
-<script src="../utility/_initMenu.js" crossorigin="anonymous"></script>
 
 <html>
 <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-dark">
@@ -54,7 +53,7 @@ include ("header.php");
   <table class="help-logintable">
     <tr>
       <td>
-        <form action="notifications.php"><button class="btn btn-secondary w-100" disabled>Értesítések <i
+        <form action="notifications.php"><button class="btn btn-secondary w-100">Értesítések <i
               class="fas fa-mail-bulk"></i> (hamarosan)</button></form>
       </td>
     </tr>

@@ -62,10 +62,11 @@ $(document).ready(function () {
 });
 
 function loadPicker(calendarId, startDate = new Date(), endDate = null) {
+    startDate.setHours(0, 0, 0, 0); // Set the start date to the beginning of the day
     if (endDate == null) {
         endDate = new Date();
-        endDate.setHours(endDate.getHours() + 48);
-        endDate.setMinutes(0, 0, 0);
+        endDate.setHours(0, 0, 0, 0); // Set the end date to the beginning of the day
+        endDate.setDate(endDate.getDate() + 2); // Add one day to the end date
     }
 
     return new easepick.create({
@@ -77,16 +78,12 @@ function loadPicker(calendarId, startDate = new Date(), endDate = null) {
         ],
         zIndex: 10,
         autoApply: false,
-        format: 'YYYY-MM-DD HH:mm',
+        format: 'YYYY-MM-DD',
         locale: {
             cancel: 'Mégsem',
             apply: 'Mehet',
         },
         lang: "hu",
-        TimePlugin: {
-            stepMinutes: 15,
-            stepSeconds: 60
-        },
         LockPlugin: {
             minDate: new Date(),
         },
@@ -96,7 +93,6 @@ function loadPicker(calendarId, startDate = new Date(), endDate = null) {
         },
         plugins: [
             "RangePlugin",
-            "TimePlugin",
             "LockPlugin",
         ]
     });
@@ -115,7 +111,7 @@ async function loadItems() {
         }
     }));
 
-    //console.log(response);
+    console.log(response);
 
     //Get userinfo
 
@@ -268,9 +264,20 @@ function addItemCard(item) {
     cardTitle.classList.add("card-title");
     cardTitle.innerHTML = item.Nev;
 
+    let rentDate = "";
+    if (item.isPlanned) {
+        let text = item.isPlanned ? "Időzítve: " : "Kivette: ";
+        let startDate = new Date(item.StartTime);
+        let endDate = new Date(item.ReturnTime);
+
+        let startFormatted = `${(startDate.getMonth() + 1).toString().padStart(2, '0')}.${startDate.getDate().toString().padStart(2, '0')}`;
+        let endFormatted = `${(endDate.getMonth() + 1).toString().padStart(2, '0')}.${endDate.getDate().toString().padStart(2, '0')}`;
+        rentDate = `${text} ${startFormatted} - ${endFormatted}`;
+    }
+
     const cardText = document.createElement("p");
     cardText.classList.add("card-text");
-    cardText.innerHTML = item.UID;
+    cardText.innerHTML = `${item.UID} <br><i>${rentDate}</i>`;
 
     infoDiv.appendChild(cardTitle);
     infoDiv.appendChild(cardText);

@@ -755,10 +755,10 @@ class itemDataManager
     $connection = Database::runQuery_mysqli();
 
     // Prepare the SQL query
-    $sql = "SELECT leltar.*, COALESCE(leltar.RentBy, tp.UserID) as RentBy
+    $sql = "SELECT leltar.*, COALESCE(leltar.RentBy, tp.UserID) as RentBy, tp.StartTime, tp.ReturnTime 
     FROM leltar
     LEFT JOIN (
-        SELECT tp1.Items, tp1.UserID, tp1.StartTime
+        SELECT tp1.Items, tp1.UserID, tp1.StartTime, tp1.ReturnTime
         FROM takeoutPlanner tp1
         JOIN (
             SELECT Items, MIN(StartTime) as MinStartTime

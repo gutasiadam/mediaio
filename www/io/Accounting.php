@@ -4,6 +4,7 @@
 namespace Mediaio;
 
 require_once 'Database.php';
+use Google\Service\AlertCenter\Notification;
 use Mediaio\Database;
 
 class Accounting
@@ -76,10 +77,12 @@ class Accounting
 
     }
 
-    static function getPublicUserInfo($userID = NULL)
+    static function getPublicUserInfo($userID = NULL, $notificationSettings = false)
     {
         if ($userID != NULL) {
-            $sql = "SELECT `usernameUsers`, `firstName`, `lastName`, `teleNum`, `emailUsers` FROM `users` WHERE `idUsers` = " . $userID . ";";
+            $sql = "SELECT `usernameUsers`, `firstName`, `lastName`, `teleNum`, `emailUsers`";
+            $notificationSettings ? $sql .= ", `AdditionalData`" : null; // Get the notification settings if requested
+            $sql .= " FROM `users` WHERE `idUsers` = " . $userID . ";";
         } else {
             $sql = "SELECT `idUsers`, `usernameUsers`, `firstName`, `lastName`, `teleNum`, `emailUsers` FROM `users`;";
         }
@@ -94,6 +97,67 @@ class Accounting
             return 500;
         }
 
+    }
+
+
+    /* 
+        Functions for the user notification system
+        These functions will be used to setup the settings
+    */
+
+    static function getNotificationSettings($userID)
+    {
+        $connection = Database::runQuery_mysqli();
+        $sql = "SELECT `AdditionalData` FROM `users` WHERE `idUsers` = ?;";
+        $stmt = $connection->prepare($sql);
+        $stmt->bind_param("s", $userID);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $connection->close();
+
+        if ($result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+
+            //Decode the JSON data and only return the notification settings
+            $settings = json_decode($row, true);
+            $settings = $settings['notificationSettings'];
+
+            return json_encode($settings);
+        } else {
+            return json_encode(array('code' => '404'));
+        }
+    }
+
+
+    static function setNotificationSettings($userID, $settings)
+    {
+        $connection = Database::runQuery_mysqli();
+        // Get the current Data
+        $sql = "SELECT `AdditionalData` FROM `users` WHERE `idUsers` = ?;";
+        $stmt = $connection->prepare($sql);
+        $stmt->bind_param("s", $userID);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+
+        $currentData = json_decode($row, true);
+
+        // Update the notification settings
+        $currentData['notificationSettings'] = $settings; // Update the notification settings
+        // Encode the data back to JSON
+        $settings = json_encode($currentData);
+
+        $sql = "UPDATE `users` SET `AdditionalData` = ? WHERE `idUsers` = ?;";
+        $stmt = $connection->prepare($sql);
+        $stmt->bind_param("ss", $settings, $userID);
+        $stmt->execute();
+        $connection->close();
+
+        if ($stmt->affected_rows == 1) {
+            return json_encode(array('code' => '200'));
+        } else {
+            return json_encode(array('code' => '401'));
+        }
     }
 }
 
@@ -113,6 +177,16 @@ if (isset($_POST['mode'])) {
         // Get the log history for the last week
         case 'getLogHistory':
             echo Accounting::getLogHistory();
+            break;
+
+            
+        // Get the notification settings for a user
+        case 'getNotificationSettings':
+            echo Accounting::getNotificationSettings($_POST['userID']);
+            break;
+        // Set the notification settings for a user
+        case 'setNotificationSettings':
+            echo Accounting::setNotificationSettings($_POST['userID'], $_POST['settings']);
             break;
     }
 }

@@ -11,23 +11,23 @@ async function loadTakeOutPlanner() {
         headerToolbar: {
             left: 'title',
             center: '',
-            right: 'timeGridWeek dayGridMonth today prev,next'
+            right: 'dayGridMonth listWeek today prev,next' //'timeGridWeek'
         },
         buttonText: {
             today: 'Ma',
             month: 'Hónap',
-            week: 'Hét',
-            list: 'Lista'
+            //week: 'Hét', 
+            list: 'Lista' // TODO: Implement list view
         },
         views: {
             dayGridMonth: {
                 titleFormat: { year: 'numeric', month: 'long' },
                 dayHeaderFormat: { weekday: 'short' },
             },
-            timeGridWeek: {
+            /* timeGridWeek: {
                 titleFormat: { year: 'numeric', month: 'long', day: 'numeric' },
                 dayHeaderFormat: { weekday: 'short', day: 'numeric', omitCommas: true },
-            },
+            }, */
         },
 
         // LOCALE
@@ -96,14 +96,14 @@ async function getTakeOutEvents() {
 
     resEvents.forEach(element => {
 
-        let isAllDay = false;
-        var startTime = new Date(element.StartTime);
-        var returnTime = new Date(element.ReturnTime);
-        var durationInHours = (returnTime - startTime) / (1000 * 60 * 60);
+        let isAllDay = true;
+        //var startTime = new Date(element.StartTime);
+        //var returnTime = new Date(element.ReturnTime);
+        //var durationInHours = (returnTime - startTime) / (1000 * 60 * 60);
 
-        if (durationInHours >= 24) {
-            isAllDay = true;
-        }
+        //if (durationInHours >= 24) {
+        //    isAllDay = true;
+        //}
 
         let color = element.eventState == 1 ? "#d3772c" : element.eventState == 2 ? "#28a745" : "#3788d8";
         element.eventState == -1 ? color = "#636363" : null;
@@ -256,8 +256,8 @@ function createTimeRange(eventID, start, end, eventState) {
     let startDate = new Date(start);
     let endDate = new Date(end);
 
-    let formattedStart = `${(startDate.getMonth() + 1).toString().padStart(2, '0')}.${startDate.getDate()} ${(startDate.getHours()).toString().padStart(2, '0')}:${startDate.getMinutes() < 10 ? '0' : ''}${startDate.getMinutes()}`;
-    let formattedEnd = `${(endDate.getMonth() + 1).toString().padStart(2, '0')}.${endDate.getDate()} ${(endDate.getHours()).toString().padStart(2, '0')}:${endDate.getMinutes() < 10 ? '0' : ''}${endDate.getMinutes()}`;
+    let formattedStart = `${(startDate.getMonth() + 1).toString().padStart(2, '0')}.${startDate.getDate().toString().padStart(2, '0')}`;
+    let formattedEnd = `${(endDate.getMonth() + 1).toString().padStart(2, '0')}.${endDate.getDate().toString().padStart(2, '0')}`;
 
     // Create a p element
     const timeRange = document.createElement('p');

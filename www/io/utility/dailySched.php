@@ -70,6 +70,7 @@ class DailySchedule
                     ';
 
                     MailService::sendContactMail($email, $subject, $message);
+                    echo 'Reminder sent to ' . $email . "\n";
                 }
             }
         } catch (\Exception $e) {
@@ -97,7 +98,7 @@ class DailySchedule
                     // TODO: Send an email to the user if needed
                 }
             }
-            //echo 'Not initiated takeout disabled successfully!';
+            echo "Not initiated takeout disabled successfully!\n";
         } catch (\Exception $e) {
             // Log the error
             error_log($e->getMessage());
@@ -161,6 +162,7 @@ class DailySchedule
                     ';
 
                     MailService::sendContactMail($email, $subject, $message);
+                    echo 'Reminder sent to ' . $email . "\n";
                 }
             }
         } catch (\Exception $e) {
