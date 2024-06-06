@@ -1,6 +1,9 @@
 
 let reloading = false;
 
+//If set to false, saved cookies are bypassed to allow project-specific selection
+var cookiesEnabled = true;
+
 function getCookie(cName) {
     const name = cName + "=";
     const cDecoded = decodeURIComponent(document.cookie); //to be careful
@@ -13,6 +16,9 @@ function getCookie(cName) {
 }
 
 function updateSelectionCookie() {
+    if(!cookiesEnabled) {
+        return;
+    }
     console.log("Updating selection cookie");
 
     //Set cookie expire date to 1 day
@@ -29,6 +35,9 @@ function updateSelectionCookie() {
 
 
 async function reloadSavedSelections() {
+    if(!cookiesEnabled) {
+        return;
+    }
     reloading = true;
     //Try re-selectiong items that are saved in the takeOutItems cookie.
     try {

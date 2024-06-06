@@ -1,3 +1,5 @@
+//Stores every reservation in the calendar
+var reservations = [];
 
 
 // Calendar
@@ -64,8 +66,6 @@ async function loadTakeOutPlanner() {
     });
     calendar.render();
 }
-
-
 
 // Get events
 async function getTakeOutEvents() {
@@ -139,7 +139,7 @@ async function openEventModal(info) {
 
     const headerTitle = document.getElementById('plannedEventsModalLabel');
 
-    headerTitle.innerHTML = info.event.title;
+    console.log(info.event);
     $('#plannedEventsModal').modal('show');
 
 

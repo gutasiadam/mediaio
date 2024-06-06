@@ -386,6 +386,7 @@ class itemDataManager
 
   // TAKEOUT PLANNING FUNCTIONS ---------------------------
 
+  //Get planned takeouts from the database
   static function getPlannedTakeouts()
   {
     $sql = "SELECT * FROM takeoutPlanner";
@@ -449,7 +450,7 @@ class itemDataManager
   }
 
 
-  static function changeTakeoutTime($eventID, $newStartTime, $newEndTime) // Not tested
+  static function changeTakeoutTime($eventID, $newStartTime, $newEndTime)
   {
     $sql = "SELECT * FROM takeoutPlanner WHERE ID=" . $eventID . " AND eventState=0";
     //Get a new database connection
@@ -500,8 +501,9 @@ class itemDataManager
     return 200;
   }
 
-
-  static function changeItems($eventID, $newItems) // Not tested
+  // Modofies the reservation data
+  // $newItems is Every item selected for the event in JSON format!
+  static function change_Takeout($eventID, $newItems,$newProjectName,$newStartTime, $newEndTime, $newDescription)
   {
     $sql = "SELECT * FROM takeoutPlanner WHERE ID=" . $eventID . " AND eventState=0";
     //Get a new database connection
@@ -509,9 +511,11 @@ class itemDataManager
     $result = $connection->query($sql);
     $result = $result->fetch_assoc();
     if ($result == NULL) {
+      // Event not found
       return 409;
     }
 
+    // Check if the user has access to modify the event
     if ($result['UserID'] != $_SESSION['userId'] && !in_array("admin", $_SESSION['groups'])) {
       return 403;
     }
@@ -529,20 +533,101 @@ class itemDataManager
     $result = $connection->query($sql);
     $rows = $result->fetch_all(MYSQLI_ASSOC);
 
+    $previousItems=Array();
+
     foreach ($rows as $row) {
       $items = json_decode($row['Items'], true);
+      $previousItems=$items;
 
       if ($row['ID'] == $eventID)
         continue;
 
       $conflict = array_intersect(array_column($items, 'uid'), array_column($newItemsDecoded, 'uid'));
       if (count($conflict) > 0) {
+        // Conflict found, don't update the event
         return 409;
       }
     }
 
-    $sql = "UPDATE takeoutPlanner SET Items='$newItems' WHERE ID=" . $eventID;
-    $connection->query($sql);
+    //Get the items that are not in the new list
+    $itemsToReturn=array_diff(array_column($previousItems, 'uid'), array_column($newItemsDecoded, 'uid'));
+    
+    //Get the items that are not in the old list
+    $itemsToTake=array_diff(array_column($newItemsDecoded, 'uid'), array_column($previousItems, 'uid'));
+    
+     //Debug section - Prints the previous, new, and to return items
+    /*echo("Previous items:\n");
+    var_dump($previousItems);
+
+    echo("\nNew items:\n");
+    var_dump($newItemsDecoded);
+    
+    echo("\nItems to return:\n");
+    var_dump($itemsToReturn);*/
+
+    // If no other event has the item, set it as available.
+    $sql = "UPDATE `leltar`
+    SET `isPlanned`=0
+    WHERE `UID`=?
+    AND NOT EXISTS (
+        SELECT 1 FROM `takeoutPlanner`
+        WHERE `eventState`=0
+        AND JSON_CONTAINS(`Items`, CONCAT('\"', ?, '\"'), '$'))";
+
+    //Apply query for each item in itemsToReturn
+    foreach ($itemsToReturn as $item) {
+      //echo "Returning item: ".$item;
+      $stmt = $connection->prepare($sql);
+      $stmt->bind_param("ss", $item, $item);
+      $stmt->execute();
+            //get result
+            $result = $stmt->get_result();
+            //get affected rows
+            $affectedRows = $stmt->affected_rows;
+            //var_dump($result,$affectedRows);
+    }
+
+
+    $dateChangeSuccessFlag=true;
+    $dateChangeResult=self::changeTakeoutTime($eventID, $newStartTime, $newEndTime);
+    if($dateChangeResult!=200){
+      $dateChangeSuccessFlag=false;
+      echo $dateChangeResult;
+    }
+    
+    $sql = "UPDATE takeoutPlanner SET Items='$newItems', Name=?, Description=? WHERE ID=?";
+    //Bind parameters
+    $stmt = $connection->prepare($sql);
+    $stmt->bind_param("sss", $newProjectName, $newDescription, $eventID);
+    $stmt->execute();
+        // Check if the event was updated
+    if ($stmt->affected_rows == 0 and $dateChangeSuccessFlag==false) {
+          return 410;
+        }
+    /* //Debug seciton - get the result
+    $result = $stmt->get_result();
+    //get affected rows
+    $affectedRows = $stmt->affected_rows;
+    var_dump($result,$affectedRows);*/
+
+    //For each new item, set it as Planned
+    $sql = "UPDATE `leltar`
+    SET `isPlanned`=1
+    WHERE `UID`=?";
+
+
+    foreach ($itemsToTake as $item) {
+      //echo "Setting item as planned: ".$item."\n";
+      $stmt = $connection->prepare($sql);
+      $stmt->bind_param("s", $item);
+      $stmt->execute();
+      //Debug section: get result
+      //$result = $stmt->get_result();
+      //get affected rows
+      //$affectedRows = $stmt->affected_rows;
+      //var_dump($result,$affectedRows);
+    }
+
     return 200;
   }
 
@@ -620,6 +705,69 @@ class itemDataManager
     $sql = "DELETE FROM takeoutPlanner WHERE ID=" . $eventID;
     $connection->query($sql);
     return 200;
+  }
+
+
+  /**Obtains modifyable reservation data available for the user */
+  static function listReservationData($id){
+
+  
+    if(in_array("admin", $_SESSION['groups'])){
+      $sql = "SELECT * from takeoutPlanner WHERE 1=1 AND eventState=0";
+    }else{
+      $sql = "SELECT * FROM takeoutPlanner WHERE UserId=".$_SESSION['userId']."AND eventState=0";
+    }
+    //if id is not null, append it to the query, binded
+    if($id!=-1){
+      $sql .= " AND ID=?";
+    }
+        //Get a new database connection
+        $connection = Database::runQuery_mysqli();
+
+
+        $stmt = $connection->prepare($sql);
+        if($id!=-1){
+          $stmt->bind_param("s", $id);
+        }
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $rows = $result->fetch_all(MYSQLI_ASSOC);
+        $result = json_encode($rows);
+        return $result;
+
+  }
+
+  //Get items that are selected for a project
+  static function listTakeoutItems($eventID){
+    //
+
+    $sql = "SELECT * FROM takeoutPlanner WHERE ID=?";
+
+
+    //Get a new database connection
+    $connection = Database::runQuery_mysqli();
+
+    //bind parameters
+    $stmt = $connection->prepare($sql);
+    $stmt->bind_param("s", $eventID);
+    $stmt->execute();
+    $result = $stmt->get_result();  
+    $result = $result->fetch_assoc();
+    //if number of rows is 0, return 404
+    if($result==NULL){
+      return 404;
+    }
+
+    //if the user is not the owner of the event or not an admin, return 403
+    if($result['UserID'] != $_SESSION['userId'] && !in_array("admin", $_SESSION['groups'])){
+      return 403;
+    }
+    
+    $items = json_decode($result['Items'], true);
+    return json_encode($items);
+
+
+
   }
 
   // ______________________________________________________________________________________
@@ -997,6 +1145,17 @@ if (isset($_POST['mode'])) {
     echo itemDataManager::deletePlannedTakeout($_POST['ID']);
   }
 
+  //Handles changeTakeoutTime too
+  if ($_POST['mode'] == 'change_Takeout') {
+    echo itemDataManager::change_Takeout(
+    $_POST['id'], 
+    $_POST['items'],
+    $_POST['newProjectName'],
+    $_POST['newStartTime'], 
+    $_POST['newEndTime'],
+    $_POST['newDescription'],
+    );
+  }
 
   if ($_POST['mode'] == 'confirmItems') {
     echo itemDataManager::confirmItems($_POST['eventID'], $_POST['items'], $_POST['direction']);
@@ -1033,10 +1192,18 @@ if (isset($_POST['mode'])) {
     echo itemDataManager::updateItemAttributes($_POST['item']);
   }
 
-
   if ($_POST['mode'] == 'createItem') {
     echo itemDataManager::createItem($_POST['item']);
   }
+
+  if ($_POST['mode'] == 'listReservationData') {
+    echo itemDataManager::listReservationData($_POST['id']);
+  }
+
+  if ($_POST['mode'] == 'listTakeoutItems') {
+    echo itemDataManager::listTakeoutItems($_POST['eventID']);
+  }
+  
 
   if ($_POST['mode'] == 'getProfileItemCounts') {
     echo itemDataManager::getServiceItemCount();

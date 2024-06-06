@@ -62,7 +62,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-success" onclick="submitTakout()">
+                <button id="submitTakeoutButton" type="button" class="btn btn-success" onclick="submitTakeout()">
                     Mehet</button>
             </div>
         </div>

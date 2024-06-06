@@ -214,7 +214,13 @@ async function loadItems() {
 
 
 function toggleSelectItem(item) {
+    console.log('UID:', item.UID);  // Log the UID
     const itemElement = document.getElementById(item.UID);
+    if (!itemElement) {
+        console.error('No element found with UID:', item.UID);  // Log an error if no element is found
+        return;
+    }
+    
     const checkBox = itemElement.querySelector(".leltarItemCheckbox");
 
     if (itemElement.classList.contains("selected")) {
