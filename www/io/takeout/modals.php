@@ -87,12 +87,13 @@
                 <div id="timeRangeEdit">
                     <!--- Time range -->
                 </div>
-                <div class="d-flex align-items-center justify-content-between">
-                    <b><label>Tárgyak:</label></b>
-                    <button class="btn btn-sm" id="editItems" onclick="editItems();" style=""><i
-                            class="fas fa-pen"></i></button>
+                <!-- Items -->
+                <div class="d-flex align-items-center justify-content-between" id="itemsEditHeader">
+                    
                 </div>
                 <div class="mb-3" id="plannedEventsItems"></div>
+
+                <!-- Planner name -->
                 <div class="">
                     <b><label class="" id="plannedEventOwner"></label></b>
                 </div>

@@ -23,7 +23,7 @@
 
   <script src="./frontEnd/retrieve.js" type="text/javascript"></script>
   <script src="./frontEnd/qrManager.js" type="text/javascript"></script>
-  <script src="./frontEnd/toastManager.js" type="text/javascript" defer></script>
+  <script src="../utility/toastManager.js" crossorigin="anonymous" defer></script>
   <script src="./frontEnd/cookieManager.js" type="text/javascript"></script>
 
 

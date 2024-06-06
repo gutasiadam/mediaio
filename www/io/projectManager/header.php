@@ -31,7 +31,7 @@ if (!isset($_SESSION["userId"])) {
   <script src="frontEnd/fetchData.js" crossorigin="anonymous"></script>
   <script src="frontEnd/taskAnswers.js" crossorigin="anonymous"></script>
   <script src="frontEnd/dragAndDrop.js" crossorigin="anonymous" defer></script>
-  <script src="frontEnd/toastManager.js" crossorigin="anonymous" defer></script>
+  <script src="../utility/toastManager.js" crossorigin="anonymous" defer></script>
   <script src="frontEnd/nasCommunication.js" crossorigin="anonymous" defer></script>
 
 

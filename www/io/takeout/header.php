@@ -24,7 +24,7 @@
   <script src="./frontEnd/items.js" type="text/javascript"></script>
   <script src="./frontEnd/qrManager.js" type="text/javascript"></script>
   <script src="./frontEnd/cookieManager.js" type="text/javascript"></script>
-  <script src="./frontEnd/toastManager.js" type="text/javascript" defer></script>
+  <script src="../utility/toastManager.js" crossorigin="anonymous" defer></script>
 
   <script src='./fullcalendar-6.1.11/dist/index.global.js' type="text/javascript"></script>
   <script src="./frontEnd/takeOutPlanner.js" type="text/javascript" defer></script>

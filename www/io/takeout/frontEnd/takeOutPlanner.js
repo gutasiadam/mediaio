@@ -136,9 +136,6 @@ async function getTakeOutEvents() {
 // Open event modal
 
 async function openEventModal(info) {
-
-    const headerTitle = document.getElementById('plannedEventsModalLabel');
-
     console.log(info.event);
     $('#plannedEventsModal').modal('show');
 
@@ -151,21 +148,9 @@ async function openEventModal(info) {
 
     //____________________________________________________
 
-    if (info.event.extendedProps.eventState == 0) {
-        document.getElementById('editItems').style.display = "block";
-    } else {
-        document.getElementById('editItems').style.display = "none";
-    }
+    // Create items list and edit button
 
-    const eventItems = document.getElementById('plannedEventsItems');
-    eventItems.innerHTML = "";
-
-    const items = JSON.parse(info.event.extendedProps.itemsList);
-    items.forEach(element => {
-        let item = document.createElement('li');
-        item.innerHTML = `${element.name} - ${element.uid} `;
-        eventItems.appendChild(item);
-    });
+    createItemsList(info);
 
     // Owner label
 
@@ -282,6 +267,45 @@ function createTimeRange(eventID, start, end, eventState) {
 
 }
 
+function createItemsList(info) {
+
+    const headerDiv = document.getElementById('itemsEditHeader');
+    headerDiv.innerHTML = "";
+
+    // Label
+    const label = document.createElement('label');
+    label.innerHTML = "<b>Tárgyak:</b>";
+    headerDiv.appendChild(label);
+
+    // Edit button
+    const editButton = document.createElement('button');
+    editButton.className = 'btn btn-sm';
+    editButton.id = 'editItems';
+    editButton.onclick = function () {
+        location.href = "./?reservationProject=" + info.event.id;
+    };
+    
+    const icon = document.createElement('i');
+    icon.className = 'fas fa-pen';
+    editButton.appendChild(icon);
+
+    // Only if the event is not started
+    info.event.extendedProps.eventState == 0 ? headerDiv.appendChild(editButton) : null;
+
+
+    // Items list
+    const eventItems = document.getElementById('plannedEventsItems');
+    eventItems.innerHTML = "";
+
+    const items = JSON.parse(info.event.extendedProps.itemsList);
+    items.forEach(element => {
+        let item = document.createElement('li');
+        item.innerHTML = `${element.name} - ${element.uid} `;
+        eventItems.appendChild(item);
+    });
+    
+}
+
 let timeRangeCalendar = null;
 
 function openTimeRangeEditor(eventID, startDate, endDate) {
@@ -340,11 +364,6 @@ async function editTimeRange(eventID) {
         serverErrorToast();
     }
 
-}
-
-async function editItems() {
-    // IN DEVELOPMENT
-    simpleToast("Még nem elérhető", "info");
 }
 
 async function deleteEvent(eventId) {

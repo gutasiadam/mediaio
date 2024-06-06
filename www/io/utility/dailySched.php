@@ -1,5 +1,5 @@
 <?php
-// A file which runs daily 
+//    A file which runs daily 
 //    Includes jobs like automatic email notifications,
 //    updating the database, etc.
 
@@ -16,6 +16,10 @@ date_default_timezone_set('Europe/Budapest');
 
 class DailySchedule
 {
+    /*
+        The following functions are for the takeout system
+        ---------------------------------------------------
+    */
 
     static function plannedTakeoutReminder()
     {
@@ -28,7 +32,7 @@ class DailySchedule
 
                 // Check if the takeout starts in less than 24 hours
                 $startTime = strtotime($takeout['StartTime']);
-                $tomorrow = strtotime('tomorrow') + 86400; // Tomorrow 11:59:59 PM
+                $tomorrow = strtotime('now') + 86400; // Tomorrow 06:00:00 AM --> script runs at 06:00:00 AM
                 $timeDifference = $tomorrow - $startTime;
 
                 if ($timeDifference <= 86400 && $timeDifference >= 0) {
@@ -117,7 +121,7 @@ class DailySchedule
 
                 // Check if the takeout starts in less than 24 hours
                 $endTime = strtotime($takeout['ReturnTime']);
-                $tomorrow = strtotime('tomorrow') + 86400; // Tomorrow 11:59:59 PM
+                $tomorrow = strtotime('now') + 2*86400; // Tomorrow 06:00:00 AM --> script runs at 06:00:00 AM
                 $timeDifference = $tomorrow - $endTime;
 
                 if ($timeDifference <= 86400 && $timeDifference >= 0) {
@@ -171,50 +175,22 @@ class DailySchedule
         }
     }
 
+    /*
+        The following functions are for the projectManaging system
+        ---------------------------------------------------
+    */
 
-    /*static function projectDeadlineReminder() // NEEDS TO BE IMPLEMENTED
+
+    static function projectDeadlineReminder() 
     {
-        $projectsJSON = ProjectMailer::getProjects();
-        $projects = json_decode($projectsJSON, true);
+        
+    }
 
-        foreach ($projects as $project) {
-            // Check if the project deadline is tomorrow
-            $deadline = strtotime($project['Deadline']);
-            $tomorrow = strtotime('tomorrow');
-            $timeDifference = $deadline - $tomorrow;
+    /*
+        The following functions are for the admin statistics system
+        TODO: Implement the functions
+    */
 
-            if ($timeDifference < 86400 && $timeDifference > 0) {
-                // Get the members of the project
-                $membersJSON = ProjectMailer::getProjectMembers($project['ID']);
-                $members = json_decode($membersJSON, true);
-
-                // Get the project manager
-                $managerJSON = ProjectMailer::getProjectManager($project['ID']);
-                $manager = json_decode($managerJSON, true);
-
-                // Details
-                $projectName = $project['Name'];
-                $managerName = $manager['firstName'] . ' ' . $manager['lastName'];
-
-                // Get current time
-                $currentTime = date("Y-m-d H:i:s");
-                if ($currentTime < $project['Deadline']) {
-                    $message = "A(z) " . $projectName . " projekt a határideje " . $project['Deadline'] . ".\n\n";
-                } else {
-                    $message = "A(z) " . $projectName . " projekt határideje lejárt.\n\n";
-                }
-
-                // Send an email to all members
-                foreach ($members as $member) {
-                    $email = $member['emailUsers'];
-                    $name = $member['firstName'];
-
-                    $message .= "Kedves " . $name . "! \n" . $message;
-                    MailService::sendContactMail($email, 'Projekt határidő emlékeztető', $message);
-                }
-            }
-        }
-    }*/
 }
 
 // Testing purposes

@@ -54,7 +54,7 @@ include ("header.php");
     <tr>
       <td>
         <form action="notifications.php"><button class="btn btn-secondary w-100">Értesítések <i
-              class="fas fa-mail-bulk"></i> (hamarosan)</button></form>
+              class="fas fa-mail-bulk"></i></button></form>
       </td>
     </tr>
     <tr>

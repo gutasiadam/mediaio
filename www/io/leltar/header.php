@@ -23,7 +23,7 @@
 
   <script src="./frontEnd/stats.js" type="text/javascript"></script>
   <script src="./frontEnd/cookieManager.js" type="text/javascript"></script>
-  <script src="./frontEnd/toastManager.js" type="text/javascript" defer></script>
+  <script src="../utility/toastManager.js" crossorigin="anonymous" defer></script>
 
 </head>
 <div class="UI_loading"><img class="loadingAnimation" src="../utility/mediaIO_loading_logo.gif"></div>

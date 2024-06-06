@@ -17,7 +17,7 @@
   <title>Arpad Media IO</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <script src="toastManager.js" crossorigin="anonymous" defer></script>
+  <script src="../../utility/toastManager.js" crossorigin="anonymous" defer></script>
   <script src="confirmFrontEnd.js" crossorigin="anonymous"></script>
 
   <link href='style.scss' rel='stylesheet' />

@@ -220,7 +220,7 @@ function toggleSelectItem(item) {
         console.error('No element found with UID:', item.UID);  // Log an error if no element is found
         return;
     }
-    
+
     const checkBox = itemElement.querySelector(".leltarItemCheckbox");
 
     if (itemElement.classList.contains("selected")) {

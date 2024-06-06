@@ -3,7 +3,7 @@
     <div class="toast" id="infoToast" role="alert" aria-live="assertive" aria-atomic="true">
         <div class="toast-header">
             <img src="../logo.ico" class="rounded me-2" alt="..." style="height: 20px; filter: invert(1);">
-            <strong class="me-auto" id="infoToastTitle">Projektek</strong>
+            <strong class="me-auto" id="infoToastTitle">IO</strong>
             <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
         </div>
         <div class="toast-body">
