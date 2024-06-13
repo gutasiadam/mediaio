@@ -7,6 +7,7 @@ include ("../translation.php"); ?>
 <script src="frontEnd/elementGenerator.js" type="text/javascript"></script>
 <script src="frontEnd/formSubmission.js" type="text/javascript"></script>
 <script src="frontEnd/fetchData.js" type="text/javascript"></script>
+<script src="frontEnd/formElements.js" type="text/javascript"></script>
 
 <body>
 

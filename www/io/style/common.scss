@@ -15,6 +15,34 @@
     box-sizing: border-box;
 }
 
+/* CSS class for using space in the navbar */
+
+.centerTopAccessories {
+    display: static;
+    position: fixed;
+    z-index: 1021;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 15px;
+    max-width: 70%;
+    overflow: hidden;
+
+    @media (min-width: 990px) {
+        @media (max-width: 1150px) {
+            transform: translateX(5%);
+        }
+    }
+
+    /* Floating glass background */
+    background: rgba(255, 255, 255, 0.137);
+    border-radius: 10px;
+    padding: 10px;
+
+    /* Shadow */
+    box-shadow: 0px 0px 10px 0px #00000081;
+
+}
+
 
 .indexToasts {
     @media (min-width: 1151px) {
@@ -664,7 +692,7 @@ table {
         color: #1d2660;
     }
 
-    .submit-btn{
+    .submit-btn {
         background: linear-gradient(135deg, #ff7052, #1d2660);
         color: #fff;
         border: none;

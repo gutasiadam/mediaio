@@ -1,9 +1,9 @@
 <?php
 session_start();
 include ("header.php");
-include ("../translation.php"); 
+include ("../translation.php");
 
-if (!isset ($_SESSION["userId"])) {
+if (!isset($_SESSION["userId"])) {
    echo "<script>window.location.href = '../index.php?error=AccessViolation';</script>";
    exit();
 }
@@ -52,121 +52,15 @@ if (!in_array("admin", $_SESSION["groups"])) {
    </div>
 </nav>
 
-<div class="toast-container position-absolute p-3 indexToasts">
-   <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" id="save_toast">
-      <div class="toast-header">
-         <img src="../utility/logo.png" height="30">
-         <strong class="me-auto" id="save_status"></strong>
-         <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-      </div>
-   </div>
+<div class="centerTopAccessories">
+   <button class="btn" onclick="window.location.href = 'formanswers.php?formId=' +<?php echo $_GET['formId'] ?>"><i
+         class='fas fa-align-left fa-lg' style="color: fff"></i></button>
+   <button class="btn" onclick="window.location.href = 'viewform.php?formId=' + <?php echo $_GET['formId'] ?>" style="color: fff"><i
+         class="fas fa-eye"></i></button>
 </div>
 
 
-<!-- Title edit modal -->
-<div class="modal fade" id="Title_Modal" tabindex="-1" role="dialog" aria-labelledby="title_ModalLabel"
-   aria-hidden="true">
-   <div class="modal-dialog" role="document">
-      <div class="modal-content">
-         <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Kérdőív címe</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-         </div>
-         <div class="modal-body">
-            <input type='text' class='form-control' id='formTitle' placeholder='Új cím'></input>
-         </div>
-         <div class="modal-footer">
-            <button class="btn btn-success col-lg-auto mb-1" id="clear" data-bs-dismiss="modal"
-               onclick="save_title()">Kész</button>
-            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Mégse</button>
-         </div>
-      </div>
-   </div>
-</div>
-<!-- Title edit modal end -->
-
-<!-- Clear Modal -->
-<div class="modal fade" id="delete_Modal" tabindex="-1" role="dialog" aria-labelledby="delete_ModalLabel"
-   aria-hidden="true">
-   <div class="modal-dialog" role="document">
-      <div class="modal-content">
-         <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Törlés</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-         </div>
-         <div class="modal-body">
-            <a>Biztosan ki akarod törölni a kérdőívet?</a>
-         </div>
-         <div class="modal-footer">
-            <button class="btn btn-danger col-lg-auto mb-1" id="clear" data-bs-dismiss="modal"
-               onclick="deleteForm()">Törlés</button>
-            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Mégse</button>
-         </div>
-      </div>
-   </div>
-</div>
-<!-- End of Clear Modal -->
-
-<!-- Settings Modal -->
-<div class="modal fade" id="settings_Modal" tabindex="-1" role="dialog" aria-labelledby="settings_ModalLabel"
-   aria-hidden="true">
-   <div class="modal-dialog" role="document">
-      <div class="modal-content">
-         <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Beállítások</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-         </div>
-         <div class="modal-body">
-            <label for="cars">Form állapota:</label>
-            <select class="form-select form-select-sm" id="formState" name="formState">
-               <option value="0">Nem fogad válaszokat</option>
-               <option value="1">Fogad válaszokat</option>
-            </select>
-            </br>
-            <div class="mb-3" id="accessForm">
-               Elérhetőség:
-               <select class="form-select form-select-sm mb-1" id="accessRestrict" name="accessRestrict">
-                  <option value="1">Privát</option>
-                  <option value="2">Médiás</option>
-                  <option value="3">Csak linkkel elérhető</option>
-                  <option value="0">Publikus</option>
-               </select>
-               <div class="input-group" id="linkHolderGroup" style="display: none;">
-                  <input type="text" class="form-control" placeholder="Kérdőív link" aria-label="Form link"
-                     id="formLinkHolder">
-                  <button class="btn btn-outline-secondary" type="button" onclick="copyLink()">Másolás</button>
-               </div>
-            </div>
-            <div class="form-check form-switch">
-               <input type="checkbox" class="form-check-input" id="flexSwitchCheckDefault" data-setting="SingleAnswer">
-               <label class="form-check-label" for="flexSwitchCheckDefault">Korlátozás egy válaszra (még nem
-                  működik)</label>
-            </div>
-            <div class="form-check form-switch mb-3">
-               <input type="checkbox" class="form-check-input" id="flexSwitchCheckDefault" data-setting="Anonim">
-               <label class="form-check-label" for="flexSwitchCheckDefault"><b>Anonymous</b> válaszadás</label>
-            </div>
-            <label class="mb-2" for="background_img">Háttérkép: <a href="#" id="default-background"
-                  data-bs-toggle="popover" data-bs-placement="top">(alapértelmezett)</a></label>
-            <div class="input-group">
-
-               <input type="file" class="form-control" placeholder="Háttérkép feltöltése" aria-label="Background upload"
-                  name="fileToUpload" id="background_img" accept="image/*">
-               <button class="btn btn-outline-danger" type="button"
-                  onclick="changeBackground(<?php echo $_GET['formId'] ?>,true)">Reset</button>
-               <button class="btn btn-outline-success" type="button"
-                  onclick="changeBackground(<?php echo $_GET['formId'] ?>)">Feltöltés</button>
-            </div>
-         </div>
-         <div class="modal-footer">
-            <button class="btn btn-success col-lg-auto mb-1" id="save" data-bs-dismiss="modal"
-               onclick="saveForm(false)">Mentés</button>
-            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Mégse</button>
-         </div>
-      </div>
-   </div>
-</div>
-<!-- End of Settings Modal -->
+<?php include ("modals.php"); ?>
 
 
 
@@ -221,12 +115,10 @@ if (!in_array("admin", $_SESSION["groups"])) {
                </li>
             </ul>
          </div>
-         <button class="btn btn-primary" onclick="saveForm(false)">Mentés</button>
+         <button class="btn btn-primary" onclick="saveFormElements(false)">Mentés</button>
          <!-- <button class="btn btn-danger" data-bs-target="#delete_Modal" data-bs-toggle="modal"><i class='fas fa-trash-alt fa-lg'></i></button> -->
-         <button class="btn" onclick="showFormAnswers(<?php echo $_GET['formId'] ?>)"><i
-               class='fas fa-align-left fa-lg'></i></button>
-         <button class="btn" onclick="viewForm(<?php echo $_GET['formId'] ?>)"><i class="fas fa-eye"></i></button>
-         <button class="btn" data-bs-target="#settings_Modal" data-bs-toggle="modal"><i class="fas fa-sliders-h fa-lg"></i></button>
+         <button class="btn" data-bs-target="#settings_Modal" data-bs-toggle="modal"><i
+               class="fas fa-sliders-h fa-lg"></i></button>
       </div>
       <div class="row" id="editorZone">
 
@@ -238,6 +130,7 @@ if (!in_array("admin", $_SESSION["groups"])) {
 <script src="frontEnd/elementGenerator.js" type="text/javascript"></script>
 <script src="frontEnd/backgroundManager.js" type="text/javascript"></script>
 <script src="frontEnd/fetchData.js" type="text/javascript"></script>
+<script src="frontEnd/formElements.js" type="text/javascript"></script>
 
 <script>
    //Changing this variable if something is changed
@@ -266,16 +159,6 @@ if (!in_array("admin", $_SESSION["groups"])) {
          placement: 'right'
       });
    });
-
-   //Function to view form
-   function viewForm(formId) {
-      window.location.href = "viewform.php?formId=" + formId;
-   }
-
-   //Function to show form answers
-   function showFormAnswers(formId) {
-      window.location.href = "formanswers.php?formId=" + formId;
-   }
 
    //Function to show title modal
    var i = 0;
@@ -317,12 +200,12 @@ if (!in_array("admin", $_SESSION["groups"])) {
    $(document).ready(function () {
       //Load form from server
 
-      let formId = <?php if (isset ($_GET['formId'])) {
+      let formId = <?php if (isset($_GET['formId'])) {
          echo $_GET['formId'];
       } else {
          echo '-1';
       } ?>;
-      let formHash = <?php if (isset ($_GET['form'])) {
+      let formHash = <?php if (isset($_GET['form'])) {
          echo '"' . $_GET['form'] . '"';
       } else {
          echo 'null';
@@ -348,14 +231,13 @@ if (!in_array("admin", $_SESSION["groups"])) {
    function checkIdNotUsed(id) {
       var elements = document.getElementById("editorZone").getElementsByClassName("form-member");
       for (var j = 0; j < elements.length; j++) {
-         if (elements[j].id.split("-")[1] == id) {
+      if (elements[j].id.split("-")[1] == id) {
             id++;
             checkIdNotUsed(id);
          }
       }
       return id;
    }
-
 
    //Function to add a new form element
    function addFormElement(type) {
@@ -364,8 +246,11 @@ if (!in_array("admin", $_SESSION["groups"])) {
       i = checkIdNotUsed(i); //Check if id is used
       console.log("Adding form element: " + type);
       var place = document.getElementById("editorZone").getElementsByClassName("form-member").length + 1; //Get the place of the new element
-      //console.log("Place: " + place);
-      document.getElementById("editorZone").appendChild(generateElement(type, i, place, "", "editor")); //Generate the element
+      
+      let newElement = new FormElement(i, type, "", "", false, []);
+      let container = document.getElementById("editorZone");
+      newElement.createElement(container, "editor");
+      formElements.push(newElement);
    };
 
 
@@ -424,13 +309,6 @@ if (!in_array("admin", $_SESSION["groups"])) {
    }
 
 
-   //Function to remove an element
-   function removeElement(type, id) {
-      everythingSaved = false;
-      var element = document.getElementById(type + "-" + id);
-      element.remove();
-   }
-
    //Function to move an element up
    function moveUp(type, id) {
       everythingSaved = false;
@@ -466,7 +344,7 @@ if (!in_array("admin", $_SESSION["groups"])) {
       }
       //Add growing spinner to the first h6
       //document.getElementById("time").innerHTML = "<div class='spinner-grow text-success' role='status'></div>"
-      saveForm(true);
+      saveFormElements(true);
    }, 10000);
 
 
@@ -521,12 +399,12 @@ if (!in_array("admin", $_SESSION["groups"])) {
       };
       var formJson = JSON.stringify(form);
 
-      var formId = <?php if (isset ($_GET['formId'])) {
+      var formId = <?php if (isset($_GET['formId'])) {
          echo $_GET['formId'];
       } else {
          echo '-1';
       } ?>;
-      var formHash = <?php if (isset ($_GET['form'])) {
+      var formHash = <?php if (isset($_GET['form'])) {
          echo '"' . $_GET['form'] . '"';
       } else {
          echo 'null';
@@ -562,12 +440,12 @@ if (!in_array("admin", $_SESSION["groups"])) {
    }
 
    function deleteForm() {
-      var formId = <?php if (isset ($_GET['formId'])) {
+      var formId = <?php if (isset($_GET['formId'])) {
          echo $_GET['formId'];
       } else {
          echo '-1';
       } ?>;
-      var formHash = <?php if (isset ($_GET['form'])) {
+      var formHash = <?php if (isset($_GET['form'])) {
          echo '"' . $_GET['form'] . '"';
       } else {
          echo 'null';
