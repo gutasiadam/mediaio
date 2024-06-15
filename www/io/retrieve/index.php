@@ -64,8 +64,8 @@ include "header.php";
 </div>
 
 <!-- Scanner Modal -->
-<div class="modal fade" id="scanner_Modal" data-bs-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="scanner_ModalLabel"
-  aria-hidden="true">
+<div class="modal fade" id="scanner_Modal" data-bs-backdrop="static" tabindex="-1" role="dialog"
+  aria-labelledby="scanner_ModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -90,8 +90,10 @@ include "header.php";
       <div class="modal-footer" id="scanner_footer">
         <button type="button" class="btn btn-outline-dark" id="ext_scanner" onclick="ExternalScan()">Külső
           olvasó</button>
-        <button type="button" class="btn btn-info" id="zoom_btn" onclick="zoomCamera()" style="display: none;">Zoom: 2x</button>
-        <button type="button" class="btn btn-info" id="torch_btn" onclick="startTorch()" style="display: none;">Vaku</button>
+        <button type="button" class="btn btn-info" id="zoom_btn" onclick="zoomCamera()" style="display: none;">Zoom:
+          2x</button>
+        <button type="button" class="btn btn-info" id="torch_btn" onclick="startTorch()"
+          style="display: none;">Vaku</button>
         <div class="dropdown dropup">
           <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown"
             aria-expanded="true">
@@ -137,6 +139,31 @@ include "header.php";
   </div>
 </div>
 
+<!-- changeOwnerModal Modal -->
+<div class="modal fade" id="changeOwnerModal" tabindex="-1" role="dialog" aria-labelledby="changeOwnerModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Tárgy átadása</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <h6 class="statement">Válassz új tulajdonost a listából:</h6>
+        <select class="form-select" name="newOwnerSelect" id="newOwnerSelect">
+          <!--- Users will be loaded here --->
+        </select>
+        <br>
+        <i>A kiválasztott felhasználó értesítést kap az átvételről.</i>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Mégse</button>
+        <button type="button" class="btn btn-success" onclick="changeOwner();">Mehet</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 
 <body>
   <h2 class="rainbow" id="doTitle">Visszahozás</h2>
@@ -155,8 +182,14 @@ include "header.php";
 
     <div class="itemsToRetrieve" id="itemsHolder">
     </div>
-    <button class="btn btn-success w-50 mb-3" id="submission" data-bs-target="#confirmModal"
-      data-bs-toggle="modal">Visszahozás</button>
+    <div class="bottomOptions">
+      <?php if (in_array("admin", $_SESSION['groups'])): ?>
+        <button class="btn btn-warning mb-3" id="ownerChange" data-bs-target="#changeOwnerModal" data-bs-toggle="modal"
+          onclick="loadUsersModal()">Átadás</button>
+      <?php endif; ?>
+      <button class="btn btn-success mb-3" id="submission" data-bs-target="#confirmModal"
+        data-bs-toggle="modal">Visszahozás</button>
+    </div>
 
     <div id='toTop'><i class="fas fa-chevron-down"></i></div>
 </body>

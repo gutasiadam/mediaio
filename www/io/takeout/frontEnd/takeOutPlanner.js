@@ -136,7 +136,7 @@ async function getTakeOutEvents() {
 // Open event modal
 
 async function openEventModal(info) {
-    console.log(info.event);
+    //console.log(info.event);
     $('#plannedEventsModal').modal('show');
 
 
@@ -268,13 +268,12 @@ function createTimeRange(eventID, start, end, eventState) {
 }
 
 function createItemsList(info) {
-
     const headerDiv = document.getElementById('itemsEditHeader');
     headerDiv.innerHTML = "";
 
     // Label
     const label = document.createElement('label');
-    label.innerHTML = "<b>Tárgyak:</b>";
+    label.innerHTML = "<b>Tárgyak:</b> <i>(Dőlt betű: át lett adva)</i>";
     headerDiv.appendChild(label);
 
     // Edit button
@@ -300,6 +299,7 @@ function createItemsList(info) {
     const items = JSON.parse(info.event.extendedProps.itemsList);
     items.forEach(element => {
         let item = document.createElement('li');
+        info.event.extendedProps.owner.idUsers != element.holderUserID ? item.classList.add("differentUser") : null;
         item.innerHTML = `${element.name} - ${element.uid} `;
         eventItems.appendChild(item);
     });

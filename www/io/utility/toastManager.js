@@ -3,14 +3,14 @@ const option = {
     delay: 3000
 };
 
-const toastList = document.querySelector('.toast')
-const toast = new bootstrap.Toast(toastList, option)
+const toastList = document.querySelector('.toast');
+const toast = new bootstrap.Toast(toastList, option);
 
 
 function serverErrorToast() {
     //Remove all classes except the toast class
-    toastList.classList.remove('text-bg-danger');
     toastList.classList.remove('text-bg-warning');
+    toastList.classList.remove('text-bg-danger');
     toastList.classList.remove('text-bg-info');
     toastList.classList.remove('text-bg-success');
 

@@ -97,6 +97,10 @@
     .form-control {
         margin-bottom: 5px;
     }
+
+    .form-options {
+        padding-top: 15px;
+    }
 }
 
 .element-nav {
@@ -112,26 +116,6 @@
     width: 100%;
 }
 
-/* Old CSS will be removed */
-#e-settings {
-    .form-check {
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
-        align-items: center;
-        margin-bottom: 5px;
-
-        .form-control {
-            margin-bottom: 0;
-        }
-
-        .form-check-input {
-            margin-right: 5px;
-        }
-    }
-}
-
-/* -------- */
 .editor {
     .form-check {
         display: flex;

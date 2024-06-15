@@ -12,6 +12,8 @@ if (!in_array("admin", $_SESSION["groups"])) {
    exit();
 }
 ?>
+
+<script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
 <html>
 
 <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-dark">
@@ -55,8 +57,8 @@ if (!in_array("admin", $_SESSION["groups"])) {
 <div class="centerTopAccessories">
    <button class="btn" onclick="window.location.href = 'formanswers.php?formId=' +<?php echo $_GET['formId'] ?>"><i
          class='fas fa-align-left fa-lg' style="color: fff"></i></button>
-   <button class="btn" onclick="window.location.href = 'viewform.php?formId=' + <?php echo $_GET['formId'] ?>" style="color: fff"><i
-         class="fas fa-eye"></i></button>
+   <button class="btn" onclick="window.location.href = 'viewform.php?formId=' + <?php echo $_GET['formId'] ?>"
+      style="color: fff"><i class="fas fa-eye"></i></button>
 </div>
 
 
@@ -126,11 +128,10 @@ if (!in_array("admin", $_SESSION["groups"])) {
    </div>
 </div>
 
-
-<script src="frontEnd/elementGenerator.js" type="text/javascript"></script>
 <script src="frontEnd/backgroundManager.js" type="text/javascript"></script>
 <script src="frontEnd/fetchData.js" type="text/javascript"></script>
 <script src="frontEnd/formElements.js" type="text/javascript"></script>
+<script src="frontEnd/drangAndDrop.js" type="text/javascript"></script>
 
 <script>
    //Changing this variable if something is changed
@@ -223,7 +224,7 @@ if (!in_array("admin", $_SESSION["groups"])) {
             showLink(formHash);
          } else {
             showLink(formHash, false);
-         }
+            }
       });
    });
 
@@ -238,7 +239,6 @@ if (!in_array("admin", $_SESSION["groups"])) {
       }
       return id;
    }
-
    //Function to add a new form element
    function addFormElement(type) {
       everythingSaved = false;
@@ -252,61 +252,6 @@ if (!in_array("admin", $_SESSION["groups"])) {
       newElement.createElement(container, "editor");
       formElements.push(newElement);
    };
-
-
-   function getCheckSettings(maindiv, type) {
-      var checkboxOptions = [];
-      var checkbox_holder = maindiv.getElementsByClassName(type + '-holder');
-      var checkNames = checkbox_holder[0].querySelectorAll('input[type="text"]');
-      for (var i = 0; i < checkNames.length; i++) {
-         checkboxOptions.push(checkNames[i].value);
-      }
-      return checkboxOptions;
-   }
-
-   function getGridSettings(maindiv) {
-      var grid_holder = maindiv.getElementsByClassName('grid-holder');
-      var rows = grid_holder[0].getElementsByClassName('grid-row').length;
-
-      var labels = grid_holder[0].querySelectorAll('input[type="text"]');
-      labels = Array.from(labels).map(function (el) {
-         return el.value;
-      });
-
-      var gridOptions = {
-         'rows': rows,
-         'columns': 5,
-         'options': labels
-      };
-      return gridOptions;
-   }
-
-
-   //Function to get element settings
-   function getElementSettings(type, id) {
-      var maindiv = document.getElementById(type + "-" + id); //Get the main div of the element
-      var extraOptions = "";
-      //Check if the element is a checkbox, radio or dropdown
-      if (type == "checkbox" || type == "radio" || type == "dropdown") {
-         extraOptions = getCheckSettings(maindiv, type); //Get the options of the element
-      }
-      if (type == "scaleGrid") {
-         extraOptions = getGridSettings(maindiv);
-      }
-      //Get the question of the element
-      var elementQuestion = maindiv.querySelector("#e-settings").getElementsByTagName("input")[0].value;
-      //Check if the element is required
-      var isRequired = maindiv.querySelector("#flexSwitchCheckDefault").checked;
-      //Create settings object
-      var elementSettings = {
-         question: elementQuestion,
-         required: isRequired,
-         options: extraOptions
-      }
-      //Return settings as JSON string
-      elementSettings = JSON.stringify(elementSettings).replace(/"/g, '\\"');
-      return elementSettings;
-   }
 
 
    //Function to move an element up
@@ -359,27 +304,6 @@ if (!in_array("admin", $_SESSION["groups"])) {
          formName = "Névtelen";
       }
 
-      //console.log(elements);
-      var formElements = [];
-      //Get all elements and their settings
-      for (var k = 0; k < elements.length; k++) {
-         var elementType = elements[k].id.split("-")[0];
-         var elementId = elements[k].id.split("-")[1];
-         var elementPlace = k + 1;
-         var elementSettings = getElementSettings(elementType, elementId);
-
-         //Create element object
-         var formElement = {
-            "type": elementType,
-            "place": elementPlace,
-            "id": elementId,
-            "settings": elementSettings
-         };
-         console.log(formElement);
-         formElements.push(formElement);
-      }
-
-
 
       var formState = document.getElementById("formState").value;
       var accessRestrict = document.getElementById("accessRestrict").value;
@@ -391,7 +315,6 @@ if (!in_array("admin", $_SESSION["groups"])) {
       var form = {
          "name": formName,
          "header": formHeader,
-         "elements": formElements,
          "state": formState,
          "access": accessRestrict,
          "anonim": formAnonim,

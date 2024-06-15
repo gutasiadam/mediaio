@@ -327,7 +327,7 @@ error_reporting(E_ALL ^ E_NOTICE);
         //Load selected items
         await loadTooltips();
 
-        await loadReservationData();
+        //await loadReservationData();
 
         if (reservationProject) {
             loadReservation(reservationProject);

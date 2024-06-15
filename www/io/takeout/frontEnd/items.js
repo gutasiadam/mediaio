@@ -111,7 +111,7 @@ async function loadItems() {
         }
     }));
 
-    console.log(response);
+    //console.log(response);
 
     //Get userinfo
 

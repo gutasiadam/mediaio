@@ -63,8 +63,8 @@ async function loadItemStats() {
 
         const card = document.createElement('div');
         card.classList.add('card', 'mb-3');
-        card.classList.add(event.Event === 'OUT' ? 'border-danger' : event.Event === 'DECLINE' ? 'border-warning' : event.Event === 'PLANNED' ? 'border-info' : 'border-success');
-        card.classList.add(event.Event === 'OUT' ? 'card-out' : event.Event === 'DECLINE' ? 'card-decline' : event.Event === 'PLANNED' ? 'card-planned' : 'card-in');
+        card.classList.add(event.Event === 'OUT' ? 'border-danger' : event.Event === 'DECLINE' ? 'border-warning' : event.Event === 'CHANGE' ? 'border-info' : 'border-success');
+        card.classList.add(event.Event === 'OUT' ? 'card-out' : event.Event === 'DECLINE' ? 'card-decline' : event.Event === 'CHANGE' ? 'card-planned' : 'card-in');
 
         const cardBody = document.createElement('div');
         cardBody.classList.add('card-body', 'confirm-card');
@@ -89,7 +89,7 @@ async function loadItemStats() {
         takenItems.classList.add('taken-items');
         cardBody.appendChild(takenItems);
 
-        const items = JSON.parse(event.Items);
+        const items = JSON?.parse(event.Items);
 
         for (let i = 0; i < 5; i++) {
             if (i >= items.length) {
@@ -126,7 +126,7 @@ async function loadItemStats() {
         inOrOut.classList.add('card-timestamp');
         inOrOut.style.fontSize = '1.2em';
         inOrOut.style.fontWeight = 'bold';
-        inOrOut.textContent = event.Event === 'OUT' ? 'Kiadva' : event.Event === 'DECLINE' ? 'Elutasítva' : event.Event === 'PLANNED' ? 'Időzítve' : 'Visszahozva';
+        inOrOut.textContent = event.Event === 'OUT' ? 'Kiadva' : event.Event === 'DECLINE' ? 'Elutasítva' : event.Event === 'CHANGE' ? 'Átadva' : 'Visszahozva';
         if (event.Acknowledged == 0) {
             inOrOut.style.fontSize = '1em';
             inOrOut.textContent += ' (Megerősítésre vár)';

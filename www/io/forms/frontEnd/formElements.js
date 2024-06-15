@@ -12,7 +12,7 @@ class FormElement {
 
     // Methods:
     constructor(id, type, question, details, required, options) {
-        this.id = `${type}-${id}`;
+        this.id = id;
         this.type = type;
         this.question = question;
         this.details = details;
@@ -24,24 +24,36 @@ class FormElement {
 
         // Main div containing the form element
         const mainDIV = document.createElement('div');
-        mainDIV.id = this.id;
-        mainDIV.classList.add("mb-3", "form-member");
+        mainDIV.id = `${this.type}-${this.id}`;
+        mainDIV.classList.add("mb-3", "form-member", "draggable");
         state == "editor" ? mainDIV.classList.add("editor") : mainDIV.classList.add("user");
         mainDIV.setAttribute('data-type', this.type);
         mainDIV.setAttribute('data-required', this.required);
 
         // Create a div for the ui elements
         const uiDiv = document.createElement('div');
-        uiDiv.classList.add("form-control");
+        uiDiv.classList.add("form-control", "form-options");
         mainDIV.appendChild(uiDiv);
 
-        // Question input
-        const questionInput = document.createElement('input');
-        questionInput.type = 'text';
-        questionInput.classList.add("form-control", "editorLabel");
-        questionInput.placeholder = 'Kérdés';
-        questionInput.value = this.question ? this.question : '';
-        uiDiv.appendChild(questionInput);
+        // Question input or label
+        if (state == "editor") {
+            const questionInput = document.createElement('input');
+            questionInput.type = 'text';
+            questionInput.classList.add("form-control", "editorLabel");
+            questionInput.placeholder = 'Kérdés';
+            questionInput.value = this.question ? this.question : '';
+            uiDiv.appendChild(questionInput);
+        } else {
+            const questionLabel = document.createElement('label');
+            questionLabel.classList.add("form-label");
+            if (this.required) {
+                questionLabel.innerHTML = (this.question ? this.question : '') + "<span style='color: red;'> *</span>";
+            } else {
+                questionLabel.innerHTML = this.question ? this.question : '';
+            }
+            uiDiv.appendChild(questionLabel);
+        }
+
 
         // Based on the type of the form element, we generate the specific editor
         switch (this.type) {
@@ -64,11 +76,11 @@ class FormElement {
                 break;
 
             case "dropdown":
-                //uidiv.appendChild(generateDropdown(id, settings, extraOptions, state, answer));
+                uiDiv.appendChild(this.generateDropdown(state));
                 break;
 
             case "scaleGrid":
-                //uidiv.appendChild(generateScaleGrid(id, settings, extraOptions, state, answer));
+                uiDiv.appendChild(this.generateScaleGrid(state));
                 break;
 
             case "fileUpload":
@@ -118,7 +130,9 @@ class FormElement {
         const deleteButton = document.createElement('button');
         deleteButton.classList.add("btn", "btn-close", "btn-sm", "deleteButton");
         deleteButton.onclick = function () {
-            formElements = formElements.filter(element => element.id !== editor.id);
+            formElements = formElements.filter(element =>
+                `${element.type}-${element.id}` !== editor.id
+            );
             everythingSaved = false;
             editor.remove();
         };
@@ -214,6 +228,7 @@ class FormElement {
         return dateInput;
     }
 
+    // Radio and checkbox
     generateChoice(state) {
         const holderDiv = document.createElement('div');
         holderDiv.classList.add("mb-3", `${this.type}-holder`);
@@ -222,7 +237,7 @@ class FormElement {
             this.details = ["", ""];
         }
         this.details?.forEach((option, index) => {
-            holderDiv.appendChild(this.addNewChoiceOption(option, index));
+            holderDiv.appendChild(this.addNewChoiceOption(option, index, state));
         });
 
         if (state == "editor") {
@@ -231,7 +246,7 @@ class FormElement {
             addRadio.innerHTML = "+";
             addRadio.onclick = () => {
                 // Create the new choice option element
-                var newChoiceOption = this.addNewChoiceOption("", holderDiv.children.length - 1);
+                var newChoiceOption = this.addNewChoiceOption("", holderDiv.children.length - 1, state);
 
                 // Insert the new choice option before the last child of holderDiv (the "Add" button)
                 holderDiv.insertBefore(newChoiceOption, holderDiv.lastChild);
@@ -242,46 +257,363 @@ class FormElement {
         return holderDiv;
     }
 
-    addNewChoiceOption(option, index) {
+    addNewChoiceOption(option, index, state) {
         // Create div for checkbox or radio  
         const div = document.createElement("div");
-        div.classList.add("input-group", "mb-2");
+        div.classList.add(state == "editor" ? "input-group" : "form-check", "mb-2");
         div.setAttribute('data-option', index);
 
-        const CheckHolderDiv = document.createElement("div");
-        CheckHolderDiv.classList.add("input-group-text");
-        CheckHolderDiv.innerHTML = `<input class="form-check-input" type="${this.type === 'radio' ? 'radio' : 'checkbox'}" id="${this.id}-option-${index}" data-name="${option}" disabled>`;
-        div.appendChild(CheckHolderDiv);
+        if (state === "editor") {
+            const CheckHolderDiv = document.createElement("div");
+            CheckHolderDiv.classList.add("input-group-text");
+            CheckHolderDiv.innerHTML = `<input class="form-check-input" type="${this.type === 'radio' ? 'radio' : 'checkbox'}" id="${this.id}-option-${index}" data-name="${option}" disabled>`;
+            div.appendChild(CheckHolderDiv);
 
-        const label = document.createElement("input");
-        label.type = "text";
-        label.classList.add("form-control", "details-text");
-        label.style.marginBottom = "0";
-        label.placeholder = "Opció";
-        label.value = option;
-        div.appendChild(label);
+            const label = document.createElement("input");
+            label.type = "text";
+            label.classList.add("form-control", "details-text");
+            label.style.marginBottom = "0";
+            label.placeholder = "Opció";
+            label.value = option;
+            div.appendChild(label);
+        } else {
+            // Create input for checkbox or radio
+            const checkbox = document.createElement("input");
+            checkbox.type = this.type;
+            checkbox.classList.add("form-check-input");
+            checkbox.classList.add("userInput");
+            if (checkbox.type === "radio") {
+                checkbox.name = `${this.id}-radio`;
+            }
+            if (state === "answer") {
+                checkbox.disabled = true;
+                if (answer === 1) {
+                    checkbox.checked = true;
+                }
+            }
+            checkbox.setAttribute('data-name', option);
+            checkbox.id = index;
+            div.appendChild(checkbox);
 
-        const deleteHolder = document.createElement("div");
-        deleteHolder.classList.add("input-group-text");
+            // Create label for checkbox or radio
+            const Qlabel = document.createElement("label");
+            Qlabel.classList.add("form-check-label");
+            Qlabel.htmlFor = index;
+            Qlabel.textContent = option ? option : "Opció";
+            div.appendChild(Qlabel);
+        }
 
-        // Create delete button
+        if (state === "editor") {
+            const deleteHolder = document.createElement("div");
+            deleteHolder.classList.add("input-group-text");
+
+            // Create delete button
+            const deleteButton = document.createElement("button");
+            deleteButton.classList.add("btn", "btn-close", "btn-sm");
+            deleteButton.onclick = function () {
+                div.remove();
+            };
+            deleteHolder.appendChild(deleteButton);
+            div.appendChild(deleteHolder);
+        }
+        return div;
+    }
+
+    // Dropdown
+    generateDropdown(state) {
+        //Create dropdown holder
+        const dropdownHolder = document.createElement("div");
+        dropdownHolder.classList.add("dropdown-holder", "mb-3");
+
+        let dropdownButton;
+        if (state == "fill" || state == "answer") {
+            dropdownButton = document.createElement("select");
+            dropdownButton.classList.add("form-select", "userInput");
+            dropdownButton.id = `${this.id}-dropdown`;
+            dropdownHolder.appendChild(dropdownButton);
+            if (state == "answer") {
+                dropdownButton.disabled = true;
+            }
+        }
+
+        if (this.details?.length == 0) {
+            this.details = ["", ""];
+        }
+        this.details?.forEach((option, index) => {
+            if (state == "fill" || state == "answer") {
+                dropdownButton.appendChild(this.addNewDropdownOption(option, index, state));
+            } else if (state == "editor") {
+                dropdownHolder.appendChild(this.addNewDropdownOption(option, index, state));
+            }
+        });
+
+
+        if (state == "editor") {
+            const addDropdown = document.createElement("button");
+            addDropdown.classList.add("btn", "btn-success", "btn-sm");
+            addDropdown.innerHTML = "+";
+            addDropdown.onclick = () => {
+                // Create the new choice option element
+                var newChoiceOption = this.addNewDropdownOption("", dropdownHolder.children.length - 1, state);
+
+                // Insert the new choice option before the last child of holderDiv (the "Add" button)
+                dropdownHolder.insertBefore(newChoiceOption, dropdownHolder.lastChild);
+            };
+            dropdownHolder.appendChild(addDropdown);
+        }
+
+        return dropdownHolder;
+    }
+
+    addNewDropdownOption(option, index, state) {
+        if (state == "editor") {
+            //Create div for dropdown
+            const div = document.createElement("div");
+            div.classList.add("form-check");
+            div.setAttribute('data-option', index);
+
+            //Create arrow
+            const arrow = document.createElement("i");
+            arrow.classList.add("fas", "fa-arrow-right", "fa-lg");
+            div.appendChild(arrow);
+
+            //Create option for dropdown
+            const label = document.createElement("input");
+            label.type = "text";
+            label.classList.add("form-control", "details-text");
+            label.placeholder = "Opció";
+            label.value = option ? option : "";
+            div.appendChild(label);
+
+            //Create delete button
+            const deleteButton = document.createElement("button");
+            deleteButton.classList.add("btn", "btn-close", "btn-sm");
+            deleteButton.onclick = function () {
+                div.remove();
+            };
+            div.appendChild(deleteButton);
+            return div;
+
+        } else if (state == "fill" || state == "answer") {
+            const dropdown = document.createElement("option");
+            dropdown.value = option ? option : "Opció";
+            dropdown.innerHTML = option ? option : "Opció";
+            dropdown.classList.add("userInput");
+            return dropdown;
+        }
+    }
+
+    // Scale grid
+    generateScaleGrid(state) {
+
+        if (state == "editor") {
+            return this.generateScaleGridEditor();
+        }
+
+        const columns = this.options.scale ? this.options.scale : 4;
+
+        // Create scale grid holder
+        const gridHolder = document.createElement("div");
+        gridHolder.classList.add("container", "justify-content-center");
+        gridHolder.classList.add("grid-holder");
+        gridHolder.style.paddingLeft = "10px";
+        gridHolder.style.paddingRight = "10px";
+
+        //Create header row
+        const headerRow = document.createElement("div");
+        headerRow.classList.add("row");
+        headerRow.style.flexWrap = "nowrap";
+        headerRow.setAttribute('data-option', "header");
+
+
+        const spacerColumn = document.createElement("div");
+        spacerColumn.classList.add("col-3");
+        spacerColumn.style.minWidth = "50px";
+        headerRow.appendChild(spacerColumn);
+
+        Array.from({ length: columns + 1 }).forEach((column, index) => {
+            const headerColumn = document.createElement("div");
+            headerColumn.classList.add("col", "header-column", "text-center");
+            headerColumn.style.minWidth = "50px";
+            headerColumn.innerHTML = index + 1;
+            headerRow.appendChild(headerColumn);
+        });
+        gridHolder.appendChild(headerRow);
+
+
+        if (this.details?.length == 0) {
+            this.details = ["", ""];
+        }
+        //Create rows
+        this.details?.forEach((option, index) => {
+            gridHolder.appendChild(this.addNewRow(option, index, state, columns));
+        });
+
+        return gridHolder;
+    }
+
+    addNewRow(option, index, state, columns) {
+        //Create row
+        const row = document.createElement("div");
+        row.classList.add("row", "mb-3");
+        row.style.flexWrap = "nowrap";
+        row.setAttribute('data-option', index);
+        row.classList.add("grid-row");
+
+        //Create label for row
+
+        const labelHolder = document.createElement("div");
+        labelHolder.classList.add("col-3");
+        labelHolder.appendChild(this.createRowLabel(option, state));
+        row.appendChild(labelHolder);
+
+
+        //Create columns with radio buttons
+        Array.from({ length: columns + 1 }).forEach((_, j) => {
+            const column = document.createElement("div");
+            column.classList.add("col", "text-center", "align-self-center");
+
+            const input = document.createElement("input");
+            input.type = "radio";
+            input.classList.add("form-check-input");
+            //input.id = id + "-" + rownum + "-" + j;
+            input.name = `${this.id}-scaleGrid-${index}`;
+
+            input.classList.add("userInput");
+            if (state == "answer") {
+                input.disabled = true;
+            }
+
+            column.appendChild(input);
+
+            row.appendChild(column);
+        });
+        return row;
+    }
+
+    createRowLabel(option, state) {
+        //Create input for row
+        if (state == "editor") {
+            const div = document.createElement("div");
+            div.classList.add("mb-2", "d-flex", "no-wrap", "align-items-center");
+
+            const input = document.createElement("input");
+            input.type = "text";
+            input.classList.add("form-control", "details-text");
+            input.placeholder = "Sor";
+            input.value = option ? option : "";
+            
+            const deleteButton = document.createElement("button");
+            deleteButton.classList.add("btn", "btn-close", "btn-sm");
+            deleteButton.onclick = function () {
+                div.remove();
+            }
+
+            div.appendChild(input);
+            div.appendChild(deleteButton);
+            return div;
+        } else if (state == "fill" || state == "answer") {
+            const label = document.createElement("label");
+            label.classList.add("form-check-label", "row-label");
+            label.innerHTML = option ? option : "Opció";
+            label.style.textAlign = "center";
+            return label;
+        }
+    }
+
+    createOptionLabel(option) {
+        const div = document.createElement("div");
+        div.classList.add("mb-2", "d-flex", "no-wrap", "align-items-center");
+
+        const input = document.createElement("input");
+        input.type = "text";
+        input.classList.add("form-control", "options-text");
+        input.placeholder = "Oszlop";
+        input.value = option ? option : "";
+
         const deleteButton = document.createElement("button");
         deleteButton.classList.add("btn", "btn-close", "btn-sm");
         deleteButton.onclick = function () {
             div.remove();
         };
-        deleteHolder.appendChild(deleteButton);
-        div.appendChild(deleteHolder);
+
+        
+        div.appendChild(input);
+        div.appendChild(deleteButton);
         return div;
     }
 
+    generateScaleGridEditor() {
+        // Create scale grid holder
+        const gridHolder = document.createElement("div");
+        gridHolder.classList.add("container", "justify-content-center");
+        gridHolder.classList.add("grid-holder");
+        gridHolder.style.paddingLeft = "10px";
+        gridHolder.style.paddingRight = "10px";
+
+        //Create header row with two columns
+        const headerRow = document.createElement("div");
+        headerRow.classList.add("row");
+        headerRow.style.flexWrap = "nowrap";
+        headerRow.setAttribute('data-option', "header");
+
+        // First column for labels
+        const labelColumn = document.createElement("div");
+        labelColumn.classList.add("col");
+        labelColumn.innerHTML = "Sorok";
+        headerRow.appendChild(labelColumn);
+
+        if (this.details?.length == 0) {
+            this.details = ["", ""];
+        }
+        //Create rows
+        this.details?.forEach((option, index) => {
+            labelColumn.appendChild(this.createRowLabel(option, "editor"));
+        });
+
+        // Second column for options
+        const optionColumn = document.createElement("div");
+        optionColumn.classList.add("col");
+        optionColumn.innerHTML = "Oszlopok";
+        headerRow.appendChild(optionColumn);
+
+        if (this.options?.length == 0) {
+            this.options = ["", ""];
+        }
+        //Create rows
+        this.options?.forEach((option, index) => {
+            optionColumn.appendChild(this.createOptionLabel(option));
+        });
+
+        gridHolder.appendChild(headerRow);
+
+        //Create add row button
+
+        const plusHolder = document.createElement("div");
+        plusHolder.classList.add("row", "mb-3", "justify-content-center");
+
+        const addRow = document.createElement("button");
+        addRow.classList.add("btn", "btn-success", "btn-sm", "w-50");
+        addRow.innerHTML = "+";
+        addRow.onclick = () => {
+            // Create the new choice option element
+            var newChoiceOption = this.addNewRow("", holderDiv.children.length - 1, state, columns);
+
+            // Insert the new choice option before the last child of holderDiv (the "Add" button)
+            gridHolder.insertBefore(newChoiceOption, dropdownHolder.lastChild);
+        };
+        plusHolder.appendChild(addRow);
+        gridHolder.appendChild(plusHolder);
+
+
+        return gridHolder;
+    }
 
     // File upload
     generateFileUpload(state) {
         const fileInput = document.createElement("input");
         fileInput.type = "file";
         fileInput.classList.add("form-control");
-        fileInput.disabled = true;
 
         if (state == "editor") {
             fileInput.disabled = true;
@@ -296,7 +628,7 @@ class FormElement {
 
     // Getters
     getQuestion() {
-        return document.getElementById(this.id).querySelector('input[type="text"]').value;
+        return document.getElementById(`${this.type}-${this.id}`).querySelector('input[type="text"]').value;
     }
 
     getRequired() {
@@ -304,12 +636,26 @@ class FormElement {
     }
 
     getDetails() {
-        if (this.type === 'radio' || this.type === 'checkbox') {
+        if (this.type === 'radio' || this.type === 'checkbox' || this.type === 'dropdown' || this.type === 'scaleGrid') {
             const details = [];
-            document.querySelectorAll(`#${this.id} .details-text`).forEach(input => {
+            document.querySelectorAll(`#${this.type}-${this.id} .details-text`).forEach(input => {
                 details.push(input.value);
             });
+            this.details = details;
             return details;
+        } else {
+            return "";
+        }
+    }
+
+    getOptions() {
+        if (this.type === 'scaleGrid') {
+            const options = [];
+            document.querySelectorAll(`#${this.type}-${this.id} .options-text`).forEach(input => {
+                options.push(input.value);
+            });
+            this.options = options;
+            return options;
         } else {
             return "";
         }
@@ -418,12 +764,12 @@ async function loadPage(form, state) {
 function serializeFormElements(formElements) {
     return formElements.map(element => {
         return {
-            id: element.id.match(/\d+/) ? parseInt(element.id.match(/\d+/)[0], 10) : null, // Strip the id from the type
+            id: element.id,
             type: element.type,
             question: element.getQuestion(),
             details: element.getDetails(),
             required: element.getRequired(),
-            options: element.options,
+            options: element.getOptions(),
             //answer: element.answer
         };
     });

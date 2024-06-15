@@ -334,38 +334,42 @@ class retrieveManager
       $stmt->bind_param("sssis", $currDate, $_SESSION['userId'], $dataJSON, $acknowledged, $ackBy);
       $stmt->execute();
 
-      // Update takeoutPlanner table
-      $stmt = $connection->prepare("SELECT * FROM takeoutPlanner WHERE eventState=1 AND UserID=?");
-      $stmt->bind_param("s", $_SESSION['userId']);
-      $stmt->execute();
-      $result = $stmt->get_result();
 
-      if ($result->num_rows > 0) { // For safety reasons
-        $rows = $result->fetch_all(MYSQLI_ASSOC);
+
+
+      // Update takeoutPlanner table
+      $sql = "SELECT * FROM takeoutPlanner WHERE eventState=1";
+      $result = $connection->query($sql);
+      $plannedTakeoutToUpdate = $result->fetch_all(MYSQLI_ASSOC);
+
+      // Check every ongoing takeout if all the items are returned after this retrieve
+      foreach ($plannedTakeoutToUpdate as $plannedTakeout) {
+        $items = json_decode($plannedTakeout['Items'], true);
+
+        $itemsToCheckString = implode(",", array_map(function ($item) {
+          return "'" . $item['uid'] . "'";
+        }, $items));
+
+        $itemHolderUserIDs_STR = implode(",", array_map(function ($item) {
+          return "'" . $item['holderUserID'] . "'";
+        }, $items));
+
+        // Filter duplicate userIDs
+        $itemHolderUserIDs_STR = implode(",", array_unique(explode(",", $itemHolderUserIDs_STR)));
 
         // Check if all the items are returned
-        foreach ($rows as $row) {
-          // Make a list of the items for IN statement
-          $items = json_decode($row['Items'], true);
-          $items = array_map(function ($item) {
-            return "'" . $item['uid'] . "'";
-          }, $items);
+        $sql = "SELECT COUNT(*) FROM leltar WHERE UID IN ($itemsToCheckString) AND Status=0 AND RentBy IN ($itemHolderUserIDs_STR)";
+        $result = $connection->query($sql);
+        $result = $result->fetch_assoc();
 
-          // Check if all the items are returned
-          $items_str = implode(",", $items);
-          $sql = "UPDATE takeoutPlanner 
-              SET eventState=2 
-              WHERE ID='{$row['ID']}' 
-              AND (
-                  SELECT COUNT(*) 
-                  FROM leltar 
-                  WHERE UID IN ($items_str) 
-                  AND Status=0 
-                  AND RentBy='{$_SESSION['userId']}'
-              ) = 0";
+        if ($result['COUNT(*)'] == 0) {
+          // All items are returned, update the event
+          $sql = "UPDATE takeoutPlanner SET eventState=2 WHERE ID=" . $plannedTakeout['ID'];
           $connection->query($sql);
         }
+
       }
+
 
       // Commit transaction
       $connection->commit();
@@ -498,6 +502,73 @@ class itemDataManager
 
     $sql = "UPDATE takeoutPlanner SET StartTime='$newStartTime', ReturnTime='$newEndTime' WHERE ID=" . $eventID;
     $connection->query($sql);
+    return 200;
+  }
+
+  // Change owner of items
+  static function changeOwner($items, $newUserID)
+  {
+    // Only admins can change the owner of items
+    if (!in_array("admin", $_SESSION['groups'])) {
+      return 403;
+    }
+
+    try {
+      $connection = Database::runQuery_mysqli();
+      $connection->begin_transaction(); // Real backend developers use transactions XD
+
+      $newUserID = intval($newUserID);
+      $currentUserID = $_SESSION['userId'];
+
+      date_default_timezone_set('Europe/Budapest');
+      $currDate = date("Y/m/d H:i:s");
+
+      // Update takelog
+      $sql = "INSERT INTO `takelog` (`Date`, `UserID`, `Items`, `Event`,`Acknowledged`,`ACKBY`) 
+        VALUES (?, ?, ?, 'CHANGE', 1, ?);";
+      $stmt = $connection->prepare($sql);
+      $stmt->bind_param("siss", $currDate, $newUserID, $items, $_SESSION['UserUserName']);
+      $stmt->execute();
+
+      $items = json_decode($items, true);
+      $items = array_map(function ($item) {
+        return $item['uid'];
+      }, $items);
+
+      $sql = "UPDATE leltar SET RentBy=? WHERE UID=?";
+      $stmt = $connection->prepare($sql);
+      $stmt->bind_param("ss", $newUserID, $item);
+      foreach ($items as $item) {
+        $stmt->execute();
+      }
+
+
+      // Update owner in takeoutPlanner JSON
+      $sql = "SELECT * FROM takeoutPlanner WHERE eventState=1"; // Takeout already started
+      $result = $connection->query($sql);
+      $rows = $result->fetch_all(MYSQLI_ASSOC);
+
+      foreach ($rows as $row) {
+        $Originalitems = json_decode($row['Items'], true);
+        foreach ($Originalitems as &$oitem) {
+          if (in_array($oitem['uid'], $items) && $oitem['holderUserID'] == $currentUserID) {
+            $oitem['holderUserID'] = $newUserID;
+          }
+        }
+        $Originalitems = json_encode($Originalitems, JSON_UNESCAPED_UNICODE);
+
+        $sql = "UPDATE takeoutPlanner SET Items=? WHERE ID=?";
+        $stmt = $connection->prepare($sql);
+        $stmt->bind_param("ss", $Originalitems, $row['ID']);
+        $stmt->execute();
+      }
+      $connection->commit();
+    } catch (\Exception $e) {
+      echo "Error: " . $e->getMessage();
+      $connection->rollback();
+      return 500;
+    }
+
     return 200;
   }
 
@@ -711,7 +782,6 @@ class itemDataManager
   /**Obtains modifyable reservation data available for the user */
   static function listReservationData($id)
   {
-
 
     if (in_array("admin", $_SESSION['groups'])) {
       $sql = "SELECT * from takeoutPlanner WHERE 1=1 AND eventState=0";
@@ -931,6 +1001,7 @@ class itemDataManager
     return $result;
   }
 
+  // Function to list specific items from the database (Used on "leltar" page)
   static function listByCriteria($itemState, $orderCriteria, $orderDirection = 'asc', $takeRestrict = 'none')
   {
     $takeRestrictArray = array(
@@ -1098,16 +1169,10 @@ class itemHistoryManager
     $sql = "SELECT * FROM `takelog` WHERE `Date` > DATE_SUB(NOW(), INTERVAL 1 WEEK) ORDER BY `Date` DESC";
     //Get a new database connection
     $connection = Database::runQuery_mysqli();
-    $stmt = $connection->prepare($sql);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $rows = array();
-    while ($row = $result->fetch_assoc()) {
-      $rows[] = $row;
-    }
+    $result = $connection->query($sql);
+    $rows = $result->fetch_all(MYSQLI_ASSOC);
     $result = json_encode($rows);
     return $result;
-
   }
 
 }
@@ -1143,6 +1208,11 @@ if (isset($_POST['mode'])) {
 
   if ($_POST['mode'] == 'deletePlannedTakeout') {
     echo itemDataManager::deletePlannedTakeout($_POST['ID']);
+  }
+
+  //Handles item ownership change
+  if ($_POST['mode'] == 'changeOwner') {
+    echo itemDataManager::changeOwner($_POST['items'], $_POST['newOwner']);
   }
 
   //Handles changeTakeoutTime too

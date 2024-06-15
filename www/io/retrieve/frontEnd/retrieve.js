@@ -56,6 +56,10 @@ async function loadUserItems() {
         itemHolder.style.alignItems = "center";
 
         document.getElementById("submission").style.display = "none";
+        const ownerChangeElement = document.getElementById("ownerChange");
+        if (ownerChangeElement) {
+            ownerChangeElement.style.display = "none";
+        }
         return;
     }
 
@@ -137,6 +141,70 @@ function toggleSelectItem(item) {
     updateSelectionCookie();
 }
 
+async function loadUsersModal() {
+    const users = JSON.parse(await $.ajax({
+        url: "../Accounting.php",
+        method: "POST",
+        data: {
+            mode: "getPublicUserInfo"
+        }
+    }));
+
+    const select = document.getElementById("newOwnerSelect");
+    select.innerHTML = "";
+
+    const defaultOption = document.createElement("option");
+    defaultOption.value = "";
+    defaultOption.innerHTML = "Válassz egy felhasználót...";
+    select.appendChild(defaultOption);
+
+    users.forEach(user => {
+        const option = document.createElement("option");
+        option.value = user.idUsers;
+        option.innerHTML = `${user.lastName} ${user.firstName}`;
+        select.appendChild(option);
+    });
+}
+
+async function changeOwner() {
+    const selectedItems = document.getElementsByClassName("selected");
+    if (selectedItems.length == 0) {
+        warningToast("Nincs kiválasztva egy tárgy sem!");
+        return;
+    }
+
+    const newOwner = document.getElementById("newOwnerSelect").value;
+    if (newOwner == "") {
+        warningToast("Nincs kiválasztva új tulajdonos!");
+        return;
+    }
+
+    const itemsToChange = Array.from(selectedItems).map(item => ({
+        uid: item.id,
+        name: item.getAttribute("data-name"),
+    }));
+
+    const response = await $.ajax({
+        url: "../ItemManager.php",
+        method: "POST",
+        data: {
+            mode: "changeOwner",
+            items: JSON.stringify(itemsToChange),
+            newOwner: newOwner
+        }
+    });
+
+    if (response == 200) {
+        successToast("Sikeres tulajdonosváltás!");
+        loadUserItems();
+        clearSelectionCookie();
+        // Close modal
+        $('#changeOwnerModal').modal('hide');
+    } else {
+        console.log(response);
+        serverErrorToast();
+    }
+}
 
 async function submitRetrieve() {
     if (!document.getElementById("intactItems").checked) {
@@ -180,5 +248,6 @@ async function submitRetrieve() {
     } else {
         console.log(response);
         serverErrorToast();
+        clearSelectionCookie();
     }
 }
