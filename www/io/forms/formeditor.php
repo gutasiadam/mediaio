@@ -1,8 +1,9 @@
 <?php
 session_start();
-include ("header.php");
-include ("../translation.php");
+include("header.php");
+include("../translation.php");
 
+if (!isset($_SESSION["userId"])) {
 if (!isset($_SESSION["userId"])) {
    echo "<script>window.location.href = '../index.php?error=AccessViolation';</script>";
    exit();
@@ -12,6 +13,8 @@ if (!in_array("admin", $_SESSION["groups"])) {
    exit();
 }
 ?>
+
+<script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
 <html>
@@ -35,7 +38,7 @@ if (!in_array("admin", $_SESSION["groups"])) {
       </ul>
       <ul class="navbar-nav ms-auto navbarPhP">
          <li>
-            <a class="nav-link disabled timelock" href="#"><span id="time"> 60:00 </span>
+            <a class="nav-link disabled timelock" href="#"><span id="time"> 30:00 </span>
                <?php echo ' ' . $_SESSION['UserUserName']; ?>
             </a>
          </li>
@@ -47,7 +50,7 @@ if (!in_array("admin", $_SESSION["groups"])) {
             window.onload = function () {
                display = document.querySelector('#time');
                var timeUpLoc = "../utility/userLogging.php?logout-submit=y"
-               startTimer(display, timeUpLoc, 60);
+               startTimer(display, timeUpLoc, 30);
             };
          </script>
       </form>
@@ -59,10 +62,11 @@ if (!in_array("admin", $_SESSION["groups"])) {
          class='fas fa-align-left fa-lg' style="color: fff"></i></button>
    <button class="btn" onclick="window.location.href = 'viewform.php?formId=' + <?php echo $_GET['formId'] ?>"
       style="color: fff"><i class="fas fa-eye"></i></button>
+   <button class="btn" onclick="saveFormElements(false)"><i class="fas fa-save" style="color: #ffffff;"></i></button>
 </div>
 
 
-<?php include ("modals.php"); ?>
+<?php include("modals.php"); ?>
 
 
 
@@ -81,26 +85,33 @@ if (!in_array("admin", $_SESSION["groups"])) {
             </button>
             <ul class="dropdown-menu">
                <li><a class="dropdown-item" href="#" onclick="addFormElement('email')"><i class="fas fa-at"></i>
+               <li><a class="dropdown-item" href="#" onclick="addFormElement('email')"><i class="fas fa-at"></i>
                      E-Mail</a></li>
                <li><a class="dropdown-item" href="#" onclick="addFormElement('shortText')"><i
                         class="fas fa-grip-lines fa-lg"></i> Rövid szöveg</a></li>
+                        class="fas fa-grip-lines fa-lg"></i> Rövid szöveg</a></li>
                <li><a class="dropdown-item" href="#" onclick="addFormElement('longText')"><i
+                        class="fas fa-align-justify fa-lg"></i> Hosszú szöveg</a></li>
                         class="fas fa-align-justify fa-lg"></i> Hosszú szöveg</a></li>
 
                <!-- Feleletválasztós -->
                <li class="dropdown-divider"></li>
                <li><a class="dropdown-item" href="#" onclick="addFormElement('radio')"><i
                         class="far fa-dot-circle fa-lg"></i>
+                        class="far fa-dot-circle fa-lg"></i>
                      Feleletválasztós</a></li>
                <li><a class="dropdown-item" href="#" onclick="addFormElement('checkbox')"><i
                         class="far fa-check-square fa-lg"></i> Jelölőnégyzet</a>
+                        class="far fa-check-square fa-lg"></i> Jelölőnégyzet</a>
                </li>
                <li><a class="dropdown-item" href="#" onclick="addFormElement('dropdown')"><i
+                        class="fas fa-chevron-down fa-lg"></i> Legördülő lista</a></li>
                         class="fas fa-chevron-down fa-lg"></i> Legördülő lista</a></li>
 
                <!-- Skála -->
                <li class="dropdown-divider"></li>
                <li><a class="dropdown-item" href="#" onclick="addFormElement('scaleGrid')"><i
+                        class="fas fa-th fa-lg"></i> Feleletválasztós rács</a></li>
                         class="fas fa-th fa-lg"></i> Feleletválasztós rács</a></li>
 
                <!-- Idő -->
@@ -108,17 +119,17 @@ if (!in_array("admin", $_SESSION["groups"])) {
                <li><a class="dropdown-item" href="#" onclick="addFormElement('date')"><i
                         class="fas fa-calendar-alt fa-lg"></i> Dátum</a></li>
                <li><a class="dropdown-item" href="#" onclick="addFormElement('time')"><i class="fas fa-clock fa-lg"></i>
+                        class="fas fa-calendar-alt fa-lg"></i> Dátum</a></li>
+               <li><a class="dropdown-item" href="#" onclick="addFormElement('time')"><i class="fas fa-clock fa-lg"></i>
                      Idő</a></li>
 
                <!-- Fájl -->
                <li class="dropdown-divider"></li>
-               <li><a class="dropdown-item" href="#" onclick="addFormElement('fileUpload')"><i
-                        class="fas fa-file fa-lg"></i> Fájl feltöltés</a>
+               <li><a class="dropdown-item" href="#" onclick="/*addFormElement('fileUpload')*/"><i
+                        class="fas fa-file fa-lg"></i><i>Fájl feltöltés (fejlesztés alatt)</i></a>
                </li>
             </ul>
          </div>
-         <button class="btn btn-primary" onclick="saveFormElements(false)">Mentés</button>
-         <!-- <button class="btn btn-danger" data-bs-target="#delete_Modal" data-bs-toggle="modal"><i class='fas fa-trash-alt fa-lg'></i></button> -->
          <button class="btn" data-bs-target="#settings_Modal" data-bs-toggle="modal"><i
                class="fas fa-sliders-h fa-lg"></i></button>
       </div>
@@ -130,6 +141,8 @@ if (!in_array("admin", $_SESSION["groups"])) {
 
 <script src="frontEnd/backgroundManager.js" type="text/javascript"></script>
 <script src="frontEnd/fetchData.js" type="text/javascript"></script>
+<script src="frontEnd/formElements.js" type="text/javascript"></script>
+<script src="frontEnd/drangAndDrop.js" type="text/javascript"></script>
 <script src="frontEnd/formElements.js" type="text/javascript"></script>
 <script src="frontEnd/drangAndDrop.js" type="text/javascript"></script>
 
@@ -202,10 +215,12 @@ if (!in_array("admin", $_SESSION["groups"])) {
       //Load form from server
 
       let formId = <?php if (isset($_GET['formId'])) {
+      let formId = <?php if (isset($_GET['formId'])) {
          echo $_GET['formId'];
       } else {
          echo '-1';
       } ?>;
+      let formHash = <?php if (isset($_GET['form'])) {
       let formHash = <?php if (isset($_GET['form'])) {
          echo '"' . $_GET['form'] . '"';
       } else {
@@ -230,9 +245,8 @@ if (!in_array("admin", $_SESSION["groups"])) {
 
    //Function to check if question id is used
    function checkIdNotUsed(id) {
-      var elements = document.getElementById("editorZone").getElementsByClassName("form-member");
-      for (var j = 0; j < elements.length; j++) {
-      if (elements[j].id.split("-")[1] == id) {
+      for (var j = 0; j < formElements.length; j++) {
+         if (formElements[j].id == id) {
             id++;
             checkIdNotUsed(id);
          }
@@ -246,7 +260,7 @@ if (!in_array("admin", $_SESSION["groups"])) {
       i = checkIdNotUsed(i); //Check if id is used
       console.log("Adding form element: " + type);
       var place = document.getElementById("editorZone").getElementsByClassName("form-member").length + 1; //Get the place of the new element
-      
+
       let newElement = new FormElement(i, type, "", "", false, []);
       let container = document.getElementById("editorZone");
       newElement.createElement(container, "editor");
@@ -290,6 +304,7 @@ if (!in_array("admin", $_SESSION["groups"])) {
       //Add growing spinner to the first h6
       //document.getElementById("time").innerHTML = "<div class='spinner-grow text-success' role='status'></div>"
       saveFormElements(true);
+      saveFormElements(true);
    }, 10000);
 
 
@@ -323,16 +338,19 @@ if (!in_array("admin", $_SESSION["groups"])) {
       var formJson = JSON.stringify(form);
 
       var formId = <?php if (isset($_GET['formId'])) {
+      var formId = <?php if (isset($_GET['formId'])) {
          echo $_GET['formId'];
       } else {
          echo '-1';
       } ?>;
+      var formHash = <?php if (isset($_GET['form'])) {
       var formHash = <?php if (isset($_GET['form'])) {
          echo '"' . $_GET['form'] . '"';
       } else {
          echo 'null';
       } ?>;
 
+      //console.log(formJson);
       //console.log(formJson);
       //Send form to server
       $.ajax({
@@ -364,10 +382,12 @@ if (!in_array("admin", $_SESSION["groups"])) {
 
    function deleteForm() {
       var formId = <?php if (isset($_GET['formId'])) {
+      var formId = <?php if (isset($_GET['formId'])) {
          echo $_GET['formId'];
       } else {
          echo '-1';
       } ?>;
+      var formHash = <?php if (isset($_GET['form'])) {
       var formHash = <?php if (isset($_GET['form'])) {
          echo '"' . $_GET['form'] . '"';
       } else {

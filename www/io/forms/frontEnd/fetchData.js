@@ -20,6 +20,7 @@ async function FetchData(formId, formHash) {
 
             if (response == 404) {
                 window.location.href = "index.php?invalidID";
+                window.location.href = "index.php?invalidID";
             }
 
             var form = JSON.parse(response);
@@ -47,19 +48,37 @@ async function fetchAnswers(formId, formHash) {
             url: "../formManager.php",
             data: data
         });
+    try {
+        let data = { mode: "getFormAnswers" };
+        if (formId != -1) {
+            data.id = formId;
+        } else {
+            data.formHash = formHash;
+        }
+
+        let response = await $.ajax({
+            type: "POST",
+            url: "../formManager.php",
+            data: data
+        });
 
         if (response == 404) {
             window.location.href = "index.php?invalidID";
         }
+        if (response == 404) {
+            window.location.href = "index.php?invalidID";
+        }
 
-        let submission = JSON.parse(response);
-        submission.forEach(item => formAnswers.push(item));
+        formAnswers = JSON.parse(response);
 
         let dropdown = document.getElementById("answers_dropdown");
 
-        submission.forEach((item, i) => {
+        formAnswers.forEach((item, i) => {
             let id = item.ID;
 
+            let li = document.createElement("li");
+            li.classList.add("dropdown-item");
+            li.style.cursor = "pointer";
             let li = document.createElement("li");
             li.classList.add("dropdown-item");
             li.style.cursor = "pointer";
@@ -67,6 +86,18 @@ async function fetchAnswers(formId, formHash) {
             li.onclick = function () {
                 showFormAnswers(id);
             };
+            li.onclick = function () {
+                showFormAnswers(id);
+            };
+
+            li.innerHTML = `${i + 1}. válasz</a>`;
+            dropdown.appendChild(li);
+        });
+    } catch (error) {
+        console.error("Error:", error);
+    }
+}
+
 
             li.innerHTML = `${i + 1}. válasz</a>`;
             dropdown.appendChild(li);
