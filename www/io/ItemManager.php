@@ -46,11 +46,25 @@ class takeOutManager
       // Check if planned takeout start time is in the future
       $status = in_array("admin", $_SESSION['groups']) ? 0 : 2;
 
+      $checksql = "SELECT * FROM leltar WHERE UID = ? AND Status = 2";
+
       $sql = "UPDATE leltar SET Status = $status, RentBy = '" . $_SESSION['userId'] . "' WHERE `UID` = ?";
 
-      // Update leltar
-      $stmt = $connection->prepare($sql);
+      // Check availability and update leltar
       foreach ($takeoutItems as $item) {
+        $stmt = $connection->prepare($checksql);
+        $stmt->bind_param("s", $item['uid']);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        if ($row) {
+          // Item is already taken out
+          $connection->rollback();
+          $connection->close();
+          return 409;
+        }
+        
+        $stmt = $connection->prepare($sql);
         $stmt->bind_param("s", $item['uid']);
         $stmt->execute();
       }
